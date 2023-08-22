@@ -1,0 +1,49 @@
+{
+    "app_url": "http://localhost:8001",
+    "api_url": "http://localhost:9100/post-api",
+    "site_title": "Test",
+    "theme": "default",
+    "pages": {
+        "home": {
+            "title": "Test",
+            "menu_name": "Home",
+            "description": "Test",
+            "blocks": [
+                {
+                    "block": "hot_news",
+                    "post_tags": "tin-nong"
+                },
+                {
+                    "block": "news",
+                    "title": "Thời sự giải trí",
+                    "post_tags": "viet-nam,quan-su"
+                }
+            ]
+        },
+        "sport": {
+            "title": "Test",
+            "menu_name": "Worklife",
+            "description": "Test",
+            "blocks": [
+                {
+                    "block": "news",
+                    "title": "Thời sự giải trí",
+                    "post_tags": "viet-nam,quan-su"
+                }
+            ]
+        },
+        "future": {
+            "title": "Test",
+            "menu_name": "future",
+            "description": "Test",
+            "blocks": [
+                {
+                    "block": "news",
+                    "title": "Thời sự giải trí",
+                    "post_tags": "viet-nam,quan-su"
+
+                }
+            ]
+        }
+    }
+}
