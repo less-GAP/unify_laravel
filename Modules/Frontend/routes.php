@@ -9,9 +9,9 @@ use Modules\Frontend\Actions\TestFormAction;
 
 Route::middleware(['splade'])->group(function () {
     Route::get('/',  fn () => view('Frontend::home'))->name('home');
-    Route::get('/apply',  fn () => view('Frontend::apply'))->name('apply');
-    Route::get('/checkout',  CheckoutVisaApplication::class.'@handle')->name('checkout');
-    Route::post('/visa-application', PostVisaApplication::class.'@handle')->name('visa-application');
+    // Route::get('/apply',  fn () => view('Frontend::apply'))->name('apply');
+    // Route::get('/checkout',  CheckoutVisaApplication::class.'@handle')->name('checkout');
+    // Route::post('/visa-application', PostVisaApplication::class.'@handle')->name('visa-application');
 
     // Registers routes to support the interactive components...
     Route::spladeWithVueBridge();

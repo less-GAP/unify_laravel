@@ -6,7 +6,7 @@ import Antd from 'ant-design-vue';
 import { createApp } from "vue/dist/vue.esm-bundler.js";
 import { renderSpladeApp, SpladePlugin } from "@protonemedia/laravel-splade";
 const pinia = createPinia();
-import VisaApplicationForm from './components/VisaApplicationForm.vue';
+import FrontendNewPatientForm from './components/FrontendNewPatientForm.vue';
 const el = document.getElementById("app");
 const app = createApp({
     render: renderSpladeApp({ el }),
@@ -14,5 +14,5 @@ const app = createApp({
     'max_keep_alive': 50,
     'transform_anchors': true,
 }).use(pinia).use(Antd)
-    .component('VisaApplicationForm', VisaApplicationForm)
+    .component('FrontendNewPatientForm', FrontendNewPatientForm)
     .mount(el)
