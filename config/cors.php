@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'paths' => [env('APP_ADMIN').'/*', 'sanctum/csrf-cookie'],
+    'paths' => [env('APP_ADMIN','admin').'/*','/admin/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
