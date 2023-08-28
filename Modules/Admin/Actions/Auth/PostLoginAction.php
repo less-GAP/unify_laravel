@@ -11,7 +11,6 @@ class PostLoginAction
 {
     public function handle(LoginRequest $request){
         $credentials = $request->getCredentials();
-        return $credentials;
         if(!Auth::guard('admin')->validate($credentials)):
             return response(trans('auth.failed'),401);
         endif;
