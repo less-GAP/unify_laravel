@@ -5,6 +5,7 @@ import {mdiDelete} from "@mdi/js";
 import {notification} from "ant-design-vue";
 
 const prefix = 'post'
+const routerPath = '/'+prefix
 const fetchListApi = function (params) {
   return Api.get(prefix + '/list', {params})
 };
@@ -143,8 +144,12 @@ const defaultNewValue = {
   type: 'post',
   tags: []
 }
-
+const back = () => {
+  router.push('/'+prefix);
+};
 export {
+  back,
+  routerPath,
   defaultNewValue,
   createApi,
   updateApi,

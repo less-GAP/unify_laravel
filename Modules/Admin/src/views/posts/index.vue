@@ -1,5 +1,5 @@
 <script setup>
-import {reactive, ref, h} from "vue";
+import {reactive, ref, h, watch} from "vue";
 import {mdiBallotOutline, mdiDelete} from "@mdi/js";
 import SectionMain from "@/components/SectionMain.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
@@ -15,23 +15,31 @@ import router from "@/router";
 
 import {notification} from "ant-design-vue";
 import {tableConfig, updateApi} from "./meta";
+import {routerPath} from "./meta";
 
 const isShowModal = ref(false)
 
 const editProduct = ref(null);
 
-function showEditUser(user, reload) {
-  isShowModal.value = true;
-  editProduct.value = user;
-}
 
+let reloadTable = ()=>{}
+
+watch(router.currentRoute, (data) => {
+  if (data.path === routerPath) {
+    reloadTable()
+  }
+});
+
+function registerTable({reload}) {
+  reloadTable = reload
+}
 
 </script>
 
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <DataTable v-bind="tableConfig">
+      <DataTable @register="registerTable" v-bind="tableConfig">
         <template #cellAction[delete]="{item,actionMethod}">
           <a-popconfirm
             title="Bạn muốn xóa sản phẩm này?"
@@ -51,6 +59,7 @@ function showEditUser(user, reload) {
         </template>
         <template #cellAction[edit]="{item,actionMethod}">
           <a-button
+            class="mr-5"
             type="text"
             :icon="h(FormOutlined)"
             label=""
@@ -73,6 +82,7 @@ function showEditUser(user, reload) {
         </template>
       </DataTable>
     </SectionMain>
+    <router-view></router-view>
   </LayoutAuthenticated>
 
 </template>

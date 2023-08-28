@@ -4,7 +4,8 @@ import {useMainStore} from "@/stores/main";
 import {mdiEye, mdiTrashCan} from "@mdi/js";
 import {Button, Input, InputUpload} from "@/components/index";
 import BaseIcon from "@/components/BaseIcon.vue";
-import {DownOutlined, ReloadOutlined} from "@ant-design/icons-vue";
+import {DownOutlined, ReloadOutlined,SearchOutlined} from "@ant-design/icons-vue";
+const emit = defineEmits(["init"]);
 
 const props = defineProps({
   tableConfig: {
@@ -64,7 +65,6 @@ const tableColumns = computed(() => {
     result.push({
       title: 'Hành động',
       key: 'action',
-      width: 200,
       dataIndex: 'action'
     })
   }
@@ -87,7 +87,7 @@ function reload() {
     })
   }
 }
-
+emit('register',{reload})
 const loading = ref(false);
 const checkAll = ref(false);
 const selectedKeys = ref([])
@@ -145,6 +145,7 @@ reload()
             placeholder="Enter to search..."
             :loading="loading"
           />
+          <a-button @click="reload" type="primary" :icon="h(SearchOutlined)"></a-button>
           <slot name="filter"></slot>
         </a-space>
         <span></span>
@@ -155,21 +156,21 @@ reload()
               <reload-outlined @click="reload"/>
             </template>
           </a-button>
-          <a-dropdown v-if="selectionActions.length > 0" :disabled="!selectedItems.length">
-            <template #overlay>
-              <a-menu>
-                <a-menu-item @click="doSelectionAction(action)" :key="index" v-for="(action,index) in selectionActions"
-                >
-                  {{ action.title }}
-                </a-menu-item>
+<!--          <a-dropdown v-if="selectionActions.length > 0" :disabled="!selectedItems.length">-->
+<!--            <template #overlay>-->
+<!--              <a-menu>-->
+<!--                <a-menu-item @click="doSelectionAction(action)" :key="index" v-for="(action,index) in selectionActions"-->
+<!--                >-->
+<!--                  {{ action.title }}-->
+<!--                </a-menu-item>-->
 
-              </a-menu>
-            </template>
-            <a-button>
-              Hành động
-              <DownOutlined/>
-            </a-button>
-          </a-dropdown>
+<!--              </a-menu>-->
+<!--            </template>-->
+<!--            <a-button>-->
+<!--              Hành động-->
+<!--              <DownOutlined/>-->
+<!--            </a-button>-->
+<!--          </a-dropdown>-->
 
           <a-button type="primary" v-if="addAction" @click="()=>{addAction(reload)}">Thêm mới</a-button>
 

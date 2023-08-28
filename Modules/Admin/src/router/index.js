@@ -15,38 +15,7 @@ const routes = [
     name: "dashboard",
     component: Home,
   },
-  {
-    meta: {
-      title: "Kanban",
-    },
-    path: "/kanban",
-    name: "kanban",
-    component: () => import("@/views/kanban/index.vue"),
-  },
-  {
-    meta: {
-      title: "Inbox",
-    },
-    path: "/inbox",
-    name: "inbox",
-    component: () => import("@/views/inbox/index.vue"),
-  },
-  {
-    meta: {
-      title: "Visa Applications",
-    },
-    path: "/visa-applications",
-    name: "visa-applications",
-    component: () => import("@/views/visa-applications/index.vue"),
-  },
-  {
-    meta: {
-      title: "Visa Applications",
-    },
-    path: "/visa-applications/:id",
-    name: "visa-applications-form",
-    component: () => import("@/views/visa-applications/FormPage.vue"),
-  },
+
   {
     meta: {
       title: "Posts",
@@ -63,54 +32,7 @@ const routes = [
     name: "post-detail",
     component: () => import("@/views/posts/Detail.vue"),
   },
-  {
-    meta: {
-      title: "Websites",
-    },
-    path: "/websites",
-    name: "websites",
-    component: () => import("@/views/websites/index.vue"),
-  },
-  {
-    meta: {
-      title: "Website Detail",
-    },
-    path: "/websites/:id",
-    name: "website-detail",
-    component: () => import("@/views/websites/Detail.vue"),
-  },
-  {
-    meta: {
-      title: "Themes",
-    },
-    path: "/themes",
-    name: "themes",
-    component: () => import("@/views/themes/index.vue"),
-  },
-  {
-    meta: {
-      title: "Theme Detail",
-    },
-    path: "/themes/:id",
-    name: "theme-detail",
-    component: () => import("@/views/themes/Detail.vue"),
-  },
-  {
-    meta: {
-      title: "Data Source",
-    },
-    path: "/data-source",
-    name: "data-source",
-    component: () => import("@/views/data-source/index.vue"),
-  },
-  {
-    meta: {
-      title: "Data Source Detail",
-    },
-    path: "/data-source/:id",
-    name: "data-source-detail",
-    component: () => import("@/views/data-source/Detail.vue"),
-  },
+
   {
     meta: {
       title: "Users",
