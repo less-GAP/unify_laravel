@@ -1,31 +1,92 @@
 <script setup>
 import {reactive, ref, h, watch} from "vue";
-import {mdiBallotOutline, mdiDelete} from "@mdi/js";
 import SectionMain from "@/components/SectionMain.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
-import {Modal, DataTable} from "@/components";
-
-import {PlusOutlined, LoadingOutlined, DeleteOutlined, FormOutlined} from '@ant-design/icons-vue';
-
-import {InputUpload} from "@/components";
-
-import Api from "@/utils/Api";
+import {DataTable} from "@/components";
 import router from "@/router";
+import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
+import {UseDataTable} from "@/utils/UseDataTable";
 
-import {notification} from "ant-design-vue";
-import {tableConfig, updateApi} from "./meta";
-import {routerPath} from "./meta";
-
+const prefix = router.currentRoute.value.meta.api ? router.currentRoute.value.meta.api : router.currentRoute.value.path
+const {
+  fetchListApi,
+  createApi,
+  deleteApi,
+  updateApi
+} = UseEloquentRouter(prefix)
 const isShowModal = ref(false)
 
-const editProduct = ref(null);
+const itemActions = [
+  {
+    label: 'Edit',
+    action: (item, reload) => {
+      //showEditUser({}, reload)
+      router.push(prefix + '/' + item.id)
+    }
+  },
+  {
+    label: 'Delete',
+    class: 'font-medium text-red-600 dark:text-red-500 hover:underline',
+    action(item, reload) {
+      deleteApi(item.id).then(rs => {
+      }).finally(() => {
+        reload();
+      });
+    }
+  }
+]
+const listActions = [
+  {
+    label: 'Add',
+    action: (reload) => {
+      //showEditUser({}, reload)
+      router.push(prefix + '/new')
+    }
+  }
+]
+const columns = [
+  {
+    title: 'Hình ảnh',
+    key: 'image',
+    width: '100px'
+  },
+  {
+    title: 'Title',
+    key: 'title',
+
+  },
+
+  {
+    title: 'Loại',
+    key: 'type',
+    width: 100
+  },
+
+  {
+    title: 'Publish',
+    key: 'status',
+    width: 100
+
+  },
+  {
+    title: 'Created at',
+    key: 'created_at',
+    width: 200
+  },
+]
 
 
-let reloadTable = ()=>{}
+const tableConfig = UseDataTable(fetchListApi, {
+  columns,
+  listActions,
+  itemActions
+})
+let reloadTable = () => {
+}
 
 watch(router.currentRoute, (data) => {
-  if (data.path === routerPath) {
+  if (data.path === prefix) {
     reloadTable()
   }
 });
@@ -72,9 +133,7 @@ function registerTable({reload}) {
           <a-image height="50px" class="w-20 h-auto" :src="item.image_url"
                    :alt="item.name"/>
         </template>
-        <template #cell[tags]="{item,column}">
-          {{ item.tags.join(',') }}
-        </template>
+
 
         <template #cell[status]="{item,column}">
           <a-switch @change="updateApi(item.id,{status:item.status})" checkedValue="publish" unCheckedValue="draft"

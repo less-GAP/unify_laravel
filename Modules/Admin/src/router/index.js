@@ -3,7 +3,7 @@ import Style from "@/views/StyleView.vue";
 import Home from "@/views/HomeView.vue";
 import {useAuthStore} from "@/stores/auth";
 import {useAppStateStore} from "@/stores/appState";
-
+import patientRoutes from "@/views/patients/routers"
 const publicPages = ['/login'];
 
 const routes = [
@@ -16,22 +16,7 @@ const routes = [
     component: Home,
   },
 
-  {
-    meta: {
-      title: "Patients",
-    },
-    path: "/patient",
-    name: "patient",
-    component: () => import("@/views/patients/index.vue"),
-  },
-  {
-    meta: {
-      title: "Patient",
-    },
-    path: "/patient/:id",
-    name: "patient-detail",
-    component: () => import("@/views/patients/Detail.vue"),
-  },
+
   {
     meta: {
       title: "Posts",
@@ -135,7 +120,6 @@ const routes = [
     name: "user-detail",
     component: () => import("@/views/users/ProfileView.vue"),
   },
-
   {
     meta: {
       title: "Profile",
@@ -154,14 +138,8 @@ const routes = [
     name: "login",
     component: () => import("@/views/LoginView.vue"),
   },
-  {
-    meta: {
-      title: "Error",
-    },
-    path: "/error",
-    name: "error",
-    component: () => import("@/views/ErrorView.vue"),
-  },
+
+  ...patientRoutes
 ];
 
 const router = createRouter({

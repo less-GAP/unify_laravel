@@ -12,11 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Patient extends Model
 {
-    use CreatedUpdatedByAdmin, HasSlug, HasTags;
 
-    public $storage = 'post-content';
 
-    public $slugBy = 'title';
     /**
      * The attributes that are mass assignable.
      *
@@ -81,6 +78,7 @@ class Patient extends Model
      */
     protected $casts = [
         //'product_descr' => 'array',
+        'dob' => 'datetime',
     ];
 
     protected $appends = [

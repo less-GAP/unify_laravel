@@ -58,11 +58,6 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'title')]
             ]
         )->routes(function () {
-            Route::get('list', \Modules\Admin\Actions\Patient\GetPatientListAction::class . '@handle');
-            Route::get('{id}', \Modules\Admin\Actions\Patient\GetDetailAction::class . '@handle');
-            Route::post('', \Modules\Admin\Actions\Patient\PostAction::class . '@handle');
-            Route::post('uploadImage', \Modules\Admin\Actions\Patient\PostUploadImageAction::class . '@handle');
-            Route::post('activeList', \Modules\Admin\Actions\Patient\PostActiveListAction::class . '@handle');
         });
     EloquentRouter::prefix('websites')
         ->handle(\App\Models\Website::class,

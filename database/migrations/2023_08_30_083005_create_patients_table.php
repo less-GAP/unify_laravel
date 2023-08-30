@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
 
             $table->date('unify_active')->nullable();
-            $table->integer('unify_status');
-            $table->integer('unify_process');
+            $table->integer('unify_status')->nullable();
+            $table->integer('unify_process')->nullable();
 
             //data
-            $table->string('full_name');
-            $table->string('last_name');
-            $table->string('first_name');
+            $table->string('full_name')->index();
+            $table->string('last_name')->nullable();
+            $table->string('first_name')->nullable();
             $table->date('dob')->nullable();
             $table->text('height')->nullable();
             $table->text('weight')->nullable();
@@ -30,21 +30,21 @@ return new class extends Migration
             $table->text('insurance_coverages')->nullable();
 
             // contact
-            $table->string('email');
-            $table->string('phone');
-            $table->text('street');
-            $table->text('apt');
-            $table->string('city');
-            $table->string('state');
-            $table->string('zip');
-            $table->string('route');
-            $table->string('sub_r');
+            $table->string('email')->index();
+            $table->string('phone')->index();
+            $table->text('street')->nullable();
+            $table->text('apt')->nullable();
+            $table->string('city')->nullable();
+            $table->string('state')->nullable();
+            $table->string('zip')->nullable();
+            $table->string('route')->nullable();
+            $table->string('sub_r')->nullable();
 
-            $table->string('supplies'); // medical_supplies
+            $table->string('supplies')->nullable(); // medical_supplies
             $table->text('products')->nullable();
 
-            $table->text('note');
-            $table->text('unify_data'); // merge weight, height and name of doctor the patient chooses
+            $table->text('note')->nullable();
+            $table->text('unify_data')->nullable(); // merge weight, height and name of doctor the patient chooses
 
             // confirm by doctor
             $table->integer('doctor_id')->nullable();
@@ -55,11 +55,11 @@ return new class extends Migration
             $table->text('service_dates')->nullable();
             $table->integer('need_improve')->default(0);
 
-            $table->boolean('unify_deleted');
+            $table->boolean('unify_deleted')->nullable();
             $table->time('unify_deleted_at')->nullable();;
             $table->integer('unify_deleted_by')->nullable();;
 
-            $table->integer('sale_user'); // created_by
+            $table->integer('sale_user')->nullable(); // created_by
             $table->timestamps();
         });
     }

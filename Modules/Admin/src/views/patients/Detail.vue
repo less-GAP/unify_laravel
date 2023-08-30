@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { reactive, h, ref, toRaw } from "vue";
+import {reactive, h, ref, toRaw} from "vue";
 
-import { useMainStore } from "@/stores/main";
+import {useMainStore} from "@/stores/main";
 import {
   mdiAccount,
   mdiMail,
@@ -10,24 +10,18 @@ import {
   mdiGithub,
 } from "@mdi/js";
 
-import { CloseCircleOutlined, PlusOutlined, LoadingOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+import {CloseCircleOutlined, PlusOutlined, LoadingOutlined, DeleteOutlined} from '@ant-design/icons-vue';
 
 import router from "@/router";
+import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
 
-import Api from "@/utils/Api";
+const prefix = 'patient'
+const {
+  fetchDetailApi,
+  createApi,
+  updateApi
+} = UseEloquentRouter(prefix)
 
-import 'jodit/es5/jodit.css';
-
-import { JoditEditor, Jodit } from 'jodit-vue';
-
-import { notification } from 'ant-design-vue';
-import type { UploadProps } from 'ant-design-vue';
-
-import { InputUploadGetPath, FilePicker } from "@/components";
-import { createApi, defaultNewValue, formConfig, fetchDetailApi } from "./meta";
-import { getPostDetail, back } from "./meta";
-
-const mainStore = useMainStore();
 
 const loading = ref(false);
 const showPicker = ref(false);
@@ -47,7 +41,7 @@ const props = defineProps({
   },
 })
 const emit = defineEmits(["close"]);
-const formState = reactive({ ...defaultNewValue });
+const formState = reactive({});
 const isShowModal = ref(false)
 
 const customFormat = "MM-DD-YYYY"; // format of datepicker
@@ -55,13 +49,11 @@ const customFormat = "MM-DD-YYYY"; // format of datepicker
 const fetch = async function () {
   loading.value = true;
   var id = router.currentRoute.value.params.id;
-  if (typeof id == 'number') {
-    if (id > 0) {
-      loading.value = true
-      const value = await fetchDetailApi(id)
-      Object.assign(formState, value.data)
-      loading.value = false
-    }
+  if (id !== 'new') {
+    loading.value = true
+    const value = await fetchDetailApi(id)
+    Object.assign(formState, value.data)
+    loading.value = false
   } else {
     loading.value = false
   }
@@ -72,16 +64,13 @@ const submit = (status) => {
   formRef.value
     .validate()
     .then(() => {
-      createApi({ ...formState, status: status }).then(rs => {
+      createApi({...formState, status: status}).then(rs => {
         Object.assign(formState, rs.data.result)
       });
     })
 };
-
 const closeDetail = function () {
-  props.visible = false;
-  emit('close');
-  back()
+  router.replace({ path: '/'+prefix })
 }
 
 
@@ -89,14 +78,20 @@ const closeDetail = function () {
 
 <template>
   <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;"
-    @close="closeDetail" :open="visible" width="90vw">
-    <a-form v-if="formState" layout="vertical" v-bind="formConfig" ref="formRef" :model="formState" @finish="submit">
+            @close="closeDetail" :open="visible" width="90vw">
+    <a-form  layout="vertical" v-bind="$config.formConfig" ref="formRef" :model="formState"
+            @finish="submit">
       <a-card bodyStyle="padding:10px;" class="shadow bg-gray-50">
-        <a-button class="hidden md:inline-block" type="primary" @click="closeDetail">Back to
-          list</a-button>
+        <a-button class="hidden md:inline-block" type="link" @click="closeDetail">Back
+          <template #icon>
+            <CloseCircleOutlined/>
+          </template>
+        </a-button>
         <a-button class="inline-flex items-center justify-center md:hidden !w-10 !h-10 !p-0" type="primary"
-          @click="closeDetail">
-          <CloseCircleOutlined />
+                  @click="closeDetail">
+          <template #icon>
+            <CloseCircleOutlined/>
+          </template>
         </a-button>
         <a-space class="float-right">
           <a-tag v-if="formState.status == 'publish'" color="success">Published</a-tag>
@@ -109,28 +104,28 @@ const closeDetail = function () {
         <div class="flex flex-wrap -mx-4">
           <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Full Name" name="full_name"
-              :rules="[{ required: true, message: 'Please enter full name!' }]">
-              <a-input v-model:value="formState.full_name" />
+                         :rules="[{ required: true, message: 'Please enter full name!' }]">
+              <a-input v-model:value="formState.full_name"/>
             </a-form-item>
           </div>
           <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="First Name" name="first_name"
-              :rules="[{ required: true, message: 'Please enter first name!' }]">
-              <a-input v-model:value="formState.first_name" />
+                         :rules="[{ required: true, message: 'Please enter first name!' }]">
+              <a-input v-model:value="formState.first_name"/>
             </a-form-item>
           </div>
           <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Last Name" name="last_name"
-              :rules="[{ required: true, message: 'Please enter last name!' }]">
-              <a-input v-model:value="formState.last_name" />
+                         :rules="[{ required: true, message: 'Please enter last name!' }]">
+              <a-input v-model:value="formState.last_name"/>
             </a-form-item>
           </div>
-          <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Date of Birth" name="dob" :rules="[{ required: true, message: 'Please enter dob!' }]">
-              <a-date-picker v-model:value="formState.dob" inputReadOnly :format="customFormat"
-                class="w-full"></a-date-picker>
-            </a-form-item>
-          </div>
+<!--          <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">-->
+<!--            <a-form-item label="Date of Birth" name="dob" :rules="[{ required: true, message: 'Please enter dob!' }]">-->
+<!--              <a-date-picker v-model:value="formState.dob"  format="YYYY-MM-DD HH:mm"-->
+<!--                             class="w-full"></a-date-picker>-->
+<!--            </a-form-item>-->
+<!--          </div>-->
           <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Gender" name="gender" :rules="[{ required: true, message: 'Please enter gender!' }]">
               <a-select v-model:value="formState.gender" allowClear="" class="w-full">
@@ -156,50 +151,50 @@ const closeDetail = function () {
           <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Phone" name="phone" :rules="[{ required: true, message: 'Please enter phone!' }]">
               <a-input v-model:value="formState.phone"
-                class="w-full"></a-input>
+                       class="w-full"></a-input>
             </a-form-item>
           </div>
           <a-Divider plain>Address</a-Divider>
           <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Street" name="street" :rules="[{ required: true, message: 'Please enter street!' }]">
               <a-input v-model:value="formState.street"
-                class="w-full"></a-input>
+                       class="w-full"></a-input>
             </a-form-item>
           </div>
           <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Apt" name="apt" :rules="[{ required: true, message: 'Please enter apt!' }]">
               <a-input v-model:value="formState.apt"
-                class="w-full"></a-input>
+                       class="w-full"></a-input>
             </a-form-item>
           </div>
           <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="City" name="city" :rules="[{ required: true, message: 'Please enter city!' }]">
               <a-input v-model:value="formState.city"
-                class="w-full"></a-input>
+                       class="w-full"></a-input>
             </a-form-item>
           </div>
           <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="State" name="state" :rules="[{ required: true, message: 'Please enter state!' }]">
               <a-input v-model:value="formState.state"
-                class="w-full"></a-input>
+                       class="w-full"></a-input>
             </a-form-item>
           </div>
           <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Zip" name="zip" :rules="[{ required: true, message: 'Please enter zip!' }]">
               <a-input-number v-model:value="formState.zip"
-                class="w-full"></a-input-number>
+                              class="w-full"></a-input-number>
             </a-form-item>
           </div>
           <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Route" name="route" :rules="[{ required: true, message: 'Please enter route!' }]">
               <a-input v-model:value="formState.route"
-                class="w-full"></a-input>
+                       class="w-full"></a-input>
             </a-form-item>
           </div>
           <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Sub-r" name="sub_r" :rules="[{ required: true, message: 'Please enter sub-r!' }]">
               <a-input v-model:value="formState.sub_r"
-                class="w-full"></a-input>
+                       class="w-full"></a-input>
             </a-form-item>
           </div>
           <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
@@ -212,13 +207,6 @@ const closeDetail = function () {
       </div>
     </a-form>
   </a-drawer>
-
-  <a-modal append-to-body v-model:open="showPicker" style="z-index:99999;top: 2vh;height:98vh" height="96vh" width="90vw"
-    title="Select file">
-    <FilePicker :multiple="true" @close="showPicker = false" @select="onSelectImage"></FilePicker>
-    <template #footer>
-    </template>
-  </a-modal>
 </template>
 
 <style>
