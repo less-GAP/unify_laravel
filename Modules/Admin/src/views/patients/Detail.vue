@@ -166,7 +166,7 @@ const closeDetail = function () {
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Apt" name="apt" :rules="[{ required: true, message: 'Please enter apt!' }]">
+            <a-form-item label="Apt" name="apt" :rules="[{ message: 'Please enter apt!' }]">
 
               <a-input v-model:value="formState.apt" class="w-full"></a-input>
             </a-form-item>
@@ -198,7 +198,7 @@ const closeDetail = function () {
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Sub-r" name="sub_r" :rules="[{ required: true, message: 'Please enter sub-r!' }]">
+            <a-form-item label="Sub-r" name="sub_r" :rules="[{ message: 'Please enter sub-r!' }]">
               <a-input v-model:value="formState.sub_r" class="w-full"></a-input>
             </a-form-item>
           </div>

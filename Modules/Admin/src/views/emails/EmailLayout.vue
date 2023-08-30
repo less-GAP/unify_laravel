@@ -30,9 +30,9 @@ function menuClick({item}){
 
 <template>
   <LayoutAuthenticated>
-    <a-layout>
+    <a-layout class="rounded-xl overflow-hidden shadow">
       <a-layout-sider  style="width:300px;background: #fff;max-width:40vw;">
-        <a-menu @click="menuClick"  mode="vertical" :items="items">
+        <a-menu class="h-full" @click="menuClick"  mode="vertical" :items="items">
         </a-menu>
       </a-layout-sider>
       <a-layout-content
