@@ -156,8 +156,9 @@ function registerTable({reload}) {
           <a-image height="50px" class="w-20 h-auto" :src="item.image_url"
                    :alt="item.name"/>
         </template>
-        <template #cell[dob]="{item,column}">
-          {{$format.formatDateTime(item.dob)}}
+        <template #cell[phone]="{item,column}">
+          <a-input @change="updateApi(item.id,{phone:item.phone})" checkedValue="publish" unCheckedValue="draft"
+                    v-model:value="item.phone"/>
         </template>
 
 
