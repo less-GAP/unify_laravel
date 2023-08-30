@@ -1,3 +1,71 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.ant-select .ant-select-selector {
+    padding: 0 !important;
+    height: 24px !important;
+    border: unset !important;
+    line-height: 24px !important;
+    font-size: inherit !important;
+    font-weight: 700 !important;
+    border-radius: 0 !important;
+    box-shadow: unset !important;
+}
+
+.ant-select-single .ant-select-selector .ant-select-selection-item,
+.ant-select-single .ant-select-selector .ant-select-selection-placeholder {
+    height: 24px !important;
+    line-height: 24px !important;
+}
+
+.ant-select .ant-select-selector:focus {
+    border: unset !important;
+    box-shadow: unset !important;
+}
+
+.ant-select:not(.ant-select-customize-input) .ant-select-selector .ant-select-selection-search-input {
+    border: unset !important;
+    box-shadow: unset !important;
+    height: 24px !important;
+}
+
+.ant-select-single .ant-select-selector .ant-select-selection-search {
+    inset-inline-start: 0;
+    inset-inline-end: 0;
+}
+
+.ant-select .ant-select-selection-item,
+.ant-select-single .ant-select-selector .ant-select-selection-search-input {
+    padding: 0 !important;
+    height: 24px !important;
+    border: unset !important;
+    line-height: 24px !important;
+    font-size: inherit !important;
+    font-weight: 700 !important;
+    border-radius: 0 !important;
+}
+
+.ant-select-single:not(.ant-select-customize-input) .ant-select-selector:after {
+    line-height: 24px;
+}
+
+.ant-picker,
+.ant-picker:hover,
+.ant-picker-focused {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+.ant-select-single .ant-select-selector:after,
+.ant-select-single .ant-select-selector .ant-select-selection-item:after,
+.ant-select-single .ant-select-selector .ant-select-selection-placeholder:after {
+    display: none !important;
+}
+
+.ant-picker .ant-picker-input >input{
+    font-size: inherit !important;
+    text-transform: inherit !important;
+    font-weight: inherit !important;
+}
