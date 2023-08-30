@@ -78,8 +78,8 @@ const tableConfig = {
 
   ],
   columns: [
+    {title: 'Name', key: 'full_name'},
     {title: 'Username',width:200, key: 'username'}
-    , {title: 'Name', key: 'full_name'}
     , {title: 'Role', key: 'role'}
     , {title: 'Status', key: 'status'}
   ],
@@ -136,15 +136,15 @@ const tableConfig = {
 
         </a-popconfirm>
       </template>
-      <template #cell[full_name]="{item,column}">
+      <template #cell[full_name]="{item,column}" class="bg-white">
         <img class="w-10 h-10 float-left rounded-full" :src="item.profile_photo_url"
              :alt="item.full_name">
         <div class="pl-3 float-left">
-          <div class="text-base font-semibold">{{ item.full_name }}</div>
           <div class="font-normal text-gray-500">{{ item.email }}</div>
+          <div class="text-base font-semibold">{{ item.full_name }}</div>
         </div>
       </template>
-      <template #cell[status]>
+      <template #cell[status] class="bg-white">
         <div class="flex items-center">
           <div class="h-2.5 w-2.5 rounded-full bg-red-500 mr-2"></div>
           Offline

@@ -193,7 +193,7 @@ const closeDetail = function () {
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Route" name="route" :rules="[{ required: true, message: 'Please enter route!' }]">
+            <a-form-item label="Route" name="route" :rules="[{ message: 'Please enter route!' }]">
               <a-input v-model:value="formState.route" class="w-full"></a-input>
             </a-form-item>
           </div>
