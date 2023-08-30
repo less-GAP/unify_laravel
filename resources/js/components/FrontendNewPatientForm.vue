@@ -204,7 +204,7 @@ const submit = async () => {
                                 <a-select showSearch name="s_state" placeholder="Select a state" id="s_state"
                                     class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer">
                                     <a-select-option v-for="(state, index) in JSON.parse(states)" :key="index"
-                                        :value="index">{{ state }} ({{ index }})</a-select-option>
+                                        :value="state">{{ state }} ({{ index }})</a-select-option>
                                 </a-select>
                             </div>
                         </div>

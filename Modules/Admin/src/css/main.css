@@ -34,3 +34,9 @@
 .ant-picker-dropdown .ant-picker-content th, .ant-picker-dropdown .ant-picker-content td{
   text-align: center;
 }
+
+.ant-divider-horizontal.ant-divider-with-text{
+  margin: .5rem 0;
+  font-weight: 700;
+  text-transform: uppercase;
+}
