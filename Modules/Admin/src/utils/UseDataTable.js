@@ -2,6 +2,7 @@ export function UseDataTable(fetchListApi, _tableConfig = {}) {
   const tableConfig = {
     api: fetchListApi,
     filter: {..._tableConfig.filter},
+    showReload: _tableConfig.showReload!==null?_tableConfig.showReload:false,
     columns:  _tableConfig.columns?_tableConfig.columns:[],
     config: {
       columns: [],

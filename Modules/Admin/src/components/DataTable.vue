@@ -25,6 +25,10 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  showReload: {
+    type: Boolean,
+    default: true
+  },
   params: {
     type: Object,
     default: {}
@@ -57,7 +61,7 @@ const tableConfig = {
 }
 const tableData = ref({})
 const filter = ref({
-  search:'',
+  search: '',
   ...props.filter
 })
 
@@ -82,13 +86,15 @@ const tableColumns = computed(() => {
   }
   return result;
 })
-function getFilter(){
+
+function getFilter() {
   let rs = {}
-  for (let filterKey in filter.value){
-    rs['filter['+filterKey+']'] = filter.value[filterKey]
+  for (let filterKey in filter.value) {
+    rs['filter[' + filterKey + ']'] = filter.value[filterKey]
   }
   return rs
 }
+
 function reload() {
   if (props.api) {
     loading.value = true
@@ -106,7 +112,7 @@ function reload() {
   }
 }
 
-emit('register', {reload,filter})
+emit('register', {reload, filter})
 const loading = ref(false);
 const checkAll = ref(false);
 const selectedKeys = ref([])
@@ -149,52 +155,55 @@ reload()
 
 <template>
   <div class="flex flex-col text-center h-full sm:rounded-lg">
+    <slot name="header" v-bind="{tableConfig,filter,reload}">
+    </slot>
     <div :loading="loading" class="flex items-center pb-2 justify-between   bg-white dark:bg-gray-800">
-      <slot name="header" v-bind="{tableConfig,filter,reload}">
 
-        <a-space>
 
-          <a-input
-            v-if="tableConfig.globalSearch"
-            allow-clear
-            @search="reload"
-            @keyup.enter="reload"
-            style="max-width: 300px"
-            v-model:value="filter.search"
-            placeholder="Enter to search..."
-            :loading="loading"
-          />
+      <a-space>
+
+        <a-input
+          v-if="tableConfig.globalSearch"
+          allow-clear
+          @search="reload"
+          @keyup.enter="reload"
+          style="max-width: 300px"
+          v-model:value="filter.search"
+          placeholder="Enter to search..."
+          :loading="loading"
+        />
+        <slot name="filter" v-bind="{tableConfig,filter,reload}"></slot>
+        <slot name="filterButton" v-bind="{tableConfig,filter,reload}">
           <a-button @click="reload" type="primary" :icon="h(SearchOutlined)"></a-button>
-          <slot name="filter"></slot>
-        </a-space>
-        <span></span>
+        </slot>
+      </a-space>
+      <span></span>
 
-        <a-space>
-          <a-button>
-            <template #icon>
-              <reload-outlined @click="reload"/>
-            </template>
-          </a-button>
-          <!--          <a-dropdown v-if="selectionActions.length > 0" :disabled="!selectedItems.length">-->
-          <!--            <template #overlay>-->
-          <!--              <a-menu>-->
-          <!--                <a-menu-item @click="doSelectionAction(action)" :key="index" v-for="(action,index) in selectionActions"-->
-          <!--                >-->
-          <!--                  {{ action.title }}-->
-          <!--                </a-menu-item>-->
+      <a-space>
+        <a-button v-if="showReload">
+          <template #icon>
+            <reload-outlined @click="reload"/>
+          </template>
+        </a-button>
+        <!--          <a-dropdown v-if="selectionActions.length > 0" :disabled="!selectedItems.length">-->
+        <!--            <template #overlay>-->
+        <!--              <a-menu>-->
+        <!--                <a-menu-item @click="doSelectionAction(action)" :key="index" v-for="(action,index) in selectionActions"-->
+        <!--                >-->
+        <!--                  {{ action.title }}-->
+        <!--                </a-menu-item>-->
 
-          <!--              </a-menu>-->
-          <!--            </template>-->
-          <!--            <a-button>-->
-          <!--              Hành động-->
-          <!--              <DownOutlined/>-->
-          <!--            </a-button>-->
-          <!--          </a-dropdown>-->
-          <a-button v-for="listAction in listActions" type="primary"
-                    @click="()=>{listAction.action(reload)}">{{ listAction.label }}
-          </a-button>
-        </a-space>
-      </slot>
+        <!--              </a-menu>-->
+        <!--            </template>-->
+        <!--            <a-button>-->
+        <!--              Hành động-->
+        <!--              <DownOutlined/>-->
+        <!--            </a-button>-->
+        <!--          </a-dropdown>-->
+        <a-button v-for="listAction in listActions" type="primary"
+                  @click="()=>{listAction.action(reload)}">{{ listAction.label }}
+        </a-button>
+      </a-space>
     </div>
     <div class="overflow-auto scroll-smooth flex-1 w-full h-full">
       <slot v-if="tableData.data?.length" name="table" v-bind="{tableConfig,tableData,columns,selectionActions,reload}">

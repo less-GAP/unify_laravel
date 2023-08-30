@@ -46,17 +46,55 @@ const listActions = [
   }
 ]
 const columns = [
-
   {
-    title: 'Full Name',
-    key: 'full_name',
-
+    title: 'PATIENT ID',
+    key: 'id',
+    width: '60px'
   },
-
   {
-    title: 'Created at',
+    title: 'STATUS',
+    key: 'status',
+    width: '60px'
+  },
+  {
+    title: 'NAME',
+    key: 'full_name',
+    width: '60px'
+  },
+  {
+    title: 'DOB (M-D-Y)',
+    key: 'dob',
+    width: '60px'
+  },
+  {
+    title: 'PHONE',
+    key: 'phone',
+    width: '60px'
+  },
+  {
+    title: 'ADDRESS',
+    key: 'address',
+    width: '60px'
+  },
+  {
+    title: 'CITY',
+    key: 'city',
+    width: '60px'
+  },
+  {
+    title: 'ZIPCODE',
+    key: 'zipcode',
+    width: '60px'
+  },
+  {
+    title: 'DATE ACTIVE',
+    key: 'date_active',
+    width: '60px'
+  },
+  {
+    title: 'CREATED AT',
     key: 'created_at',
-    width: 200
+    width: '60px'
   },
 ]
 
@@ -86,6 +124,13 @@ function registerTable({reload}) {
   <LayoutAuthenticated>
     <SectionMain>
       <DataTable @register="registerTable" v-bind="tableConfig">
+        <template #header>
+          <h2>Patient List</h2>
+        </template>
+        <template #filter="{tableConfig,filter,reload}">
+                    <a-input @keypress="reload" v-model:value="filter.phone" placeholder="Phone"></a-input>
+        </template>
+
         <template #cellAction[delete]="{item,actionMethod}">
           <a-popconfirm
             title="Bạn muốn xóa sản phẩm này?"
