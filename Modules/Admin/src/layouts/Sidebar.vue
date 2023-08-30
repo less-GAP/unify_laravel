@@ -1,6 +1,7 @@
 <script setup>
-import { mdiAccountSupervisorCircle, mdiAccount, mdiFileDocumentMultipleOutline } from '@mdi/js';
 import { BaseIcon } from "@/components";
+import menuAside from "@/menuAside.js";
+  import router from "@/router";
 
 </script>
 <template>
@@ -10,32 +11,60 @@ import { BaseIcon } from "@/components";
       class="relative flex flex-col flex-1 min-h-0 pt-0 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
       <div class="flex flex-col flex-1 pt-5 pb-4 overflow-y-auto">
         <div class="flex-1 px-3 space-y-1  divide-y divide-gray-200 flex flex-col justify-between">
+          
+          
           <ul class="pb-2 space-y-2">
-            <li>
-              <router-link to="/patient"
-                class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-                  fill="currentColor" viewBox="0 0 576 512">
+              <li v-for="(menu, key) in menuAside" :key="key">
+                <router-link :to="menu.to" :class="router.currentRoute.value.path.includes(menu.to || menu.path)
+                ? 'flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-300 group bg-gray-300':
+                'flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-300 group'
+                  " v-if="!menu.menu">
+                  <BaseIcon
+                    v-if="menu.icon"
+                    :path="menu.icon"
+                    class="flex-none"
+                    :class="[vSlot && vSlot.isExactActive ? asideMenuItemActiveStyle : '']"
+                    :w="'w-'+$style.menu.iconSize"
+                    :size="$style.menu.iconSize"
+                  />
+                  <span class="ml-3" sidebar-toggle-item="">{{menu.label}}</span>
+                  {{}}
+                </router-link>
+                <button type="button" class="w-full flex items-center p-2 text-base text-gray-900 rounded-lg
+                hover:bg-gray-300 group  "
+                        :aria-controls="key"
+                        :data-collapse-toggle="key" v-else>
+                  <BaseIcon
+                    v-if="menu.icon"
+                    :path="menu.icon"
+                    class="flex-none"
+                    :class="[vSlot && vSlot.isExactActive ? asideMenuItemActiveStyle : '']"
+                    :w="'w-'+$style.menu.iconSize"
+                    :size="$style.menu.iconSize"
+                  />
+                  <span class="flex-1 ml-3 text-left whitespace-nowrap">{{menu.label}}</span>
+                  <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                  </svg>
+                </button>
+                <ul :id="key" class="hidden py-2 space-y-2">
+                  <li v-for="(child, index) in menu.menu" :key="index">
+                    <router-link :to="child.to" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-300  ">
+                      {{child.label}}
+                    </router-link>
+                  </li>
+                </ul>
+              </li>
+
+              <!-- <router-link to="/users" class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-300 group ">
+                <svg class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                   <path
-                    d="M48 0C21.5 0 0 21.5 0 48V256H144c8.8 0 16 7.2 16 16s-7.2 16-16 16H0v64H144c8.8 0 16 7.2 16 16s-7.2 16-16 16H0v80c0 26.5 21.5 48 48 48H265.9c-6.3-10.2-9.9-22.2-9.9-35.1c0-46.9 25.8-87.8 64-109.2V271.8 48c0-26.5-21.5-48-48-48H48zM152 64h16c8.8 0 16 7.2 16 16v24h24c8.8 0 16 7.2 16 16v16c0 8.8-7.2 16-16 16H184v24c0 8.8-7.2 16-16 16H152c-8.8 0-16-7.2-16-16V152H112c-8.8 0-16-7.2-16-16V120c0-8.8 7.2-16 16-16h24V80c0-8.8 7.2-16 16-16zM512 272a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM288 477.1c0 19.3 15.6 34.9 34.9 34.9H541.1c19.3 0 34.9-15.6 34.9-34.9c0-51.4-41.7-93.1-93.1-93.1H381.1c-51.4 0-93.1 41.7-93.1 93.1z" />
+                    d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z"></path>
                 </svg>
-                <span class="ml-3" sidebar-toggle-item="">Patients</span>
-              </router-link>
-            </li>
-            <li>
-              <router-link to="/post"
-                class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700">
-                <svg
-                  class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-                  fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd"
-                    d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z"
-                    clip-rule="evenodd"></path>
-                </svg>
-                <span class="ml-3" sidebar-toggle-item="">Posts</span>
-              </router-link>
-            </li>
-          </ul>
+                <span class="ml-3" sidebar-toggle-item="">Users</span>
+              </router-link> -->
+
+            </ul>
         
 
           <div class="pt-2 space-y-2 mt-auto">

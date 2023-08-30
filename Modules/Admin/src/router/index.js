@@ -15,8 +15,22 @@ const routes = [
     name: "dashboard",
     component: Home,
   },
-
-
+  {
+    meta: {
+      title: "Dashboard",
+    },
+    path: "/dashboard",
+    name: "homedashboard",
+    component: Home,
+  },
+  {
+    meta: {
+      title: "File Manager",
+    },
+    path: "/files",
+    name: "files",
+    component: () => import("@/views/files/index.vue"),
+  },
   {
     meta: {
       title: "Posts",
