@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
 
-            $table->date('unify_active')->nullable();
+            $table->dateTime('unify_active')->nullable();
             $table->integer('unify_status')->nullable();
             $table->integer('unify_process')->nullable();
 
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('full_name')->index();
             $table->string('last_name')->nullable();
             $table->string('first_name')->nullable();
-            $table->date('dob')->nullable();
+            $table->dateTime('dob')->nullable();
             $table->text('height')->nullable();
             $table->text('weight')->nullable();
             $table->integer('gender')->default(0);
@@ -56,7 +56,7 @@ return new class extends Migration
             $table->integer('need_improve')->default(0);
 
             $table->boolean('unify_deleted')->nullable();
-            $table->time('unify_deleted_at')->nullable();;
+            $table->dateTime('unify_deleted_at')->nullable();;
             $table->integer('unify_deleted_by')->nullable();;
 
             $table->integer('sale_user')->nullable(); // created_by

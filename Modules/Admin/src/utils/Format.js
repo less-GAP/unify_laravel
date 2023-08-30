@@ -37,18 +37,18 @@ export default {
     return value + '%'
   },
 
-  formatDateTime: function (value, defaultValue = '-') {
+  formatDateTime: function (value, defaultValue = '') {
     if (!value) {
       return defaultValue
     }
-    return moment(value).format("HH:mm DD/MM/YYYY")
+    return moment(value).format("HH:mm MM-DD-YYYY")
   },
 
-  formatDate: function (value, defaultValue = '-') {
+  formatDate: function (value, defaultValue = '') {
     if (!value) {
       return defaultValue
     }
-    return moment(value).format("DD/MM/YYYY")
+    return moment(value).format("MM-DD-YYYY")
   }
   , humanFileSize(bytes, si = false, dp = 1) {
     const thresh = si ? 1000 : 1024;

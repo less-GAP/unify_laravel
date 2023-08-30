@@ -78,7 +78,7 @@ class Patient extends Model
      */
     protected $casts = [
         //'product_descr' => 'array',
-        'dob' => 'datetime',
+        // 'dob' => 'date',
     ];
 
     protected $appends = [

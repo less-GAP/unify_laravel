@@ -154,10 +154,10 @@ reload()
 </script>
 
 <template>
-  <div class="flex flex-col text-center h-full sm:rounded-lg">
+  <div class="flex flex-col h-full text-center sm:rounded-lg" id="table-list">
     <slot name="header" v-bind="{tableConfig,filter,reload}">
     </slot>
-    <div :loading="loading" class="flex items-center pb-2 justify-between   bg-white dark:bg-gray-800">
+    <div :loading="loading" class="flex items-center justify-between pb-2 bg-white dark:bg-gray-800">
 
 
       <a-space>
@@ -205,10 +205,10 @@ reload()
         </a-button>
       </a-space>
     </div>
-    <div class="overflow-auto scroll-smooth flex-1 w-full h-full">
+    <div class="flex-1 w-full h-full overflow-auto scroll-smooth">
       <slot v-if="tableData.data?.length" name="table" v-bind="{tableConfig,tableData,columns,selectionActions,reload}">
-        <table class="table-auto w-full mt-5">
-          <thead class="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
+        <table class="w-full mt-5 table-auto">
+          <thead class="text-xs font-semibold text-gray-400 uppercase bg-gray-50">
           <tr>
             <th v-if="selectionActions.length > 0 && tableConfig.selectionColumn" width="50" scope="col"
                 class="p-2 whitespace-nowrap">
@@ -227,7 +227,7 @@ reload()
             </th>
 
             <th v-if="itemActions.length" width="100" scope="col"
-                class="p-2 whitespace-nowrap">
+                class="p-2 text-center whitespace-nowrap">
               {{ __('Action') }}
             </th>
           </tr>
@@ -253,7 +253,7 @@ reload()
               </slot>
 
             </td>
-            <td v-if="itemActions.length " class="p-2 whitespace-nowrap">
+            <td v-if="itemActions.length " class="flex flex-wrap justify-center p-2 whitespace-nowrap">
               <!-- Modal toggle -->
               <template v-for="itemAction in itemActions">
                 <slot :name="'cellAction['+itemAction.key+']'"
@@ -287,12 +287,12 @@ reload()
         <component :is="originalElement" v-else></component>
       </template>
     </a-pagination>
-    <!--    <table v-if="tableData.data?.length" class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-5">-->
+    <!--    <table v-if="tableData.data?.length" class="w-full mt-5 text-sm text-left text-gray-500 dark:text-gray-400">-->
     <!--      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">-->
     <!--      <tr>-->
     <!--        <th v-if="config.rowSelect" scope="col" class="p-4">-->
     <!--          <div class="flex items-center">-->
-    <!--            <div class="flex items-center pl-4  border-gray-200 rounded dark:border-gray-700">-->
+    <!--            <div class="flex items-center pl-4 border-gray-200 rounded dark:border-gray-700">-->
     <!--              <label-->
     <!--                class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"> <input-->
     <!--                @change="toggleCheckAll" :value="true" v-model="checkAll" type="checkbox"-->
@@ -317,7 +317,7 @@ reload()
     <!--          class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600">-->
     <!--        <td v-if="config.rowSelect" class="w-4 p-4">-->
     <!--          <div class="flex items-center">-->
-    <!--            <div class="flex items-center pl-4  border-gray-200 rounded dark:border-gray-700">-->
+    <!--            <div class="flex items-center pl-4 border-gray-200 rounded dark:border-gray-700">-->
     <!--              <label :for="'checkbox-table-search-'+item[config.item_key]"-->
     <!--                     class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"> <input-->
     <!--                v-model="selectedItems" :id="item[config.item_key]" :value="item" type="checkbox"-->
@@ -334,7 +334,7 @@ reload()
     <!--          </slot>-->
 
     <!--        </td>-->
-    <!--        <td v-if="itemActions.length" class="px-6 item-actions py-2">-->
+    <!--        <td v-if="itemActions.length" class="px-6 py-2 item-actions">-->
     <!--          &lt;!&ndash; Modal toggle &ndash;&gt;-->
     <!--          <template v-for="itemAction in itemActions">-->
     <!--            <slot :name="'cellAction['+itemAction.key+']'"-->

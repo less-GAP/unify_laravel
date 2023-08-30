@@ -1,4 +1,4 @@
-@import "ant-design-vue/dist/reset.css";
+/* @import "ant-design-vue/dist/reset.css"; */
 
 @import "tailwind/_base.css";
 @import "tailwind/_components.css";
@@ -16,27 +16,68 @@
   box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
 }
 
-.ant-input-number-input:focus,.ant-select-selection-search-input:focus {
+.ant-input-number-input:focus,
+.ant-select-selection-search-input:focus {
   border: 0 !important;
   box-shadow: 0 !important;
   outline: 0 !important;
   --tw-ring-color: transparent !important;
 }
 
-.ant-btn.ant-btn-lg{
+.ant-btn.ant-btn-lg {
   font-size: 14px !important;
 }
 
-.ant-form .ant-form-item .ant-form-item-label>label{
+.ant-form .ant-form-item .ant-form-item-label>label {
   height: auto !important;
 }
 
-.ant-picker-dropdown .ant-picker-content th, .ant-picker-dropdown .ant-picker-content td{
+.ant-select-single:not(.ant-select-customize-input) .ant-select-selector,
+.ant-picker{
+  height: 34px !important;
+}
+
+.ant-picker-dropdown .ant-picker-content th,
+.ant-picker-dropdown .ant-picker-content td {
   text-align: center;
 }
 
-.ant-divider-horizontal.ant-divider-with-text{
+.ant-divider-horizontal.ant-divider-with-text {
   margin: .5rem 0;
   font-weight: 700;
   text-transform: uppercase;
+}
+
+.ant-input {
+  padding: .25rem .5rem !important;
+}
+
+#table-list td{
+  font-size: 13px;
+}
+
+#table-list .ant-input {
+  background: transparent;
+  border: unset;
+  padding: 0 !important;
+  font-size: 13px;
+  box-shadow: unset !important;
+}
+
+#table-list [type='text'],
+#table-list [type='email'],
+#table-list [type='url'],
+#table-list [type='password'],
+#table-list [type='number'],
+#table-list [type='date'],
+#table-list [type='datetime-local'],
+#table-list [type='month'],
+#table-list [type='search'],
+#table-list [type='tel'],
+#table-list [type='time'],
+#table-list [type='week'],
+#table-list [multiple],
+#table-list textarea,
+#table-list select {
+  font-size: 13px;
 }

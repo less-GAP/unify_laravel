@@ -27,5 +27,4 @@ export const white = {
 };
 export const format = {
   created_at: Format.formatDateTime,
-
 };
