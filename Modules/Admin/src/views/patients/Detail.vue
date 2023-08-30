@@ -138,12 +138,7 @@ const closeDetail = function () {
               <a-input v-model:value="formState.last_name" />
             </a-form-item>
           </div>
-          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Date of Birth" name="dob" :rules="[{ required: true, message: 'Please enter dob!' }]">
-              <a-date-picker v-model:value="formState.dob" inputReadOnly :format="customFormat"
-                class="w-full"></a-date-picker>
-            </a-form-item>
-          </div>
+
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Gender" name="gender" :rules="[{ required: true, message: 'Please enter gender!' }]">
               <a-select v-model:value="formState.gender" allowClear="" class="w-full">
