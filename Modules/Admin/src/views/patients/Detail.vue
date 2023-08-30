@@ -24,7 +24,7 @@ import {notification} from 'ant-design-vue';
 
 import type {UploadProps} from 'ant-design-vue';
 
-import {InputTags,InputUploadGetPath,FilePicker} from "@/components";
+import {InputUploadGetPath,FilePicker} from "@/components";
 import {createApi, defaultNewValue, formConfig, fetchDetailApi} from "./meta";
 import {getPostDetail,back} from "./meta";
 
@@ -96,7 +96,7 @@ const closeDetail = function () {
           @finish="onFinish"
   >
     <a-card body-style="padding:10px;height:55px;"
-            class="bg-gray-50 shadow ">
+            class="shadow bg-gray-50 ">
       <a-button :icon="h(ArrowLeftOutlined)" class="float-left" type="link" @click="closeDetail" > Back to list</a-button>
       <a-space  class="flex items-end float-right " align="right">
         <!--                <a-button v-if="formState.rule_detect_category_link" @click="detectCategory" :loading="loadingDraft" >Test Category</a-button>-->
@@ -165,12 +165,6 @@ const closeDetail = function () {
           <!--                <InputUpload :multiple="true" alt="" autocomplete="off"-->
           <!--                             v-model:value="formState.images"></InputUpload>-->
           <!--              </a-form-item>-->
-        </a-card>
-        <a-card class="mt-5">
-          <a-form-item style="width:100%" label="Tags">
-            <InputTags v-model:value="formState.tags"></InputTags>
-          </a-form-item>
-
         </a-card>
       </a-col>
     </a-row>
