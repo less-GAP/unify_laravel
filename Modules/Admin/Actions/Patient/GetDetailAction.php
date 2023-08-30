@@ -20,7 +20,7 @@ class GetDetailAction
 
         return [
             'code' => 1,
-            'message' => 'Success !',
+            'message' => 'Success!',
             'data' => $patient->load('images')
         ];
     }

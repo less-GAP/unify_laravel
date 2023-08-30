@@ -17,7 +17,7 @@ import { notification } from "ant-design-vue";
 import { tableConfig, updateApi } from "./meta";
 import { routerPath } from "./meta";
 
-const isShowModal = ref(false)
+const isShowModal = ref(false);
 
 const editProduct = ref(null);
 
@@ -39,7 +39,7 @@ function registerTable({ reload }) {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <DataTable @register="registerTable" v-bind="tableConfig">
+      <DataTable v-bind="tableConfig">
         <template #cellAction[delete]="{ item, actionMethod }">
           <a-popconfirm title="Do you want to delete this patient?" ok-text="Yes" cancel-text="No"
             @confirm="actionMethod">

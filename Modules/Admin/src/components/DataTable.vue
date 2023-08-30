@@ -67,7 +67,7 @@ const tableColumns = computed(() => {
   });
   if (props.itemActions.length) {
     result.push({
-      title: "Hành động",
+      title: "Action",
       key: "action",
       dataIndex: "action",
     });

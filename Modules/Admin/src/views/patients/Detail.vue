@@ -10,7 +10,7 @@ import {
   mdiGithub,
 } from "@mdi/js";
 
-import { PlusOutlined, LoadingOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+import { CloseCircleOutlined, PlusOutlined, LoadingOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 
 import router from "@/router";
 
@@ -21,7 +21,6 @@ import 'jodit/es5/jodit.css';
 import { JoditEditor, Jodit } from 'jodit-vue';
 
 import { notification } from 'ant-design-vue';
-
 import type { UploadProps } from 'ant-design-vue';
 
 import { InputUploadGetPath, FilePicker } from "@/components";
@@ -51,14 +50,18 @@ const emit = defineEmits(["close"]);
 const formState = reactive({ ...defaultNewValue });
 const isShowModal = ref(false)
 
+const customFormat = "MM-DD-YYYY"; // format of datepicker
+
 const fetch = async function () {
   loading.value = true;
   var id = router.currentRoute.value.params.id;
-  if (id > 0) {
-    loading.value = true
-    const value = await fetchDetailApi(id)
-    Object.assign(formState, value.data)
-    loading.value = false
+  if (typeof id == 'number') {
+    if (id > 0) {
+      loading.value = true
+      const value = await fetchDetailApi(id)
+      Object.assign(formState, value.data)
+      loading.value = false
+    }
   } else {
     loading.value = false
   }
@@ -85,44 +88,131 @@ const closeDetail = function () {
 </script>
 
 <template>
-  <a-drawer :closable="false" bodyStyle="position:relative;display:flex;flex-direction:column;height:100vh;"
+  <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;"
     @close="closeDetail" :open="visible" width="90vw">
-    <a-form v-if="formState" layout="vertical" v-bind="formConfig" ref="formRef" :model="formState" @finish="onFinish">
-      <a-card body-style="padding:10px;height:55px;" class="shadow bg-gray-50 ">
-        <a-button :icon="h(ArrowLeftOutlined)" class="float-left" type="link" @click="closeDetail"> Back to
+    <a-form v-if="formState" layout="vertical" v-bind="formConfig" ref="formRef" :model="formState" @finish="submit">
+      <a-card bodyStyle="padding:10px;" class="shadow bg-gray-50">
+        <a-button class="hidden md:inline-block" type="primary" @click="closeDetail">Back to
           list</a-button>
-        <a-space class="flex items-end float-right " align="right">
+        <a-button class="inline-flex items-center justify-center md:hidden !w-10 !h-10 !p-0" type="primary"
+          @click="closeDetail">
+          <CloseCircleOutlined />
+        </a-button>
+        <a-space class="float-right">
           <a-tag v-if="formState.status == 'publish'" color="success">Published</a-tag>
           <a-tag v-else-if="formState.status" color="orange">{{ formState.status }}</a-tag>
-          <a-button @click="submit('draft')" :loading="loadingDraft" type="dashed">Save Draft</a-button>
+          <!-- <a-button @click="submit('draft')" :loading="loadingDraft" type="dashed">Save Draft</a-button> -->
           <a-button @click="submit('publish')" :loading="loading" type="primary">Save And Active</a-button>
         </a-space>
       </a-card>
-      <a-row style="height:calc(100% - 55px);overflow: auto;padding:0;" class="mt-5 shadow" :gutter="50">
-        <a-col :lg="18" :md="24">
-          <a-card>
-            <a-row :gutter="20">
-              <a-col :span="24">
-                <a-form-item label="Name" name="name"
-                  :rules="[{ required: true, message: 'Please enter patient name!' }]">
-                  <a-input v-model:value="formState.name" placeholder="Name.." />
-                </a-form-item>
-              </a-col>
-            </a-row>
-          </a-card>
-        </a-col>
-        <a-col :lg="6" :md="24">
-          <a-card class="mt-5">
-            <a-form-item style="width:100%" label="Feature image">
+      <div class="px-4 mt-5 overflow-y-auto" style="height:calc(100% - 60px);">
+        <div class="flex flex-wrap -mx-4">
+          <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
+            <a-form-item label="Full Name" name="full_name"
+              :rules="[{ required: true, message: 'Please enter full name!' }]">
+              <a-input v-model:value="formState.full_name" />
+            </a-form-item>
+          </div>
+          <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
+            <a-form-item label="First Name" name="first_name"
+              :rules="[{ required: true, message: 'Please enter first name!' }]">
+              <a-input v-model:value="formState.first_name" />
+            </a-form-item>
+          </div>
+          <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
+            <a-form-item label="Last Name" name="last_name"
+              :rules="[{ required: true, message: 'Please enter last name!' }]">
+              <a-input v-model:value="formState.last_name" />
+            </a-form-item>
+          </div>
+          <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
+            <a-form-item label="Date of Birth" name="dob" :rules="[{ required: true, message: 'Please enter dob!' }]">
+              <a-date-picker v-model:value="formState.dob" inputReadOnly :format="customFormat"
+                class="w-full"></a-date-picker>
+            </a-form-item>
+          </div>
+          <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
+            <a-form-item label="Gender" name="gender" :rules="[{ required: true, message: 'Please enter gender!' }]">
+              <a-select v-model:value="formState.gender" allowClear="" class="w-full">
+                <a-select-option key="0" value="0">Male</a-select-option>
+                <a-select-option key="1" value="1">Female</a-select-option>
+              </a-select>
+            </a-form-item>
+          </div>
+          <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
+            <a-form-item label="Email" name="email" :rules="[
+              {
+                type: 'email',
+                message: 'The input is not valid email!',
+              },
+              {
+                required: true,
+                message: 'Please enter email!',
+              },
+            ]">
+              <a-input v-model:value="formState.email"></a-input>
+            </a-form-item>
+          </div>
+          <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
+            <a-form-item label="Phone" name="phone" :rules="[{ required: true, message: 'Please enter phone!' }]">
+              <a-input v-model:value="formState.phone"
+                class="w-full"></a-input>
+            </a-form-item>
+          </div>
+          <a-Divider plain>Address</a-Divider>
+          <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
+            <a-form-item label="Street" name="street" :rules="[{ required: true, message: 'Please enter street!' }]">
+              <a-input v-model:value="formState.street"
+                class="w-full"></a-input>
+            </a-form-item>
+          </div>
+          <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
+            <a-form-item label="Apt" name="apt" :rules="[{ required: true, message: 'Please enter apt!' }]">
+              <a-input v-model:value="formState.apt"
+                class="w-full"></a-input>
+            </a-form-item>
+          </div>
+          <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
+            <a-form-item label="City" name="city" :rules="[{ required: true, message: 'Please enter city!' }]">
+              <a-input v-model:value="formState.city"
+                class="w-full"></a-input>
+            </a-form-item>
+          </div>
+          <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
+            <a-form-item label="State" name="state" :rules="[{ required: true, message: 'Please enter state!' }]">
+              <a-input v-model:value="formState.state"
+                class="w-full"></a-input>
+            </a-form-item>
+          </div>
+          <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
+            <a-form-item label="Zip" name="zip" :rules="[{ required: true, message: 'Please enter zip!' }]">
+              <a-input-number v-model:value="formState.zip"
+                class="w-full"></a-input-number>
+            </a-form-item>
+          </div>
+          <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
+            <a-form-item label="Route" name="route" :rules="[{ required: true, message: 'Please enter route!' }]">
+              <a-input v-model:value="formState.route"
+                class="w-full"></a-input>
+            </a-form-item>
+          </div>
+          <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
+            <a-form-item label="Sub-r" name="sub_r" :rules="[{ required: true, message: 'Please enter sub-r!' }]">
+              <a-input v-model:value="formState.sub_r"
+                class="w-full"></a-input>
+            </a-form-item>
+          </div>
+          <div class="w-full px-4 mt-4 md:w-1/2 lg:w-1/4">
+            <!-- <a-form-item style="width:100%" label="Feature image">
               <InputUploadGetPath width="200px" autocomplete="off" v-model:value="formState.image">
               </InputUploadGetPath>
-            </a-form-item>
-          </a-card>
-        </a-col>
-      </a-row>
+            </a-form-item> -->
+          </div>
+        </div>
+      </div>
     </a-form>
   </a-drawer>
-  
+
   <a-modal append-to-body v-model:open="showPicker" style="z-index:99999;top: 2vh;height:98vh" height="96vh" width="90vw"
     title="Select file">
     <FilePicker :multiple="true" @close="showPicker = false" @select="onSelectImage"></FilePicker>

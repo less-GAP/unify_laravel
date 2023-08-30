@@ -19,7 +19,7 @@ class GetSeriesDetailAction
         }
         return [
             'code' => 1,
-            'message' => 'Success !',
+            'message' => 'Success!',
             'data' => $seri
         ];
     }

@@ -86,7 +86,7 @@ const closeDetail = function () {
 </script>
 
 <template>
-  <a-drawer :closable="false" bodyStyle="position:relative;display:flex;flex-direction:column;height:100vh;"
+  <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;"
             @close="closeDetail" :visible="visible"
             width="90vw">
   <a-form v-if="formState" layout="vertical"
@@ -96,7 +96,7 @@ const closeDetail = function () {
           @finish="onFinish"
   >
     <a-card body-style="padding:10px;height:55px;"
-            class="bg-gray-50 shadow ">
+            class="shadow bg-gray-50 ">
       <a-button :icon="h(ArrowLeftOutlined)" class="float-left" type="link" @click="closeDetail" > Back to list</a-button>
       <a-space  class="flex items-end float-right " align="right">
         <!--                <a-button v-if="formState.rule_detect_category_link" @click="detectCategory" :loading="loadingDraft" >Test Category</a-button>-->

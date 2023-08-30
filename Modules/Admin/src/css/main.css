@@ -22,7 +22,15 @@
   outline: 0 !important;
   --tw-ring-color: transparent !important;
 }
-/*button:hover {*/
-/*  color: #fff!important;*/
-/*  border-color: #fff!important;*/
-/*}*/
+
+.ant-btn.ant-btn-lg{
+  font-size: 14px !important;
+}
+
+.ant-form .ant-form-item .ant-form-item-label>label{
+  height: auto !important;
+}
+
+.ant-picker-dropdown .ant-picker-content th, .ant-picker-dropdown .ant-picker-content td{
+  text-align: center;
+}

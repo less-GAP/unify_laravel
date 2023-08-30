@@ -21,7 +21,7 @@ class DeleteSeriesAction
             }
             $output = [
                 'code' => 1,
-                'message' => 'Success !',
+                'message' => 'Success!',
                 'data' => $request->route('id')
             ];
         } catch (\Throwable $e) {

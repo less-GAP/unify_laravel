@@ -9,6 +9,9 @@ const routerPath = '/'+prefix
 const fetchListApi = function (params) {
   return Api.get(prefix + '/list', {params});
 };
+const fetchListStatesApi = function (params) {
+  return Api.get('state' + '/list', {params});
+};
 const fetchDetailApi = function (id) {
   return Api.get(prefix + '/' + id);
 };
@@ -140,9 +143,39 @@ const tableConfig = {
   ]
 }
 const defaultNewValue = {
-  content: '',
-  type: 'patient',
-  tags: []
+  'unify_active': '',
+  'unify_status': 0,
+  'unify_process': 0,
+  'full_name': '',
+  'last_name': '',
+  'first_name': '',
+  'dob': '',
+  'height': '',
+  'weight': '',
+  'gender': '',
+  'insurance_coverages': '',
+  'email': '',
+  'phone': '',
+  'street': '',
+  'apt': '',
+  'city': '',
+  'state': '',
+  'zip': '',
+  'route': '',
+  'sub_r': '',
+  'supplies': '',
+  'products': '',
+  'note': '',
+  'unify_data': '',
+  'doctor_id': -1,
+  'doctor_status': 0,
+  'doctor_comment': '',
+  'service_dates': '',
+  'need_improve': 0,
+  'unify_deleted': '',
+  'unify_deleted_at': '',
+  'unify_deleted_by': '',
+  'sale_user': '',
 }
 const back = () => {
   router.push('/'+prefix);
@@ -156,5 +189,6 @@ export {
   formConfig,
   fetchListApi,
   fetchDetailApi,
+  fetchListStatesApi,
   tableConfig
 }

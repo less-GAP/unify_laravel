@@ -19,10 +19,13 @@
                 clip-rule="evenodd"></path>
             </svg>
           </button>
-
-          <a href="https://flowbite-admin-dashboard.vercel.app/" class="flex ml-2 md:mr-24">
+          <router-link to="/"
+              class="flex ml-2 md:mr-24">
+              <img src="@/assets/logo.png" class="h-8 mr-3" alt="Unify Logo">
+            </router-link>
+          <!-- <a href="https://flowbite-admin-dashboard.vercel.app/" class="flex ml-2 md:mr-24">
             <img src="@/assets/logo.png" class="h-8 mr-3" alt="Unify Logo">
-          </a>
+          </a> -->
           <form action="#" method="GET" class="hidden lg:block lg:pl-3.5">
             <label for="topbar-search" class="sr-only">Search</label>
             <div class="relative mt-1 lg:w-96">

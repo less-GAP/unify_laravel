@@ -17,7 +17,11 @@ import { BaseIcon } from "@/components";
             <li>
               <router-link to="/patient"
                 class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700">
-                
+                <svg xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+                  fill="currentColor" viewBox="0 0 576 512">
+                  <path
+                    d="M48 0C21.5 0 0 21.5 0 48V256H144c8.8 0 16 7.2 16 16s-7.2 16-16 16H0v64H144c8.8 0 16 7.2 16 16s-7.2 16-16 16H0v80c0 26.5 21.5 48 48 48H265.9c-6.3-10.2-9.9-22.2-9.9-35.1c0-46.9 25.8-87.8 64-109.2V271.8 48c0-26.5-21.5-48-48-48H48zM152 64h16c8.8 0 16 7.2 16 16v24h24c8.8 0 16 7.2 16 16v16c0 8.8-7.2 16-16 16H184v24c0 8.8-7.2 16-16 16H152c-8.8 0-16-7.2-16-16V152H112c-8.8 0-16-7.2-16-16V120c0-8.8 7.2-16 16-16h24V80c0-8.8 7.2-16 16-16zM512 272a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM288 477.1c0 19.3 15.6 34.9 34.9 34.9H541.1c19.3 0 34.9-15.6 34.9-34.9c0-51.4-41.7-93.1-93.1-93.1H381.1c-51.4 0-93.1 41.7-93.1 93.1z" />
+                </svg>
                 <span class="ml-3" sidebar-toggle-item="">Patients</span>
               </router-link>
             </li>
@@ -119,7 +123,7 @@ import { BaseIcon } from "@/components";
           <div class="tooltip-arrow" data-popper-arrow=""
             style="position: absolute; left: 0px; transform: translate(55px, 0px);"></div>
         </div>
-        <button type="button" data-dropdown-toggle="language-dropdown"
+        <!-- <button type="button" data-dropdown-toggle="language-dropdown"
           class="inline-flex justify-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
           <svg class="h-5 w-5 rounded-full mt-0.5" xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 3900 3900">
@@ -234,10 +238,11 @@ import { BaseIcon } from "@/components";
             </a>
           </li>
         </ul>
+      </div> -->
       </div>
     </div>
-  </div>
-</aside></template>
+  </aside>
+</template>
 <style lang="scss" scoped>#sidebar.collapsed {
   a :not(:first-child) {
     display: none;
