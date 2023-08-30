@@ -78,7 +78,7 @@ const menuClick = (event, item) => {
     <Sidebar  class="h-full  d-inline"></Sidebar>
 
     <main
-          class="relative p-5 flex-1 w-full h-full h-full overflow-y-auto bg-gray-50  dark:bg-gray-900">
+    class="relative p-5 flex-1 w-full h-full overflow-y-auto bg-gray-50  dark:bg-gray-900">
       <slot/>
 
     </main>

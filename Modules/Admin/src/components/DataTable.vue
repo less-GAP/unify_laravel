@@ -18,7 +18,7 @@ const props = defineProps({
     default: {
       page: 1,
       total: 0,
-      perPage: 10
+      perPage: 20
     }
   },
   showSizeChanger: {
@@ -64,6 +64,7 @@ const filter = ref({
   search: '',
   ...props.filter
 })
+const orderby = ref('')
 
 function reset() {
   props.pagination.page = 1
@@ -79,7 +80,7 @@ const tableColumns = computed(() => {
   })
   if (props.actionColumn && props.itemActions.length) {
     result.push({
-      title: 'Hành động',
+      title: 'Actions',
       key: 'action',
       dataIndex: 'action'
     })
@@ -154,15 +155,15 @@ reload()
 </script>
 
 <template>
-  <div class="flex flex-col h-full text-center sm:rounded-lg" id="table-list">
+  <div class="flex flex-col sm:rounded-lg" id="table-list">
     <slot name="header" v-bind="{tableConfig,filter,reload}">
     </slot>
-    <div :loading="loading" class="flex items-center justify-between pb-2 bg-white dark:bg-gray-800">
 
+    <div :loading="loading" class="flex items-center p-2 justify-between bg-white border border-gray-200 rounded-xl">
 
       <a-space>
 
-        <a-input
+        <a-input-search
           v-if="tableConfig.globalSearch"
           allow-clear
           @search="reload"
@@ -173,9 +174,16 @@ reload()
           :loading="loading"
         />
         <slot name="filter" v-bind="{tableConfig,filter,reload}"></slot>
-        <slot name="filterButton" v-bind="{tableConfig,filter,reload}">
-          <a-button @click="reload" type="primary" :icon="h(SearchOutlined)"></a-button>
-        </slot>
+        <a-select
+          style="width: 140px"
+          placeholder="Order by..."
+          v-model:value="orderby"
+          @change="reload"
+          >
+            <a-select-option value="id">ID</a-select-option>
+            <a-select-option value="created_at">Date</a-select-option>
+            <a-select-option value="name">Name</a-select-option>
+          </a-select>
       </a-space>
       <span></span>
 
@@ -205,9 +213,11 @@ reload()
         </a-button>
       </a-space>
     </div>
-    <div class="flex-1 w-full h-full overflow-auto scroll-smooth">
+    <div class="overflow-auto scroll-smooth flex-1 w-full bg-white shadow rounded-lg my-5">
+      <a-skeleton active class="p-10" v-if="!tableData.data" />
+
       <slot v-if="tableData.data?.length" name="table" v-bind="{tableConfig,tableData,columns,selectionActions,reload}">
-        <table class="w-full mt-5 table-auto">
+        <table class="table-auto w-full">
           <thead class="text-xs font-semibold text-gray-400 uppercase bg-gray-50">
           <tr>
             <th v-if="selectionActions.length > 0 && tableConfig.selectionColumn" width="50" scope="col"
@@ -273,11 +283,10 @@ reload()
           </tbody>
         </table>
       </slot>
-      <a-empty v-else/>
-      <br>
+      <a-empty class="my-10" :description="false" v-if="tableData.data?.length === 0 && pagination.total ===0"/>
     </div>
 
-    <a-pagination style="height:40px" class="pt-2" v-if="pagination?.total" :showSizeChanger="showSizeChanger"
+    <a-pagination style="height:40px" class="pt-2" v-if="tableData.data && pagination?.total"  :showSizeChanger="showSizeChanger"
                   @change="reload"
                   v-model:current="pagination.page"
                   v-model:pageSize="pagination.perPage" :total="pagination.total">
