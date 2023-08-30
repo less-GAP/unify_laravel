@@ -138,7 +138,6 @@ const routes = [
     name: "login",
     component: () => import("@/views/LoginView.vue"),
   },
-
   ...patientRoutes
 ];
 

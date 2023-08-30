@@ -61,6 +61,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                 ]
             ]
         )->routes(function () {
+
         });
     EloquentRouter::prefix('websites')
         ->handle(\App\Models\Website::class,
