@@ -20,6 +20,7 @@ const isShowModal = ref(false)
 const itemActions = [
   {
     label: 'Edit',
+    key: 'edit',
     action: (item, reload) => {
       //showEditUser({}, reload)
       router.push(prefix + '/' + item.id)
@@ -27,6 +28,7 @@ const itemActions = [
   },
   {
     label: 'Delete',
+    key: 'delete',
     class: 'font-medium text-red-600 dark:text-red-500 hover:underline',
     action(item, reload) {
       deleteApi(item.id).then(rs => {
@@ -145,20 +147,11 @@ function registerTable({reload}) {
               label=""
               :outline="true"
             >
+              Delete
             </a-button>
           </a-popconfirm>
         </template>
-        <template #cellAction[edit]="{item,actionMethod}">
-          <a-button
-            class="mr-5"
-            type="text"
-            :icon="h(FormOutlined)"
-            label=""
-            :outline="true"
-            @click="actionMethod"
-          >
-          </a-button>
-        </template>
+
         <template #cell[image]="{item,column}">
           <a-image height="50px" class="w-20 h-auto" :src="item.image_url"
                    :alt="item.name"/>
