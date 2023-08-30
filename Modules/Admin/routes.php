@@ -33,17 +33,17 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,username')]
             ]
         );
-    EloquentRouter::prefix('visa-application')
-        ->handle(\App\Models\VisaApplication::class,
-            [
-                'allowedIncludes' => ['applicants', 'history', 'assignees'],
-                'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'contact_name,contact_email,mobile_phone')]
-            ]
-        )->routes(function () {
-            Route::post('/', \Modules\Admin\Actions\VisaApplication\PostIndexAction::class . '@handle');
-            Route::post('/status', \Modules\Admin\Actions\VisaApplication\PostStatusAction::class . '@handle');
-            Route::post('/assign', \Modules\Admin\Actions\VisaApplication\PostAssignAction::class . '@handle');
-        });
+    // EloquentRouter::prefix('visa-application')
+    //     ->handle(\App\Models\VisaApplication::class,
+    //         [
+    //             'allowedIncludes' => ['applicants', 'history', 'assignees'],
+    //             'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'contact_name,contact_email,mobile_phone')]
+    //         ]
+    //     )->routes(function () {
+    //         Route::post('/', \Modules\Admin\Actions\VisaApplication\PostIndexAction::class . '@handle');
+    //         Route::post('/status', \Modules\Admin\Actions\VisaApplication\PostStatusAction::class . '@handle');
+    //         Route::post('/assign', \Modules\Admin\Actions\VisaApplication\PostAssignAction::class . '@handle');
+    //     });
     EloquentRouter::prefix('post')
         ->handle(\App\Models\Post::class,
             [
@@ -59,10 +59,10 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             ]
         )->routes(function () {
             Route::get('list', \Modules\Admin\Actions\Patient\GetPatientListAction::class . '@handle');
-            // Route::get('{id}', \Modules\Admin\Actions\Patient\GetDetailAction::class . '@handle');
-            // Route::post('', \Modules\Admin\Actions\Patient\PostAction::class . '@handle');
-            // Route::post('uploadImage', \Modules\Admin\Actions\Patient\PostUploadImageAction::class . '@handle');
-            // Route::post('activeList', \Modules\Admin\Actions\Patient\PostActiveListAction::class . '@handle');
+            Route::get('{id}', \Modules\Admin\Actions\Patient\GetDetailAction::class . '@handle');
+            Route::post('', \Modules\Admin\Actions\Patient\PostAction::class . '@handle');
+            Route::post('uploadImage', \Modules\Admin\Actions\Patient\PostUploadImageAction::class . '@handle');
+            Route::post('activeList', \Modules\Admin\Actions\Patient\PostActiveListAction::class . '@handle');
         });
     EloquentRouter::prefix('websites')
         ->handle(\App\Models\Website::class,
@@ -147,43 +147,43 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
 //        Route::delete('{id}', \Modules\Admin\Actions\Product\DeleteProductAction::class . '@handle');
 //    });
 
-    Route::prefix('/video')->group(function () {
+//     Route::prefix('/video')->group(function () {
 
-        Route::get('list', \Modules\Admin\Actions\Video\GetListAction::class . '@handle');
-        Route::get('{id}', \Modules\Admin\Actions\Video\GetDetailAction::class . '@handle');
-        Route::post('uploadVideo', \Modules\Admin\Actions\Video\PostUploadVideoAction::class . '@handle');
-        Route::post('', \Modules\Admin\Actions\Video\PostAction::class . '@handle');
-        Route::post('activeList', \Modules\Admin\Actions\Video\PostActiveListAction::class . '@handle');
-        Route::delete('{id}', \Modules\Admin\Actions\Video\DeleteAction::class . '@handle');
-    });
+//         Route::get('list', \Modules\Admin\Actions\Video\GetListAction::class . '@handle');
+//         Route::get('{id}', \Modules\Admin\Actions\Video\GetDetailAction::class . '@handle');
+//         Route::post('uploadVideo', \Modules\Admin\Actions\Video\PostUploadVideoAction::class . '@handle');
+//         Route::post('', \Modules\Admin\Actions\Video\PostAction::class . '@handle');
+//         Route::post('activeList', \Modules\Admin\Actions\Video\PostActiveListAction::class . '@handle');
+//         Route::delete('{id}', \Modules\Admin\Actions\Video\DeleteAction::class . '@handle');
+//     });
 
-    Route::prefix('/series')->group(function () {
-        Route::get('list', \Modules\Admin\Actions\Series\GetSeriesListAction::class . '@handle');
-        Route::get('customer-groups', \Modules\Admin\Actions\Series\GetCustomerGroupsAction::class . '@handle');
-        Route::get('{id}', \Modules\Admin\Actions\Series\GetSeriesDetailAction::class . '@handle');
+//     Route::prefix('/series')->group(function () {
+//         Route::get('list', \Modules\Admin\Actions\Series\GetSeriesListAction::class . '@handle');
+//         Route::get('customer-groups', \Modules\Admin\Actions\Series\GetCustomerGroupsAction::class . '@handle');
+//         Route::get('{id}', \Modules\Admin\Actions\Series\GetSeriesDetailAction::class . '@handle');
 
-        Route::post('', \Modules\Admin\Actions\Series\PostSeriesAction::class . '@handle');
-//        Route::post('activeList', \Modules\Admin\Actions\Video\PostActiveListAction::class . '@handle');
-        Route::delete('{id}', \Modules\Admin\Actions\Series\DeleteSeriesAction::class . '@handle');
-    });
+//         Route::post('', \Modules\Admin\Actions\Series\PostSeriesAction::class . '@handle');
+// //        Route::post('activeList', \Modules\Admin\Actions\Video\PostActiveListAction::class . '@handle');
+//         Route::delete('{id}', \Modules\Admin\Actions\Series\DeleteSeriesAction::class . '@handle');
+//     });
 
     Route::prefix('/config')->group(function () {
         Route::get('/', \Modules\Admin\Actions\Config\GetListAction::class . '@handle');
         Route::post('/', \Modules\Admin\Actions\Config\PostAction::class . '@handle');
         Route::post('/testSmtp', \Modules\Admin\Actions\Config\PostTestSmtpAction::class . '@handle');
     });
-    Route::prefix('/customer')->group(function () {
-        Route::get('list', \Modules\Admin\Actions\Customer\GetListAction::class . '@handle');
-        Route::post('activeList', \Modules\Admin\Actions\Customer\PostActiveListAction::class . '@handle');
-    });
+    // Route::prefix('/customer')->group(function () {
+    //     Route::get('list', \Modules\Admin\Actions\Customer\GetListAction::class . '@handle');
+    //     Route::post('activeList', \Modules\Admin\Actions\Customer\PostActiveListAction::class . '@handle');
+    // });
 
-    Route::prefix('/customer-group')->group(function () {
-        Route::get('list', \Modules\Admin\Actions\CustomerGroup\GetListAction::class . '@handle');
-        Route::post('', \Modules\Admin\Actions\CustomerGroup\PostAction::class . '@handle');
-        Route::get('{id}', \Modules\Admin\Actions\CustomerGroup\GetDetailAction::class . '@handle');
-        Route::post('activeList', \Modules\Admin\Actions\CustomerGroup\PostActiveListAction::class . '@handle');
-        Route::delete('{id}', \Modules\Admin\Actions\CustomerGroup\DeleteAction::class . '@handle');
-    });
+    // Route::prefix('/customer-group')->group(function () {
+    //     Route::get('list', \Modules\Admin\Actions\CustomerGroup\GetListAction::class . '@handle');
+    //     Route::post('', \Modules\Admin\Actions\CustomerGroup\PostAction::class . '@handle');
+    //     Route::get('{id}', \Modules\Admin\Actions\CustomerGroup\GetDetailAction::class . '@handle');
+    //     Route::post('activeList', \Modules\Admin\Actions\CustomerGroup\PostActiveListAction::class . '@handle');
+    //     Route::delete('{id}', \Modules\Admin\Actions\CustomerGroup\DeleteAction::class . '@handle');
+    // });
 
     Route::prefix('/countries')->group(function () {
         Route::get('list', \Modules\Admin\Actions\Countries\GetListAction::class . '@handle');

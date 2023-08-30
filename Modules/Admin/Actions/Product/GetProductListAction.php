@@ -7,7 +7,7 @@ namespace Modules\Admin\Actions\Product;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
-class GetListAction
+class GetProductListAction
 {
     public function handle(Request $request)
     {

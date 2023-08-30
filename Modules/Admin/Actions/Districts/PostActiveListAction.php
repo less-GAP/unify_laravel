@@ -18,7 +18,7 @@ class PostActiveListAction
 
             $output = [
                 'code' => 1,
-                'message' => 'Thành công!',
+                'message' => 'Success!',
                 'data' => []
             ];
         } catch (\Throwable $e) {

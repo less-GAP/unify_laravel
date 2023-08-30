@@ -7,16 +7,16 @@ import {notification} from "ant-design-vue";
 const prefix = 'patient'
 const routerPath = '/'+prefix
 const fetchListApi = function (params) {
-  return Api.get(prefix + '/list', {params})
+  return Api.get(prefix + '/list', {params});
 };
 const fetchDetailApi = function (id) {
-  return Api.get(prefix + '/' + id)
+  return Api.get(prefix + '/' + id);
 };
 const createApi = function (params) {
-  return Api.post(prefix, params)
+  return Api.post(prefix, params);
 };
 const updateApi = function (id, params) {
-  return Api.put(prefix + '/' + id, params)
+  return Api.put(prefix + '/' + id, params);
 };
 const tableConfig = {
   tableConfig: {
@@ -141,7 +141,7 @@ const tableConfig = {
 }
 const defaultNewValue = {
   content: '',
-  type: 'post',
+  type: 'patient',
   tags: []
 }
 const back = () => {

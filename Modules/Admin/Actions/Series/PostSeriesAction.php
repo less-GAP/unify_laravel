@@ -39,7 +39,7 @@ class PostSeriesAction
 
             $output = [
                 'code' => 1,
-                'message' => 'Thành công!',
+                'message' => 'Success!',
                 'data' => $seri
             ];
         } catch (\Throwable $e) {

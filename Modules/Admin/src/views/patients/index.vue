@@ -42,7 +42,7 @@ function registerTable({reload}) {
       <DataTable @register="registerTable" v-bind="tableConfig">
         <template #cellAction[delete]="{item,actionMethod}">
           <a-popconfirm
-            title="Bạn muốn xóa sản phẩm này?"
+            title="Do you want to delete this patient?"
             ok-text="Yes"
             cancel-text="No"
             @confirm="actionMethod"

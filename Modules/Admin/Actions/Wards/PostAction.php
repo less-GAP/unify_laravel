@@ -24,7 +24,7 @@ class PostAction
 
             $output = [
                 'code' => 1,
-                'message' => 'Thành công!',
+                'message' => 'Success!',
                 'data' => $ward
             ];
         } catch (\Throwable $e) {

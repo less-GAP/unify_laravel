@@ -20,38 +20,20 @@ class PostAction
                 $patient = Patient::find($data['id']);
             }
 
-            if (!isset($data['slug']) || $data['slug'] == '') {
-                $data['slug'] = \Str::slug($data['name']);
-            }
-
             $patient->fill($data);
             $patient->save();
-            if($request->input('images')){
-                $syncImages = [];
-                foreach($request->input('images') as $imageData){
-                    $syncImages[$imageData['id']]=['type'=>$imageData['type']??'image'];
-                }
-                $patient->images()->sync($syncImages);
-            }
-            if($data['type'] == 'package'){
-                if(isset($data['id']) && $data['id'] > 0){
-                    PatientPackage::where('package_id',$data['id'])->delete();
-                }
-                if(!empty($data['packages'])){
-                    foreach($data['packages'] as $v){
-                        $pa = [
-                            'package_id' => $patient->id,
-                            'patient_id' => $v['id'],
-                            'patient_descr' => $v
-                        ];
-                        PatientPackage::create($pa);
-                    }
-                }
-            }
+
+            // if($request->input('images')){
+            //     $syncImages = [];
+            //     foreach($request->input('images') as $imageData){
+            //         $syncImages[$imageData['id']]=['type'=>$imageData['type']??'image'];
+            //     }
+            //     $patient->images()->sync($syncImages);
+            // }
 
             $output = [
                 'code' => 1,
-                'message' => 'Thành công!',
+                'message' => 'Success!',
                 'data' => $patient
             ];
         } catch (\Throwable $e) {
