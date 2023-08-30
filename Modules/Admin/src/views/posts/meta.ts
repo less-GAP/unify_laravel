@@ -48,7 +48,7 @@ const tableConfig = {
       action(item, reload) {
         Api.delete(prefix + '/' + item.id).then(rs => {
           notification[rs.data.code == 0 ? 'error' : 'success']({
-            message: 'Thông báo',
+            message: 'Notification',
             description: rs.data.message,
           });
         }).finally(() => {
@@ -95,14 +95,14 @@ const tableConfig = {
   ],
   selectionActions: [
     {
-      title: 'Hoạt động',
+      title: 'Active',
       action(selectedKeys) {
         return Api.post('product/activeList', {
           'items': selectedKeys,
           'status': 'A'
         }).then(rs => {
           notification[rs.data.code == 0 ? 'error' : 'success']({
-            message: 'Thông báo',
+            message: 'Notification',
             description: rs.data.message,
           });
         })
@@ -112,14 +112,14 @@ const tableConfig = {
       // }
     },
     {
-      title: 'Tắt',
+      title: 'Deactive',
       action(selectedKeys) {
         return Api.post('product/activeList', {
           'items': selectedKeys,
           'status': 'D'
         }).then(rs => {
           notification[rs.data.code == 0 ? 'error' : 'success']({
-            message: 'Thông báo',
+            message: 'Notification',
             description: rs.data.message,
           });
         })

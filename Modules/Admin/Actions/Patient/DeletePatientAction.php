@@ -16,7 +16,7 @@ class DeletePatientAction
             $del = $query->find($request->route('id'))->delete();
             $output = [
                 'code' => 1,
-                'message' => 'Thành công !',
+                'message' => 'Success !',
                 'data' => $del
             ];
         } catch (\Throwable $e) {

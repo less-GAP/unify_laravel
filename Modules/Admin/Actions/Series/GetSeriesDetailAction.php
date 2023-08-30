@@ -19,7 +19,7 @@ class GetSeriesDetailAction
         }
         return [
             'code' => 1,
-            'message' => 'Thành công !',
+            'message' => 'Success !',
             'data' => $seri
         ];
     }
