@@ -12,17 +12,15 @@
 
 
   const configNames = [
-    'site_title',
-    'site_logo',
-    'favicon',
-    'site_description',
-    'copy_right'
+    'per_page'
   ]
 
   const emit = defineEmits(["success", "cancel"]);
   const loading = ref(false)
   const error = ref(null)
-  const formState = reactive({});
+  const formState = reactive({
+    per_page: 50
+  });
   const formConfig = reactive({
     "validateTrigger": "submit",
     "label-align": "top",
@@ -60,23 +58,10 @@
     v-bind="formConfig"
     @finish="submit"
   >
-      <a-form-item name="site_title" label="Site title" :rules="[{ required: true }]">
-        <a-input autocomplete="off" class="rounded-lg" v-model:value="formState.site_title"/>
-      </a-form-item>
-      <a-form-item name="site_description" label="Site description" :rules="[{ required: true }]">
-        <a-textarea autocomplete="off" v-model:value="formState.site_description"/>
-      </a-form-item>
-      <a-form-item name="copy_right" label="Copyright" :rules="[{ required: true }]">
-        <a-textarea autocomplete="off" v-model:value="formState.copy_right"/>
-      </a-form-item>
-      <a-form-item name="site_logo" label="Site Logo" :rules="[{ required: true }]">
-        <InputUploadGetPath width="200px" alt="Site logo" autocomplete="off" v-model:value="formState.site_logo">
-        </InputUploadGetPath>
-      </a-form-item>
-      <a-form-item name="favicon" label="Favicon" :rules="[{ required: true }]">
-        <InputUploadGetPath width="200px" alt="Favicon" autocomplete="off" v-model:value="formState.favicon">
-        </InputUploadGetPath>
-      </a-form-item>
+   
+    <a-form-item name="per_page" label="Per Page" :rules="[{ required: true }]">
+      <a-input-number v-model:value="formState.per_page" size="large" :min="1" :max="1000"  />
+    </a-form-item>
 
     <a-form-item>
       <a-space>

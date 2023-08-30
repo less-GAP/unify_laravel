@@ -92,6 +92,54 @@ const routes = [
       },
       {
         meta: {
+          title: "Posts Configuration",
+        },
+        path: "/configs/postspages",
+        name: "config-postspages",
+        component: () => import("@/views/configs/PostsConfig.vue"),
+      },
+      // {
+      //   meta: {
+      //     title: "QuickBooks Configuration",
+      //   },
+      //   path: "/configs/quickbooks",
+      //   name: "config-quickbooks",
+      //   component: () => import("@/views/configs/QuickBooksConfig.vue"),
+      // },
+      {
+        meta: {
+          title: "CloudFlare Configuration",
+        },
+        path: "/configs/cloudflare",
+        name: "config-cloudflare",
+        component: () => import("@/views/configs/CloudFlareConfig.vue"),
+      },
+      {
+        meta: {
+          title: "Google API Configuration",
+        },
+        path: "/configs/google",
+        name: "config-google",
+        component: () => import("@/views/configs/GoogleConfig.vue"),
+      },
+      {
+        meta: {
+          title: "Payment API Configuration",
+        },
+        path: "/configs/paymentapi",
+        name: "config-paymentapi",
+        component: () => import("@/views/configs/PaymentConfig.vue"),
+      },
+      // {
+      //   meta: {
+      //     title: "Social Configuration",
+      //   },
+      //   path: "/configs/social",
+      //   name: "config-social",
+      //   component: () => import("@/views/configs/SocialConfig.vue"),
+      // },
+      {
+        meta: {
           title: "SMTP Configuration",
         },
         path: "/configs/smtp",

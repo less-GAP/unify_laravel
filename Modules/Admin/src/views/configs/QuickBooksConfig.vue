@@ -12,11 +12,8 @@
 
 
   const configNames = [
-    'site_title',
-    'site_logo',
-    'favicon',
-    'site_description',
-    'copy_right'
+    'quickbooks_client_id',
+    'quickbooks_client_secret',
   ]
 
   const emit = defineEmits(["success", "cancel"]);
@@ -60,24 +57,16 @@
     v-bind="formConfig"
     @finish="submit"
   >
-      <a-form-item name="site_title" label="Site title" :rules="[{ required: true }]">
-        <a-input autocomplete="off" class="rounded-lg" v-model:value="formState.site_title"/>
-      </a-form-item>
-      <a-form-item name="site_description" label="Site description" :rules="[{ required: true }]">
-        <a-textarea autocomplete="off" v-model:value="formState.site_description"/>
-      </a-form-item>
-      <a-form-item name="copy_right" label="Copyright" :rules="[{ required: true }]">
-        <a-textarea autocomplete="off" v-model:value="formState.copy_right"/>
-      </a-form-item>
-      <a-form-item name="site_logo" label="Site Logo" :rules="[{ required: true }]">
-        <InputUploadGetPath width="200px" alt="Site logo" autocomplete="off" v-model:value="formState.site_logo">
-        </InputUploadGetPath>
-      </a-form-item>
-      <a-form-item name="favicon" label="Favicon" :rules="[{ required: true }]">
-        <InputUploadGetPath width="200px" alt="Favicon" autocomplete="off" v-model:value="formState.favicon">
-        </InputUploadGetPath>
-      </a-form-item>
+    
+      
+    <a-form-item name="quickbooks_client_id" label="Site Key">
+      <a-input autocomplete="off" v-model:value="formState.quickbooks_client_id" class="rounded border-gray-300"/>
+    </a-form-item>
 
+    <a-form-item name="quickbooks_client_secret" label="Secret Key">
+      <a-input autocomplete="off" v-model:value="formState.quickbooks_client_secret" class="rounded border-gray-300"/>
+    </a-form-item>
+            
     <a-form-item>
       <a-space>
         <a-button :loading="loading" type="primary" html-type="submit">Submit</a-button>

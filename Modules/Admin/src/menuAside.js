@@ -38,15 +38,15 @@ export default [
     label: "Template",
     icon: mdiPaletteSwatch,
     to: "/email/templates",
-    menu: [
-      {
-        to: "/email/templates",
-        label: "Email",
-      } ,
-      {
-        to: "/invoice/templates",
-        label: "Invoice",
-      }
-    ],
+    // menu: [
+    //   {
+    //     to: "/email/templates",
+    //     label: "Email",
+    //   } ,
+    //   {
+    //     to: "/invoice/templates",
+    //     label: "Invoice",
+    //   }
+    // ],
   }
 ];

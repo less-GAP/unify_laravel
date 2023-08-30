@@ -1,21 +1,57 @@
 <script setup>
 import { ref, h} from "vue";
-import {AppstoreOutlined, MailOutlined} from '@ant-design/icons-vue';
+// import {AppstoreOutlined, MailOutlined, OrderedListOutlined} from '@ant-design/icons-vue';
 import router from "@/router";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 
 const items = ref([
   {
     key: 'General',
-    icon: () => h(MailOutlined),
+    // icon: () => h(MailOutlined),
     label: 'General',
     href:'/configs/general',
     title: 'General',
   },
-
+  {
+    key: 'PostsPages',
+    // icon: () => h(OrderedListOutlined),
+    label: 'Posts/Pages',
+    href:'/configs/postspages',
+    title: 'Posts/Pages',
+  },
+  {
+    key: 'Cloudflare',
+    label: 'Cloudflare',
+    href:'/configs/cloudflare',
+    title: 'Cloudflare',
+  },
+  {
+    key: 'Google',
+    label: 'Google API',
+    href:'/configs/google',
+    title: 'Google API',
+  },
+  {
+    key: 'PaymentAPI',
+    label: 'Payment API',
+    href:'/configs/paymentapi',
+    title: 'Payment API',
+  },
+  // {
+  //   key: 'QuickBooks',
+  //   label: 'QuickBooks',
+  //   href:'/configs/quickbooks',
+  //   title: 'QuickBooks',
+  // },
+  // {
+  //   key: 'Social',
+  //   label: 'Social',
+  //   href:'/configs/social',
+  //   title: 'Social',
+  // },
   {
     key: 'smtp',
-    icon: () => h(AppstoreOutlined),
+    // icon: () => h(AppstoreOutlined),
     href:'/configs/smtp',
     label: 'SMTP',
     title: 'SMTP',
@@ -32,7 +68,7 @@ function menuClick({item}){
 
 <template>
   <LayoutAuthenticated>
-    <a-layout>
+    <a-layout class="rounded-xl overflow-hidden shadow">
       <a-layout-sider  style="width:300px;background: #fff;max-width:40vw;">
         <a-menu class="h-full" @click="menuClick"  mode="vertical" :items="items">
         </a-menu>
