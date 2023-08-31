@@ -4,7 +4,6 @@
 namespace Modules\Admin\Actions\Patient;
 
 use App\Models\Patient;
-use App\Models\PatientPackage;
 use Illuminate\Http\Request;
 use Modules\Admin\Middleware\AdminIsAuthenticated;
 
@@ -13,6 +12,9 @@ class PostAction
     public function handle(Request $request)
     {
         $data = $request->all();
+        // if(auth()->user()->role != 'admin'){
+        //     $data['saler_id'] = auth()->user()->id;
+        // }
 
         try {
             $patient = new Patient();
