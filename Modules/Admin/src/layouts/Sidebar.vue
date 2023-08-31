@@ -8,7 +8,7 @@ import menuAside from "@/menuAside.js";
   <aside :class="$appState.showMenu?'w-['+$style.theme.sidebarWidth+'] lg:flex h-full w-60 bg-stone-100':'lg:w-['+$style.theme.sidebarCollapsedWidth+'] collapsed lg:left-0 -left-['+$style.theme.sidebarWidth+']0 bg-stone-100'" id="sidebar"
          aria-label="Sidebar">
     <div
-      class="relative flex flex-col flex-1 min-h-0 pt-0 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+      class="relative h-full flex flex-col flex-1 min-h-0 pt-0 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
       <div class="flex flex-col flex-1 pt-5 pb-4 overflow-y-auto">
         <div class="flex-1 px-3 space-y-1  divide-y divide-gray-200 flex flex-col justify-between">
 
