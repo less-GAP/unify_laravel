@@ -54,13 +54,8 @@ const listActions = [
 ]
 const columns = [
   {
-    title: 'PATIENT ID',
+    title: 'ID',
     key: 'id',
-    width: 60
-  },
-  {
-    title: 'ACTIVE',
-    key: 'unify_status',
     width: 60
   },
   {
@@ -69,34 +64,29 @@ const columns = [
     width: 60
   },
   {
+    title: 'ACTIVE',
+    key: 'unify_status',
+    width: 60
+  },
+  {
     title: 'DOB (M-D-Y)',
     key: 'dob',
     width: 60
   },
   {
-    title: 'PHONE',
-    key: 'phone',
-    width: 60
-  },
-  {
-    title: 'ADDRESS',
-    key: 'street',
-    width: 60
-  },
-  {
-    title: 'CITY',
-    key: 'city',
-    width: 60
-  },
-  {
-    title: 'ZIPCODE',
-    key: 'zip',
-    width: 60
+    title: 'INFO',
+    key: 'info',
+    width: 200
   },
   {
     title: 'DATE ACTIVE',
     key: 'date_active',
     width: 60
+  },
+  {
+    title: 'Assigned',
+    key: 'assigned',
+    width: 80
   },
   {
     title: 'CREATED AT',
@@ -157,20 +147,17 @@ function registerTable({ reload }) {
         <template #cell[image]="{ item, column }">
           <a-image height="50px" class="w-20 h-auto" :src="item.image_url" :alt="item.name" />
         </template>
-        <template #cell[phone]="{ item, column }">
+        <template #cell[info]="{ item, column }">
           <a-input @change="updateApi(item.id, { phone: item.phone })" v-model:value="item.phone" />
+          <div class="flex">
+            <div>{{ item.street }}, {{ item.city }}, {{ item.state }}, {{ item.zip }}</div>
+          </div>
         </template>
         <template #cell[dob]="{ item, column }">
           {{ dob_value(item) }}
         </template>
-        <template #cell[street]="{ item, column }">
-          <a-input v-model:value="item.street" @change="updateApi(item.id, { street: item.street })" />
-        </template>
-        <template #cell[city]="{ item, column }">
-          <a-input v-model:value="item.city" @change="updateApi(item.id, { city: item.city })" />
-        </template>
-        <template #cell[zip]="{ item, column }">
-          <a-input v-model:value="item.zip" @change="updateApi(item.id, { zip: item.zip })" />
+        <template #cell[assigned]="{ item, column }">
+          <a-input v-model:value="item.assigned" @change="updateApi(item.id, { assigned: item.assigned })" />
         </template>
         <template #cell[unify_status]="{ item, column }">
           <div v-if="item.unify_status === 0" class="">Waiting</div>
