@@ -70,6 +70,7 @@
     font-weight: inherit !important;
 }
 
+.ant-input:hover,
 .ant-input:focus, .ant-input-focused{
     border-inline-end-width: 0 !important;
 }

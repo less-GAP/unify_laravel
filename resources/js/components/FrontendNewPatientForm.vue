@@ -1,8 +1,13 @@
 <script setup>
-import { ref, defineProps, computed } from "vue";
+import { ref, defineProps, computed, reactive } from "vue";
 import SignaturePanel from './SignaturePanel.vue';
-// import useAuthStore from "@/stores/auth";
+import Api from "@/utils/Api";
+import { useAuthStore } from "@/utils/auth";
 
+const authStore = useAuthStore();
+const saler_id = computed(() => {
+    return authStore.user ? authStore.user.id : 1;
+});
 defineProps({
     title: {
         type: String,
@@ -20,7 +25,10 @@ defineProps({
 
 const customFormat = "MM-DD-YYYY";
 
-const form = ref({
+const formState = reactive({});
+const formRef = ref({
+    full_name: "",
+    first_name: "",
     first_name: "",
     last_name: "",
     doctor_name: "",
@@ -47,18 +55,23 @@ const showInsurance = (e) => {
     }
 };
 
-const onChange = (value) => {
-    console.log(`selected ${value}`);
-};
-
-const onSearch = (value) => {
-    console.log('search:', value);
+const prefix = 'api/patient/new';
+const createApi = function (params) {
+    return Api.post(prefix, params)
 };
 
 const submit = async () => {
+    const formState = formRef.value;
+    formState.full_name = formState.first_name + ' ' + formState.last_name;
+    console.log(formState.first_name);
     try {
-        // await useAuthStore().login(form.value)
-        // router.push("/");
+        formState
+            .validate()
+            .then(() => {
+                createApi({ ...formState }).then(rs => {
+                    Object.assign(formState, rs.data.result)
+                });
+            })
     } catch (e) {
         alert('wrong!')
     }
@@ -74,12 +87,13 @@ const submit = async () => {
                     <img :src="logo" :alt="title" class="block w-28">
                 </div>
             </div>
-            <form @submit="submit" :model="form" action="" method="post" enctype="multipart/form-data">
+            <a-form layout="vertical" ref="formRef" :model="formState" @finish="submit">
                 <div class="grid md:grid-cols-2 md:gap-6">
                     <div class="relative z-0 w-full mb-6 group">
                         <label for="first_name"
                             class="inline-block mb-1 text-sm font-medium text-gray-600">Firstname</label>
-                        <input type="text" name="first_name" id="first_name"
+                        <a-input v-model:value="formState.first_name" type="text" name="first_name"
+                            id="first_name"
                             class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                             placeholder=" " required />
                     </div>
@@ -142,34 +156,29 @@ const submit = async () => {
                 <div class="grid md:grid-cols-2 md:gap-6">
                     <div class="relative z-0 w-full mb-6 group">
                         <label for="phone" class="inline-block mb-1 text-sm font-medium text-gray-600">Phone</label>
-                        <input type="text" name="phone" id="phone"
+                        <input type="text" name="phone" id="phone" required
                             class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" />
                     </div>
                     <div class="relative z-0 w-full mb-6 group">
                         <label for="dob" class="inline-block mb-1 text-sm font-medium text-gray-600">Date of Birth</label>
-                        <a-date-picker required inputReadOnly name="dob" id="dob" :format="customFormat"
+                        <a-date-picker required inputReadOnly name="dob" id="dob" valueFormat="YYYY-MM-DD HH:mm:ss"
+                            format="YYYY-MM-DD HH:mm"
                             class="block date-picker w-full px-0 py-1 text-base font-bold text-gray-900 uppercase !bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" />
                     </div>
                 </div>
                 <div class="grid md:grid-cols-2 md:gap-6">
                     <div class="relative z-0 w-full mb-6 group">
                         <label for="gender" class="inline-block mb-1 text-sm font-medium text-gray-600">Gender</label>
-                        <a-select
+                        <a-select value="0"
                             class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                             name="gender" id="gender" required placeholder="Select your gender">
                             <a-select-option key="0" value="0">Male</a-select-option>
                             <a-select-option key="1" value="1">Female</a-select-option>
                         </a-select>
-                        <!-- <select
-                            class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                            name="gender" id="gender" required>
-                            <option value="0">Male</option>
-                            <option value="1">Female</option>
-                        </select> -->
                     </div>
                     <div class="relative z-0 w-full mb-6 group">
                         <label for="email" class="inline-block mb-1 text-sm font-medium text-gray-600">Email</label>
-                        <input type="email" name="email" id="email"
+                        <input type="email" name="email" id="email" required
                             class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" />
                     </div>
                 </div>
@@ -210,35 +219,17 @@ const submit = async () => {
                         </div>
                     </div>
                 </div>
-                <input type="hidden" name="sale_user" id="sale_user" value="1" />
-                <!-- <?php
-                // IF logged in 
-                if (is_user_logged_in()) {
-                    echo '<input type="hidden" name="sale_user" id="sale_user" value="' . get_current_user_id() . '" />';
-                } else {
-                    $user = get_user_by('id', $getCurrenKey);
-                    if (!empty($getCurrenKey) && $user) {
-                        echo '<input type="hidden" name="sale_user" id="sale_user" value="' . $getCurrenKey . '" />';
-                    } else {
-                        $get_default_sale = get_option('s_sale_default');
-                        echo '<input type="hidden" name="sale_user" id="sale_user" value="' . $get_default_sale . '" />';
-                    }
-                }
-                ?> -->
 
                 <div class="relative z-0 w-full mb-3 group">
                     <label class="text-sm text-gray-500 duration-300 -translate-y-6 -z-10">Signature</label>
                 </div>
                 <div class="relative z-0 w-full mb-6 group">
                     <SignaturePanel></SignaturePanel>
-                    <!-- <canvas v-if="isMobile()" id="signature-pad" ref="signatureCanvas" height="250" width="300"
-                        class="border border-gray-300"></canvas>
-                    <canvas v-else id="signature-pad" ref="signatureCanvas" height="`500`" width="600" class="border border-gray-300"></canvas> -->
                     <button id="clear-signature"
                         class="absolute z-20 px-2 py-1 text-sm text-white bg-gray-400 border-0 rounded-sm top-2 left-2">
                         Clear
                     </button>
-                    <input type="file" name="uploadSignature" id="uploadSignature" class="hidden" />
+                    <input type="file" name="uploadSignature" id="uploadSignature" class="!hidden" />
                 </div>
 
                 <div class="relative z-0 w-full mb-3 group">
@@ -252,7 +243,10 @@ const submit = async () => {
                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
                     Submit
                 </button>
-            </form>
+
+                <a-input type="hidden" name="unify_process" value="0"></a-input>
+                <a-input type="hidden" name="sale_user" v-model:value="saler_id"></a-input>
+            </a-form>
         </div>
     </div>
 </template>

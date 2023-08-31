@@ -1,8 +1,5 @@
-import Api from "@/utils/Api";
 import router from "@/router";
 import { formConfig } from "@/config";
-import { mdiDelete } from "@mdi/js";
-import { notification } from "ant-design-vue";
 
 const prefix = 'patient'
 const routerPath = '/' + prefix
