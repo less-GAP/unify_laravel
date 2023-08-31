@@ -21,6 +21,12 @@ return new class extends Migration
             $table->string('password');
             $table->string('role')->default('user');
             $table->rememberToken();
+
+            // new migrate 1/9
+            $table->integer('deleted')->default(0);
+            $table->dateTime('deleted_at')->nullable();
+            $table->integer('deleted_by')->nullable();
+
             $table->timestamps();
         });
     }

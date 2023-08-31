@@ -14,7 +14,11 @@ class DeleteUserAction
 
         $query = User::query();
         return [
-            'result' =>$query->find($request->route('id'))->delete(),
+            'result' => $query->find($request->route('id'))->update([
+                'delete' => 1,
+                'deleted_at' => now(),
+                'deleted_by' => auth()->user()->id
+            ]),
             'message' => 'Delete User Successfully!'
         ];
     }

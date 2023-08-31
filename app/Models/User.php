@@ -24,6 +24,11 @@ class User extends Authenticatable
         'email',
         'avatar_picture_path',
         'password',
+
+        // new field 1/9
+        'deleted',
+        'deleted_at',
+        'deleted_by',
     ];
 
     /**
