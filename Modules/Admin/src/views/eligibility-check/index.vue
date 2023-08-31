@@ -109,7 +109,7 @@ const submit = async () => {
                         <div class="relative z-0 w-full mb-6 group">
                             <label class="inline-block mb-1 text-sm font-medium text-gray-600">Choose the insurance plan you
                                 have joined:</label>
-                            <a-checkbox-group name="insurance_coverages" :options="listInsurances"
+                            <a-checkbox-group name="insurance_coverages" :options="listInsurances" v-model:value="formState.insurance_coverages"
                                 class="block"></a-checkbox-group>
                         </div>
                     </div>
