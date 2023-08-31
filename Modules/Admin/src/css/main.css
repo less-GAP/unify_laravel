@@ -86,3 +86,7 @@
 #table-list select {
   font-size: 13px;
 }
+
+.ant-input:focus, .ant-input-focused{
+  border-inline-end-width: 0 !important;
+}

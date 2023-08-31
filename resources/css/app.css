@@ -69,3 +69,7 @@
     text-transform: inherit !important;
     font-weight: inherit !important;
 }
+
+.ant-input:focus, .ant-input-focused{
+    border-inline-end-width: 0 !important;
+}
