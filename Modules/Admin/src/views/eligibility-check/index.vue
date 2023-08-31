@@ -11,7 +11,16 @@ import {
 
 const listStates = fetchListStatesApi();
 const listInsurances = fetchListInsurancesApi();
-
+const genderList = [
+  {
+    value: 0,
+    label: 'Male'
+  },
+  {
+    value: 1,
+    label: 'Female'
+  }
+];
 const formState = reactive({});
 const formRef = ref({
     full_name: "",
@@ -151,9 +160,9 @@ const submit = async () => {
                         <label for="gender" class="inline-block mb-1 text-sm font-medium text-gray-600">Gender</label>
                         <a-select v-model:value="formState.gender"
                             class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                            name="gender" id="gender" required placeholder="Select your gender">
-                            <a-select-option key="0" value="0">Male</a-select-option>
-                            <a-select-option key="1" value="1">Female</a-select-option>
+                            name="gender" id="gender" required placeholder="Select your gender"
+                            :options="genderList"
+                            >
                         </a-select>
                     </div>
                     <div class="relative z-0 w-full mb-6 group">

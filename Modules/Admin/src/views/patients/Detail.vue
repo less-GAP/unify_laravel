@@ -25,9 +25,18 @@ const listInsurances = fetchListInsurancesApi();
 const listDoctors = fetchListDoctorsApi();
 const listDoctorStatus = fetchListDoctorStatusApi();
 const loading = ref(false);
-const showPicker = ref(false);
 const authStore = useAuthStore();
 
+const genderList = [
+  {
+    value: 0,
+    label: 'Male'
+  },
+  {
+    value: 1,
+    label: 'Female'
+  }
+];
 
 const formRef = ref();
 
@@ -131,9 +140,9 @@ const closeDetail = function () {
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Gender" name="gender" :rules="[{ required: true, message: 'Please enter gender!' }]">
-              <a-select v-model:value="formState.gender" allowClear="" class="w-full">
-                <a-select-option key="0" value="0">Male</a-select-option>
-                <a-select-option key="1" value="1">Female</a-select-option>
+              <a-select v-model:value="formState.gender" allowClear="" class="w-full"
+              :options="genderList"
+              >
               </a-select>
             </a-form-item>
           </div>
