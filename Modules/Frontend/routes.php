@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Frontend\Actions\PatientForm;
 
+Route::post('api/patient/new', \Modules\Admin\Actions\Patient\PostAction::class . '@handle');
 Route::middleware(['splade'])->group(function () {
     Route::get('/',  PatientForm::class.'@handle')->name('home');
     // Route::get('/apply',  fn () => view('Frontend::apply'))->name('apply');
