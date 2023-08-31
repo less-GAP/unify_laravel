@@ -55,7 +55,7 @@ myApp.use(Antd).mount("#app");
 // }
 
 /* Default title tag */
-const defaultDocumentTitle = "";
+const defaultDocumentTitle = "Unify";
 
 /* Set document title from route meta */
 router.afterEach((to) => {
