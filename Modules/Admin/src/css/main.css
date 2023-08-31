@@ -10,6 +10,10 @@
 @import "_table.css";
 @import "made.css";
 
+:root{
+  --h-input: 42px;
+}
+
 .ant-btn-primary {
   color: #fff;
   background-color: #1677ff;
@@ -32,9 +36,14 @@
   height: auto !important;
 }
 
+.ant-input-number,
+.ant-input-number .ant-input-number-input,
+.ant-select-single .ant-select-selector .ant-select-selection-item, .ant-select-single .ant-select-selector .ant-select-selection-placeholder,
+.ant-select-single:not(.ant-select-customize-input) .ant-select-selector .ant-select-selection-search-input,
 .ant-select-single:not(.ant-select-customize-input) .ant-select-selector,
 .ant-picker{
-  height: 34px !important;
+  height: var(--h-input) !important;
+  line-height: var(--h-input) !important;
 }
 
 .ant-picker-dropdown .ant-picker-content th,
