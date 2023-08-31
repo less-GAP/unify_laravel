@@ -532,11 +532,6 @@ a:hover {
   color: #2CB34A;
 }
 
-.made-die-message,
-p {
-  font-size: 0.75rem;
-}
-
 .uni-main-container {
   background: #FFFFFF;
   box-shadow: 0px 2.02546px 6.07637px rgba(13, 10, 44, 0.08);

@@ -3,6 +3,7 @@ import { ref, computed, reactive } from "vue";
 import SignaturePanel from "./SignaturePanel.vue";
 import Api from "@/utils/Api";
 import { useAuthStore } from "@/stores/auth";
+import router from "@/router";
 
 import {
     fetchListStatesApi,
@@ -12,35 +13,17 @@ import {
 const listStates = fetchListStatesApi();
 const listInsurances = fetchListInsurancesApi();
 const genderList = [
-  {
-    value: 0,
-    label: 'Male'
-  },
-  {
-    value: 1,
-    label: 'Female'
-  }
+    {
+        value: 0,
+        label: 'Male'
+    },
+    {
+        value: 1,
+        label: 'Female'
+    }
 ];
 const formState = reactive({});
-const formRef = ref({
-    full_name: "",
-    first_name: "",
-    last_name: "",
-    doctor_name: "",
-    weight: "",
-    height: "",
-    phone: "",
-    dob: "",
-    gender: "",
-    email: "",
-    address: "",
-    apt: "",
-    zip: "",
-    city: "",
-    state: "",
-    signature: "",
-    note: "",
-});
+const formRef = ref({});
 
 const showInsurance = (e) => {
     if (e.target.checked) {
@@ -62,15 +45,22 @@ const createApi = function (params) {
 const submit = async () => {
     try {
         await formRef.value.validate();
-
         // Combine first_name and last_name to create full_name
         formState.full_name = formState.first_name + ' ' + formState.last_name;
-
+        formState.unify_data = 'Weight: ' + formState.weight + 'Height: ' + formState.height + 'Doctor Name: ' + formState.doctor_name;
+        if (!formState.insurance_coverages) {
+            formState.insurance_coverages = null;
+        }else{
+            formState.insurance_coverages = JSON.stringify(formState.insurance_coverages);
+        }
         // Submit the form data
         const response = await createApi({ ...formState });
+        if (response.status === 200) {
+            router.push('thank-you');
+        } else {
+            alert('Something went wrong!');
+        }
 
-        // Update formState with response data
-        Object.assign(formState, response.data.result);
     } catch (e) {
         alert('Something went wrong!');
     }
@@ -118,8 +108,8 @@ const submit = async () => {
                         <div class="relative z-0 w-full mb-6 group">
                             <label class="inline-block mb-1 text-sm font-medium text-gray-600">Choose the insurance plan you
                                 have joined:</label>
-                            <a-checkbox-group name="insurance_coverages" :options="listInsurances" v-model:value="formState.insurance_coverages"
-                                class="block"></a-checkbox-group>
+                            <a-checkbox-group name="insurance_coverages" :options="listInsurances"
+                                v-model:value="formState.insurance_coverages" class="block"></a-checkbox-group>
                         </div>
                     </div>
                 </div>
@@ -160,9 +150,7 @@ const submit = async () => {
                         <label for="gender" class="inline-block mb-1 text-sm font-medium text-gray-600">Gender</label>
                         <a-select v-model:value="formState.gender"
                             class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                            name="gender" id="gender" required placeholder="Select your gender"
-                            :options="genderList"
-                            >
+                            name="gender" id="gender" required placeholder="Select your gender" :options="genderList">
                         </a-select>
                     </div>
                     <div class="relative z-0 w-full mb-6 group">
@@ -227,7 +215,8 @@ const submit = async () => {
                     <label for="note" class="text-sm text-gray-500 duration-300 -translate-y-6 -z-10">Your request</label>
                 </div>
                 <div class="relative z-0 w-full mb-6 group">
-                    <a-textarea v-model:value="formState.note" class="!rounded-none" name="note" id="note" :auto-size="{ minRows: 2, maxRows: 5 }" />
+                    <a-textarea v-model:value="formState.note" class="!rounded-none" name="note" id="note"
+                        :auto-size="{ minRows: 2, maxRows: 5 }" />
                 </div>
 
                 <button id="submitForm" type="submit"

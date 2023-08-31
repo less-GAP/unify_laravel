@@ -16,6 +16,15 @@ let routes = [
   },
   {
     meta: {
+      title: "Thank You",
+      isPublic: true,
+    },
+    path: "/thank-you",
+    name: "thank-you",
+    component: () => import("@/views/eligibility-check/thank.vue"),
+  },
+  {
+    meta: {
       title: "Dashboard",
     },
     path: "/dashboard",

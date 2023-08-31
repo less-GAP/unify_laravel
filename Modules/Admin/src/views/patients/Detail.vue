@@ -3,14 +3,13 @@ import { reactive, h, ref, toRaw, computed } from "vue";
 import { CloseCircleOutlined } from '@ant-design/icons-vue';
 import router from "@/router";
 import {useAuthStore} from "@/stores/auth";
-
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 
 const prefix = 'patient'
 const {
   fetchDetailApi,
   createApi,
-  updateApi
+  // updateApi
 } = UseEloquentRouter(prefix)
 
 import {
