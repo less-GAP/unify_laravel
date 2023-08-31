@@ -93,7 +93,7 @@ const columns = [
   {
     title: 'CREATED AT',
     key: 'created_at',
-    width: 120
+    width: 80
   },
 ]
 const customFormat = 'MM-DD-YYYY';
