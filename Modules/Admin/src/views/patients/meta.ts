@@ -109,11 +109,11 @@ const fetchListDoctorsApi = function () {
   // return Api.get('doctor' + '/list', { params });
   return [
     {
-      value: '0',
+      value: 0,
       label: 'Dr. John Doe',
     },
     {
-      value: '1',
+      value: 1,
       label: 'Dr. Mike Donald',
     },
   ];
@@ -235,19 +235,19 @@ const fetchListDoctorStatusApi = function () {
   // return Api.get('doctor' + '/list_status', { params });
   return [
     {
-      value: '0',
+      value: 0,
       label: 'Unknow',
     },
     {
-      value: '1',
+      value: 1,
       label: 'Waiting',
     },
     {
-      value: '2',
+      value: 2,
       label: 'Confirm',
     },
     {
-      value: '3',
+      value: 3,
       label: 'Done',
     },
   ];
