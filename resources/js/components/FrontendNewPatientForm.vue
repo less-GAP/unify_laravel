@@ -160,8 +160,8 @@ const submit = async () => {
                     </div>
                     <div class="relative z-0 w-full mb-6 group">
                         <label for="dob" class="inline-block mb-1 text-sm font-medium text-gray-600">Date of Birth</label>
-                        <a-date-picker required inputReadOnly name="dob" id="dob" valueFormat="YYYY-MM-DD HH:mm:ss"
-                            format="YYYY-MM-DD HH:mm"
+                        <a-date-picker required inputReadOnly name="dob" id="dob" valueFormat="YYYY-MM-DD"
+                            format="MM-DD-YYYY"
                             class="block date-picker w-full px-0 py-1 text-base font-bold text-gray-900 uppercase !bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" />
                     </div>
                 </div>
