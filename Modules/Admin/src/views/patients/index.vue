@@ -110,7 +110,12 @@ const tableConfig = UseDataTable(fetchListApi, {
     {
       label: 'Latest',
       value: "-id"
-    }, {
+    },
+    {
+      label: 'Oldest',
+      value: "id"
+    },
+    {
       label: 'Name Alphabet',
       value: "name"
     },

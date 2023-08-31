@@ -34,7 +34,7 @@ const props = defineProps({
     default: true
   },
   showSort: {
-    type: [Boolean,Array],
+    type: [Boolean, Array],
     default: true
   },
   params: {
@@ -194,7 +194,8 @@ reload()
             v-model:value="orderBy"
             @change="reload"
           >
-            <a-select-option v-for="sort in showSort" :key="sort.value" :value="sort.value">{{sort.label}}</a-select-option>
+            <a-select-option v-for="sort in showSort" :key="sort.value" :value="sort.value">{{ sort.label }}
+            </a-select-option>
           </a-select>
         </slot>
 
@@ -228,9 +229,9 @@ reload()
       </a-space>
     </div>
     <div class="overflow-auto scroll-smooth flex-1 w-full bg-white shadow rounded-lg my-5">
-      <a-skeleton active class="p-10" v-if="!tableData.data"/>
+      <a-skeleton active class="p-10" v-if="loading||!tableData.data"/>
 
-      <slot v-if="tableData.data?.length" name="table" v-bind="{tableConfig,tableData,columns,selectionActions,reload}">
+      <slot v-else name="table" v-bind="{tableConfig,tableData,columns,selectionActions,reload}">
         <table class="table-auto w-full">
           <thead class="text-xs font-semibold text-gray-400 uppercase bg-gray-50">
           <tr>
