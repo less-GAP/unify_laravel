@@ -48,10 +48,6 @@
   text-transform: uppercase;
 }
 
-.ant-input {
-  padding: .25rem .5rem !important;
-}
-
 #table-list td{
   font-size: 13px;
 }
