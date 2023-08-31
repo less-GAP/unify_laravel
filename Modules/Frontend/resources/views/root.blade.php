@@ -30,8 +30,6 @@
         rel="stylesheet">
     <link rel='stylesheet' id='lessGAP-fontawesome-css' href='{{ asset('static/css/all.min.css') }}' type='text/css'
         media='all' />
-    <link rel="stylesheet" id="select2-css"
-        href="{{ asset('static/js/lib/select2/css/select2.min.css') }}" media="all">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @spladeHead
     @vite('resources/js/app.js')
