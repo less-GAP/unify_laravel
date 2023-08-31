@@ -71,7 +71,7 @@ const columns = [
     width: 60
   },
   {
-    title: 'DOB (M-D-Y)',
+    title: 'DOB',
     key: 'dob',
     width: 60
   },
@@ -86,14 +86,14 @@ const columns = [
     width: 60
   },
   {
-    title: 'Assigned',
-    key: 'assigned',
-    width: 80
-  },
-  {
     title: 'CREATED AT',
     key: 'created_at',
-    width: 80
+    width: 60
+  },
+  {
+    title: 'Assigned',
+    key: 'assigned',
+    width: 60
   },
 ]
 const customFormat = 'MM-DD-YYYY';
@@ -150,22 +150,25 @@ function registerTable({ reload }) {
           <div class="flex flex-row">
             <BaseIcon
                 :path="mdiGenderMale"
-                class="flex-none"
+                class="flex-none !text-blue-600"
                 v-if="item.gender === 0"
                 />
                 <BaseIcon
                 :path="mdiGenderFemale"
-                class="flex-none"
+                class="flex-none text-pink-600"
                 v-if="item.gender === 1"
             />
-            <span class="pl-1">{{ item.full_name }}</span>
+            <span class="pl-1 font-bold">{{ item.full_name }}</span>
           </div>
         </template>
         <template #cell[image]="{ item, column }">
           <a-image height="50px" class="w-20 h-auto" :src="item.image_url" :alt="item.name" />
         </template>
         <template #cell[info]="{ item, column }">
-          <a-input @change="updateApi(item.id, { phone: item.phone })" v-model:value="item.phone" />
+          <!-- <a-input @change="updateApi(item.id, { phone: item.phone })" v-model:value="item.phone" /> -->
+          <div class="flex">
+            <div><strong>Tel:</strong> {{ item.phone }}</div>
+          </div>
           <div class="flex">
             <div>{{ item.street }}, {{ item.city }}, {{ item.state }}, {{ item.zip }}</div>
           </div>
