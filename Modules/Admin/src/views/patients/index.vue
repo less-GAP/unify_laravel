@@ -1,17 +1,17 @@
 <script setup>
-import { reactive, ref, h, watch } from "vue";
+import {reactive, ref, h, watch} from "vue";
 import SectionMain from "@/components/SectionMain.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
-import { DataTable } from "@/components";
+import {DataTable} from "@/components";
 import router from "@/router";
-import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
-import { UseDataTable } from "@/utils/UseDataTable";
-import { CloseCircleOutlined, PlusOutlined, LoadingOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue';
-import { fetchListStatusPatientApi } from './meta';
+import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
+import {UseDataTable} from "@/utils/UseDataTable";
+import {CloseCircleOutlined, PlusOutlined, LoadingOutlined, EditOutlined, DeleteOutlined} from '@ant-design/icons-vue';
+import {fetchListStatusPatientApi} from './meta';
 import dayjs from 'dayjs';
-import { mdiGenderMale, mdiGenderFemale } from '@mdi/js';
-import { BaseIcon } from "@/components";
+import {mdiGenderMale, mdiGenderFemale} from '@mdi/js';
+import {BaseIcon} from "@/components";
 
 const prefix = 'patient'
 const {
@@ -33,17 +33,17 @@ const itemActions = [
       router.push(prefix + '/' + item.id)
     }
   },
-  {
-    label: 'Delete',
-    key: 'delete',
-    class: 'font-medium text-red-600 dark:text-red-500 hover:underline',
-    action(item, reload) {
-      deleteApi(item.id).then(rs => {
-      }).finally(() => {
-        reload();
-      });
-    }
-  }
+  // {
+  //   label: 'Delete',
+  //   key: 'delete',
+  //   class: 'font-medium text-red-600 dark:text-red-500 hover:underline',
+  //   action(item, reload) {
+  //     deleteApi(item.id).then(rs => {
+  //     }).finally(() => {
+  //       reload();
+  //     });
+  //   }
+  // }
 ]
 const listActions = [
   {
@@ -100,25 +100,39 @@ const customFormat = 'MM-DD-YYYY';
 const dbFormat = "YYYY-MM-DD H:i:s"; // format of datepicker
 
 const dob_value = (item) => {
-  return item.dob?dayjs(item.dob, dbFormat).format(customFormat):'-';
+  return item.dob ? dayjs(item.dob, dbFormat).format(customFormat) : '-';
 };
 
 const tableConfig = UseDataTable(fetchListApi, {
   columns,
+  showSelection: true,
+  showSort: [
+    {
+      label: 'Latest',
+      value: "-id"
+    }, {
+      label: 'Name Alphabet',
+      value: "name"
+    },
+    {
+      label: 'Last Updated',
+      value: "-updated_at"
+    }
+  ],
   listActions,
   itemActions
 })
 let reloadTable = () => {
 }
 
-watch(router.currentRoute.path, (path) => {
-  console.log(999, path)
-  if (path === prefix) {
+watch(router.currentRoute, (currentRoute) => {
+  console.log(999, currentRoute)
+  if (currentRoute.path === '/'+prefix) {
     reloadTable()
   }
 });
 
-function registerTable({ reload }) {
+function registerTable({reload}) {
   reloadTable = reload
 }
 
@@ -136,7 +150,7 @@ function registerTable({ reload }) {
         </template> -->
 
         <template #cellAction[edit]="{ item, actionMethod }">
-          <a-button type="text" :icon="h(EditOutlined)" label="" :outline="true"></a-button>
+          <a-button @click="actionMethod" type="text" :icon="h(EditOutlined)" label="" :outline="true"></a-button>
         </template>
         <template #cellAction[delete]="{ item, actionMethod }">
           <a-popconfirm title="Do you want to delete?" ok-text="Yes" cancel-text="No" @confirm="actionMethod">
@@ -149,23 +163,23 @@ function registerTable({ reload }) {
         <template #cell[full_name]="{ item, column }">
           <div class="flex flex-row">
             <BaseIcon
-                :path="mdiGenderMale"
-                class="flex-none"
-                v-if="item.gender === 0"
-                />
-                <BaseIcon
-                :path="mdiGenderFemale"
-                class="flex-none"
-                v-if="item.gender === 1"
+              :path="mdiGenderMale"
+              class="flex-none"
+              v-if="item.gender === 0"
+            />
+            <BaseIcon
+              :path="mdiGenderFemale"
+              class="flex-none"
+              v-if="item.gender === 1"
             />
             <span class="pl-1">{{ item.full_name }}</span>
           </div>
         </template>
         <template #cell[image]="{ item, column }">
-          <a-image height="50px" class="w-20 h-auto" :src="item.image_url" :alt="item.name" />
+          <a-image height="50px" class="w-20 h-auto" :src="item.image_url" :alt="item.name"/>
         </template>
         <template #cell[info]="{ item, column }">
-          <a-input @change="updateApi(item.id, { phone: item.phone })" v-model:value="item.phone" />
+          <a-input @change="updateApi(item.id, { phone: item.phone })" v-model:value="item.phone"/>
           <div class="flex">
             <div>{{ item.street }}, {{ item.city }}, {{ item.state }}, {{ item.zip }}</div>
           </div>
@@ -176,29 +190,33 @@ function registerTable({ reload }) {
         <template #cell[assigned]="{ item, column }">
 
           <a-avatar-group>
-            <a-avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel&key=1" />
+            <a-avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel&key=1"/>
             <a href="https://www.antdv.com">
               <a-avatar style="background-color: #f56a00">K</a-avatar>
             </a>
             <a-tooltip title="Ant User" placement="top">
               <a-avatar style="background-color: #87d068">
-                <template #icon><UserOutlined /></template>
+                <template #icon>
+                  <UserOutlined/>
+                </template>
               </a-avatar>
             </a-tooltip>
             <a-avatar style="background-color: #1890ff">
-              <template #icon><AntDesignOutlined /></template>
+              <template #icon>
+                <AntDesignOutlined/>
+              </template>
             </a-avatar>
           </a-avatar-group>
 
         </template>
         <template #cell[unify_status]="{ item, column }">
-          <a-tag v-if="item.unify_status === 0"  color="orange">Waiting</a-tag>
-          <a-tag v-else-if="item.unify_status === 1"  color="green">Active</a-tag>
-          <a-tag v-else-if="item.unify_status === 2"  color="red">Inactive</a-tag>
-          <a-tag v-else-if="item.unify_status === 3"  color="black">Decease</a-tag>
-          <a-tag v-else  color="orange">Waiting</a-tag>
+          <a-tag v-if="item.unify_status === 0" color="orange">Waiting</a-tag>
+          <a-tag v-else-if="item.unify_status === 1" color="green">Active</a-tag>
+          <a-tag v-else-if="item.unify_status === 2" color="red">Inactive</a-tag>
+          <a-tag v-else-if="item.unify_status === 3" color="black">Decease</a-tag>
+          <a-tag v-else color="orange">Waiting</a-tag>
         </template>
-        
+
 
       </DataTable>
       <router-view></router-view>

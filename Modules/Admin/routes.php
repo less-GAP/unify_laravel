@@ -55,6 +55,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
     EloquentRouter::prefix('patient')
         ->handle(\App\Models\Patient::class,
             [
+                'allowedSorts'=>['id','name','updated_at'],
                 'allowedFilters' => [
                     AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,phone,email')
                     ,AllowedFilter::custom('phone', new \App\Builder\Filters\SearchLikeMultipleField, 'phone')

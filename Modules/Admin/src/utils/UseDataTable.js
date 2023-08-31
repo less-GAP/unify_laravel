@@ -7,7 +7,7 @@ export function UseDataTable(fetchListApi, _tableConfig = {}) {
     config: {
       columns: [],
       sticky: true,
-      selectionColumn: true,
+
       actionColumn: true,
       scroll: "{ x: 1500, y: 300 }",
       bordered: true,
@@ -16,7 +16,7 @@ export function UseDataTable(fetchListApi, _tableConfig = {}) {
     },
     listActions: _tableConfig.listActions?_tableConfig.listActions:[],
     itemActions: _tableConfig.itemActions?_tableConfig.itemActions:[],
-
+    ..._tableConfig
   }
   return tableConfig
 }

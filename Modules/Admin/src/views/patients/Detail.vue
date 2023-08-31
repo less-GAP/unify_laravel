@@ -126,8 +126,7 @@ const closeDetail = function () {
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Date of Birth" name="dob">
-              <a-date-picker v-if="!formState.dob" :format="customFormat" inputReadOnly class="w-full"></a-date-picker>
-              <a-date-picker v-else v-model:value="dob_value" inputReadOnly class="w-full"></a-date-picker>
+              <a-date-picker  v-model:value="formState.dob" valueFormat="YYYY-MM-DD HH:mm:ss" format="YYYY-MM-DD HH:mm" inputReadOnly class="w-full"></a-date-picker>
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">

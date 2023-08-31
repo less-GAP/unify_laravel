@@ -29,9 +29,21 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  showSelection: {
+    type: Boolean,
+    default: true
+  },
+  showSort: {
+    type: [Boolean,Array],
+    default: true
+  },
   params: {
     type: Object,
     default: {}
+  },
+  sort: {
+    type: String,
+    default: '-id'
   },
   filter: {
     type: Object,
@@ -64,7 +76,7 @@ const filter = ref({
   search: '',
   ...props.filter
 })
-const orderby = ref('')
+const orderBy = ref(props.sort)
 
 function reset() {
   props.pagination.page = 1
@@ -101,6 +113,7 @@ function reload() {
     loading.value = true
     props.api({
       perPage: props.pagination.perPage,
+      sort: orderBy.value,
       page: props.pagination.page, ...props.params,
       ...getFilter()
     }).then(rs => {
@@ -174,16 +187,17 @@ reload()
           :loading="loading"
         />
         <slot name="filter" v-bind="{tableConfig,filter,reload}"></slot>
-        <a-select
-          style="width: 140px"
-          placeholder="Order by..."
-          v-model:value="orderby"
-          @change="reload"
+        <slot name="sort" v-bind="{tableConfig,sort,filter,reload}">
+          <a-select
+            style="width: 140px"
+            placeholder="Order by..."
+            v-model:value="orderBy"
+            @change="reload"
           >
-            <a-select-option value="id">ID</a-select-option>
-            <a-select-option value="created_at">Date</a-select-option>
-            <a-select-option value="name">Name</a-select-option>
+            <a-select-option v-for="sort in showSort" :key="sort.value" :value="sort.value">{{sort.label}}</a-select-option>
           </a-select>
+        </slot>
+
       </a-space>
       <span></span>
 
@@ -214,13 +228,13 @@ reload()
       </a-space>
     </div>
     <div class="overflow-auto scroll-smooth flex-1 w-full bg-white shadow rounded-lg my-5">
-      <a-skeleton active class="p-10" v-if="!tableData.data" />
+      <a-skeleton active class="p-10" v-if="!tableData.data"/>
 
       <slot v-if="tableData.data?.length" name="table" v-bind="{tableConfig,tableData,columns,selectionActions,reload}">
         <table class="table-auto w-full">
           <thead class="text-xs font-semibold text-gray-400 uppercase bg-gray-50">
           <tr>
-            <th v-if="selectionActions.length > 0 && tableConfig.selectionColumn" width="50" scope="col"
+            <th v-if="showSelection" width="30" scope="col"
                 class="p-2 whitespace-nowrap">
               <label
                 class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"> <input
@@ -245,7 +259,7 @@ reload()
           <tbody class="text-sm divide-y divide-gray-100">
           <tr v-for="(item,index) in tableData.data" :key="item[tableConfig.item_key]"
               v-bind:class="{'border-b':(index%2===0)}">
-            <td v-if="tableConfig.selectionColumn" class="p-2 whitespace-nowrap">
+            <td v-if="showSelection" class="p-2 whitespace-nowrap">
               <label :for="'checkbox-table-search-'+item[tableConfig.item_key]"
                      class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"> <input
                 v-model="selectedItems" :id="item[tableConfig.item_key]" :value="item" type="checkbox"
@@ -253,7 +267,7 @@ reload()
               </label>
             </td>
 
-            <td v-for="column in columns"
+            <td :data-label="column.title" v-for="column in columns"
                 :class="'p-2 ' + (column.class ? column.class : '')">
               <template v-if="item.render">
                 {{ item.render() }}
@@ -286,7 +300,8 @@ reload()
       <a-empty class="my-10" :description="false" v-if="tableData.data?.length === 0 && pagination.total ===0"/>
     </div>
 
-    <a-pagination style="height:40px" class="pt-2" v-if="tableData.data && pagination?.total"  :showSizeChanger="showSizeChanger"
+    <a-pagination style="height:40px" class="pt-2" v-if="tableData.data && pagination?.total"
+                  :showSizeChanger="showSizeChanger"
                   @change="reload"
                   v-model:current="pagination.page"
                   v-model:pageSize="pagination.perPage" :total="pagination.total">
