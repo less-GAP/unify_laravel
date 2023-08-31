@@ -8,11 +8,12 @@ const publicPages = ['/login'];
 let routes = [
   {
     meta: {
-      title: "Dashboard",
+      title: "Form",
+      isPublic: true,
     },
     path: "/",
-    name: "dashboard",
-    component: Home,
+    name: "form",
+    component: () => import("@/views/eligibility-check/index.vue"),
   },
   {
     meta: {

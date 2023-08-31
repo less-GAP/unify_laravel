@@ -1,29 +1,21 @@
-<script setup>
-import { ref, defineProps, computed, reactive } from "vue";
-import SignaturePanel from './SignaturePanel.vue';
+<script lang="ts" setup>
+import { ref, computed, reactive } from "vue";
+import SignaturePanel from "./SignaturePanel.vue";
 import Api from "@/utils/Api";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/stores/auth";
 
-const authStore = useAuthStore();
-const saler_id = computed(() => {
-    return authStore.user ? authStore.user.id : 1;
-});
-defineProps({
-    title: {
-        type: String,
-    },
-    logo: {
-        type: String,
-    },
-    states: {
-        type: String,
-    },
-    insuranceCoverages: {
-        type: String,
-    },
-});
+import {
+    fetchListStatesApi,
+    fetchListInsurancesApi,
+    fetchListDoctorsApi,
+    fetchListDoctorStatusApi,
+} from "../patients/meta";
 
-const customFormat = "MM-DD-YYYY";
+const listStates = fetchListStatesApi();
+const listInsurances = fetchListInsurancesApi();
+const listDoctors = fetchListDoctorsApi();
+const listDoctorStatus = fetchListDoctorStatusApi();
+const loading = ref(false);
 
 const formState = reactive({});
 const formRef = ref({
@@ -53,8 +45,12 @@ const showInsurance = (e) => {
         document.getElementById("insurance_info").classList.add("hidden");
     }
 };
+const authStore = useAuthStore();
+const saler_id = computed(() => {
+    return authStore.user ? authStore.user.id : 1;
+});
 
-const prefix = 'api/patient/new';
+const prefix = 'patient'
 const createApi = function (params) {
     return Api.post(prefix, params)
 };
@@ -91,8 +87,7 @@ const submit = async () => {
                     <div class="relative z-0 w-full mb-6 group">
                         <label for="first_name"
                             class="inline-block mb-1 text-sm font-medium text-gray-600">Firstname</label>
-                        <a-input v-model:value="formState.first_name" type="text" name="first_name"
-                            id="first_name"
+                        <a-input v-model:value="formState.first_name" type="text" name="first_name" id="first_name"
                             class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                             placeholder=" " required />
                     </div>
@@ -119,17 +114,8 @@ const submit = async () => {
                         <div class="relative z-0 w-full mb-6 group">
                             <label class="inline-block mb-1 text-sm font-medium text-gray-600">Choose the insurance plan you
                                 have joined:</label>
-                            <div class="flex flex-wrap items-center">
-                                <div v-for="coverage in JSON.parse(insuranceCoverages)" :key="coverage.id"
-                                    class="flex items-center mb-2 mr-2">
-                                    <input type="checkbox" :id="'coverages_' + coverage.id" :value="coverage.id"
-                                        class="cursor-pointer" />
-                                    <label :for="'coverages_' + coverage.id"
-                                        class="pl-3 pr-1 text-sm font-medium text-gray-600 cursor-pointer">
-                                        {{ coverage.name }}
-                                    </label>
-                                </div>
-                            </div>
+                            <a-checkbox-group name="insurance_coverages" :options="listInsurances"
+                                class="block"></a-checkbox-group>
                         </div>
                     </div>
                 </div>
@@ -211,8 +197,9 @@ const submit = async () => {
                             <div class="relative w-full">
                                 <a-select showSearch name="s_state" placeholder="Select a state" id="s_state"
                                     class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer">
-                                    <a-select-option v-for="(state, index) in JSON.parse(states)" :key="index"
-                                        :value="state">{{ state }} ({{ index }})</a-select-option>
+                                    <a-select-option v-for="(state, index) in listStates" :key="state.code"
+                                        :value="state.code">{{ state.name
+                                        }} ({{ state.code }})</a-select-option>
                                 </a-select>
                             </div>
                         </div>
@@ -250,4 +237,77 @@ const submit = async () => {
     </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.ant-select .ant-select-selector {
+    padding: 0 !important;
+    height: 24px !important;
+    border: unset !important;
+    line-height: 24px !important;
+    font-size: inherit !important;
+    font-weight: 700 !important;
+    border-radius: 0 !important;
+    box-shadow: unset !important;
+}
+
+.ant-select-single .ant-select-selector .ant-select-selection-item,
+.ant-select-single .ant-select-selector .ant-select-selection-placeholder {
+    height: 24px !important;
+    line-height: 24px !important;
+}
+
+.ant-select .ant-select-selector:focus {
+    border: unset !important;
+    box-shadow: unset !important;
+}
+
+.ant-select:not(.ant-select-customize-input) .ant-select-selector .ant-select-selection-search-input {
+    border: unset !important;
+    box-shadow: unset !important;
+    height: 24px !important;
+}
+
+.ant-select-single .ant-select-selector .ant-select-selection-search {
+    inset-inline-start: 0;
+    inset-inline-end: 0;
+}
+
+.ant-select .ant-select-selection-item,
+.ant-select-single .ant-select-selector .ant-select-selection-search-input {
+    padding: 0 !important;
+    height: 24px !important;
+    border: unset !important;
+    line-height: 24px !important;
+    font-size: inherit !important;
+    font-weight: 700 !important;
+    border-radius: 0 !important;
+}
+
+.ant-select-single:not(.ant-select-customize-input) .ant-select-selector:after {
+    line-height: 24px;
+}
+
+.ant-picker,
+.ant-picker:hover,
+.ant-picker-focused {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+.ant-select-single .ant-select-selector:after,
+.ant-select-single .ant-select-selector .ant-select-selection-item:after,
+.ant-select-single .ant-select-selector .ant-select-selection-placeholder:after {
+    display: none !important;
+}
+
+.ant-picker .ant-picker-input>input {
+    font-size: inherit !important;
+    text-transform: inherit !important;
+    font-weight: inherit !important;
+}
+
+.ant-input:hover,
+.ant-input:focus,
+.ant-input-focused {
+    border-inline-end-width: 0 !important;
+}
+</style>
