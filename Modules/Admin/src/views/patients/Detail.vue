@@ -1,13 +1,10 @@
 <script lang="ts" setup>
 import { reactive, h, ref, toRaw, computed } from "vue";
-
 import { CloseCircleOutlined } from '@ant-design/icons-vue';
-
 import router from "@/router";
+import {useAuthStore} from "@/stores/auth";
 
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
-// datepicker
-import dayjs from 'dayjs';
 
 const prefix = 'patient'
 const {
@@ -29,6 +26,8 @@ const listDoctors = fetchListDoctorsApi();
 const listDoctorStatus = fetchListDoctorStatusApi();
 const loading = ref(false);
 const showPicker = ref(false);
+const authStore = useAuthStore();
+
 
 const formRef = ref();
 
@@ -43,13 +42,6 @@ const props = defineProps({
 })
 const emit = defineEmits(["close"]);
 const formState = reactive({});
-const isShowModal = ref(false)
-
-const customFormat = "YYYY-MM-DD"; // format of datepicker
-const dbFormat = "YYYY-MM-DD H:i:s"; // format of datepicker
-const dob_value = computed(() => {
-  return dayjs(formState.dob, dbFormat);
-});
 
 const fetch = async function () {
   loading.value = true;
@@ -64,6 +56,10 @@ const fetch = async function () {
   }
 }
 fetch();
+
+const saler_id = computed(() => {
+  return formState.saler_id?formState.saler_id:authStore.user.id;
+});
 
 const submit = (status) => {
   formRef.value
@@ -107,7 +103,6 @@ const closeDetail = function () {
 
         <div class="flex flex-wrap -mx-4">
           <a-Divider plain>Sumary</a-Divider>
-
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Full Name" name="full_name"
               :rules="[{ required: true, message: 'Please enter full name!' }]">
@@ -251,6 +246,8 @@ const closeDetail = function () {
           </div>
         </div>
       </div>
+      <a-input v-model:value="formState.unify_process" name="unify_process" type="hidden"></a-input>
+      <a-input v-model:value="saler_id" name="saler_id" type="hidden"></a-input>
     </a-form>
   </a-drawer>
 </template>
