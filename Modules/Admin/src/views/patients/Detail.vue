@@ -206,7 +206,7 @@ const closeDetail = function () {
           <a-Divider plain>Insurance</a-Divider>
           <div class="w-full px-4 mb-4">
             <a-form-item label="Insurance coverages" name="insurance_coverages">
-              <a-checkbox-group :defaultValue="formState.insurance_coverages"
+              <a-checkbox-group name="insurance_coverages" v-model:value="formState.insurance_coverages"
                 :options="listInsurances"></a-checkbox-group>
             </a-form-item>
           </div>
@@ -214,7 +214,7 @@ const closeDetail = function () {
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Doctor" name="doctor">
               <a-select v-model:value="formState.doctor_id" allowClear="" class="w-full" showSearch
-                placeholder="Choose state">
+                placeholder="Choose doctor">
                 <a-select-option v-for="(doctor, index) in listDoctors" :key="doctor.value" :value="doctor.value">{{
                   doctor.label
                 }}</a-select-option>
@@ -224,7 +224,7 @@ const closeDetail = function () {
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Doctor status" name="doctor_status">
               <a-select v-model:value="formState.doctor_status" allowClear="" class="w-full" showSearch
-                placeholder="Choose state">
+                placeholder="Choose status">
                 <a-select-option v-for="(status, index) in listDoctorStatus" :key="status.value" :value="status.value">{{
                   status.label
                 }}</a-select-option>
