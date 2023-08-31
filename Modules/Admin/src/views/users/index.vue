@@ -13,6 +13,7 @@ import Api from "@/utils/Api";
 import router from "@/router";
 import FormUser from "./FormUser.vue";
 
+const prefix = 'users'
 
 const modalState = ref({
   visible: false,
@@ -29,6 +30,14 @@ function showEditUser(value, success) {
   modalState.value.success = success;
 }
 
+const listActions = [
+  {
+    label: 'Add',
+    action: (reload) => {
+      showEditUser(null, reload)
+    }
+  }
+]
 const tableConfig = {
   tableConfig: {
     sticky: true,
@@ -40,6 +49,7 @@ const tableConfig = {
   addAction: (reload) => {
     showEditUser(null, reload)
   },
+  listActions,
   itemActions: [
     // {
     //   label: 'View'
@@ -71,7 +81,7 @@ const tableConfig = {
   ],
   columns: [
     {title: 'Name', key: 'full_name'},
-    {title: 'Username',width:200, key: 'username'}
+    {title: 'Username', width: 200, key: 'username'}
     , {title: 'Role', key: 'role'}
     , {title: 'Status', key: 'status'}
   ],

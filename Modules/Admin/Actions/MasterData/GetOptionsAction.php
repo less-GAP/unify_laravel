@@ -4,6 +4,9 @@
 namespace Modules\Admin\Actions\MasterData;
 
 
+use App\Models\MasterData;
+use Illuminate\Http\Request;
+
 class GetOptionsAction
 {
     public function handle(Request $request){

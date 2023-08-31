@@ -209,21 +209,7 @@ reload()
             <reload-outlined @click="reload"/>
           </template>
         </a-button>
-        <!--          <a-dropdown v-if="selectionActions.length > 0" :disabled="!selectedItems.length">-->
-        <!--            <template #overlay>-->
-        <!--              <a-menu>-->
-        <!--                <a-menu-item @click="doSelectionAction(action)" :key="index" v-for="(action,index) in selectionActions"-->
-        <!--                >-->
-        <!--                  {{ action.title }}-->
-        <!--                </a-menu-item>-->
 
-        <!--              </a-menu>-->
-        <!--            </template>-->
-        <!--            <a-button>-->
-        <!--              Hành động-->
-        <!--              <DownOutlined/>-->
-        <!--            </a-button>-->
-        <!--          </a-dropdown>-->
         <a-button v-for="listAction in listActions" type="primary"
                   @click="()=>{listAction.action(reload)}">{{ listAction.label }}
         </a-button>

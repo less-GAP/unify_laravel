@@ -4,8 +4,8 @@ import { reactive, h, ref, toRaw, computed } from "vue";
 import { CloseCircleOutlined } from '@ant-design/icons-vue';
 
 import router from "@/router";
-import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 
+import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 // datepicker
 import dayjs from 'dayjs';
 
@@ -104,8 +104,10 @@ const closeDetail = function () {
         </a-space>
       </a-card>
       <div class="px-4 mt-5 overflow-y-auto" style="height:calc(100% - 60px);">
+
         <div class="flex flex-wrap -mx-4">
           <a-Divider plain>Sumary</a-Divider>
+
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Full Name" name="full_name"
               :rules="[{ required: true, message: 'Please enter full name!' }]">
