@@ -58,7 +58,10 @@ const fetch = async function () {
 fetch();
 
 const saler_id = computed(() => {
-  return formState.saler_id?formState.saler_id:authStore.user.id;
+  return formState.sale_user?formState.sale_user:authStore.user.id;
+});
+const patient_process = computed(() => {
+  return formState.unify_process?formState.unify_process:0;
 });
 
 const submit = (status) => {
@@ -246,8 +249,8 @@ const closeDetail = function () {
           </div>
         </div>
       </div>
-      <a-input v-model:value="formState.unify_process" name="unify_process" type="hidden"></a-input>
-      <a-input v-model:value="saler_id" name="saler_id" type="hidden"></a-input>
+      <a-input v-model:value="patient_process" name="unify_process" type="hidden"></a-input>
+      <a-input v-model:value="saler_id" name="sale_user" type="hidden"></a-input>
     </a-form>
   </a-drawer>
 </template>
