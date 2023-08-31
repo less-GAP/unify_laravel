@@ -5,6 +5,7 @@ import {
   mdiCog,
   mdiAccountMultiple,
   mdiPaletteSwatch,
+  mdiDatabase,
   mdiCardAccountDetails
 } from "@mdi/js";
 
@@ -28,6 +29,11 @@ export default [
     label: "File Manager",
     icon: mdiImageMultiple,
     to: "/files",
+  },
+  {
+    label: "Master Data",
+    icon: mdiDatabase,
+    to: "/master-data",
   },
   {
     label: "System Config",

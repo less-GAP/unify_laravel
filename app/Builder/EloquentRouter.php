@@ -93,16 +93,17 @@ class EloquentRouter
             ->allowedIncludes($this->config['allowedIncludes'] ?? [])
             ->allowedFilters($this->config['allowedFilters'] ?? [])
             ->allowedSorts($this->config['allowedSorts'] ?? 'id')
-            ->groupBy($this->config['groupBy'] ?? 'id')
-            ->limit($request->input('limit',100)<100?$request->input('limit',100):100)
+            ->groupBy(\DB::raw($this->config['groupBy'] ?? 'id'))
+            ->limit($request->input('limit',$this->config['limit']??100))
             ->get();
     }
 
     public function getDetail(Request $request)
     {
+        $model = new $this->model;
         $query = $this->model::query();
         if ($id = $request->route('id')) {
-            $query->where('id', $id);
+            $query->where($model->getKeyName(), $id);
         }
         return $query->with($this->config['allowedIncludes'] ?? [])->first();
     }
@@ -118,12 +119,13 @@ class EloquentRouter
 
     public function updateOrCreate(Request $request)
     {
+        $model = new $this->model;
         $data = $request->all();
-        $result = $this->model::updateOrCreate(['id' => $request->input('id')], $data);
+        $result = $this->model::updateOrCreate([$model->getKeyName() => $request->input($model->getKeyName())], $data);
 
         return [
             'result' => $result,
-            'message' => $request->input('id') ? 'Update Successfully!' : 'Create Successfully!'
+            'message' => $request->input($model->getKeyName()) ? 'Update Successfully!' : 'Create Successfully!'
         ];
     }
     public function update(Request $request)

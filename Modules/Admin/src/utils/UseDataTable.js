@@ -7,7 +7,6 @@ export function UseDataTable(fetchListApi, _tableConfig = {}) {
     config: {
       columns: [],
       sticky: true,
-
       actionColumn: true,
       scroll: "{ x: 1500, y: 300 }",
       bordered: true,

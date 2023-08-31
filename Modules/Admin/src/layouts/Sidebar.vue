@@ -11,8 +11,8 @@ import menuAside from "@/menuAside.js";
       class="relative flex flex-col flex-1 min-h-0 pt-0 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
       <div class="flex flex-col flex-1 pt-5 pb-4 overflow-y-auto">
         <div class="flex-1 px-3 space-y-1  divide-y divide-gray-200 flex flex-col justify-between">
-          
-          
+
+
           <ul class="pb-2 space-y-2">
               <li v-for="(menu, key) in menuAside" :key="key">
                 <router-link :to="menu.to" :class="router.currentRoute.value.path.includes(menu.to || menu.path)
@@ -28,7 +28,6 @@ import menuAside from "@/menuAside.js";
                     :size="$style.menu.iconSize"
                   />
                   <span class="ml-3" sidebar-toggle-item="">{{menu.label}}</span>
-                  {{}}
                 </router-link>
                 <button type="button" class="w-full flex items-center p-2 text-base text-gray-900 rounded-lg
                 hover:bg-gray-300 group  "
@@ -65,7 +64,7 @@ import menuAside from "@/menuAside.js";
               </router-link> -->
 
             </ul>
-        
+
 
           <div class="pt-2 space-y-2 mt-auto">
 
@@ -86,7 +85,7 @@ import menuAside from "@/menuAside.js";
 
         </div>
       </div>
-      
+
     </div>
   </aside>
 </template>

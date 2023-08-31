@@ -35,7 +35,7 @@ const props = defineProps({
   },
   showSort: {
     type: [Boolean, Array],
-    default: true
+    default: false
   },
   params: {
     type: Object,
@@ -189,6 +189,7 @@ reload()
         <slot name="filter" v-bind="{tableConfig,filter,reload}"></slot>
         <slot name="sort" v-bind="{tableConfig,sort,filter,reload}">
           <a-select
+            v-if="showSort"
             style="width: 140px"
             placeholder="Order by..."
             v-model:value="orderBy"

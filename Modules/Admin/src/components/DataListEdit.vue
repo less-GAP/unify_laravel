@@ -1,14 +1,8 @@
 <template>
   <div style="margin-bottom:15px">
-    <a-button style="margin-right:15px" v-if="editColumn" @click="showAddColumn =true;columnForm={}" type="warning">{{
+    <a-button style="margin-right:15px" v-if="editColumn" @click="showAddColumn =true;columnForm={}" type="primary">{{
         __('Add Column')
       }}
-    </a-button>
-    <a-button @click="value.push({})" type="success">
-      <template #icon>
-        <Icon icon="ion:add-outline"></Icon>
-      </template>
-      {{ __('Add') }}
     </a-button>
 
   </div>
@@ -18,31 +12,68 @@
       <table>
         <thead class="ant-table-thead">
         <tr>
-          <th class="ant-table-cell ant-table-cell-ellipsis" v-for="(column,columnIndex) in getColumns()" scope="col">
+          <th class="ant-table-cell ant-table-cell-ellipsis" v-class="column.class"
+              v-for="(column,columnIndex) in getColumns()" scope="col">
             <slot name="column" v-bind="{column}">
-              {{ column.title }}
-              <a-button size="small" v-if="editColumn && column.dataIndex !=='action'"
-                        @click="columns.splice((columnIndex-1),1)" style="float:right" type="danger">
-                <template #icon>
-                  <Icon icon="ion:remove-outline"></Icon>
-                </template>
-              </a-button>
+              <template v-if="column.dataIndex=='action'">
+                <a-button @click="newValue.push({})">
+                  <template #icon>
+                    <PlusOutlined></PlusOutlined>
+                  </template>
+                  {{ __('Add Row') }}
+                </a-button>
+              </template>
+              <template v-else>
+                {{ column.title }}
+                <a-button size="small" v-if="editColumn && column.dataIndex !=='action'"
+                          @click="columns.splice((columnIndex-1),1)" style="float:right" type="link" danger>
+                  <template #icon>
+                    <Icon icon="ion:remove-outline"></Icon>
+                  </template>
+                </a-button>
+              </template>
             </slot>
           </th>
         </tr>
         </thead>
-        {{ newValue }}
-        <div  v-if="newValue && newValue.length>0">
+        <draggable v-bind="dragOptions" v-model="newValue" class="ant-table-tbody" handle=".drag-handle" tag="tbody">
+          <template #item="{ element ,index }">
+            <tr class="ant-table-measure-row">
+              <td v-for="column in getColumns()" scope="row">
+                <template v-if="column.dataIndex=='action'">
+                  <div style="width:100px">
 
-<!--        <draggable v-model="newValue" group="people" @start="drag=true" @end="drag=false" item-key="id">-->
-<!--          <template #item="{element}">-->
-<!--            <div>d23d232d3}</div>-->
-<!--          </template>-->
-<!--        </draggable>-->
-        </div>
+                    <a-button type="link" primary>
+                      <template #icon>
+                        <DragOutlined class="drag-handle"></DragOutlined>
+                      </template>
+                    </a-button>
+
+                    <a-button @click="newValue.splice(index,1)" style="margin-left:10px" type="link" danger>
+                      <template #icon>
+                        <DeleteOutlined></DeleteOutlined>
+                      </template>
+                    </a-button>
+                  </div>
+
+                </template>
+                <template v-else>
+                  <slot :name="'bodyCell['+column.dataIndex+']'" v-bind="{record:element,column}">
+                    <a-input-number :min="column.min"
+                                    :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                                    :parser="value => value.replace(/\$\s?|(,*)/g, '')" v-if="column.type =='number'"
+                                    v-model:value="element[column.dataIndex]"></a-input-number>
+                    <a-input v-else v-model:value="element[column.dataIndex]"></a-input>
+                  </slot>
+                </template>
+              </td>
+            </tr>
+          </template>
+        </draggable>
 
       </table>
     </div>
+
   </div>
 
   <a-modal
@@ -56,7 +87,7 @@
         label="Column Key"
         :rules="[{ required: true, message: 'Please input group name!' }]"
       >
-        <a-input v-model:value="columnForm.key"/>
+        <a-input v-model:value="columnForm.dataIndex"/>
       </a-form-item>
     </a-form>
 
@@ -65,20 +96,20 @@
 
 <script lang="ts">
 import {computed, defineComponent, watch, ref, onMounted, unref, toRaw} from 'vue';
-import {DragOutlined, DeleteOutlined} from '@ant-design/icons-vue';
-import Draggable from 'vuedraggable';
+import {isArray, isFunction} from '@/utils/is';
+import {DragOutlined, DeleteOutlined, PlusOutlined} from '@ant-design/icons-vue';
+import draggable from "vuedraggable";
 import type {FormInstance} from "ant-design-vue";
 
 export default defineComponent({
-  name: 'ApiTree',
-  components: {Draggable, DragOutlined, DeleteOutlined},
+  components: {draggable, DragOutlined, DeleteOutlined, PlusOutlined},
   props: {
     value: Array,
     columns: Array,
     editColumn: Boolean,
   },
   emits: ['options-change', 'change'],
-  setup(props, {attrs, emit}) {
+  setup(props, {emit}) {
     const isFirstLoaded = ref<Boolean>(false);
     const loading = ref(false);
     const showAddColumn = ref(false);
@@ -89,7 +120,6 @@ export default defineComponent({
     if (!props.value) {
       props.value = []
       emit('update', [])
-
     }
 
     function handleChange(...args) {
@@ -99,7 +129,7 @@ export default defineComponent({
     watch(
       () => newValue.value,
       (value) => {
-        emit('update', value)
+        emit('update:value', value)
       },
       {deep: true},
     );
@@ -121,7 +151,8 @@ export default defineComponent({
         return [{
           title: '',
           dataIndex: 'action',
-          key: 'action'
+          width: 100,
+          class: 'w-[70px]'
         }].concat(props.columns)
       },
       addColumn() {
@@ -132,7 +163,7 @@ export default defineComponent({
             if (!props.columns) {
               props.columns = []
             }
-            props.columns.push({title: value.key, key: value.key, dataIndex: value.key});
+            props.columns.push({title: value.dataIndex, dataIndex: value.dataIndex});
             formRef.value.resetFields();
           })
 

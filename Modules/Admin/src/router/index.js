@@ -1,12 +1,11 @@
 import {createRouter, createWebHashHistory} from "vue-router";
-import Style from "@/views/StyleView.vue";
 import Home from "@/views/HomeView.vue";
 import {useAuthStore} from "@/stores/auth";
 import {useAppStateStore} from "@/stores/appState";
-import patientRoutes from "@/views/patients/routers"
+
 const publicPages = ['/login'];
 
-const routes = [
+let routes = [
   {
     meta: {
       title: "Dashboard",
@@ -208,9 +207,13 @@ const routes = [
     name: "login",
     component: () => import("@/views/LoginView.vue"),
   },
-  ...patientRoutes
 ];
+const modules = import.meta.globEager('./../views/**/router.js');
 
+Object.keys(modules).forEach((key) => {
+  const mod = modules[key].default || {};
+  routes = [...routes, ...mod]
+});
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
