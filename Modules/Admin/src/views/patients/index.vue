@@ -10,6 +10,8 @@ import { UseDataTable } from "@/utils/UseDataTable";
 import { CloseCircleOutlined, PlusOutlined, LoadingOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import { fetchListStatusPatientApi } from './meta';
 import dayjs from 'dayjs';
+import { mdiGenderMale, mdiGenderFemale } from '@mdi/js';
+import { BaseIcon } from "@/components";
 
 const prefix = 'patient'
 const {
@@ -59,9 +61,9 @@ const columns = [
     width: 60
   },
   {
-    title: 'FULL NAME',
+    title: 'Patient',
     key: 'full_name',
-    width: 60
+    width: 120
   },
   {
     title: 'ACTIVE',
@@ -137,12 +139,27 @@ function registerTable({ reload }) {
           <a-button type="text" :icon="h(EditOutlined)" label="" :outline="true"></a-button>
         </template>
         <template #cellAction[delete]="{ item, actionMethod }">
-          <a-popconfirm title="Bạn muốn xóa sản phẩm này?" ok-text="Yes" cancel-text="No" @confirm="actionMethod">
+          <a-popconfirm title="Do you want to delete?" ok-text="Yes" cancel-text="No" @confirm="actionMethod">
             <a-button type="text" danger :icon="h(DeleteOutlined)" label="" :outline="true"></a-button>
           </a-popconfirm>
         </template>
         <template #cell[id]="{ item, column }">
           <div class="text-center">{{ item.id }}</div>
+        </template>
+        <template #cell[full_name]="{ item, column }">
+          <div class="flex flex-row">
+            <BaseIcon
+                :path="mdiGenderMale"
+                class="flex-none"
+                v-if="item.gender === 0"
+                />
+                <BaseIcon
+                :path="mdiGenderFemale"
+                class="flex-none"
+                v-if="item.gender === 1"
+            />
+            <span class="pl-1">{{ item.full_name }}</span>
+          </div>
         </template>
         <template #cell[image]="{ item, column }">
           <a-image height="50px" class="w-20 h-auto" :src="item.image_url" :alt="item.name" />
@@ -157,15 +174,32 @@ function registerTable({ reload }) {
           {{ dob_value(item) }}
         </template>
         <template #cell[assigned]="{ item, column }">
-          <a-input v-model:value="item.assigned" @change="updateApi(item.id, { assigned: item.assigned })" />
+
+          <a-avatar-group>
+            <a-avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel&key=1" />
+            <a href="https://www.antdv.com">
+              <a-avatar style="background-color: #f56a00">K</a-avatar>
+            </a>
+            <a-tooltip title="Ant User" placement="top">
+              <a-avatar style="background-color: #87d068">
+                <template #icon><UserOutlined /></template>
+              </a-avatar>
+            </a-tooltip>
+            <a-avatar style="background-color: #1890ff">
+              <template #icon><AntDesignOutlined /></template>
+            </a-avatar>
+          </a-avatar-group>
+
         </template>
         <template #cell[unify_status]="{ item, column }">
-          <div v-if="item.unify_status === 0" class="">Waiting</div>
-          <div v-else-if="item.unify_status === 1" class="">Active</div>
-          <div v-else-if="item.unify_status === 2" class="">Inactive</div>
-          <div v-else-if="item.unify_status === 3" class="">Decease</div>
-          <div v-else class="">Waiting</div>
+          <a-tag v-if="item.unify_status === 0"  color="orange">Waiting</a-tag>
+          <a-tag v-else-if="item.unify_status === 1"  color="green">Active</a-tag>
+          <a-tag v-else-if="item.unify_status === 2"  color="red">Inactive</a-tag>
+          <a-tag v-else-if="item.unify_status === 3"  color="black">Decease</a-tag>
+          <a-tag v-else  color="orange">Waiting</a-tag>
         </template>
+        
+
       </DataTable>
       <router-view></router-view>
 
