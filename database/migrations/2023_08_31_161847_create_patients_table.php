@@ -17,12 +17,13 @@ return new class extends Migration
             $table->dateTime('unify_active')->nullable();
             $table->integer('unify_status')->nullable();
             $table->integer('unify_process')->nullable();
+            $table->integer('unify_task_status')->nullable();
 
             //data
             $table->string('full_name')->index();
             $table->string('last_name')->nullable();
             $table->string('first_name')->nullable();
-            $table->dateTime('dob')->nullable();
+            $table->date('dob')->nullable();
             $table->text('height')->nullable();
             $table->text('weight')->nullable();
             $table->integer('gender')->default(0);

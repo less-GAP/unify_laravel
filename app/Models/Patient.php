@@ -29,6 +29,7 @@ class Patient extends Model
         'unify_active',
         'unify_status',
         'unify_process',
+        'unify_task_status',
         'full_name',
         'last_name',
         'first_name',

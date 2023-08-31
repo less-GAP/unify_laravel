@@ -96,7 +96,7 @@ const columns = [
   },
 ]
 const customFormat = 'MM-DD-YYYY';
-const dbFormat = "YYYY-MM-DD H:i:s"; // format of datepicker
+const dbFormat = "YYYY-MM-DD"; // format of datepicker
 
 const dob_value = (item) => {
   return item.dob ? dayjs(item.dob, dbFormat).format(customFormat) : '-';

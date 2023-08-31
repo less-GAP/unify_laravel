@@ -8,7 +8,6 @@ const publicPages = ['/login'];
 let routes = [
   {
     meta: {
-      title: "Form",
       isPublic: true,
     },
     path: "/",
