@@ -71,7 +71,7 @@ const columns = [
   {
     title: 'ID',
     key: 'id',
-    width: 60
+    width: 30
   },
   {
     title: 'Patient',
@@ -191,7 +191,7 @@ function registerTable({reload}) {
           </a-popconfirm>
         </template>
         <template #cell[id]="{ item, column }">
-          <div class="text-center">{{ item.id }}</div>
+          <div>{{ item.id }}</div>
         </template>
         <template #cell[full_name]="{ item, column }">
           <div class="flex flex-row items-center">
@@ -220,7 +220,7 @@ function registerTable({reload}) {
           </div>
         </template>
         <template #cell[dob]="{ item, column }">
-          {{ dob_value(item) }}<br/><span class="text-[11px]">{{ age(item) }}</span>
+          {{ dob_value(item) }}<br/><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
         </template>
         <template #cell[assigned]="{ item, column }">
 
