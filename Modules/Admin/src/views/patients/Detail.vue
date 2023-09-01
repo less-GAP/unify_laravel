@@ -92,12 +92,12 @@ const closeDetail = function () {
     @close="closeDetail" :open="visible" width="90vw">
     <a-form layout="vertical" v-bind="$config.formConfig" ref="formRef" :model="formState" @finish="submit">
       <a-card class="shadow bg-gray-50">
-        <a-button class="hidden md:inline-block" type="link" @click="closeDetail">Back
+        <a-button class="!hidden md:!inline-block" danger type="link" @click="closeDetail">Back
           <template #icon>
             <CloseCircleOutlined />
           </template>
         </a-button>
-        <a-button class="inline-flex items-center justify-center md:hidden !w-10 !h-10 !p-0" type="primary"
+        <a-button class="!inline-flex items-center justify-center md:!hidden !w-8 !h-8 !p-0" type="primary"
           @click="closeDetail">
           <template #icon>
             <CloseCircleOutlined />
@@ -229,7 +229,7 @@ const closeDetail = function () {
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Doctor status" name="doctor_status">
-              <a-select v-model:value="formState.doctor_status" allowClear="" class="w-full" showSearch
+              <a-select v-model:value="formState.doctor_status" allowClear="" class="w-full"
                 placeholder="Choose status">
                 <a-select-option v-for="(status, index) in listDoctorStatus" :key="status.value" :value="status.value">{{
                   status.label
