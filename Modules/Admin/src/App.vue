@@ -1,7 +1,10 @@
 <template>
   <a-config-provider v-bind="$style.antdv" :getPopupContainer="getPopupContainer">
-    <c-reset />
-    <router-view />
+    <c-reset/>
+    <a-style-provider hash-priority="high">
+
+      <router-view/>
+    </a-style-provider>
   </a-config-provider>
 </template>
 
