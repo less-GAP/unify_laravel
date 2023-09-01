@@ -13,7 +13,11 @@ class DeletePatientAction
     {
         try {
             $query = Patient::query();
-            $del = $query->find($request->route('id'))->delete();
+            $del = $query->find($request->route('id'))->update([
+                'delete' => 1,
+                'deleted_at' => now(),
+                'deleted_by' => auth()->user()->id
+            ]);
             $output = [
                 'code' => 1,
                 'message' => 'Success!',
@@ -22,7 +26,7 @@ class DeletePatientAction
         } catch (\Throwable $e) {
             $output = [
                 'code' => 0,
-                'message' => 'Thất bại ! ' . $e->getMessage(),
+                'message' => 'Fail! ' . $e->getMessage(),
                 'data' => $request->route('id')
             ];
         }
