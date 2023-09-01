@@ -1,12 +1,12 @@
 <script setup>
-import {reactive, ref, h, watch} from "vue";
+import {reactive, computed, ref, h, watch} from "vue";
 import SectionMain from "@/components/SectionMain.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue"
 import {DataTable} from "@/components";
 import router from "@/router";
 import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
 import {UseDataTable} from "@/utils/UseDataTable";
-import {CloseCircleOutlined, PlusOutlined, LoadingOutlined, EditOutlined, DeleteOutlined} from '@ant-design/icons-vue';
+import {UnorderedListOutlined, ProfileOutlined, SlackOutlined, EditOutlined, DeleteOutlined} from '@ant-design/icons-vue';
 import {fetchListStatusPatientApi} from './meta';
 import dayjs from 'dayjs';
 import {mdiGenderMale, mdiGenderFemale} from '@mdi/js';
@@ -32,6 +32,20 @@ const itemActions = [
       router.push(prefix + '/' + item.id)
     }
   },
+  {
+    label: 'Edit Process',
+    key: 'editProcess',
+    action: (item, reload) => {
+      router.push(prefix + '/' + item.id + '/process')
+    }
+  },
+  {
+    label: 'Add Task',
+    key: 'addTask',
+    action: (item, reload) => {
+      router.push(prefix + '/' + item.id + '/task')
+    }
+  }
   // {
   //   label: 'Delete',
   //   key: 'delete',
@@ -51,7 +65,7 @@ const listActions = [
       //showEditUser({}, reload)
       router.push(prefix + '/new')
     }
-  }
+  },
 ]
 const columns = [
   {
@@ -100,6 +114,10 @@ const dbFormat = "YYYY-MM-DD"; // format of datepicker
 
 const dob_value = (item) => {
   return item.dob ? dayjs(item.dob, dbFormat).format(customFormat) : '-';
+};
+
+const age = (item) => {
+  return item.dob ? '(' + dayjs().diff(dayjs(item.dob, dbFormat), 'year') + ' years old)' : '-';
 };
 
 const tableConfig = UseDataTable(fetchListApi, {
@@ -152,9 +170,14 @@ function registerTable({reload}) {
         <!-- <template #filter="{tableConfig,filter,reload}">
                     <a-input @keypress="reload" v-model:value="filter.phone" placeholder="Phone"></a-input>
         </template> -->
-
         <template #cellAction[edit]="{ item, actionMethod }">
           <a-button @click="actionMethod" type="text" :icon="h(EditOutlined)" label="" :outline="true"></a-button>
+        </template>
+        <template #cellAction[editProcess]="{ item, actionMethod }">
+          <a-button @click="actionMethod" type="text" :icon="h(SlackOutlined)" label="" :outline="true"></a-button>
+        </template>
+        <template #cellAction[addTask]="{ item, actionMethod }">
+          <a-button @click="actionMethod" type="text" :icon="h(UnorderedListOutlined)" label="" :outline="true"></a-button>
         </template>
         <template #cellAction[delete]="{ item, actionMethod }">
           <a-popconfirm title="Do you want to delete?" ok-text="Yes" cancel-text="No" @confirm="actionMethod">
@@ -165,7 +188,7 @@ function registerTable({reload}) {
           <div class="text-center">{{ item.id }}</div>
         </template>
         <template #cell[full_name]="{ item, column }">
-          <div class="flex flex-row">
+          <div class="flex flex-row items-center">
             <BaseIcon
                 :path="mdiGenderMale"
                 class="flex-none !text-blue-600"
@@ -183,7 +206,6 @@ function registerTable({reload}) {
           <a-image height="50px" class="w-20 h-auto" :src="item.image_url" :alt="item.name"/>
         </template>
         <template #cell[info]="{ item, column }">
-          <!-- <a-input @change="updateApi(item.id, { phone: item.phone })" v-model:value="item.phone" /> -->
           <div class="flex">
             <div><strong>Tel:</strong> {{ item.phone }}</div>
           </div>
@@ -192,7 +214,7 @@ function registerTable({reload}) {
           </div>
         </template>
         <template #cell[dob]="{ item, column }">
-          {{ dob_value(item) }}
+          {{ dob_value(item) }}<br/><span class="text-[11px]">{{ age(item) }}</span>
         </template>
         <template #cell[assigned]="{ item, column }">
 
