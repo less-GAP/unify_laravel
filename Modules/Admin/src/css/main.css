@@ -14,6 +14,10 @@
   --h-input: 42px;
 }
 
+.ant-drawer .ant-card .ant-card-body{
+  padding: 10px !important;
+}
+
 .ant-btn-primary {
   color: #fff;
   background-color: #1677ff;

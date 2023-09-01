@@ -21,7 +21,15 @@ export default [{
       path: "/patient/:id/process",
       name: "patient-process",
       component: () => import("./Process.vue"),
-    }
+    },
+    {
+      meta: {
+        title: "Patient Task",
+      },
+      path: "/patient/:id/task",
+      name: "patient-task",
+      component: () => import("./Task.vue"),
+    },
   ]
 }
 

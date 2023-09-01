@@ -171,13 +171,19 @@ function registerTable({reload}) {
                     <a-input @keypress="reload" v-model:value="filter.phone" placeholder="Phone"></a-input>
         </template> -->
         <template #cellAction[edit]="{ item, actionMethod }">
-          <a-button @click="actionMethod" type="text" :icon="h(EditOutlined)" label="" :outline="true"></a-button>
+          <a-tooltip title="Edit">
+            <a-button @click="actionMethod" type="text" :icon="h(EditOutlined)" label="" :outline="true"></a-button>
+          </a-tooltip>
         </template>
         <template #cellAction[editProcess]="{ item, actionMethod }">
-          <a-button @click="actionMethod" type="text" :icon="h(SlackOutlined)" label="" :outline="true"></a-button>
+          <a-tooltip title="Approve Patient">
+            <a-button @click="actionMethod" type="text" :icon="h(SlackOutlined)" label="" :outline="true"></a-button>
+          </a-tooltip>
         </template>
         <template #cellAction[addTask]="{ item, actionMethod }">
-          <a-button @click="actionMethod" type="text" :icon="h(UnorderedListOutlined)" label="" :outline="true"></a-button>
+          <a-tooltip title="Add Task">
+            <a-button @click="actionMethod" type="text" :icon="h(UnorderedListOutlined)" label="" :outline="true"></a-button>
+          </a-tooltip>
         </template>
         <template #cellAction[delete]="{ item, actionMethod }">
           <a-popconfirm title="Do you want to delete?" ok-text="Yes" cancel-text="No" @confirm="actionMethod">

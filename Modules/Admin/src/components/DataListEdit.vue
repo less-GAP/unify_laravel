@@ -78,7 +78,7 @@
 
   <a-modal
     title="Add Column"
-    v-model:visible="showAddColumn"
+    :open="showAddColumn"
     @ok="addColumn"
   >
     <a-form style="margin:20px" ref="formRef" :model="columnForm" layout="vertical" name="form_in_modal">

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import {reactive, h, ref, toRaw} from "vue";
+import { reactive, h, ref, toRaw } from "vue";
 
-import {useMainStore} from "@/stores/main";
+import { useMainStore } from "@/stores/main";
 import {
   mdiAccount,
   mdiMail,
@@ -10,11 +10,11 @@ import {
   mdiGithub,
 } from "@mdi/js";
 
-import {PlusOutlined, LoadingOutlined, DeleteOutlined} from '@ant-design/icons-vue';
+import { PlusOutlined, LoadingOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 
 import router from "@/router";
 
-import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
+import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import DataListEdit from "@/components/DataListEdit.vue";
 
 const prefix = 'master-data'
@@ -48,7 +48,7 @@ const props = defineProps({
 })
 const emit = defineEmits(["close"]);
 const formState = reactive({
-  list_key:listKey,
+  list_key: listKey,
   data: [{}]
 });
 const isShowModal = ref(false)
@@ -67,45 +67,33 @@ fetch();
 
 const submit = (status) => {
 
-  createApi({...formState, status: status}).then(rs => {
+  createApi({ ...formState, status: status }).then(rs => {
     Object.assign(formState, rs.data.result)
   });
 
 };
-
-const closeDetail = function () {
-  props.visible = false;
-  emit('close');
-}
-
 
 </script>
 
 <template>
   <a-button @click="submit" class="float-right" type="primary" success>Save</a-button>
   <DataListEdit :columns="[{
-          title: 'Label',
-          dataIndex: 'label'
-        },{
-          title: 'Value',
-          dataIndex: 'value'
-        },{
-          title: 'Working hours',
-          dataIndex: 'working_hours',
-          min:0,
-           type:'number'
-        },
-        {
-          title: 'Fee per applicant (USD)',
-          dataIndex: 'fee_per_applicant',
-          min:0,
-          type:'number'
-        }
-        ]" v-model:value="formState.data"></DataListEdit>
-
+    title: 'Label',
+    dataIndex: 'label'
+  }, {
+    title: 'Value',
+    dataIndex: 'value'
+  }, {
+    title: 'Color',
+    dataIndex: 'color'
+  }, {
+    title: 'Background color',
+    dataIndex: 'background_color'
+  },
+  ]" v-model:value="formState.data"></DataListEdit>
 </template>
 
-<style>
+<style scoped>
 .ant-input {
   border-color: #d9d9d9 !important;
   border-radius: 5px !important;
