@@ -25,18 +25,18 @@ const listPatientStatus = fetchListStatusPatientApi();
 
 const itemActions = [
   {
+    label: 'Edit Process',
+    key: 'editProcess',
+    action: (item, reload) => {
+      router.push(prefix + '/' + item.id + '/process')
+    }
+  },
+  {
     label: 'Edit',
     key: 'edit',
     action: (item, reload) => {
       //showEditUser({}, reload)
       router.push(prefix + '/' + item.id)
-    }
-  },
-  {
-    label: 'Edit Process',
-    key: 'editProcess',
-    action: (item, reload) => {
-      router.push(prefix + '/' + item.id + '/process')
     }
   },
   {
