@@ -2,7 +2,7 @@
 import {reactive, computed, ref, h, watch} from "vue";
 import SectionMain from "@/components/SectionMain.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue"
-import {DataTable} from "@/components";
+import {DataTablePatient} from "@/components";
 import router from "@/router";
 import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
 import {UseDataTable} from "@/utils/UseDataTable";
@@ -106,7 +106,7 @@ const columns = [
   {
     title: 'Assigned',
     key: 'assigned',
-    width: 60
+    width: 40
   },
 ]
 const customFormat = 'MM-DD-YYYY';
@@ -163,7 +163,7 @@ function registerTable({reload}) {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <DataTable @register="registerTable" v-bind="tableConfig">
+      <DataTablePatient @register="registerTable" v-bind="tableConfig">
         <template #header>
           <h2>Patient List</h2>
         </template>
@@ -226,7 +226,7 @@ function registerTable({reload}) {
 
           <a-avatar-group>
             <a-avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel&key=1"/>
-            <a href="https://www.antdv.com">
+            <a href="#">
               <a-avatar style="background-color: #f56a00">K</a-avatar>
             </a>
             <a-tooltip title="Ant User" placement="top">
@@ -253,7 +253,7 @@ function registerTable({reload}) {
         </template>
 
 
-      </DataTable>
+      </DataTablePatient>
       <router-view></router-view>
 
     </SectionMain>
