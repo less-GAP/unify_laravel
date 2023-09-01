@@ -172,7 +172,7 @@ reload()
     <slot name="header" v-bind="{ tableConfig, filter, reload }">
     </slot>
 
-    <div :loading="loading" class="flex items-center justify-between p-2 bg-white border border-gray-200 rounded-xl">
+    <div :loading="loading" class="flex items-center justify-between p-0 bg-white border border-gray-200 rounded-xl">
 
       <a-space>
 
@@ -203,24 +203,24 @@ reload()
       <a-skeleton active class="p-10" v-if="loading || !tableData.data" />
 
       <slot v-else name="table" v-bind="{ tableConfig, tableData, columns, selectionActions, reload }">
-        <table class="w-full table-auto">
+        <table class="w-full text-xs table-auto">
           <thead class="text-xs font-semibold text-gray-400 uppercase bg-gray-50">
             <tr>
-              <th v-if="showSelection" width="30" scope="col" class="p-2 whitespace-nowrap">
-                <label class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"> <input
+              <th v-if="showSelection" width="10" scope="col" class="whitespace-nowrap">
+                <label class="w-full py-0 ml-2 text-sm font-medium text-gray-900"> <input
                     @change="toggleCheckAll" :value="true" v-model="checkAll" type="checkbox"
-                    class="w-4 h-4 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    class="rounded w-4 h-4 text-blue-600 focus:ring-blue-500">
                 </label>
               </th>
 
               <th v-for="column in columns" scope="col" :width="column.width ? column.width : 'auto'"
-                class="p-2 whitespace-nowrap">
+                class="whitespace-nowrap">
                 <div class="font-semibold text-left">
                   {{ __(column.title) }}
                 </div>
               </th>
 
-              <th v-if="itemActions.length" width="100" scope="col" class="p-2 text-center whitespace-nowrap">
+              <th v-if="itemActions.length" width="80" scope="col" class="p-0 text-center whitespace-nowrap">
                 {{ __('Action') }}
               </th>
             </tr>
@@ -228,16 +228,16 @@ reload()
           <tbody class="text-sm divide-y divide-gray-100">
             <tr v-for="(item, index) in tableData.data" :key="item[tableConfig.item_key]"
               v-bind:class="{ 'border-b': (index % 2 === 0) }">
-              <td v-if="showSelection" class="p-2 whitespace-nowrap">
+              <td v-if="showSelection" class="whitespace-nowrap">
                 <label :for="'checkbox-table-search-' + item[tableConfig.item_key]"
-                  class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"> <input
+                  class="w-full py-0 ml-2 text-sm font-medium text-gray-900"> <input
                     v-model="selectedItems" :id="item[tableConfig.item_key]" :value="item" type="checkbox"
-                    class="w-4 h-4 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    class="w-4 h-4 text-blue-600 focus:ring-blue-500">
                 </label>
               </td>
 
               <td :data-label="column.title" v-for="column in columns"
-                :class="'p-2 ' + (column.class ? column.class : '')">
+                :class="'p-0 ' + (column.class ? column.class : '')">
                 <template v-if="item.render">
                   {{ item.render() }}
                 </template>
@@ -247,7 +247,7 @@ reload()
 
               </td>
               <td v-if="itemActions.length" class="">
-                <div class="flex flex-wrap justify-center p-2 whitespace-nowrap">
+                <div class="flex flex-wrap justify-center whitespace-nowrap">
                   <template v-for="itemAction in itemActions">
                     <slot :name="'cellAction[' + itemAction.key + ']'"
                       v-bind="{ item, itemAction, actionMethod() { itemAction.action(item, reload) } }">
