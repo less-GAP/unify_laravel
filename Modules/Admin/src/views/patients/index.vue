@@ -1,7 +1,8 @@
 <script setup>
 import {reactive, computed, ref, h, watch} from "vue";
 import SectionMain from "@/components/SectionMain.vue";
-import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue"
+import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
+import { useAuthStore } from "@/stores/auth";
 import {DataTablePatient} from "@/components";
 import router from "@/router";
 import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
@@ -20,13 +21,18 @@ const {
   updateApi
 } = UseEloquentRouter(prefix)
 const isShowModal = ref(false)
-
+const auth = useAuthStore();
 const listPatientStatus = fetchListStatusPatientApi();
+
+console.log(auth.user.role);
 
 const itemActions = [
   {
     label: 'Edit Process',
     key: 'editProcess',
+    show: () => {
+      return auth.user.role === 'admin'
+    },
     action: (item, reload) => {
       router.push(prefix + '/' + item.id + '/process')
     }
@@ -46,17 +52,6 @@ const itemActions = [
       router.push(prefix + '/' + item.id + '/task')
     }
   }
-  // {
-  //   label: 'Delete',
-  //   key: 'delete',
-  //   class: 'font-medium text-red-600 dark:text-red-500 hover:underline',
-  //   action(item, reload) {
-  //     deleteApi(item.id).then(rs => {
-  //     }).finally(() => {
-  //       reload();
-  //     });
-  //   }
-  // }
 ]
 const listActions = [
   {
@@ -176,7 +171,7 @@ function registerTable({reload}) {
           </a-tooltip>
         </template>
         <template #cellAction[editProcess]="{ item, actionMethod }">
-          <a-tooltip title="Approve Patient">
+          <a-tooltip v-if="auth.user.role == 'admin'" title="Approve Patient">
             <a-button @click="actionMethod" type="text" :icon="h(SlackOutlined)" label="" :outline="true"></a-button>
           </a-tooltip>
         </template>

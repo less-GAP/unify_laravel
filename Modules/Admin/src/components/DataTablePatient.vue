@@ -199,17 +199,17 @@ reload()
         <a-button v-for="listAction in listActions" type="primary" @click="() => { listAction.action(reload) }">{{ listAction.label }}</a-button>
       </a-space>
     </div>
-    <div class="flex-1 w-full my-5 overflow-auto bg-white rounded-lg shadow border-gray-200 border scroll-smooth">
+    <div class="flex-1 w-full my-5 overflow-auto bg-white border border-gray-200 rounded-lg shadow scroll-smooth">
       <a-skeleton active class="p-10" v-if="loading || !tableData.data" />
 
       <slot v-else name="table" v-bind="{ tableConfig, tableData, columns, selectionActions, reload }">
         <table class="w-full text-xs table-auto">
           <thead class="font-semibold text-gray-400 uppercase bg-gray-50">
             <tr>
-              <th v-if="showSelection" scope="col" class="text-center px-1 py-2 w-3 whitespace-nowrap">
+              <th v-if="showSelection" scope="col" class="w-3 px-1 py-2 text-center whitespace-nowrap">
                 <label class="w-full font-medium text-gray-900"> <input
                     @change="toggleCheckAll" :value="true" v-model="checkAll" type="checkbox"
-                    class="rounded w-4 h-4 text-blue-600 focus:ring-blue-500">
+                    class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
                 </label>
               </th>
 
@@ -228,11 +228,11 @@ reload()
           <tbody class="divide-y divide-gray-100">
             <tr v-for="(item, index) in tableData.data" :key="item[tableConfig.item_key]"
               v-bind:class="{ 'border-b': (index % 2 === 0)}">
-              <td v-if="showSelection" class="text-center p-1 w-3 whitespace-nowrap">
+              <td v-if="showSelection" class="w-3 p-1 text-center whitespace-nowrap">
                 <label :for="'checkbox-table-search-' + item[tableConfig.item_key]"
                   class="w-full font-medium text-gray-900"> <input
                     v-model="selectedItems" :id="item[tableConfig.item_key]" :value="item" type="checkbox"
-                    class="rounded w-4 h-4 text-blue-600 focus:ring-blue-500">
+                    class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
                 </label>
               </td>
 
@@ -251,7 +251,7 @@ reload()
                   <template v-for="itemAction in itemActions">
                     <slot :name="'cellAction[' + itemAction.key + ']'"
                       v-bind="{ item, itemAction, actionMethod() { itemAction.action(item, reload) } }">
-                      <a-button @click="itemAction.action(item, reload)"
+                      <a-button @click="itemAction.action(item, reload)" v-if="itemAction.show()"
                         :class="itemAction.class || 'font-medium text-blue-600 dark:text-blue-500 hover:underline'"
                         type="link">
                         {{ itemAction.label }}

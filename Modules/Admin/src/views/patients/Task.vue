@@ -42,7 +42,7 @@ const submit = (status) => {
   formRef.value
     .validate()
     .then(() => {
-      updateApi({ ...formState, status: status }).then(rs => {
+      updateApi(formState.id, { ...formState }).then(rs => {
         Object.assign(formState, rs.data.result)
       });
     })
