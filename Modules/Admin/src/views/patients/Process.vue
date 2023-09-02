@@ -86,14 +86,14 @@ const closeDetail = function () {
                 <div class="flex flex-wrap -mx-4">
                     <h3 class="block w-full px-4 mb-4 leading-6"><strong>{{ formState.full_name }}</strong> <span class="text-xs leading-6">{{ age(formState) }}</span></h3>
                     <div class="w-full px-4">
-                        <a-form-item v-if="auth.user.role == 'admin'" label="Choose process" name="unify_process">
+                        <a-form-item required v-if="auth.user.role == 'admin'" label="Choose process" name="unify_process">
                             <a-select
                             class="w-full"
                             v-model:value="formState.unify_process"
                             :options="listProcessOptions"
                             ></a-select>
                         </a-form-item>
-                        <a-form-item label="Notes for this change" name="log_detail">
+                        <a-form-item required label="Notes for this change" name="log_detail">
                             <a-textarea
                             class="w-full"
                             v-model:value="formState.log_detail"

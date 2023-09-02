@@ -74,7 +74,7 @@ const columns = [
     width: 120
   },
   {
-    title: 'ACTIVE',
+    title: 'ACTIVE (Date active)',
     key: 'unify_status',
     width: 20
   },
@@ -87,11 +87,6 @@ const columns = [
     title: 'INFO',
     key: 'info',
     width: 300
-  },
-  {
-    title: 'DATE ACTIVE',
-    key: 'date_active',
-    width: 60
   },
   {
     title: 'CREATED AT',
@@ -240,11 +235,11 @@ function registerTable({reload}) {
 
         </template>
         <template #cell[unify_status]="{ item, column }">
-          <a-tag v-if="item.unify_status === 0" color="orange">Waiting</a-tag>
+          <a-tag v-if="item.unify_status === 0 || item.unify_status=== null" color="orange">Waiting</a-tag>
           <a-tag v-else-if="item.unify_status === 1" color="green">Active</a-tag>
           <a-tag v-else-if="item.unify_status === 2" color="red">Inactive</a-tag>
           <a-tag v-else-if="item.unify_status === 3" color="black">Decease</a-tag>
-          <a-tag v-else color="orange">Waiting</a-tag>
+          <span v-if="item.unify_status === 1" >({{ $format.formatDate(item.date_active) }})</span>
         </template>
 
 

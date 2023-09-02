@@ -2,7 +2,7 @@ export function listProcess() {
     return [
         { value: 0, label: 'Waiting' },
         { value: 1, label: 'Eligibility Check' },
-        { value: 2, label: 'New Patient' },
+        { value: 2, label: 'Patient' },
     ]
 }
 
