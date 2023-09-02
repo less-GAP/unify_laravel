@@ -78,13 +78,12 @@ const closeDetail = function () {
                     </template>
                 </a-button>
                 <a-space class="float-right">
-                    <a-tag color="success">Published</a-tag>
-                    <a-button @click="submit()" :loading="loading" type="primary">Update</a-button>
+                    <!-- <a-button @click="submit()" :loading="loading" type="primary">Update</a-button> -->
                 </a-space>
             </a-card>
             <div class="px-4 mt-5 overflow-y-auto" style="height:calc(100% - 60px)">
                 <div class="flex flex-wrap -mx-4">
-                    <h3 class="block w-full px-4 mb-4 leading-6"><strong>{{ formState.full_name }}</strong> <span class="text-xs leading-6">{{ age(formState) }}</span></h3>
+                    <h3 class="block w-full px-4 mb-4 leading-6"><strong>List tasks of {{ formState.full_name }}</strong></h3>
                     <div class="w-full px-4">
                       
                     </div>

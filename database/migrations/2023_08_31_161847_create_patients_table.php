@@ -57,8 +57,8 @@ return new class extends Migration
             $table->integer('need_improve')->default(0);
 
             $table->boolean('unify_deleted')->nullable();
-            $table->dateTime('unify_deleted_at')->nullable();;
-            $table->integer('unify_deleted_by')->nullable();;
+            $table->dateTime('unify_deleted_at')->nullable();
+            $table->integer('unify_deleted_by')->nullable();
 
             $table->integer('sale_user')->nullable(); // created_by
             $table->timestamps();

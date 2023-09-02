@@ -6,6 +6,7 @@ import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import dayjs from 'dayjs';
 import { listProcess, getProcess } from "@/utils/Process";
+import { now } from "moment";
 
 const listProcessOptions = listProcess();
 const prefix = 'patient'
@@ -52,6 +53,10 @@ const submit = () => {
     formRef.value
         .validate()
         .then(() => {
+            if(formState.unify_process == 2){
+                formState.unify_active = dayjs().format('YYYY-MM-DD HH:mm:ss')
+                formState.unify_status = 1
+            }
             updateApi( formState.id, {  ...formState }).then(rs => {
                 Object.assign(formState, rs.data.result)
             });
