@@ -227,7 +227,7 @@ reload()
           </thead>
           <tbody class="divide-y divide-gray-100">
             <tr v-for="(item, index) in tableData.data" :key="item[tableConfig.item_key]"
-              v-bind:class="{ 'border-b': (index % 2 === 0) }">
+              v-bind:class="{ 'border-b': (index % 2 === 0)}">
               <td v-if="showSelection" class="text-center p-1 w-3 whitespace-nowrap">
                 <label :for="'checkbox-table-search-' + item[tableConfig.item_key]"
                   class="w-full font-medium text-gray-900"> <input

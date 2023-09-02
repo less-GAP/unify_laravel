@@ -81,7 +81,7 @@ const columns = [
   {
     title: 'ACTIVE',
     key: 'unify_status',
-    width: 60
+    width: 20
   },
   {
     title: 'DOB',
@@ -91,7 +91,7 @@ const columns = [
   {
     title: 'INFO',
     key: 'info',
-    width: 200
+    width: 300
   },
   {
     title: 'DATE ACTIVE',
