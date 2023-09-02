@@ -4,9 +4,9 @@
 
 ### Tailwind 3.x Vue 3.x with Vite or Nuxt or Laravel
 
-[![Free Vue 3 Tailwind 3 admin dashboard with dark mode](https://static.justboil.me/templates/one/repo-tailwind-vue.png)](https://justboil.github.io/admin-one-vue-tailwind/)
+[![Free Vue 3 Tailwind 3 admin dashboard with dark mode](/main.png)](/)
 
-[![Vue Tailwind white & dark styles](https://static.justboil.me/templates/one/repo-styles.png)](https://justboil.github.io/admin-one-vue-tailwind/)
+[![Vue Tailwind white & dark styles](https://static.justboil.me/templates/one/repo-styles.png)](/)
 
 ### Tailwind 3.x Vue 3.x with Vite or Nuxt or Laravel
 
@@ -60,27 +60,27 @@ Looking for **Tailwind React TypeScript**? Check [Admin One - React TypeScript T
 
 Mobile layout with hidden aside menu and collapsable cards & tables
 
-[![Free Vue 3 Tailwind CSS 3 admin dashboard](https://static.justboil.me/templates/one/one-tailwind-vue-mobile.png)](https://justboil.github.io/admin-one-vue-tailwind/)
+[![Free Vue 3 Tailwind CSS 3 admin dashboard](https://static.justboil.me/templates/one/one-tailwind-vue-mobile.png)](/)
 
 ### Small laptops 1024px
 
 Small laptop layout with show/hide aside menu option
 
-[![Free Vue 3 Tailwind CSS 3 admin dashboard](https://static.justboil.me/templates/one/one-tailwind-vue-1024.png)](https://justboil.github.io/admin-one-vue-tailwind/)
+[![Free Vue 3 Tailwind CSS 3 admin dashboard](https://static.justboil.me/templates/one/one-tailwind-vue-1024.png)](/)
 
-[![Free Vue 3 Tailwind CSS 3 admin dashboard](https://static.justboil.me/templates/one/one-tailwind-vue-1024-menu-open.png)](https://justboil.github.io/admin-one-vue-tailwind/)
+[![Free Vue 3 Tailwind CSS 3 admin dashboard](https://static.justboil.me/templates/one/one-tailwind-vue-1024-menu-open.png)](/)
 
 ### Laptops & desktops
 
 Classic layout with aside menus on the left
 
-[![Free Vue 3 Tailwind CSS 3 admin dashboard](https://static.justboil.me/templates/one/one-tailwind-vue-widescreen.png)](https://justboil.github.io/admin-one-vue-tailwind/)
+[![Free Vue 3 Tailwind CSS 3 admin dashboard](https://static.justboil.me/templates/one/one-tailwind-vue-widescreen.png)](/)
 
 ## Demo
 
 ### Free Dashboard Demo
 
-https://justboil.github.io/admin-one-vue-tailwind/
+/
 
 ### Premium Dashboard Demo
 
@@ -170,12 +170,12 @@ The issue list is reserved exclusively for bug reports and feature requests. Tha
 
 ## Licensing
 
-- Copyright &copy; 2019-2022 JustBoil.me (https://justboil.me)
+- Copyright &copy; 2019-2022 less[GAP] Solutions (https://justboil.me)
 - Licensed under MIT
 
 ## Useful Links
 
-- [JustBoil.me](https://justboil.me/)
+- [less[GAP] Solutions](https://justboil.me/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Vue.js 3](https://v3.vuejs.org/)
 - [Vite](https://vitejs.dev)
