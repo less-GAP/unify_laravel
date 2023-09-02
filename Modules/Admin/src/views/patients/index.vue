@@ -12,6 +12,7 @@ import {fetchListStatusPatientApi} from './meta';
 import dayjs from 'dayjs';
 import {mdiGenderMale, mdiGenderFemale} from '@mdi/js';
 import {BaseIcon} from "@/components";
+import { now } from "moment";
 
 const prefix = 'patient'
 const {
@@ -79,6 +80,11 @@ const columns = [
     width: 20
   },
   {
+    title: 'STATUS PROCESS',
+    key: 'unify_process',
+    width: 20
+  },
+  {
     title: 'DOB',
     key: 'dob',
     width: 60
@@ -108,6 +114,12 @@ const dob_value = (item) => {
 
 const age = (item) => {
   return item.dob ? '(' + dayjs().diff(dayjs(item.dob, dbFormat), 'year') + ' years old)' : '-';
+};
+
+const textNewPatient = (item) => {
+  // check new patient or old patient
+  // return item.unify_process === 2 && ((now() - item.date_active) > 10) ? 'New Patient' : 'Patient';
+  return 'New Patient';
 };
 
 const tableConfig = UseDataTable(fetchListApi, {
@@ -208,6 +220,11 @@ function registerTable({reload}) {
           <div class="flex">
             <div>{{ item.street }}, {{ item.city }}, {{ item.state }}, {{ item.zip }}</div>
           </div>
+        </template>
+        <template #cell[unify_process]="{ item, column }">
+          <a-tag v-if="item.unify_process === 0 || item.unify_process=== null" color="gray">Waiting</a-tag>
+          <a-tag v-else-if="item.unify_process === 1" color="orange">Eligibility Check</a-tag>
+          <a-tag v-else-if="item.unify_process === 2" color="blue">{{ textNewPatient(item) }}</a-tag>
         </template>
         <template #cell[dob]="{ item, column }">
           {{ dob_value(item) }}<br/><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
