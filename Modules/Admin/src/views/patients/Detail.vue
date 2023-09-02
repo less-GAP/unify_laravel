@@ -195,8 +195,7 @@ const closeDetail = function () {
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Zip" name="zip" :rules="[{ required: true, message: 'Please enter zip!' }]">
-
-              <a-input-number v-model:value="formState.zip" class="w-full"></a-input-number>
+              <a-input-number v-model:value="formState.zip" class="!w-full"></a-input-number>
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">

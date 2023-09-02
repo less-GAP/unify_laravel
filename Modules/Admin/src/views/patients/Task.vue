@@ -2,8 +2,9 @@
 import { reactive, h, ref, toRaw, computed } from "vue";
 import { CloseCircleOutlined } from '@ant-design/icons-vue';
 import router from "@/router";
-import {useAuthStore} from "@/stores/auth";
+import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
+import { ApiData, RemoteSelect } from "@/components";
 
 const prefix = 'patient'
 const {
@@ -41,7 +42,7 @@ const submit = (status) => {
   formRef.value
     .validate()
     .then(() => {
-        updateApi({ ...formState, status: status }).then(rs => {
+      updateApi({ ...formState, status: status }).then(rs => {
         Object.assign(formState, rs.data.result)
       });
     })
@@ -51,7 +52,9 @@ const closeDetail = function () {
 }
 </script>
 <template>
-    <div>
-        
-    </div>
+  <div>
+    <RemoteSelect class="w-[200px]" v-model:value="formState.unify_task_status" url="master-data/patient-status/options">
+    </RemoteSelect>
+
+  </div>
 </template>

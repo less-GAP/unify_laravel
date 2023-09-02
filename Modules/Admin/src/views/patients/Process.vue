@@ -5,8 +5,9 @@ import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import dayjs from 'dayjs';
-import {ApiData, RemoteSelect} from "@/components";
+import { listProcess, getProcess } from "@/utils/Process";
 
+const listProcessOptions = listProcess();
 const prefix = 'patient'
 const {
     fetchDetailApi,
@@ -80,12 +81,17 @@ const closeDetail = function () {
                     <a-button @click="submit()" :loading="loading" type="primary">Update</a-button>
                 </a-space>
             </a-card>
-            <div class="px-4 mt-5 overflow-y-auto" style="height:calc(100% - 60px);">
+            <div class="px-4 mt-5 overflow-y-auto" style="height:calc(100% - 60px)">
                 <div class="flex flex-wrap -mx-4">
                     <h3 class="block w-full px-4 mb-4 leading-6"><strong>{{ formState.full_name }}</strong> <span class="text-xs leading-6">{{ age(formState) }}</span></h3>
                     <div class="w-full px-4">
-                        <RemoteSelect class="w-[200px]" v-model:value="formState.unify_task_status" url="master-data/patient-status/options">
-                        </RemoteSelect>
+                        <a-form-item label="Choose process" name="unify_process">
+                            <a-select
+                            class="w-full"
+                            v-model:value="formState.unify_process"
+                            :options="listProcessOptions"
+                            ></a-select>
+                        </a-form-item>
                     </div>
                 </div>
             </div>
