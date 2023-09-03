@@ -242,7 +242,7 @@ fetch();
                                         <span clas="text-green-500">
                                             <BaseIcon :path="mdiBagPersonal" class="w-6" />
                                         </span>
-                                        <span class="tracking-wide">PRODUCTS</span>
+                                        <span class="tracking-wide">SUPPLIES</span>
                                     </div>
                                 </div>
                             </div>
