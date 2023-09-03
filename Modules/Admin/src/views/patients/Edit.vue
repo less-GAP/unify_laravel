@@ -113,8 +113,13 @@ const closeDetail = function () {
         </a-space>
       </a-card>
       <div class="px-4 mt-5 overflow-y-auto" style="height:calc(100% - 60px);">
-
         <div class="flex flex-wrap -mx-4">
+          <div class="w-full px-4">
+            <a-form-item v-if="currentRoute.name=='patient-edit'" label="Note for this change" name="log_detail" :rules="[{required: true}]">
+              <a-textarea class="!rounded-none w-full" v-model:value="formState.log_detail" placeholder="Make a note of any changes you make to the patient record"
+                :auto-size="{ minRows: 2, maxRows: 10 }" />
+            </a-form-item>
+          </div>
           <a-Divider plain>Sumary</a-Divider>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Full Name" name="full_name"

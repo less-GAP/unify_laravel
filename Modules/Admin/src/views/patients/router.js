@@ -16,7 +16,7 @@ export default [{
     },
     {
       meta: {
-        title: "Patient Edit",
+        title: "Edit Patient",
       },
       path: "/patient/:id/edit",
       name: "patient-edit",
