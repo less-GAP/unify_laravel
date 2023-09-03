@@ -6,7 +6,6 @@ import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import dayjs from 'dayjs';
 import { listProcess, getProcess } from "@/utils/Process";
-import { now } from "moment";
 
 const listProcessOptions = listProcess();
 const prefix = 'patient'
@@ -25,7 +24,7 @@ defineProps({
         default: true
     },
 });
-const formState = reactive({});
+const formState = reactive({})
 const formRef = ref();
 const loading = ref(false);
 const auth = useAuthStore();
