@@ -135,7 +135,7 @@ const closeDetail = function () {
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Date of Birth" name="dob">
+            <a-form-item label="Date of Birth" name="dob" required>
               <a-date-picker  v-model:value="formState.dob" valueFormat="YYYY-MM-DD" format="MM-DD-YYYY" inputReadOnly class="w-full"></a-date-picker>
             </a-form-item>
           </div>
@@ -153,17 +153,12 @@ const closeDetail = function () {
                 type: 'email',
                 message: 'The input is not valid email!',
               },
-              {
-                required: true,
-                message: 'Please enter email!',
-              },
             ]">
               <a-input v-model:value="formState.email"></a-input>
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Phone" name="phone" :rules="[{ required: true, message: 'Please enter phone!' }]">
-
               <a-input v-model:value="formState.phone" class="w-full"></a-input>
             </a-form-item>
           </div>
