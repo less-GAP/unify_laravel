@@ -206,7 +206,7 @@ reload()
         <table class="w-full text-xs table-auto">
           <thead class="font-semibold text-gray-400 uppercase bg-gray-50">
             <tr>
-              <th v-if="showSelection" scope="col" class="w-3 px-1 py-2 text-center whitespace-nowrap">
+              <th v-if="showSelection" scope="col" width="40" class="px-1 py-2 text-center whitespace-nowrap">
                 <label class="w-full font-medium text-gray-900"> <input
                     @change="toggleCheckAll" :value="true" v-model="checkAll" type="checkbox"
                     class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
@@ -220,7 +220,7 @@ reload()
                 </div>
               </th>
 
-              <th v-if="itemActions.length" width="70" scope="col" class="px-1 py-2 whitespace-nowrap">
+              <th v-if="itemActions.length" width="120" scope="col" class="px-1 py-2">
                 {{ __('Action') }}
               </th>
             </tr>
@@ -228,7 +228,7 @@ reload()
           <tbody class="divide-y divide-gray-100">
             <tr v-for="(item, index) in tableData.data" :key="item[tableConfig.item_key]"
               v-bind:class="{ 'border-b': (index % 2 === 0)}">
-              <td v-if="showSelection" class="w-3 p-1 text-center whitespace-nowrap">
+              <td v-if="showSelection" width="40" class="p-1 text-center whitespace-nowrap">
                 <label :for="'checkbox-table-search-' + item[tableConfig.item_key]"
                   class="w-full font-medium text-gray-900"> <input
                     v-model="selectedItems" :id="item[tableConfig.item_key]" :value="item" type="checkbox"
@@ -246,8 +246,8 @@ reload()
                 </slot>
 
               </td>
-              <td v-if="itemActions.length" class="p-1">
-                <div class="flex flex-wrap justify-center whitespace-nowrap">
+              <td v-if="itemActions.length" width="120" class="p-1 whitespace-nowrap">
+                <div class="flex flex-nowrap justify-center whitespace-nowrap">
                   <template v-for="itemAction in itemActions">
                     <slot :name="'cellAction[' + itemAction.key + ']'"
                       v-bind="{ item, itemAction, actionMethod() { itemAction.action(item, reload) } }">
