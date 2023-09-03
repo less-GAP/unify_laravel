@@ -285,8 +285,8 @@ function registerTable({reload}) {
               <small>({{ dayjs(item.unify_active, 'YYYY-MM-DD HH:mm:ss').format('HH:mm MM-DD-YYYY') }})</small>
             </div>
           </a-tag>
-          <a-tag v-else-if="item.unify_status === 2" color="red">Inactive</a-tag>
-          <a-tag v-else-if="item.unify_status === 3" color="black">Decease</a-tag>
+          <a-tag v-else-if="item.unify_status === 2" color="gray">Inactive</a-tag>
+          <a-tag v-else-if="item.unify_status === 3" color="gray">Decease</a-tag>
         </template>
 
 
