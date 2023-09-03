@@ -31,16 +31,21 @@ const itemActions = [
   {
     label: 'Edit',
     key: 'edit',
+    show: (item) => {
+      return true;
+    },
     action: (item, reload) => {
-      //showEditUser({}, reload)
       router.push(prefix + '/' + item.id + '/edit')
     }
   },
   {
     label: 'Approve Patient',
     key: 'editProcess',
-    show: () => {
-      return auth.user.role === 'admin'
+    show: (item) => {
+      if(auth.user.role !== 'admin' || item.unify_status === 2 || item.unify_status === 3 || item.unify_status === 1){
+        return false;
+      }
+      return true;
     },
     action: (item, reload) => {
       router.push(prefix + '/' + item.id + '/process')
@@ -49,6 +54,9 @@ const itemActions = [
   {
     label: 'Add Task',
     key: 'addTask',
+    show: (item) => {
+      return true;
+    },
     action: (item, reload) => {
       router.push(prefix + '/' + item.id + '/task')
     }
@@ -56,6 +64,9 @@ const itemActions = [
   {
     label: 'History',
     key: 'history',
+    show: (item) => {
+      return true;
+    },
     action: (item, reload) => {
       router.push(prefix + '/' + item.id + '/history')
     }

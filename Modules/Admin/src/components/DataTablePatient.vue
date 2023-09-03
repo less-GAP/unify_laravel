@@ -247,11 +247,11 @@ reload()
 
               </td>
               <td v-if="itemActions.length" width="120" class="p-1 whitespace-nowrap">
-                <div class="flex flex-nowrap justify-center whitespace-nowrap">
+                <div class="flex flex-nowrap whitespace-nowrap">
                   <template v-for="itemAction in itemActions">
-                    <slot :name="'cellAction[' + itemAction.key + ']'"
+                    <slot :name="'cellAction[' + itemAction.key + ']'" v-if="itemAction.show(item)"
                       v-bind="{ item, itemAction, actionMethod() { itemAction.action(item, reload) } }">
-                      <a-button @click="itemAction.action(item, reload)" v-if="itemAction.show()"
+                      <a-button @click="itemAction.action(item, reload)"
                         :class="itemAction.class || 'font-medium text-blue-600 dark:text-blue-500 hover:underline'"
                         type="link">
                         {{ itemAction.label }}
