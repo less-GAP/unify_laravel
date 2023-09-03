@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
             'created_by' => 'admin',
         ]);
 
-        \App\Models\Patient::factory()->count(20)->create();
+        \App\Models\Patient::factory()->count(30)->create();
 
         // Re-enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
