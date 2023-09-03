@@ -1,278 +1,275 @@
 <script lang="ts" setup>
-import { reactive, h, ref, toRaw, computed } from "vue";
-import { CloseCircleOutlined } from '@ant-design/icons-vue';
+import { reactive, h, ref, toRaw } from "vue";
+import { useMainStore } from "@/stores/main";
 import router from "@/router";
-import {useAuthStore} from "@/stores/auth";
-import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
+import Api from "@/utils/Api";
+import { mdiGenderMale, mdiGenderFemale, mdiFolderMultipleImage, mdiPill, mdiMedicalBag, mdiNoteText, mdiBagPersonal } from '@mdi/js';
+import { BaseIcon } from "@/components";
+import 'jodit/es5/jodit.css';
+import dayjs from 'dayjs';
 
-const prefix = 'patient'
-const {
-  fetchDetailApi,
-  createApi,
-  // updateApi
-} = UseEloquentRouter(prefix)
+import { JoditEditor, Jodit } from 'jodit-vue';
+import { notification } from 'ant-design-vue';
+import type { UploadProps } from 'ant-design-vue';
 
-import {
-  fetchListStatesApi,
-  fetchListInsurancesApi,
-  fetchListDoctorsApi,
-  fetchListDoctorStatusApi,
-} from "./meta";
+import SectionMain from "@/components/SectionMain.vue";
+import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 
-const listStates = fetchListStatesApi();
-const listInsurances = fetchListInsurancesApi();
-const listDoctors = fetchListDoctorsApi();
-const listDoctorStatus = fetchListDoctorStatusApi();
+const customFormat = 'MM-DD-YYYY';
+const dbFormat = "YYYY-MM-DD"; // format of datepicker
+
+const dob_value = (item) => {
+  return item.dob ? dayjs(item.dob, dbFormat).format(customFormat) : '-';
+};
+
+const age = (item) => {
+  return item.dob ? '(' + dayjs().diff(dayjs(item.dob, dbFormat), 'year') + ' years old)' : '-';
+};
+
+const textNewPatient = (item) => {
+  // check new patient or old patient
+  // return item.unify_process === 2 && ((now() - item.date_active) > 10) ? 'New Patient' : 'Patient';
+  return 'Running';
+};
+
+const mainStore = useMainStore();
+const formState = reactive({})
 const loading = ref(false);
-const authStore = useAuthStore();
 
-const genderList = [
-  {
-    value: 0,
-    label: 'Male'
-  },
-  {
-    value: 1,
-    label: 'Female'
-  }
-];
-
-const formRef = ref();
-
-const props = defineProps({
-  value: {
-    type: Object,
-    default: {}
-  }, visible: {
-    type: Boolean,
-    default: true
-  },
-})
-const emit = defineEmits(["close"]);
-const formState = reactive({});
-
-const fetch = async function () {
-  loading.value = true;
-  var id = router.currentRoute.value.params.id;
-  if (id !== 'new') {
-    loading.value = true
-    const value = await fetchDetailApi(id)
-    Object.assign(formState, value.data)
-    loading.value = false
-  } else {
-    loading.value = false
-  }
+const fetch = function () {
+    loading.value = true;
+    var id = router.currentRoute.value.params.id;
+    if (id > 0) {
+        loading.value = true
+        Api.get('patient/' + id).then(rs => {
+            var value = rs.data;
+            Object.assign(formState, value)
+            loading.value = false
+        });
+    } else {
+        loading.value = false
+    }
 }
 fetch();
-
-const saler_id = computed(() => {
-  return formState.sale_user?formState.sale_user:authStore.user.id;
-});
-const patient_process = computed(() => {
-  return formState.unify_process?formState.unify_process:0;
-});
-
-const submit = (status) => {
-  formRef.value
-    .validate()
-    .then(() => {
-      createApi({ ...formState, status: status }).then(rs => {
-        Object.assign(formState, rs.data.result)
-      });
-    })
-};
-const closeDetail = function () {
-  router.replace({ path: '/' + prefix })
-}
 
 </script>
 
 <template>
-  <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;"
-    @close="closeDetail" :open="visible" width="90vw">
-    <a-form layout="vertical" v-bind="$config.formConfig" ref="formRef" :model="formState" @finish="submit">
-      <a-card class="shadow bg-gray-50">
-        <a-button class="!hidden md:!inline-block" danger type="link" @click="closeDetail">Back
-          <template #icon>
-            <CloseCircleOutlined />
-          </template>
-        </a-button>
-        <a-button class="!inline-flex items-center justify-center md:!hidden !w-8 !h-8 !p-0" type="primary"
-          @click="closeDetail">
-          <template #icon>
-            <CloseCircleOutlined />
-          </template>
-        </a-button>
-        <a-space class="float-right">
-          <a-tag v-if="formState.status == 'publish'" color="success">Published</a-tag>
-          <a-tag v-else-if="formState.status" color="orange">{{ formState.status }}</a-tag>
-          <!-- <a-button @click="submit('draft')" :loading="loadingDraft" type="dashed">Save Draft</a-button> -->
-          <a-button @click="submit('publish')" :loading="loading" type="primary">Save And Active</a-button>
-        </a-space>
-      </a-card>
-      <div class="px-4 mt-5 overflow-y-auto" style="height:calc(100% - 60px);">
+    <LayoutAuthenticated>
+        <SectionMain>
+            <div class="p-5">
+                <h1 class="mb-3 flex items-center justify-between">
+                    <div class="mb-3 flex items-center">
+                        <BaseIcon :path="mdiGenderMale" class="w-6 h-6 mr-2 !text-blue-600" v-if="formState.gender === 0" />
+                        <BaseIcon :path="mdiGenderFemale" class="w-6 h-6 mr-2 text-pink-600"
+                            v-if="formState.gender === 1" />
+                        <span>{{ formState.full_name }}</span>
+                    </div>
+                    <div class="text-gray-400">#{{ formState.id }}</div>
+                </h1>
+                <hr class="my-2">
+            </div>
 
-        <div class="flex flex-wrap -mx-4">
-          <a-Divider plain>Sumary</a-Divider>
-          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Full Name" name="full_name"
-              :rules="[{ required: true, message: 'Please enter full name!' }]">
-              <a-input v-model:value="formState.full_name" />
-            </a-form-item>
-          </div>
-          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="First Name" name="first_name"
-              :rules="[{ required: true, message: 'Please enter first name!' }]">
-              <a-input v-model:value="formState.first_name" />
-            </a-form-item>
-          </div>
-          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Last Name" name="last_name"
-              :rules="[{ required: true, message: 'Please enter last name!' }]">
-              <a-input v-model:value="formState.last_name" />
-            </a-form-item>
-          </div>
-          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Date of Birth" name="dob">
-              <a-date-picker  v-model:value="formState.dob" valueFormat="YYYY-MM-DD" format="MM-DD-YYYY" inputReadOnly class="w-full"></a-date-picker>
-            </a-form-item>
-          </div>
-          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Gender" name="gender" :rules="[{ required: true, message: 'Please enter gender!' }]">
-              <a-select v-model:value="formState.gender" allowClear="" class="w-full"
-              :options="genderList"
-              >
-              </a-select>
-            </a-form-item>
-          </div>
-          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Email" name="email" :rules="[
-              {
-                type: 'email',
-                message: 'The input is not valid email!',
-              },
-              {
-                required: true,
-                message: 'Please enter email!',
-              },
-            ]">
-              <a-input v-model:value="formState.email"></a-input>
-            </a-form-item>
-          </div>
-          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Phone" name="phone" :rules="[{ required: true, message: 'Please enter phone!' }]">
 
-              <a-input v-model:value="formState.phone" class="w-full"></a-input>
-            </a-form-item>
-          </div>
-          <a-Divider plain>Address</a-Divider>
-          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Street" name="street" :rules="[{ required: true, message: 'Please enter street!' }]">
+            <div class="mx-auto p-5">
+                <div class="md:flex no-wrap md:-mx-2 ">
+                    <!-- Left Side -->
+                    <div class="w-full md:w-3/12 md:mx-2">
+                        <!-- Profile Card -->
+                        <ul
+                            class="bg-white shadow text-gray-600 hover:text-gray-700 hover:shadow p-5 divide-y rounded-lg">
+                            <li class="flex items-center py-3">
+                                <span>Status</span>
+                                <span class="ml-auto">
+                                    <a-tag class="!mr-0" v-if="formState.unify_status === 0 || formState.unify_status=== null" color="orange">Waiting</a-tag>
+                                    <a-tag class="!mr-0" v-else-if="formState.unify_status === 1" color="green">Active</a-tag>
+                                    <a-tag class="!mr-0" v-else-if="formState.unify_status === 2" color="red">Inactive</a-tag>
+                                    <a-tag class="!mr-0" v-else-if="formState.unify_status === 3" color="black">Decease</a-tag>
+                                </span>
+                            </li>
+                            <li class="flex items-center py-3">
+                                <span>Process</span>
+                                <span class="ml-auto">
+                                    <a-tag class="!mr-0" v-if="formState.unify_process === 0 || formState.unify_process=== null" color="gray">Waiting</a-tag>
+                                    <a-tag class="!mr-0" v-else-if="formState.unify_process === 1" color="orange">Eligibility Check</a-tag>
+                                    <a-tag class="!mr-0" v-else-if="formState.unify_process === 2" color="blue">{{ textNewPatient(formState) }}</a-tag>
+                                </span>
+                            </li>
+                            <li class="flex items-center py-3" v-if="formState.unify_status === 1">
+                                <span>Active date</span>
+                                <span class="text-xs ml-auto">{{ dayjs(formState.unify_active, 'YYYY-MM-DD HH:mm:ss').format('HH:mm MM-DD-YYYY') }}</span>
+                            </li>
+                            <li class="flex items-center py-3">
+                                <span>Create date</span>
+                                <span class="text-xs ml-auto">{{ dayjs(formState.created_at, 'YYYY-MM-DD HH:mm:ss').format('HH:mm MM-DD-YYYY') }}</span>
+                            </li>
+                            <li class="flex items-center py-3">
+                                <span>Saler</span>
+                                <span class="text-xs ml-auto">{{ formState.sale_user }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- Right Side -->
+                    <div class="w-full md:w-9/12 mx-2 h-64">
+                        <!-- Profile tab -->
+                        <!-- About Section -->
+                        <div class="bg-white shadow text-gray-600 hover:text-gray-700 hover:shadow p-5 rounded-lg">
+                            <div class="grid">
+                                <div class="py-2 flex items-center font-semibold">
+                                    <div clas="text-green-500">
+                                        <BaseIcon :path="mdiNoteText" class="w-6" />
+                                    </div>
+                                    <div class="ml-2">ABOUT</div>
+                                </div>
+                                <div class="mb-5">
+                                    <hr class="my-2">
+                                </div>
+                            </div>
+                            <div class="text-gray-700">
+                                <div class="grid md:grid-cols-2 text-sm">
+                                    <div class="grid grid-cols-2">
+                                        <div class="py-2 font-semibold">First Name</div>
+                                        <div class="py-2">{{ formState.first_name }}</div>
+                                    </div>
+                                    <div class="grid grid-cols-2">
+                                        <div class="py-2 font-semibold">Last Name</div>
+                                        <div class="py-2">{{ formState.last_name }}</div>
+                                    </div>
+                                    <div class="grid grid-cols-2">
+                                        <div class="py-2 font-semibold">Gender</div>
+                                        <div class="py-2">{{ (formState.gender === 1) ? 'Female' : 'Male' }}</div>
+                                    </div>
+                                    <div class="grid grid-cols-2">
+                                        <div class="py-2 font-semibold">Phone</div>
+                                        <div class="py-2">
+                                            <a class="text-blue-800" href="tel:">{{ formState.phone }}</a>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2">
+                                        <div class="py-2 font-semibold">Current Address</div>
+                                        <div class="py-2">{{ formState.street }}, {{ formState.city }}, {{ formState.state }}, {{ formState.zip }}</div>
+                                    </div>
+                                    <div class="grid grid-cols-2">
+                                        <div class="py-2 font-semibold">Date of Birth</div>
+                                        <div class="py-2">{{ dob_value(formState) }} <span class="text-xs text-gray-600">{{ age(formState) }}</span></div>
+                                    </div>
+                                    <div class="grid grid-cols-2">
+                                        <div class="py-2 font-semibold">Email.</div>
+                                        <div class="py-2">
+                                            <a class="text-blue-800" href="mailto:">{{ formState.email }}</a>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2">
+                                        <div class="py-2 font-semibold">Weight</div>
+                                        <div class="py-2">{{ formState.weight ? formState.weight : 'N/A' }}</div>
+                                    </div>
+                                    <div class="grid grid-cols-2">
+                                        <div class="py-2 font-semibold">Height</div>
+                                        <div class="py-2">{{ formState.height ? formState.height : 'N/A' }}</div>
+                                    </div>
+                                   
+                                </div>
+                            </div>
+                           
+                        </div>
+                        <!-- End of about section -->
 
-              <a-input v-model:value="formState.street" class="w-full"></a-input>
-            </a-form-item>
-          </div>
-          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Apt" name="apt" :rules="[{ message: 'Please enter apt!' }]">
+                        <div class="my-4"></div>
 
-              <a-input v-model:value="formState.apt" class="w-full"></a-input>
-            </a-form-item>
-          </div>
-          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="City" name="city" :rules="[{ required: true, message: 'Please enter city!' }]">
+                        <!-- Experience and education -->
+                        <div class="bg-white shadow text-gray-600 hover:text-gray-700 hover:shadow p-5 rounded-lg">
 
-              <a-input v-model:value="formState.city" class="w-full"></a-input>
-            </a-form-item>
-          </div>
-          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="State" name="state" :rules="[{ required: true, message: 'Please enter state!' }]">
-              <a-select v-model:value="formState.state" allowClear="" class="w-full" showSearch
-                placeholder="Choose state">
-                <a-select-option v-for="(state, index) in listStates" :key="state.code" :value="state.code">{{ state.name
-                }} ({{ state.code }})</a-select-option>
-              </a-select>
-            </a-form-item>
-          </div>
-          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Zip" name="zip" :rules="[{ required: true, message: 'Please enter zip!' }]">
-              <a-input-number v-model:value="formState.zip" class="!w-full"></a-input-number>
-            </a-form-item>
-          </div>
-          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Route" name="route" :rules="[{ message: 'Please enter route!' }]">
-              <a-input v-model:value="formState.route" class="w-full"></a-input>
-            </a-form-item>
-          </div>
-          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Sub-r" name="sub_r" :rules="[{ message: 'Please enter sub-r!' }]">
-              <a-input v-model:value="formState.sub_r" class="w-full"></a-input>
-            </a-form-item>
-          </div>
-          <a-Divider plain>Insurance</a-Divider>
-          <div class="w-full px-4 mb-4">
-            <a-form-item label="Insurance coverages" name="insurance_coverages">
-              <a-checkbox-group name="insurance_coverages" v-model:value="formState.insurance_coverages"
-                :options="listInsurances"></a-checkbox-group>
-            </a-form-item>
-          </div>
-          <a-Divider plain>Doctor</a-Divider>
-          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Doctor" name="doctor">
-              <a-select v-model:value="formState.doctor_id" allowClear="" class="w-full" showSearch
-                placeholder="Choose doctor">
-                <a-select-option v-for="(doctor, index) in listDoctors" :key="doctor.value" :value="doctor.value">{{
-                  doctor.label
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </div>
-          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
-            <a-form-item label="Doctor status" name="doctor_status">
-              <a-select v-model:value="formState.doctor_status" allowClear="" class="w-full"
-                placeholder="Choose status">
-                <a-select-option v-for="(status, index) in listDoctorStatus" :key="status.value" :value="status.value">{{
-                  status.label
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </div>
-          <div class="w-full px-4 mb-4 md:w-1/2">
-            <a-form-item label="Doctor note" name="doctor_comment">
-              <a-input v-model:value="formState.doctor_comment" class="w-full"></a-input>
-            </a-form-item>
-          </div>
-          <a-Divider plain>Note</a-Divider>
-          <div class="w-full px-4 mb-4 md:w-1/2">
-            <a-form-item label="Note" name="note">
-              <a-textarea class="!rounded-none w-full" v-model:value="formState.note"
-                :auto-size="{ minRows: 2, maxRows: 10 }" />
-            </a-form-item>
-          </div>
-          <div class="w-full px-4 mb-4 md:w-1/2">
-            <a-form-item label="Data" name="unify_data">
-              <a-textarea class="!rounded-none w-full" v-model:value="formState.unify_data"
-                :auto-size="{ minRows: 2, maxRows: 10 }" />
-            </a-form-item>
-          </div>
-        </div>
-      </div>
-      <a-input v-model:value="patient_process" name="unify_process" type="hidden"></a-input>
-      <a-input v-model:value="saler_id" name="sale_user" type="hidden"></a-input>
-    </a-form>
-  </a-drawer>
-</template>
+                            <div class="grid grid-cols-2">
+                                <div>
+                                    <div class="flex items-center space-x-2 font-semibold text-gray-900 leading-8 mb-3">
+                                        <span clas="text-green-500">
+                                            <BaseIcon :path="mdiMedicalBag" class="w-6" />
 
-<style>
-.ant-input {
-  border-color: #d9d9d9 !important;
-  border-radius: 5px !important;
-}
+                                        </span>
+                                        <span class="tracking-wide">INSURANCE</span>
+                                    </div>
+                                    <ul class="list-inside space-y-2">
+                                        <li>
+                                            <div class="text-teal-600">Owner at Her Company Inc.</div>
+                                            <div class="text-gray-500 text-xs">March 2020 - Now</div>
+                                        </li>
+                                        <li>
+                                            <div class="text-teal-600">Owner at Her Company Inc.</div>
+                                            <div class="text-gray-500 text-xs">March 2020 - Now</div>
+                                        </li>
+                                        <li>
+                                            <div class="text-teal-600">Owner at Her Company Inc.</div>
+                                            <div class="text-gray-500 text-xs">March 2020 - Now</div>
+                                        </li>
+                                        <li>
+                                            <div class="text-teal-600">Owner at Her Company Inc.</div>
+                                            <div class="text-gray-500 text-xs">March 2020 - Now</div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <div class="flex items-center space-x-2 font-semibold text-gray-900 leading-8 mb-3">
+                                        <span clas="text-green-500">
+                                            <BaseIcon :path="mdiPill" class="w-6" />
+                                        </span>
+                                        <span class="tracking-wide">DOCTOR</span>
+                                    </div>
+                                    <ul class="list-inside space-y-2">
+                                        <li>
+                                            <div class="text-teal-600">Masters Degree in Oxford</div>
+                                            <div class="text-gray-500 text-xs">March 2020 - Now</div>
+                                        </li>
+                                        <li>
+                                            <div class="text-teal-600">Bachelors Degreen in LPU</div>
+                                            <div class="text-gray-500 text-xs">March 2020 - Now</div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- End of Experience and education grid -->
+                        </div>
+                        <!-- End of profile tab -->
 
-.ant-modal-wrap {
-  z-index: 100001 !important;
-}
 
-.ant-form-item {
-  margin-bottom: 0;
-}
-</style>
+                        <div class="my-4"></div>
+
+                        <!-- Experience and education -->
+                        <div class="bg-white shadow text-gray-600 hover:text-gray-700 hover:shadow p-5 rounded-lg">
+
+                            <div class="grid grid-cols-2">
+                                <div>
+                                    <div class="flex items-center space-x-2 font-semibold text-gray-900 leading-8 mb-3">
+                                        <span clas="text-green-500">
+                                            <BaseIcon :path="mdiBagPersonal" class="w-6" />
+                                        </span>
+                                        <span class="tracking-wide">PRODUCTS</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="my-4"></div>
+
+                        <!-- Experience and education -->
+                        <div class="bg-white shadow text-gray-600 hover:text-gray-700 hover:shadow p-5 rounded-lg">
+
+                            <div class="grid grid-cols-2">
+                                <div>
+                                    <div class="flex items-center space-x-2 font-semibold text-gray-900 leading-8 mb-3">
+                                        <span clas="text-green-500">
+                                            <BaseIcon :path="mdiFolderMultipleImage" class="w-6" />
+                                        </span>
+                                        <span class="tracking-wide">FILES</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+    </SectionMain>
+</LayoutAuthenticated></template>

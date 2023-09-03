@@ -33,11 +33,11 @@ const itemActions = [
     key: 'edit',
     action: (item, reload) => {
       //showEditUser({}, reload)
-      router.push(prefix + '/' + item.id)
+      router.push(prefix + '/' + item.id + '/edit')
     }
   },
   {
-    label: 'Edit Process',
+    label: 'Approve Patient',
     key: 'editProcess',
     show: () => {
       return auth.user.role === 'admin'
@@ -228,7 +228,7 @@ function registerTable({reload}) {
                 v-if="item.gender === 1"
             />
             <span class="pl-1">
-              <a :href="'#/patient/detail/' + item.id" class="text-blue-700 underline">{{ item.full_name }}</a>
+              <a :href="'#/patient/' + item.id" class="text-blue-700 underline">{{ item.full_name }}</a>
             </span>
           </div>
         </template>

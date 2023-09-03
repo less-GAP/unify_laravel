@@ -25,14 +25,6 @@ let routes = [
   },
   {
     meta: {
-      title: "Patient Full Detail",
-    },
-    path: "/patient/detail/:id",
-    name: "patient-full-detail",
-    component: () => import("@/views/patients/FullDetail.vue"),
-  },
-  {
-    meta: {
       title: "Dashboard",
     },
     path: "/dashboard",

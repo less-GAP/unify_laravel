@@ -8,15 +8,15 @@ export default [{
   children: [
     {
       meta: {
-        title: "Patient Detail",
+        title: "Patient Edit",
       },
-      path: "/patient/:id",
-      name: "patient-detail",
-      component: () => import("./Detail.vue"),
+      path: "/patient/:id/edit",
+      name: "patient-edit",
+      component: () => import("./Edit.vue"),
     },
     {
       meta: {
-        title: "Patient Process",
+        title: "Approve Patient",
       },
       path: "/patient/:id/process",
       name: "patient-process",
@@ -24,13 +24,21 @@ export default [{
     },
     {
       meta: {
-        title: "Patient Task",
+        title: "Patient Tasks",
       },
       path: "/patient/:id/task",
       name: "patient-task",
       component: () => import("./Task.vue"),
     },
   ]
-}
+},
+{
+  meta: {
+    title: "Patient Detail",
+  },
+  path: "/patient/:id",
+  name: "patient-detail",
+  component: () => import("./Detail.vue"),
+},
 
 ]
