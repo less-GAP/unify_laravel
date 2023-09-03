@@ -228,7 +228,7 @@ function registerTable({reload}) {
                 v-if="item.gender === 1"
             />
             <span class="pl-1">
-              <a :href="'#/patient/detail/' + item.id" class="underline text-blue-700">{{ item.full_name }}</a>
+              <a :href="'#/patient/detail/' + item.id" class="text-blue-700 underline">{{ item.full_name }}</a>
             </span>
           </div>
         </template>
@@ -253,8 +253,8 @@ function registerTable({reload}) {
           <br/><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
         </template>
         <template #cell[assigned]="{ item, column }">
-
-          <a-avatar-group>
+          
+          <!-- <a-avatar-group>
             <a-avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel&key=1"/>
             <a href="#">
               <a-avatar style="background-color: #f56a00">K</a-avatar>
@@ -271,14 +271,14 @@ function registerTable({reload}) {
                 <AntDesignOutlined/>
               </template>
             </a-avatar>
-          </a-avatar-group>
+          </a-avatar-group> -->
 
         </template>
         <template #cell[unify_status]="{ item, column }">
           <a-tag v-if="item.unify_status === 0 || item.unify_status=== null" color="orange">Waiting</a-tag>
           <a-tag v-else-if="item.unify_status === 1" color="green">
-            <div class="leading-none pt-1">Active</div>
-            <div class="leading-none pb-1">
+            <div class="pt-1 leading-none">Active</div>
+            <div class="pb-1 leading-none">
               <small>({{ dayjs(item.unify_active, 'YYYY-MM-DD HH:mm:ss').format('HH:mm MM-DD-YYYY') }})</small>
             </div>
           </a-tag>

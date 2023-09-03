@@ -16,11 +16,12 @@ return new class extends Migration
             $table->string('name');
             $table->string('description')->nullable();
             $table->dateTime('deadline_at')->nullable();
+            $table->integer('task_process')->default(0);
             $table->boolean('is_completed')->default(false);
             $table->dateTime('completed_at')->nullable();
-            $table->integer('created_by'); // nguoi giao task
+            $table->unsignedBigInteger('created_by'); // nguoi giao task
             $table->text('assignee_id')->nullable(); // nhung nguoi duoc nhan task
-            $table->integer('patient_id')->nullable();
+            $table->unsignedBigInteger('patient_id')->nullable();
             $table->integer('task_tag_id')->nullable();
             $table->integer('task_priority_id')->default(0);
 
@@ -29,6 +30,10 @@ return new class extends Migration
             $table->integer('deleted_by')->nullable();
             
             $table->timestamps();
+
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');
+
         });
     }
 

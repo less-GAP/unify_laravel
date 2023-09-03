@@ -16,10 +16,6 @@ class GetPatientListAction
             $query->where('name', 'like', '%' . $search . '%');
         }
 
-        // if ($request->input('type')) {
-        //     $query->where('type', $request->input('type'));
-        // }
-
         return $query->with('images')->paginate($request->input('perPage', 15));
     }
 }

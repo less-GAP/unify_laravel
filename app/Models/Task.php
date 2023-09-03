@@ -9,6 +9,7 @@ use App\Traits\HasSlug;
 use App\Traits\HasTags;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Task extends Model
 {
@@ -31,6 +32,7 @@ class Task extends Model
         'deadline_at',
         'is_completed',
         'completed_at',
+        'task_process',
         'created_by',
         'assignee_id',
         'patient_id',
@@ -40,6 +42,11 @@ class Task extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    public function patient() : BelongsTo
+    {
+        return $this->belongsTo(Patient::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

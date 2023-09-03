@@ -99,9 +99,9 @@
 
 .uni-main-container .ant-select .ant-select-selector {
   padding: 0 !important;
-  height: 24px !important;
+  height: 30px !important;
   border: unset !important;
-  line-height: 24px !important;
+  line-height: 30px !important;
   font-size: inherit !important;
   font-weight: 700 !important;
   border-radius: 0 !important;
@@ -114,8 +114,8 @@
 }
 .uni-main-container .ant-select-single .ant-select-selector .ant-select-selection-item,
 .uni-main-container .ant-select-single .ant-select-selector .ant-select-selection-placeholder {
-  height: 24px !important;
-  line-height: 24px !important;
+  height: 30px !important;
+  line-height: 30px !important;
 }
 
 .uni-main-container .ant-select .ant-select-selector:focus {
@@ -126,7 +126,7 @@
 .uni-main-container .ant-select:not(.ant-select-customize-input) .ant-select-selector .ant-select-selection-search-input {
   border: unset !important;
   box-shadow: unset !important;
-  height: 24px !important;
+  height: 30px !important;
 }
 
 .uni-main-container .ant-select-single .ant-select-selector .ant-select-selection-search {
@@ -137,9 +137,9 @@
 .uni-main-container .ant-select .ant-select-selection-item,
 .uni-main-container .ant-select-single .ant-select-selector .ant-select-selection-search-input {
   padding: 0 !important;
-  height: 24px !important;
+  height: 30px !important;
   border: unset !important;
-  line-height: 24px !important;
+  line-height: 30px !important;
   font-size: inherit !important;
   font-weight: 700 !important;
   border-radius: 0 !important;
@@ -154,6 +154,8 @@
 .uni-main-container .ant-picker-focused {
   box-shadow: none !important;
   border-radius: 0 !important;
+  border: 0 !important;
+  border-bottom: 2px solid #d1d5db !important;
 }
 
 .uni-main-container .ant-select-single .ant-select-selector:after,
@@ -173,4 +175,15 @@
 .uni-main-container .ant-input:focus,
 .uni-main-container .ant-input-focused {
   border-inline-end-width: 0 !important;
+}
+
+.uni-main-container .ant-input{
+  border-radius: 0 !important;
+  padding: 4px 0 !important;
+  border: 0 !important;
+  border-bottom: 2px solid #d1d5db !important;
+}
+
+.uni-main-container textarea.ant-input{
+  border: 2px solid #d1d5db !important;
 }
