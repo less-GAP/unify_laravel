@@ -53,7 +53,6 @@ const submit = () => {
         .validate()
         .then(() => {
             if(formState.unify_process == 2){
-                formState.unify_active = dayjs().format('YYYY-MM-DD HH:mm:ss')
                 formState.unify_status = 1
             }
             updateApi( formState.id, {  ...formState }).then(rs => {
@@ -96,6 +95,16 @@ const closeDetail = function () {
                             v-model:value="formState.unify_process"
                             :options="listProcessOptions"
                             ></a-select>
+                        </a-form-item>
+                        <a-form-item required label="Active date" v-if="formState.unify_process == 2">
+                            <a-date-picker
+                            class="w-full"
+                            :default-value="dayjs().format('YYYY-MM-DD HH:mm:ss')"
+                            v-model:value="formState.unify_active"
+                            valueFormat="YYYY-MM-DD HH:mm:ss"
+                            format="MM-DD-YYYY"
+                            :disabled="formState.unify_process != 2"
+                            ></a-date-picker>
                         </a-form-item>
                         <a-form-item required label="Notes for this change" name="log_detail">
                             <a-textarea
