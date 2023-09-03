@@ -228,7 +228,7 @@ function registerTable({reload}) {
                 v-if="item.gender === 1"
             />
             <span class="pl-1">
-              <a :href="'#/patient/' + item.id" class="text-blue-700 underline">{{ item.full_name }}</a>
+              <a :href="'#/patient/' + item.id + '/detail'" class="text-blue-700 underline">{{ item.full_name }}</a>
             </span>
           </div>
         </template>

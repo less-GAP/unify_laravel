@@ -20,6 +20,7 @@ class Patient extends Model
     public $timestamps = true;
 
     protected $fillable = [
+        'unify_number',
         'unify_active',
         'unify_status',
         'unify_process',
@@ -61,6 +62,30 @@ class Patient extends Model
         return $this->hasMany(Task::class);
     }
 
+    protected static function boot() // on create, generate a unique 6-digit number starting from 100000
+    {
+        parent::boot();
+
+        static::creating(function ($patient) {
+            // Generate a unique 6-digit number starting from 100000
+            $nextUnifyNumber = self::getNextUnifyNumber();
+            $patient->unify_number = $nextUnifyNumber;
+        });
+    }
+
+    // Add a method to get the next available unify number
+    protected static function getNextUnifyNumber()
+    {
+        $lastPatient = self::orderBy('unify_number', 'desc')->first();
+
+        if ($lastPatient) {
+            $nextUnifyNumber = $lastPatient->unify_number + 1;
+        } else {
+            $nextUnifyNumber = 100000; // Start from 100000 if no records exist
+        }
+
+        return $nextUnifyNumber;
+    }
 
     // public function getImageUrlAttribute()
     // {

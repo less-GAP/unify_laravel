@@ -8,6 +8,14 @@ export default [{
   children: [
     {
       meta: {
+        title: "Add Patient",
+      },
+      path: "/patient/new",
+      name: "patient-add",
+      component: () => import("./Edit.vue"),
+    },
+    {
+      meta: {
         title: "Patient Edit",
       },
       path: "/patient/:id/edit",
@@ -36,7 +44,7 @@ export default [{
   meta: {
     title: "Patient Detail",
   },
-  path: "/patient/:id",
+  path: "/patient/:id/detail",
   name: "patient-detail",
   component: () => import("./Detail.vue"),
 },

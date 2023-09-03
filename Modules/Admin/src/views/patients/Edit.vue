@@ -25,6 +25,7 @@ const listDoctors = fetchListDoctorsApi();
 const listDoctorStatus = fetchListDoctorStatusApi();
 const loading = ref(false);
 const authStore = useAuthStore();
+const currentRoute = router.currentRoute.value;
 
 const genderList = [
   {
@@ -53,8 +54,9 @@ const formState = reactive({});
 
 const fetch = async function () {
   loading.value = true;
-  var id = router.currentRoute.value.params.id;
-  if (id !== 'new') {
+  var nameRoute = currentRoute.name;
+  var id = currentRoute.params.id;
+  if (nameRoute == 'patient-edit') {
     loading.value = true
     const value = await fetchDetailApi(id)
     Object.assign(formState, value.data)

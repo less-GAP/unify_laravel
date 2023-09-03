@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('unify_number')->unique()->index();
 
             $table->dateTime('unify_active')->nullable();
             $table->integer('unify_status')->nullable();

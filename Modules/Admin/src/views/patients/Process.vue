@@ -32,7 +32,7 @@ const auth = useAuthStore();
 const customFormat = 'MM-DD-YYYY';
 const dbFormat = "YYYY-MM-DD";
 const age = (formState) => {
-  return formState.dob ? '(' + dayjs().diff(dayjs(formState.dob, dbFormat), 'year') + ' years old)' : '';
+    return formState.dob ? '(' + dayjs().diff(dayjs(formState.dob, dbFormat), 'year') + ' years old)' : '';
 };
 
 const fetch = async function () {
@@ -52,10 +52,10 @@ const submit = () => {
     formRef.value
         .validate()
         .then(() => {
-            if(formState.unify_process == 2){
+            if (formState.unify_process == 2) {
                 formState.unify_status = 1
             }
-            updateApi( formState.id, {  ...formState }).then(rs => {
+            updateApi(formState.id, { ...formState }).then(rs => {
                 Object.assign(formState, rs.data.result)
             });
         })
@@ -87,32 +87,22 @@ const closeDetail = function () {
             </a-card>
             <div class="px-4 mt-5 overflow-y-auto" style="height:calc(100% - 60px)">
                 <div class="flex flex-wrap -mx-4">
-                    <h3 class="block w-full px-4 mb-4 leading-6"><strong>{{ formState.full_name }}</strong> <span class="text-xs leading-6">{{ age(formState) }}</span></h3>
+                    <h3 class="block w-full px-4 mb-4 leading-6"><strong>{{ formState.full_name }}</strong> <span
+                            class="text-xs leading-6">{{ age(formState) }}</span></h3>
                     <div class="w-full px-4">
                         <a-form-item required v-if="auth.user.role == 'admin'" label="Choose process" name="unify_process">
-                            <a-select
-                            class="w-full"
-                            v-model:value="formState.unify_process"
-                            :options="listProcessOptions"
-                            ></a-select>
+                            <a-select class="w-full" v-model:value="formState.unify_process"
+                                :options="listProcessOptions"></a-select>
                         </a-form-item>
                         <a-form-item required label="Active date" v-if="formState.unify_process == 2">
-                            <a-date-picker
-                            class="w-full"
-                            :default-value="dayjs().format('YYYY-MM-DD HH:mm:ss')"
-                            v-model:value="formState.unify_active"
-                            valueFormat="YYYY-MM-DD HH:mm:ss"
-                            format="MM-DD-YYYY"
-                            :disabled="formState.unify_process != 2"
-                            ></a-date-picker>
+                            <a-date-picker class="w-full" :showTime="{ format: 'HH:mm' }"
+                            inputReadOnly
+                                v-model:value="formState.unify_active" valueFormat="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"
+                                :disabled="formState.unify_process != 2"></a-date-picker>
                         </a-form-item>
                         <a-form-item required label="Notes for this change" name="log_detail">
-                            <a-textarea
-                            class="w-full"
-                            v-model:value="formState.log_detail"
-                            :rows="4"
-                            :auto-size="{ minRows: 4, maxRows: 8 }"
-                            ></a-textarea>
+                            <a-textarea class="w-full" v-model:value="formState.log_detail" :rows="4"
+                                :auto-size="{ minRows: 4, maxRows: 8 }"></a-textarea>
                         </a-form-item>
                     </div>
                 </div>
