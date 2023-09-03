@@ -3,7 +3,7 @@ import { reactive, h, ref, toRaw } from "vue";
 import { useMainStore } from "@/stores/main";
 import router from "@/router";
 import Api from "@/utils/Api";
-import { mdiGenderMale, mdiGenderFemale, mdiFolderMultipleImage, mdiPill, mdiMedicalBag, mdiNoteTextOutline } from '@mdi/js';
+import { mdiGenderMale, mdiGenderFemale, mdiFolderMultipleImage, mdiPill, mdiMedicalBag, mdiNoteText, mdiBagPersonal } from '@mdi/js';
 import { BaseIcon } from "@/components";
 import 'jodit/es5/jodit.css';
 import dayjs from 'dayjs';
@@ -99,9 +99,13 @@ fetch();
                                 <span>Active date</span>
                                 <span class="text-xs ml-auto">{{ dayjs(formState.unify_active, 'YYYY-MM-DD HH:mm:ss').format('HH:mm MM-DD-YYYY') }}</span>
                             </li>
-                            <li class="flex items-center py-3" v-if="formState.unify_status === 1">
+                            <li class="flex items-center py-3">
                                 <span>Create date</span>
                                 <span class="text-xs ml-auto">{{ dayjs(formState.created_at, 'YYYY-MM-DD HH:mm:ss').format('HH:mm MM-DD-YYYY') }}</span>
+                            </li>
+                            <li class="flex items-center py-3">
+                                <span>Saler</span>
+                                <span class="text-xs ml-auto">{{ formState.sale_user }}</span>
                             </li>
                         </ul>
                     </div>
@@ -113,7 +117,7 @@ fetch();
                             <div class="grid">
                                 <div class="py-2 flex items-center font-semibold">
                                     <div clas="text-green-500">
-                                        <BaseIcon :path="mdiNoteTextOutline" class="w-6" />
+                                        <BaseIcon :path="mdiNoteText" class="w-6" />
                                     </div>
                                     <div class="ml-2">ABOUT</div>
                                 </div>
@@ -154,6 +158,14 @@ fetch();
                                         <div class="py-2">
                                             <a class="text-blue-800" href="mailto:">{{ formState.email }}</a>
                                         </div>
+                                    </div>
+                                    <div class="grid grid-cols-2">
+                                        <div class="py-2 font-semibold">Weight</div>
+                                        <div class="py-2">{{ formState.weight ? formState.weight : 'N/A' }}</div>
+                                    </div>
+                                    <div class="grid grid-cols-2">
+                                        <div class="py-2 font-semibold">Height</div>
+                                        <div class="py-2">{{ formState.height ? formState.height : 'N/A' }}</div>
                                     </div>
                                    
                                 </div>
@@ -217,6 +229,24 @@ fetch();
                             <!-- End of Experience and education grid -->
                         </div>
                         <!-- End of profile tab -->
+
+
+                        <div class="my-4"></div>
+
+                        <!-- Experience and education -->
+                        <div class="bg-white shadow text-gray-600 hover:text-gray-700 hover:shadow p-5 rounded-lg">
+
+                            <div class="grid grid-cols-2">
+                                <div>
+                                    <div class="flex items-center space-x-2 font-semibold text-gray-900 leading-8 mb-3">
+                                        <span clas="text-green-500">
+                                            <BaseIcon :path="mdiBagPersonal" class="w-6" />
+                                        </span>
+                                        <span class="tracking-wide">PRODUCTS</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
 
                         <div class="my-4"></div>
