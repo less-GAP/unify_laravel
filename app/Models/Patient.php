@@ -80,6 +80,10 @@ class Patient extends Model
 
         if ($lastPatient) {
             $nextUnifyNumber = $lastPatient->unify_number + 1;
+            
+            while (self::find($nextUnifyNumber)) {
+                $nextUnifyNumber++;
+            }
         } else {
             $nextUnifyNumber = 100000; // Start from 100000 if no records exist
         }
