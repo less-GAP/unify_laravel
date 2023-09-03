@@ -4,6 +4,7 @@ import { CloseCircleOutlined } from '@ant-design/icons-vue';
 import router from "@/router";
 import {useAuthStore} from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
+import { getProcess } from "@/utils/Process";
 
 const prefix = 'patient'
 const {
@@ -106,8 +107,10 @@ const closeDetail = function () {
           </template>
         </a-button>
         <a-space class="float-right">
-          <a-tag v-if="formState.status == 'publish'" color="success">Published</a-tag>
-          <a-tag v-else-if="formState.status" color="orange">{{ formState.status }}</a-tag>
+          <a-tag v-if="formState.unify_process == 0" color="gray">{{ getProcess(formState.unify_process)?getProcess(formState.unify_process).label:'' }}</a-tag>
+          <a-tag v-if="formState.unify_process == 1" color="orange">{{ getProcess(formState.unify_process)?getProcess(formState.unify_process).label:'' }}</a-tag>
+          <a-tag v-if="formState.unify_process == 2" color="blue">{{ getProcess(formState.unify_process)?getProcess(formState.unify_process).label:'' }}</a-tag>
+          <a-tag v-else-if="formState.unify_process" color="gray">{{ getProcess(formState.unify_process)?getProcess(formState.unify_process).label:'' }}</a-tag>
           <!-- <a-button @click="submit('draft')" :loading="loadingDraft" type="dashed">Save Draft</a-button> -->
           <a-button @click="submit('publish')" :loading="loading" type="primary">Save And Active</a-button>
         </a-space>

@@ -81,7 +81,6 @@ const closeDetail = function () {
                     </template>
                 </a-button>
                 <a-space class="float-right">
-                    <a-tag color="success">Published</a-tag>
                     <a-button @click="submit()" :loading="loading" type="primary">Update</a-button>
                 </a-space>
             </a-card>
