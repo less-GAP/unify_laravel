@@ -5,6 +5,7 @@ import router from "@/router";
 import {useAuthStore} from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import { getProcess } from "@/utils/Process";
+import dayjs from 'dayjs';
 
 const prefix = 'patient'
 const {
@@ -79,6 +80,9 @@ const submit = (status) => {
   formRef.value
     .validate()
     .then(() => {
+      if(formState.unify_status>1){ // die or inactive => to archive
+        formState.unify_inactive_at = dayjs().format('YYYY-MM-DD HH:mm:ss');
+      }
       createApi({ ...formState, status: status }).then(rs => {
         Object.assign(formState, rs.data.result)
       });
@@ -107,12 +111,13 @@ const closeDetail = function () {
           </template>
         </a-button>
         <a-space class="float-right">
+          <a-tag v-if="formState.unify_status == 2" color="gray">Inactive</a-tag>
+          <a-tag v-if="formState.unify_status == 3" color="gray">Decease</a-tag>
           <a-tag v-if="formState.unify_process == 0" color="gray">{{ getProcess(formState.unify_process)?getProcess(formState.unify_process).label:'' }}</a-tag>
           <a-tag v-if="formState.unify_process == 1" color="orange">{{ getProcess(formState.unify_process)?getProcess(formState.unify_process).label:'' }}</a-tag>
-          <a-tag v-if="formState.unify_process == 2" color="blue">{{ getProcess(formState.unify_process)?getProcess(formState.unify_process).label:'' }}</a-tag>
-          <a-tag v-else-if="formState.unify_process" color="gray">{{ getProcess(formState.unify_process)?getProcess(formState.unify_process).label:'' }}</a-tag>
-          <!-- <a-button @click="submit('draft')" :loading="loadingDraft" type="dashed">Save Draft</a-button> -->
-          <a-button @click="submit('publish')" :loading="loading" type="primary">Save And Active</a-button>
+          <a-tag v-if="formState.unify_process == 2 && formState.unify_status < 2" color="blue">Running</a-tag>
+          <a-button v-if="currentRoute.name == 'patient-add'" @click="submit('publish')" :loading="loading" type="primary">Save And Active</a-button>
+          <a-button v-else @click="submit('publish')" :loading="loading" type="primary">Update</a-button>
         </a-space>
       </a-card>
       <div class="px-4 mt-5 overflow-y-auto" style="height:calc(100% - 60px);">
@@ -121,6 +126,39 @@ const closeDetail = function () {
             <a-form-item v-if="currentRoute.name=='patient-edit'" label="Note for this change" name="log_detail" :rules="[{required: true}]">
               <a-textarea class="!rounded-none w-full" v-model:value="formState.log_detail" placeholder="Make a note of any changes you make to the patient record"
                 :auto-size="{ minRows: 2, maxRows: 10 }" />
+            </a-form-item>
+          </div>
+          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4 empty:hidden">
+            <a-form-item v-if="currentRoute.name=='patient-edit' && formState.unify_process==2" label="Status" :rules="[{required: true}]">
+              <a-select v-model:value="formState.unify_status" allowClear="" class="w-full"
+              :options="[
+              //   {
+              //   value:0,
+              //   label:'Waiting'
+              // },
+              {
+                value:1,
+                label:'Active'
+              },
+              {
+                value:2,
+                label:'Inactive'
+              },
+              {
+                value:3,
+                label:'Decease'
+              },
+              ]"
+              >
+              </a-select>
+            </a-form-item>
+          </div>
+          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4 empty:hidden">
+            <a-form-item v-if="currentRoute.name=='patient-edit' && formState.unify_process==2" label="Active date" :rules="[{required: true}]">
+              <a-date-picker class="w-full" :showTime="{ format: 'HH:mm' }"
+                            inputReadOnly
+                                v-model:value="formState.unify_active" valueFormat="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"
+                                :disabled="formState.unify_process != 2"></a-date-picker>
             </a-form-item>
           </div>
           <a-Divider plain>Sumary</a-Divider>

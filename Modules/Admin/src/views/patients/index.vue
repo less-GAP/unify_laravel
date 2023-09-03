@@ -86,11 +86,11 @@ const columns = [
     key: 'unify_status',
     width: 100
   },
-  {
-    title: 'PROCESS',
-    key: 'unify_process',
-    width: 125
-  },
+  // {
+  //   title: 'PROCESS',
+  //   key: 'unify_process',
+  //   width: 125
+  // },
   {
     title: 'DOB',
     key: 'dob',
@@ -243,11 +243,13 @@ function registerTable({reload}) {
             <div>{{ item.street }}, {{ item.city }}, {{ item.state }}, {{ item.zip }}</div>
           </div>
         </template>
-        <template #cell[unify_process]="{ item, column }">
-          <a-tag v-if="item.unify_process === 0 || item.unify_process=== null" color="gray">Waiting</a-tag>
-          <a-tag v-else-if="item.unify_process === 1" color="orange">Eligibility Check</a-tag>
-          <a-tag v-else-if="item.unify_process === 2" color="blue">{{ textNewPatient(item) }}</a-tag>
-        </template>
+        <!-- Update 3/9 23:34 : Merge showing process into status -->
+        <!-- <template #cell[unify_process]="{ item, column }"> 
+          <a-tag v-if="item.unify_process === 0 && item.unify_status < 2 || item.unify_process=== null && item.unify_status < 2" color="gray">Waiting</a-tag>
+          <a-tag v-else-if="item.unify_process === 1 && item.unify_status < 2" color="orange">Eligibility Check</a-tag>
+          <a-tag v-else-if="item.unify_process === 2 && item.unify_status < 2" color="blue">{{ textNewPatient(item) }}</a-tag>
+          <a-tag v-else-if="item.unify_status > 1" color="gray">Old patient</a-tag>
+        </template> -->
         <template #cell[dob]="{ item, column }">
           <small>{{ dob_value(item) }}</small>
           <br/><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
@@ -275,7 +277,8 @@ function registerTable({reload}) {
 
         </template>
         <template #cell[unify_status]="{ item, column }">
-          <a-tag v-if="item.unify_status === 0 || item.unify_status=== null" color="orange">Waiting</a-tag>
+          <a-tag v-if="item.unify_process === 0" color="yellow">Waiting</a-tag>
+          <a-tag v-else-if="item.unify_process === 1" color="orange">Eligibility Check</a-tag>
           <a-tag v-else-if="item.unify_status === 1" color="green">
             <div class="pt-1 leading-none">Active</div>
             <div class="pb-1 leading-none">

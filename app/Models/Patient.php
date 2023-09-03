@@ -51,6 +51,7 @@ class Patient extends Model
         'doctor_comment',
         'service_dates',
         'need_improve',
+        'unify_inactive_at',
         'unify_deleted',
         'unify_deleted_at',
         'unify_deleted_by',

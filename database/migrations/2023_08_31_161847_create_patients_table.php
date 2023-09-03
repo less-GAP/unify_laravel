@@ -57,7 +57,9 @@ return new class extends Migration
             $table->text('service_dates')->nullable();
             $table->integer('need_improve')->default(0);
 
-            $table->boolean('unify_deleted')->nullable();
+            //archived or trashed
+            $table->dateTime('unify_inactive_at')->nullable();// died or inactive
+            $table->boolean('unify_deleted')->default(0); // trashed
             $table->dateTime('unify_deleted_at')->nullable();
             $table->integer('unify_deleted_by')->nullable();
 

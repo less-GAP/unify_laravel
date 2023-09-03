@@ -24,7 +24,7 @@ class PatientFactory extends Factory
         return [
             'unify_active' => null,
             'unify_status' => null,
-            'unify_process' => 0,
+            'unify_process' => rand(0,1),
             'unify_task_status' => null,
             'full_name' => $full_name,
             'last_name' => $last_name,
@@ -52,7 +52,8 @@ class PatientFactory extends Factory
             'doctor_comment' => null,
             'service_dates' => null,
             'need_improve' => 0,
-            'unify_deleted' => null,
+            'unify_inactive_at' => null,
+            'unify_deleted' => 0,
             'unify_deleted_at' => null,
             'unify_deleted_by' => null,
             'sale_user' => rand(0,10),
