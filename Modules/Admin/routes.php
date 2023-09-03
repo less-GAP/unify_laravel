@@ -65,6 +65,11 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         )->routes(function () {
 
         });
+
+        Route::prefix('/patient/detail')->group(function () {
+            Route::get('{id?}', \Modules\Admin\Actions\Patient\GetDetailAction::class . '@handle');
+        });
+
     EloquentRouter::prefix('websites')
         ->handle(\App\Models\Website::class,
             [
@@ -102,6 +107,8 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'email_title,email_content')]
             ]
         );
+
+    
 
 
     Route::prefix('/config')->group(function () {
