@@ -7,10 +7,10 @@ import {DataTablePatient} from "@/components";
 import router from "@/router";
 import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
 import {UseDataTable} from "@/utils/UseDataTable";
-import {UnorderedListOutlined, ProfileOutlined, SlackOutlined, EditOutlined, DeleteOutlined} from '@ant-design/icons-vue';
+import {DeleteOutlined} from '@ant-design/icons-vue';
 import {fetchListStatusPatientApi} from './meta';
 import dayjs from 'dayjs';
-import {mdiGenderMale, mdiGenderFemale} from '@mdi/js';
+import {mdiGenderMale, mdiGenderFemale, mdiCalendarCheckOutline, mdiHistory, mdiCheckOutline, mdiPencil} from '@mdi/js';
 import {BaseIcon} from "@/components";
 import { now } from "moment";
 
@@ -29,6 +29,14 @@ console.log(auth.user.role);
 
 const itemActions = [
   {
+    label: 'Edit',
+    key: 'edit',
+    action: (item, reload) => {
+      //showEditUser({}, reload)
+      router.push(prefix + '/' + item.id)
+    }
+  },
+  {
     label: 'Edit Process',
     key: 'editProcess',
     show: () => {
@@ -39,20 +47,19 @@ const itemActions = [
     }
   },
   {
-    label: 'Edit',
-    key: 'edit',
-    action: (item, reload) => {
-      //showEditUser({}, reload)
-      router.push(prefix + '/' + item.id)
-    }
-  },
-  {
     label: 'Add Task',
     key: 'addTask',
     action: (item, reload) => {
       router.push(prefix + '/' + item.id + '/task')
     }
-  }
+  },
+  {
+    label: 'History',
+    key: 'history',
+    action: (item, reload) => {
+      router.push(prefix + '/' + item.id + '/history')
+    }
+  },
 ]
 const listActions = [
   {
@@ -67,37 +74,37 @@ const columns = [
   {
     title: 'ID',
     key: 'id',
-    width: 30
+    width: 70
   },
   {
     title: 'Patient',
     key: 'full_name',
-    width: 120
+    width: ''
   },
   {
-    title: 'ACTIVE (Date active)',
+    title: 'STATUS',
     key: 'unify_status',
-    width: 20
+    width: 100
   },
   {
-    title: 'STATUS PROCESS',
+    title: 'PROCESS',
     key: 'unify_process',
-    width: 20
+    width: 125
   },
   {
     title: 'DOB',
     key: 'dob',
-    width: 60
+    width: 100
   },
   {
     title: 'INFO',
     key: 'info',
-    width: 300
+    width: 400
   },
   {
     title: 'CREATED AT',
     key: 'created_at',
-    width: 60
+    width: 130
   },
   {
     title: 'Assigned',
@@ -119,7 +126,7 @@ const age = (item) => {
 const textNewPatient = (item) => {
   // check new patient or old patient
   // return item.unify_process === 2 && ((now() - item.date_active) > 10) ? 'New Patient' : 'Patient';
-  return 'New Patient';
+  return 'Running';
 };
 
 const tableConfig = UseDataTable(fetchListApi, {
@@ -173,18 +180,31 @@ function registerTable({reload}) {
                     <a-input @keypress="reload" v-model:value="filter.phone" placeholder="Phone"></a-input>
         </template> -->
         <template #cellAction[edit]="{ item, actionMethod }">
-          <a-tooltip title="Edit">
-            <a-button @click="actionMethod" type="text" :icon="h(EditOutlined)" label="" :outline="true"></a-button>
+          <a-tooltip title="Edit" class="mr-1">
+            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto">
+              <BaseIcon :path="mdiPencil" class="w-4 !fill-blue-200"/>
+            </a-button>
           </a-tooltip>
         </template>
         <template #cellAction[editProcess]="{ item, actionMethod }">
-          <a-tooltip v-if="auth.user.role == 'admin'" title="Approve Patient">
-            <a-button @click="actionMethod" type="text" :icon="h(SlackOutlined)" label="" :outline="true"></a-button>
+          <a-tooltip v-if="auth.user.role == 'admin'" title="Approve Patient" class="mr-1">
+            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto">
+              <BaseIcon :path="mdiCheckOutline" class="w-4"/>
+            </a-button>
           </a-tooltip>
         </template>
         <template #cellAction[addTask]="{ item, actionMethod }">
-          <a-tooltip title="Add Task">
-            <a-button @click="actionMethod" type="text" :icon="h(UnorderedListOutlined)" label="" :outline="true"></a-button>
+          <a-tooltip title="Add Task" class="mr-1">
+            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto">
+              <BaseIcon :path="mdiCalendarCheckOutline" class="w-4"/>
+            </a-button>
+          </a-tooltip>
+        </template>
+        <template #cellAction[history]="{ item, actionMethod }">
+          <a-tooltip title="View History">
+            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto">
+              <BaseIcon :path="mdiHistory" class="w-4"/>
+            </a-button>
           </a-tooltip>
         </template>
         <template #cellAction[delete]="{ item, actionMethod }">
@@ -207,7 +227,9 @@ function registerTable({reload}) {
                 class="flex-none text-pink-600"
                 v-if="item.gender === 1"
             />
-            <span class="pl-1 font-bold">{{ item.full_name }}</span>
+            <span class="pl-1">
+              <a :href="'#/patient/detail/' + item.id" class="underline text-blue-700">{{ item.full_name }}</a>
+            </span>
           </div>
         </template>
         <template #cell[image]="{ item, column }">
@@ -227,7 +249,8 @@ function registerTable({reload}) {
           <a-tag v-else-if="item.unify_process === 2" color="blue">{{ textNewPatient(item) }}</a-tag>
         </template>
         <template #cell[dob]="{ item, column }">
-          {{ dob_value(item) }}<br/><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
+          <small>{{ dob_value(item) }}</small>
+          <br/><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
         </template>
         <template #cell[assigned]="{ item, column }">
 
@@ -253,10 +276,14 @@ function registerTable({reload}) {
         </template>
         <template #cell[unify_status]="{ item, column }">
           <a-tag v-if="item.unify_status === 0 || item.unify_status=== null" color="orange">Waiting</a-tag>
-          <a-tag v-else-if="item.unify_status === 1" color="green">Active</a-tag>
+          <a-tag v-else-if="item.unify_status === 1" color="green">
+            <div class="leading-none pt-1">Active</div>
+            <div class="leading-none pb-1">
+              <small>({{ dayjs(item.unify_active, 'YYYY-MM-DD HH:mm:ss').format('HH:mm MM-DD-YYYY') }})</small>
+            </div>
+          </a-tag>
           <a-tag v-else-if="item.unify_status === 2" color="red">Inactive</a-tag>
           <a-tag v-else-if="item.unify_status === 3" color="black">Decease</a-tag>
-          <span v-if="item.unify_status === 1" >({{ dayjs(item.unify_active, 'YYYY-MM-DD HH:mm:ss').format('HH:mm MM-DD-YYYY') }})</span>
         </template>
 
 
