@@ -126,7 +126,7 @@ const age = (item) => {
 const textNewPatient = (item) => {
   // check new patient or old patient
   // return item.unify_process === 2 && ((now() - item.date_active) > 10) ? 'New Patient' : 'Patient';
-  return 'New Patient';
+  return 'Running';
 };
 
 const tableConfig = UseDataTable(fetchListApi, {
