@@ -21,7 +21,6 @@ return new class extends Migration
             $table->text('content')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
-
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
         });
