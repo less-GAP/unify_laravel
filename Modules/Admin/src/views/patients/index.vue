@@ -182,28 +182,28 @@ function registerTable({reload}) {
         <template #cellAction[edit]="{ item, actionMethod }">
           <a-tooltip title="Edit" class="mr-1">
             <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto">
-              <BaseIcon :path="mdiPencil" class="text-gray-500 w-4"/>
+              <BaseIcon :path="mdiPencil" class="w-4 !fill-blue-200"/>
             </a-button>
           </a-tooltip>
         </template>
         <template #cellAction[editProcess]="{ item, actionMethod }">
           <a-tooltip v-if="auth.user.role == 'admin'" title="Approve Patient" class="mr-1">
             <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto">
-              <BaseIcon :path="mdiCheckOutline" class="text-gray-500 w-4"/>
+              <BaseIcon :path="mdiCheckOutline" class="w-4"/>
             </a-button>
           </a-tooltip>
         </template>
         <template #cellAction[addTask]="{ item, actionMethod }">
           <a-tooltip title="Add Task" class="mr-1">
             <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto">
-              <BaseIcon :path="mdiCalendarCheckOutline" class="text-gray-500 w-4"/>
+              <BaseIcon :path="mdiCalendarCheckOutline" class="w-4"/>
             </a-button>
           </a-tooltip>
         </template>
         <template #cellAction[history]="{ item, actionMethod }">
           <a-tooltip title="View History">
             <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto">
-              <BaseIcon :path="mdiHistory" class="text-gray-500 w-4"/>
+              <BaseIcon :path="mdiHistory" class="w-4"/>
             </a-button>
           </a-tooltip>
         </template>
@@ -227,7 +227,9 @@ function registerTable({reload}) {
                 class="flex-none text-pink-600"
                 v-if="item.gender === 1"
             />
-            <span class="pl-1 font-bold">{{ item.full_name }}</span>
+            <span class="pl-1">
+              <a :href="'#/patient/detail/' + item.id" class="underline text-blue-700">{{ item.full_name }}</a>
+            </span>
           </div>
         </template>
         <template #cell[image]="{ item, column }">
@@ -247,7 +249,8 @@ function registerTable({reload}) {
           <a-tag v-else-if="item.unify_process === 2" color="blue">{{ textNewPatient(item) }}</a-tag>
         </template>
         <template #cell[dob]="{ item, column }">
-          {{ dob_value(item) }}<br/><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
+          <small>{{ dob_value(item) }}</small>
+          <br/><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
         </template>
         <template #cell[assigned]="{ item, column }">
 
