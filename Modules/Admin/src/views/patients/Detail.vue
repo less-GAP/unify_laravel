@@ -3,7 +3,7 @@ import { reactive, h, ref, toRaw } from "vue";
 import { useMainStore } from "@/stores/main";
 import router from "@/router";
 import Api from "@/utils/Api";
-import { mdiGenderMale, mdiGenderFemale, mdiFolderMultipleImage, mdiPill, mdiMedicalBag, mdiNoteText, mdiBagPersonal, mdiCheckAll,mdiCancel } from '@mdi/js';
+import { mdiGenderMale, mdiGenderFemale, mdiFolderMultipleImage, mdiPill, mdiMedicalBag, mdiNoteText, mdiBagPersonal, mdiCheckAll,mdiCancel, mdiAlertCircle } from '@mdi/js';
 import { BaseIcon } from "@/components";
 import 'jodit/es5/jodit.css';
 import dayjs from 'dayjs';
@@ -68,9 +68,11 @@ fetch();
             <div class="p-5">
                 <h1 class="mb-3 flex items-center justify-between">
                     <div class="mb-3 flex items-center">
-                        <BaseIcon :path="mdiGenderMale" class="w-6 h-6 mr-2 !text-blue-600" v-if="formState.gender === 0" />
-                        <BaseIcon :path="mdiGenderFemale" class="w-6 h-6 mr-2 text-pink-600"
-                            v-if="formState.gender === 1" />
+                        <BaseIcon
+                            :path="mdiAlertCircle"
+                            class="flex-none text-red-600 w-7 mr-1"
+                            v-if="formState.need_improve === 0 && formState.unify_status !== 1"
+                        />
                         <span>{{ formState.full_name }}</span>
                     </div>
                     <div class="text-gray-400">#{{ formState.unify_number }}</div>
@@ -145,7 +147,11 @@ fetch();
                                     </div>
                                     <div class="grid grid-cols-2">
                                         <div class="py-2 font-semibold">Gender</div>
-                                        <div class="py-2">{{ (formState.gender === 1) ? 'Female' : 'Male' }}</div>
+                                        <div class="py-2 flex items-center">
+                                            <BaseIcon :path="mdiGenderMale" class="w-6 h-6 mr-1 !text-blue-600" v-if="formState.gender === 0" />
+                                            <BaseIcon :path="mdiGenderFemale" class="w-6 h-6 mr-1 text-pink-600" v-if="formState.gender === 1" />
+                                            <div>{{ (formState.gender === 1) ? 'Female' : 'Male' }}</div>
+                                        </div>
                                     </div>
                                     <div class="grid grid-cols-2">
                                         <div class="py-2 font-semibold">Phone</div>
