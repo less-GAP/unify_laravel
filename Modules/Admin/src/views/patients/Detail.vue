@@ -65,7 +65,12 @@ fetch();
 <template>
     <LayoutAuthenticated>
         <SectionMain>
+
             <div class="p-5">
+                <a-breadcrumb>
+                    <a-breadcrumb-item>Patients</a-breadcrumb-item>
+                    <a-breadcrumb-item>Detail</a-breadcrumb-item>
+                </a-breadcrumb>
                 <h1 class="mb-3 flex items-center justify-between">
                     <div class="mb-3 flex items-center">
                         <BaseIcon

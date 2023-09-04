@@ -266,9 +266,7 @@ function registerTable({reload}) {
           <div class="flex">
             <div><strong>Tel:</strong> {{ item.phone }}</div>
           </div>
-          <div class="flex">
-            <div>{{ item.street }}, {{ item.city }}, {{ item.state }}, {{ item.zip }}</div>
-          </div>
+          <div class="block max-w-[380px] truncate">{{ item.street }}, {{ item.city }}, {{ item.state }}, {{ item.zip }}</div>
         </template>
         <!-- Update 3/9 23:34 : Merge showing process into status -->
         <!-- <template #cell[unify_process]="{ item, column }"> 
