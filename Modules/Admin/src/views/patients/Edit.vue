@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { reactive, h, ref, toRaw, computed } from "vue";
-import { CloseCircleOutlined } from '@ant-design/icons-vue';
+import { mdiBackspace, mdiContentSave } from '@mdi/js';
+import {BaseIcon} from "@/components";
+
 import router from "@/router";
 import {useAuthStore} from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
@@ -98,16 +100,22 @@ const closeDetail = function () {
   <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;"
     @close="closeDetail" :open="visible" width="90vw">
     <a-form layout="vertical" v-bind="$config.formConfig" ref="formRef" :model="formState" @finish="submit">
-      <a-card class="shadow bg-gray-50">
-        <a-button class="!hidden md:!inline-block" danger type="link" @click="closeDetail">Back
+      <div class="bg-gray-200 p-3">
+        <a-button class="!hidden md:!inline-block" type="link" @click="closeDetail">
           <template #icon>
-            <CloseCircleOutlined />
+            <div class="flex">
+              <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500" />
+              <span class="text-stone-500 ml-1">Back</span>
+            </div>
           </template>
         </a-button>
         <a-button class="!inline-flex items-center justify-center md:!hidden !w-8 !h-8 !p-0" type="primary"
           @click="closeDetail">
           <template #icon>
-            <CloseCircleOutlined />
+            <div class="flex">
+              <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500" />
+              <span class="text-stone-500 ml-1">Back</span>
+            </div>
           </template>
         </a-button>
         <a-space class="float-right">
@@ -116,12 +124,23 @@ const closeDetail = function () {
           <a-tag v-if="formState.unify_process == 0" color="gray">{{ getProcess(formState.unify_process)?getProcess(formState.unify_process).label:'' }}</a-tag>
           <a-tag v-if="formState.unify_process == 1" color="orange">{{ getProcess(formState.unify_process)?getProcess(formState.unify_process).label:'' }}</a-tag>
           <a-tag v-if="formState.unify_process == 2 && formState.unify_status < 2" color="blue">Running</a-tag>
-          <a-button v-if="currentRoute.name == 'patient-add'" @click="submit('publish')" :loading="loading" type="primary">Save And Active</a-button>
-          <a-button v-else @click="submit('publish')" :loading="loading" type="primary">Update</a-button>
+          <a-button v-if="currentRoute.name == 'patient-add'" @click="submit('publish')" type="primary" class="uppercase">
+            <div class="flex">
+              <BaseIcon :path="mdiContentSave" class="w-4 text-white" />
+              <span class="text-white ml-1">Save And Active</span>
+            </div>
+          </a-button>
+          <a-button v-else @click="submit('publish')" type="primary" class="uppercase">
+            <div class="flex">
+              <BaseIcon :path="mdiContentSave" class="w-4 text-white" />
+              <span class="text-white ml-1">Update</span>
+            </div>
+          </a-button>
         </a-space>
-      </a-card>
+      </div>
       <div class="px-4 mt-5 overflow-y-auto" style="height:calc(100% - 60px);">
         <div class="flex flex-wrap -mx-4">
+          <a-Divider v-if="currentRoute.name=='patient-edit'" class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>Log</a-Divider>
           <div class="w-full px-4">
             <a-form-item v-if="currentRoute.name=='patient-edit'" label="Note for this change" name="log_detail" :rules="[{required: true}]">
               <a-textarea class="!rounded-none w-full" v-model:value="formState.log_detail" placeholder="Make a note of any changes you make to the patient record"
@@ -161,7 +180,7 @@ const closeDetail = function () {
                                 :disabled="formState.unify_process != 2"></a-date-picker>
             </a-form-item>
           </div>
-          <a-Divider plain>Sumary</a-Divider>
+          <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>Sumary</a-Divider>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Full Name" name="full_name"
               :rules="[{ required: true, message: 'Please enter full name!' }]">
@@ -208,7 +227,7 @@ const closeDetail = function () {
               <a-input v-model:value="formState.phone" class="w-full"></a-input>
             </a-form-item>
           </div>
-          <a-Divider plain>Address</a-Divider>
+          <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>Address</a-Divider>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Street" name="street" :rules="[{ required: true, message: 'Please enter street!' }]">
 
@@ -251,14 +270,14 @@ const closeDetail = function () {
               <a-input v-model:value="formState.sub_r" class="w-full"></a-input>
             </a-form-item>
           </div>
-          <a-Divider plain>Insurance</a-Divider>
+          <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>Insurance</a-Divider>
           <div class="w-full px-4 mb-4">
             <a-form-item label="Insurance coverages" name="insurance_coverages">
               <a-checkbox-group name="insurance_coverages" v-model:value="formState.insurance_coverages"
                 :options="listInsurances"></a-checkbox-group>
             </a-form-item>
           </div>
-          <a-Divider plain>Doctor</a-Divider>
+          <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>Doctor</a-Divider>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Doctor" name="doctor">
               <a-select v-model:value="formState.doctor_id" allowClear="" class="w-full" showSearch
@@ -284,7 +303,7 @@ const closeDetail = function () {
               <a-input v-model:value="formState.doctor_comment" class="w-full"></a-input>
             </a-form-item>
           </div>
-          <a-Divider plain>Note</a-Divider>
+          <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>Note</a-Divider>
           <div class="w-full px-4 mb-4 md:w-1/2">
             <a-form-item label="Note" name="note">
               <a-textarea class="!rounded-none w-full" v-model:value="formState.note"
@@ -317,5 +336,8 @@ const closeDetail = function () {
 
 .ant-form-item {
   margin-bottom: 0;
+}
+.ant-drawer-body {
+  padding: 0 !important
 }
 </style>

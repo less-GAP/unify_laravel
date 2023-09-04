@@ -65,7 +65,7 @@ fetch();
                             v-if="formState.gender === 1" />
                         <span>{{ formState.full_name }}</span>
                     </div>
-                    <div class="text-gray-400">#{{ formState.id }}</div>
+                    <div class="text-gray-400">#{{ formState.unify_number }}</div>
                 </h1>
                 <hr class="my-2">
             </div>
