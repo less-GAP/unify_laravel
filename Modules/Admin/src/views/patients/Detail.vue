@@ -200,10 +200,10 @@ fetch();
                                         <li v-for="item in listInsurances" :key="item.value">
                                             <div class="text-teal-600">
                                                 <div class="flex">
-                                                    <BaseIcon v-if="formState.insurance_coverages.includes(item.value)"  :path="mdiCheckAll" class="w-6 text-teal-600 mr-2" />
+                                                    <BaseIcon v-if="formState.insurance_coverages && formState.insurance_coverages.includes(item.value)"  :path="mdiCheckAll" class="w-6 text-teal-600 mr-2" />
                                                     <BaseIcon v-else :path="mdiCancel" class="w-6 text-red-600 mr-2" />
                                                     <div class="flex flex-col">
-                                                        <div v-if="formState.insurance_coverages.includes(item.value)" class="text-teal-600 font-bold">{{ item.label }}</div>
+                                                        <div v-if="formState.insurance_coverages && formState.insurance_coverages.includes(item.value)" class="text-teal-600 font-bold">{{ item.label }}</div>
                                                         <div v-else class="text-gray-600">{{ item.label }}</div>
                                                         <div class="text-gray-500 text-xs">{{ item.value }}</div>
                                                     </div>
