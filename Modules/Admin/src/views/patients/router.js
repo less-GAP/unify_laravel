@@ -38,6 +38,14 @@ export default [{
       name: "patient-task",
       component: () => import("./Task.vue"),
     },
+    {
+      meta: {
+        title: "Patient History",
+      },
+      path: "/patient/:id/history",
+      name: "patient-history",
+      component: () => import("./History.vue"),
+    },
   ]
 },
 {

@@ -140,6 +140,15 @@ const closeDetail = function () {
       </div>
       <div class="px-4 mt-5 overflow-y-auto" style="height:calc(100% - 60px);">
         <div class="flex flex-wrap -mx-4">
+
+          <h1 class="w-full px-4 flex flex-col">
+              <div class="flex items-center leading-none whitespace-nowrap">
+                  <span>{{ formState.full_name }}</span>
+              </div>
+              <div class="text-gray-400 text-sm">#{{ formState.unify_number }}</div>
+          </h1>
+
+
           <a-Divider v-if="currentRoute.name=='patient-edit'" class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>Log</a-Divider>
           <div class="w-full px-4">
             <a-form-item v-if="currentRoute.name=='patient-edit'" label="Note for this change" name="log_detail" :rules="[{required: true}]">
