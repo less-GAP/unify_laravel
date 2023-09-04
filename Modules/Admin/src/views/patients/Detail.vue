@@ -3,7 +3,7 @@ import { reactive, h, ref, toRaw } from "vue";
 import { useMainStore } from "@/stores/main";
 import router from "@/router";
 import Api from "@/utils/Api";
-import { mdiGenderMale, mdiGenderFemale, mdiFolderMultipleImage, mdiPill, mdiMedicalBag, mdiNoteText, mdiBagPersonal } from '@mdi/js';
+import { mdiGenderMale, mdiGenderFemale, mdiFolderMultipleImage, mdiPill, mdiMedicalBag, mdiNoteText, mdiBagPersonal, mdiCheckAll,mdiCancel } from '@mdi/js';
 import { BaseIcon } from "@/components";
 import 'jodit/es5/jodit.css';
 import dayjs from 'dayjs';
@@ -14,6 +14,11 @@ import type { UploadProps } from 'ant-design-vue';
 
 import SectionMain from "@/components/SectionMain.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
+import {
+  fetchListInsurancesApi,
+  fetchListDoctorsApi,
+  fetchListDoctorStatusApi,
+} from "./meta";
 
 const customFormat = 'MM-DD-YYYY';
 const dbFormat = "YYYY-MM-DD"; // format of datepicker
@@ -32,6 +37,9 @@ const textNewPatient = (item) => {
   return 'Running';
 };
 
+const listInsurances = fetchListInsurancesApi();
+const listDoctors = fetchListDoctorsApi();
+const listDoctorStatus = fetchListDoctorStatusApi();
 const mainStore = useMainStore();
 const formState = reactive({})
 const loading = ref(false);
@@ -189,21 +197,18 @@ fetch();
                                         <span class="tracking-wide">INSURANCE</span>
                                     </div>
                                     <ul class="list-inside space-y-2">
-                                        <li>
-                                            <div class="text-teal-600">Owner at Her Company Inc.</div>
-                                            <div class="text-gray-500 text-xs">March 2020 - Now</div>
-                                        </li>
-                                        <li>
-                                            <div class="text-teal-600">Owner at Her Company Inc.</div>
-                                            <div class="text-gray-500 text-xs">March 2020 - Now</div>
-                                        </li>
-                                        <li>
-                                            <div class="text-teal-600">Owner at Her Company Inc.</div>
-                                            <div class="text-gray-500 text-xs">March 2020 - Now</div>
-                                        </li>
-                                        <li>
-                                            <div class="text-teal-600">Owner at Her Company Inc.</div>
-                                            <div class="text-gray-500 text-xs">March 2020 - Now</div>
+                                        <li v-for="item in listInsurances" :key="item.value">
+                                            <div class="text-teal-600">
+                                                <div class="flex">
+                                                    <BaseIcon v-if="formState.insurance_coverages.includes(item.value)"  :path="mdiCheckAll" class="w-6 text-teal-600 mr-2" />
+                                                    <BaseIcon v-else :path="mdiCancel" class="w-6 text-red-600 mr-2" />
+                                                    <div class="flex flex-col">
+                                                        <div v-if="formState.insurance_coverages.includes(item.value)" class="text-teal-600 font-bold">{{ item.label }}</div>
+                                                        <div v-else class="text-gray-600">{{ item.label }}</div>
+                                                        <div class="text-gray-500 text-xs">{{ item.value }}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </li>
                                     </ul>
                                 </div>
@@ -219,11 +224,11 @@ fetch();
                                             <div class="text-teal-600">Masters Degree in Oxford</div>
                                             <div class="text-gray-500 text-xs">March 2020 - Now</div>
                                         </li>
-                                        <li>
-                                            <div class="text-teal-600">Bachelors Degreen in LPU</div>
-                                            <div class="text-gray-500 text-xs">March 2020 - Now</div>
-                                        </li>
                                     </ul>
+                                    <div class="mt-3">
+                                        <a-Divider class="!font-bold !text-gray-700" dashed orientation="left" orientation-margin="0" plain>Doctor note</a-Divider>
+                                        <div class="text-sm">{{ formState.doctor_comment }}</div>
+                                    </div>
                                 </div>
                             </div>
                             <!-- End of Experience and education grid -->
