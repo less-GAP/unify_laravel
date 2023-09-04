@@ -109,7 +109,7 @@ const closeDetail = function () {
             </div>
           </template>
         </a-button>
-        <a-button class="!inline-flex items-center justify-center md:!hidden !w-8 !h-8 !p-0" type="primary"
+        <a-button class="!inline-flex items-center justify-center md:!hidden !w-8 !h-8 !p-0" type="link"
           @click="closeDetail">
           <template #icon>
             <div class="flex">
