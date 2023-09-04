@@ -42,9 +42,10 @@ const itemActions = [
     label: 'Approve Patient',
     key: 'editProcess',
     show: (item) => {
-      if(auth.user.role !== 'admin' || item.unify_status === 2 || item.unify_status === 3 || item.unify_status === 1){
-        return false;
-      }
+      // [1,2,3].includes(item.unify_status)
+      // if(auth.user.role !== 'admin' || item.unify_status === 2 || item.unify_status === 3 || item.unify_status === 1){
+      //   return false;
+      // }
       return true;
     },
     action: (item, reload) => {
@@ -198,8 +199,8 @@ function registerTable({reload}) {
           </a-tooltip>
         </template>
         <template #cellAction[editProcess]="{ item, actionMethod }">
-          <a-tooltip v-if="auth.user.role == 'admin'" title="Approve Patient" class="mr-1">
-            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto">
+          <a-tooltip title="Approve Patient" class="mr-1">
+            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto" :disabled="((auth.user.role !== 'admin' || [1,2,3].includes(item.unify_status)) ? true : false)" :class="((auth.user.role !== 'admin' || [1,2,3].includes(item.unify_status)) ? '!bg-gray-300 opacity-50' : '')">
               <BaseIcon :path="mdiCheckOutline" class="w-4"/>
             </a-button>
           </a-tooltip>
