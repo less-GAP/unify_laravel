@@ -10,7 +10,7 @@ import {UseDataTable} from "@/utils/UseDataTable";
 import {DeleteOutlined} from '@ant-design/icons-vue';
 import {fetchListStatusPatientApi} from './meta';
 import dayjs from 'dayjs';
-import {mdiGenderMale, mdiGenderFemale, mdiCalendarCheckOutline, mdiHistory, mdiCheckOutline, mdiPencil} from '@mdi/js';
+import {mdiGenderMale, mdiGenderFemale, mdiCalendarCheckOutline, mdiHistory, mdiCheckOutline, mdiPencil, mdiAlertCircle} from '@mdi/js';
 import {BaseIcon} from "@/components";
 import { now } from "moment";
 
@@ -83,6 +83,11 @@ const listActions = [
   },
 ]
 const columns = [
+  {
+    title: '',
+    key: 'status',
+    width: 30
+  },
   {
     title: 'Number',
     key: 'unify_number',
@@ -227,6 +232,15 @@ function registerTable({reload}) {
         <template #cell[id]="{ item, column }">
           <div>{{ item.id }}</div>
         </template>
+        <template #cell[status]="{ item, column }">
+          <div class="flex justify-center">
+                <BaseIcon
+                :path="mdiAlertCircle"
+                class="flex-none text-red-600 !mr-0"
+                v-if="item.need_improve === 0 && item.unify_status !== 1"
+            />
+          </div>
+        </template>
         <template #cell[full_name]="{ item, column }">
           <div class="flex flex-row items-center">
             <BaseIcon
@@ -239,6 +253,7 @@ function registerTable({reload}) {
                 class="flex-none text-pink-600"
                 v-if="item.gender === 1"
             />
+            
             <span class="pl-1">
               <a :href="'#/patient/' + item.id + '/detail'" class="text-blue-700 underline">{{ item.full_name }}</a>
             </span>
