@@ -1,11 +1,4 @@
 <template>
-  <div style="margin-bottom:15px">
-    <a-button style="margin-right:15px" v-if="editColumn" @click="showAddColumn =true;columnForm={}" type="primary">{{
-        __('Add Column')
-      }}
-    </a-button>
-
-  </div>
   <div
     class="ant-table ant-table-ping-right ant-table-layout-fixed ant-table-fixed-header ant-table-fixed-column ant-table-scroll-horizontal ant-table-has-fix-right ant-table-small ant-table-bordered">
     <div class="ant-table-container">
@@ -20,7 +13,7 @@
                   <template #icon>
                     <PlusOutlined></PlusOutlined>
                   </template>
-                  {{ __('Add Task') }}
+                  {{ __('Add Coverage') }}
                 </a-button>
               </template>
               <template v-else>
@@ -75,23 +68,6 @@
     </div>
 
   </div>
-
-  <a-modal
-    title="Add Column"
-    :open="showAddColumn"
-    @ok="addColumn"
-  >
-    <a-form style="margin:20px" ref="formRef" :model="columnForm" layout="vertical" name="form_in_modal">
-      <a-form-item
-        name="key"
-        label="Column Key"
-        :rules="[{ required: true, message: 'Please input group name!' }]"
-      >
-        <a-input v-model:value="columnForm.dataIndex"/>
-      </a-form-item>
-    </a-form>
-
-  </a-modal>
 </template>
 
 <script lang="ts">

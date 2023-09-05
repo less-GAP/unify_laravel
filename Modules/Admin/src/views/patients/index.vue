@@ -8,7 +8,7 @@ import router from "@/router";
 import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
 import {UseDataTable} from "@/utils/UseDataTable";
 import {DeleteOutlined} from '@ant-design/icons-vue';
-import {fetchListStatusPatientApi} from './meta';
+import {fetchListStatusPatientApi} from '@/utils/Patient';
 import dayjs from 'dayjs';
 import {mdiGenderMale, mdiGenderFemale, mdiCalendarCheckOutline, mdiHistory, mdiCheckOutline, mdiPencil, mdiAlertCircle} from '@mdi/js';
 import {BaseIcon} from "@/components";
