@@ -41,7 +41,7 @@ class AddTeamsFields extends Migration
 
         if (! Schema::hasColumn($tableNames['model_has_permissions'], $columnNames['team_foreign_key'])) {
             Schema::table($tableNames['model_has_permissions'], function (Blueprint $table) use ($tableNames, $columnNames) {
-                $table->unsignedBigInteger($columnNames['team_foreign_key'])->default('1');
+                $table->unsignedBigInteger($columnNames['team_foreign_key'])->nullable();
                 $table->index($columnNames['team_foreign_key'], 'model_has_permissions_team_foreign_key_index');
 
                 if (DB::getDriverName() !== 'sqlite') {
@@ -50,7 +50,7 @@ class AddTeamsFields extends Migration
                 $table->dropPrimary();
 
                 $table->primary([$columnNames['team_foreign_key'], PermissionRegistrar::$pivotPermission, $columnNames['model_morph_key'], 'model_type'],
-                    'model_has_permissions_permission_model_type_primary');
+                    'model_has_permissions_permission_model_type_primary')->nullable();
                 if (DB::getDriverName() !== 'sqlite') {
                     $table->foreign(PermissionRegistrar::$pivotPermission)
                         ->references('id')->on($tableNames['permissions'])->onDelete('cascade');
@@ -69,7 +69,7 @@ class AddTeamsFields extends Migration
                 $table->dropPrimary();
 
                 $table->primary([$columnNames['team_foreign_key'], PermissionRegistrar::$pivotRole, $columnNames['model_morph_key'], 'model_type'],
-                    'model_has_roles_role_model_type_primary');
+                    'model_has_roles_role_model_type_primary')->nullable();
                 if (DB::getDriverName() !== 'sqlite') {
                     $table->foreign(PermissionRegistrar::$pivotRole)
                         ->references('id')->on($tableNames['roles'])->onDelete('cascade');

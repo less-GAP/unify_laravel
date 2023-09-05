@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
             'deleted_by' => null,
         ]);
 
-        Role::create(['name' => 'Super Admin', 'team_id' => 0]);
+        Role::create(['name' => 'Super Admin']);
         $admin->assignRole('Super Admin');
         $user = \App\Models\User::factory()->create([
             'full_name' => 'User',
@@ -49,7 +49,7 @@ class DatabaseSeeder extends Seeder
             'deleted_at' => null,
             'deleted_by' => null,
         ]);
-        $role = Role::create(['name' => 'Writer', 'team_id' => 0]);
+        $role = Role::create(['name' => 'Writer']);
         Permission::findOrCreate('post.*');
         Permission::findOrCreate('patient.list');
         Permission::findOrCreate('file.*');
