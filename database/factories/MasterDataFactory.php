@@ -15,8 +15,13 @@ class MasterDataFactory extends Factory
     public function definition(): array
     {
         return [
-            'list_key' => '',
-            'data' => '',
+            'list_key' => 'patient-status',
+            'data' => [
+                [
+                    "label"=>"Test",
+                    "value"=>"Test"
+                ]
+            ],
             'created_by' => 'admin',
         ];
     }

@@ -168,9 +168,11 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Spatie\Permission\PermissionServiceProvider::class,
         Modules\Admin\ServiceProvider::class,
         Modules\Frontend\ServiceProvider::class,
         Modules\PostApi\ServiceProvider::class,
+
     ])->toArray(),
 
     /*

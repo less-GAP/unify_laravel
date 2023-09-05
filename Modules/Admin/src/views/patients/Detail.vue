@@ -186,10 +186,10 @@ fetch();
                                         <div class="py-2 font-semibold">Height</div>
                                         <div class="py-2">{{ formState.height ? formState.height : 'N/A' }}</div>
                                     </div>
-                                   
+
                                 </div>
                             </div>
-                           
+
                         </div>
                         <!-- End of about section -->
 

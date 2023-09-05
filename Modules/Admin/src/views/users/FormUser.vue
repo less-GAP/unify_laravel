@@ -1,26 +1,23 @@
-<script setup>
-import {reactive, ref} from "vue";
-import Api from "@/utils/Api";
-import { message } from 'ant-design-vue';
-const props = defineProps({
-  value: Object
-})
+<script lang="ts" setup>
+import {reactive, h, ref, toRaw, computed} from "vue";
+import {CloseCircleOutlined, ArrowLeftOutlined} from '@ant-design/icons-vue';
+import router from "@/router";
+import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
+import ApiData from "@/components/ApiData.vue";
 
-const validateMessages = {
-  required: '${label} is required!',
-  types: {
-    email: '${label} is not a valid email!',
-    number: '${label} is not a valid number!',
-  },
-  number: {
-    range: '${label} must be between ${min} and ${max}',
-  },
-};
+const prefix = 'user'
+const {
+  fetchDetailApi,
+  createApi,
+  // updateApi
+} = UseEloquentRouter(prefix)
 
-const emit = defineEmits(["success", "cancel"]);
-const loading = ref(false)
-const error = ref(null)
-const formState = reactive(props.value || {
+const loading = ref(false);
+
+const formRef = ref();
+
+
+const formState = reactive({
   isNew: true,
   full_name: "",
   username: "",
@@ -29,69 +26,84 @@ const formState = reactive(props.value || {
   password: "",
 });
 
-const formConfig = reactive({
-  "validateTrigger": "submit",
-  "label-align": "top",
-  "model": formState,
-  labelCol: {span: 24},
-  wrapperCol: {span: 24},
-  "validate-messages": validateMessages,
-});
-const submit = async function () {
-  loading.value = true
-  Api.post('user', formState).then(result => {
-    emit('success', result)
-  }).catch(e=>
-  {
-  }).finally(loading.value = false)
+const fetch = async function () {
+  loading.value = true;
+  var id = router.currentRoute.value.params.id;
+  if (id !== 'new') {
+    loading.value = true
+    const value = await fetchDetailApi(id)
+    Object.assign(formState, value.data)
+    loading.value = false
+  } else {
+    loading.value = false
+  }
 }
-const cancel = function () {
-  emit('cancel')
-}
+fetch();
 
+
+const submit = () => {
+  formRef.value
+    .validate()
+    .then(() => {
+      createApi({...formState}).then(rs => {
+        Object.assign(formState, rs.data.result)
+      });
+    })
+};
+const closeDetail = function () {
+  router.replace({path: '/'+prefix})
+}
 
 </script>
 
 <template>
-
-  <a-form
-    autocomplete="off"
-    v-bind="formConfig"
-    @finish="submit"
-  >
-    <a-form-item name="username" label="UserName" :rules="[{ required: true }]">
-      <a-input  autocomplete="off" v-model:value="formState.username"/>
-    </a-form-item>
-    <a-form-item name="full_name" label="Full Name" :rules="[{ required: true }]">
-      <a-input v-model:value="formState.full_name"/>
-    </a-form-item>
-    <a-form-item name="email" label="Email" :rules="[{ type: 'email',required: true  }]">
-      <a-input v-model:value="formState.email"/>
-    </a-form-item>
-    <a-form-item label="Role" name="role">
-      <a-radio-group v-model:value="formState.role">
-        <a-radio value="user" name="type">User</a-radio>
-        <a-radio value="admin" name="type">Admin</a-radio>
-      </a-radio-group>
-    </a-form-item>
-    <a-form-item
-      label="Password"
-      name="password"
-      :rules="formState.isNew?[{ required: true, message: 'Please input your password!' }]:[]"
+  <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;"
+            @close="closeDetail" :open="true" width="80vw">
+    <a-form
+      autocomplete="off"
+      v-bind="$config.formConfig"
+      @finish="submit"
     >
-      <a-input-password autocomplete="off" v-model:value="formState.password">
-        <template #prefix>
-          <LockOutlined class="site-form-item-icon"/>
-        </template>
-      </a-input-password>
-    </a-form-item>
+      <div style="height:50px;"
+           class=" ">
+        <a-button class="float-left" type="link" @click="closeDetail">
+          <template #icon>
+            <ArrowLeftOutlined/>
+          </template>
+        </a-button>
+        <a-space class="float-right" align="right">
+          <!--                <a-button v-if="formState.rule_detect_category_link" @click="detectCategory" :loading="loadingDraft" >Test Category</a-button>-->
+          <a-button @click="submit()" :loading="loading" type="primary">Save</a-button>
+        </a-space>
+      </div>
+      <a-form-item name="username" label="UserName" :rules="[{ required: true }]">
+        <a-input autocomplete="off" v-model:value="formState.username"/>
+      </a-form-item>
+      <a-form-item name="full_name" label="Full Name" :rules="[{ required: true }]">
+        <a-input v-model:value="formState.full_name"/>
+      </a-form-item>
+      <a-form-item name="email" label="Email" :rules="[{ type: 'email',required: true  }]">
+        <a-input v-model:value="formState.email"/>
+      </a-form-item>
+      <a-form-item label="Role" name="role">
+        <a-radio-group v-model:value="formState.role">
+          <a-radio value="user" name="type">User</a-radio>
+          <a-radio value="admin" name="type">Admin</a-radio>
+        </a-radio-group>
+      </a-form-item>
+      <a-form-item
+        label="Password"
+        name="password"
+        :rules="formState.isNew?[{ required: true, message: 'Please input your password!' }]:[]"
+      >
+        <a-input-password autocomplete="off" v-model:value="formState.password">
+          <template #prefix>
+            <LockOutlined class="site-form-item-icon"/>
+          </template>
+        </a-input-password>
+      </a-form-item>
 
-    <a-form-item>
-      <a-space>
-        <a-button :loading="loading" type="primary" html-type="submit">Submit</a-button>
-        <a-button @click="cancel" html-type="button">Cancel</a-button>
-      </a-space>
-    </a-form-item>
-  </a-form>
 
+    </a-form>
+  </a-drawer>
 </template>

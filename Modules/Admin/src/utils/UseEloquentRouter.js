@@ -1,9 +1,9 @@
 import Api from "@/utils/Api";
 import {notification} from "ant-design-vue";
 
-export function UseEloquentRouter(prefix) {
+export function UseEloquentRouter(prefix,options={}) {
   const fetchListApi = function (params) {
-    return Api.get(prefix + '/list', {params})
+    return Api.get(prefix + '/list', {params:{...options,...params}})
   };
   const fetchDetailApi = function (id) {
     return Api.get(prefix + '/' + id)

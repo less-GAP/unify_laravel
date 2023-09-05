@@ -174,7 +174,6 @@ let reloadTable = () => {
 }
 
 watch(router.currentRoute, (currentRoute) => {
-  console.log(999, currentRoute)
   if (currentRoute.path === '/'+prefix) {
     reloadTable()
   }
@@ -253,7 +252,7 @@ function registerTable({reload}) {
                 class="flex-none text-pink-600"
                 v-if="item.gender === 1"
             />
-            
+
             <span class="pl-1">
               <a :href="'#/patient/' + item.id + '/detail'" class="text-blue-700 underline">{{ item.full_name }}</a>
             </span>
@@ -269,7 +268,7 @@ function registerTable({reload}) {
           <div class="block max-w-[380px] truncate">{{ item.street }}, {{ item.city }}, {{ item.state }}, {{ item.zip }}</div>
         </template>
         <!-- Update 3/9 23:34 : Merge showing process into status -->
-        <!-- <template #cell[unify_process]="{ item, column }"> 
+        <!-- <template #cell[unify_process]="{ item, column }">
           <a-tag v-if="item.unify_process === 0 && item.unify_status < 2 || item.unify_process=== null && item.unify_status < 2" color="gray">Waiting</a-tag>
           <a-tag v-else-if="item.unify_process === 1 && item.unify_status < 2" color="orange">Eligibility Check</a-tag>
           <a-tag v-else-if="item.unify_process === 2 && item.unify_status < 2" color="blue">{{ textNewPatient(item) }}</a-tag>
@@ -280,7 +279,7 @@ function registerTable({reload}) {
           <br/><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
         </template>
         <template #cell[assigned]="{ item, column }">
-          
+
           <!-- <a-avatar-group>
             <a-avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel&key=1"/>
             <a href="#">

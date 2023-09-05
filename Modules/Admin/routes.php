@@ -30,6 +30,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         })
         ->handle(\App\Models\User::class,
             [
+                'allowedIncludes'=> ['roles','roles.permissions','permissions'],
                 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,username')]
             ]
         );
@@ -108,7 +109,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             ]
         );
 
-    
+
 
 
     Route::prefix('/config')->group(function () {

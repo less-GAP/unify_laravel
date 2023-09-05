@@ -5,7 +5,6 @@ export default [{
   path: "/example",
   name: "example",
   component: () => import("./index.vue"),
-
 }
 
 ]

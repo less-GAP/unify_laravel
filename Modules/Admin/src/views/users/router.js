@@ -3,16 +3,18 @@ export default [
     meta: {
       title: "Users",
     },
-    path: "/users",
+    path: "/user",
     name: "users",
-    component: () => import("@/views/users/index.vue"),
+    component: () => import("./index.vue"),
+    children: [
+      {
+        meta: {
+          title: "Users Detail",
+        },
+        path: "/user/:id",
+        name: "user-detail",
+        component: () => import("./FormUser.vue"),
+      }
+    ]
   },
-
-  {
-    meta: {
-      title: "Profile",
-    },
-    path: "/user/profile",
-    name: "user-profile",
-    component: () => import("@/views/users/ProfileView.vue"),
-  }]
+]

@@ -21,7 +21,7 @@ export default [
     label: "Patient",
   },
   {
-    to: "/users",
+    to: "/user",
     label: "Users",
     icon: mdiAccountMultiple,
   },
