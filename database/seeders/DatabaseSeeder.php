@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
         \App\Models\MasterData::truncate();
         Role::truncate();
         Permission::truncate();
+//        DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
         $admin = \App\Models\User::factory()->create([
             'full_name' => 'Admin',
@@ -67,6 +68,5 @@ class DatabaseSeeder extends Seeder
         \App\Models\Patient::factory()->count(30)->create();
 
         // Re-enable foreign key checks
-//        DB::statement('SET FOREIGN_KEY_CHECKS=1');
     }
 }
