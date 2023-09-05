@@ -1,14 +1,17 @@
 export default [{
   meta: {
     title: "Patient",
+    permission:'patient.list',
   },
   path: "/patient",
   name: "patient",
+
   component: () => import("./index.vue"),
   children: [
     {
       meta: {
         title: "Add Patient",
+        permission:'patient.add',
       },
       path: "/patient/new",
       name: "patient-add",

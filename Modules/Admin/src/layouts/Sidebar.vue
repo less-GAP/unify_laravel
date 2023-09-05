@@ -14,7 +14,7 @@ import menuAside from "@/menuAside.js";
 
 
           <ul class="pb-2 space-y-2">
-              <li v-for="(menu, key) in menuAside" :key="key">
+              <li v-for="(menu, key) in menuAside" v-show="$auth.hasPermission(menu.permission)" :key="key">
                 <router-link :to="menu.to" :class="router.currentRoute.value.path.includes(menu.to || menu.path)
                 ? 'flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-300 group bg-gray-300':
                 'flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-300 group'

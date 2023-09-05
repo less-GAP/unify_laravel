@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens ,HasRoles , HasFactory, Notifiable ,HasProfilePhoto;
+    use HasApiTokens ,HasRoles  , HasFactory, Notifiable ,HasProfilePhoto;
 
     /**
      * The attributes that are mass assignable.
@@ -53,6 +54,17 @@ class User extends Authenticatable
     ];
 
     protected $appends = [
-        'profile_photo_url'
+        'profile_photo_url',
+        'app_permissions'
     ];
+    public function getAppPermissionsAttribute(){
+        if($this->hasRole('Super Admin')){
+            return ['*'];
+        }
+        $permissions = $this->permissions->toArray();
+        foreach($this->roles as $role){
+            $permissions = array_merge($permissions , $role->permissions->toArray());
+        }
+        return collect($permissions)->pluck('name')->toArray();
+    }
 }

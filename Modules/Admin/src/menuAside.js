@@ -17,30 +17,36 @@ export default [
   },
   {
     to: "/patient",
+    permission:'patient.list',
     icon: mdiCardAccountDetails,
     label: "Patient",
   },
   {
     to: "/user",
+    permission:'user.list',
     label: "Users",
     icon: mdiAccountMultiple,
   },
   {
+    permission:'file.list',
     label: "File Manager",
     icon: mdiImageMultiple,
     to: "/files",
   },
   {
+    permission:'masterData.list',
     label: "Master Data",
     icon: mdiDatabase,
     to: "/master-data",
   },
   {
+    permission:'config.list',
     label: "System Config",
     icon: mdiCog,
     to: "/configs/general",
   },
   {
+    permission:'template.list',
     label: "Template",
     icon: mdiPaletteSwatch,
     to: "/email/templates",

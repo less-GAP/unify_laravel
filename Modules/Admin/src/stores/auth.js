@@ -12,10 +12,24 @@ export const useAuthStore = defineStore("auth", {
     setUser(user) {
       this.user = user
     },
+    hasPermission(permission) {
+      const user = this.user
+      if (!user) {
+        return false;
+      }
+      if (!permission || user?.app_permissions?.includes('*')) {
+        return true
+      }
+
+      const checkArr = permission.split('.')
+      if (checkArr.length > 1) {
+        return user.app_permissions.includes('*') || user.app_permissions.includes(permission) || user.app_permissions.includes(checkArr[0] + '.*');
+      }
+      return user.app_permissions.includes(permission+'.*') || user.app_permissions.includes(permission);
+    },
     logout() {
       this.$reset()
       router.push('login')
-
     },
     isLogin() {
       return this.user != null

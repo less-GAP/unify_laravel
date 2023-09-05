@@ -218,7 +218,10 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   // redirect to login page if not logged in and trying to access a restricted page
   const auth = useAuthStore();
-
+  if(!auth.hasPermission(to.meta?.permission)){
+    // alert('Permission Denied');
+    return '';
+  }
   if (!to.meta.isPublic && !auth.isLogin()) {
     auth.returnUrl = to.fullPath;
     return '/login';

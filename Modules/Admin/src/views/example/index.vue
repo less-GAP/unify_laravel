@@ -29,6 +29,12 @@ const formState = reactive({})
           {{ data }}
         </template>
       </ApiData>
+      <div v-if="$auth.hasPermission('patient.list')">
+        Check permission patient.list
+      </div>
+      <div v-if="$auth.hasPermission('patient.edit')">
+        Check permission patient.edit
+      </div>
     </SectionMain>
   </LayoutAuthenticated>
 </template>
