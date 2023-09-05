@@ -100,12 +100,12 @@ const closeDetail = function () {
   <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;"
     @close="closeDetail" :open="visible" width="90vw">
     <a-form layout="vertical" v-bind="$config.formConfig" ref="formRef" :model="formState" @finish="submit">
-      <div class="bg-gray-200 p-3">
+      <div class="p-3 bg-gray-200">
         <a-button class="!hidden md:!inline-block" type="link" @click="closeDetail">
           <template #icon>
             <div class="flex">
               <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500" />
-              <span class="text-stone-500 ml-1">Back</span>
+              <span class="ml-1 text-stone-500">Back</span>
             </div>
           </template>
         </a-button>
@@ -114,7 +114,7 @@ const closeDetail = function () {
           <template #icon>
             <div class="flex">
               <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500" />
-              <span class="text-stone-500 ml-1">Back</span>
+              <span class="ml-1 text-stone-500">Back</span>
             </div>
           </template>
         </a-button>
@@ -127,13 +127,13 @@ const closeDetail = function () {
           <a-button v-if="currentRoute.name == 'patient-add'" @click="submit('publish')" type="primary" class="uppercase">
             <div class="flex">
               <BaseIcon :path="mdiContentSave" class="w-4 text-white" />
-              <span class="text-white ml-1">Save And Active</span>
+              <span class="ml-1 text-white">Save And Active</span>
             </div>
           </a-button>
           <a-button v-else @click="submit('publish')" type="primary" class="uppercase">
             <div class="flex">
               <BaseIcon :path="mdiContentSave" class="w-4 text-white" />
-              <span class="text-white ml-1">Update</span>
+              <span class="ml-1 text-white">Update</span>
             </div>
           </a-button>
         </a-space>
@@ -141,11 +141,11 @@ const closeDetail = function () {
       <div class="px-4 mt-5 overflow-y-auto" style="height:calc(100% - 60px);">
         <div class="flex flex-wrap -mx-4">
 
-          <h1 class="w-full px-4 flex flex-col">
+          <h1 class="flex flex-col w-full px-4">
               <div class="flex items-center leading-none whitespace-nowrap">
                   <span>{{ formState.full_name }}</span>
               </div>
-              <div class="text-gray-400 text-sm">#{{ formState.unify_number }}</div>
+              <div class="text-sm text-gray-400">#{{ formState.unify_number }}</div>
           </h1>
 
 
@@ -281,7 +281,7 @@ const closeDetail = function () {
           </div>
           <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>Insurance</a-Divider>
           <div class="w-full px-4 mb-4">
-            <a-form-item label="Insurance coverages" name="insurance_coverages">
+            <a-form-item label="Insurance coverages" name="insurance_coverages" v-if="formState.unify_process<2">
               <a-checkbox-group name="insurance_coverages" v-model:value="formState.insurance_coverages"
                 :options="listInsurances"></a-checkbox-group>
             </a-form-item>
