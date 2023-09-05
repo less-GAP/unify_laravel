@@ -11,30 +11,21 @@
       </template>
     </slot>
   </div>
-  <draggable v-bind="dragOptions" v-model="newValue" class="ant-table-tbody" handle=".drag-handle" tag="tbody">
-    <template #item="{ element, index }">
-      <a-card v-for="column in getColumns()">
-        <a-button type="link" primary>
-          <template #icon>
-            <DragOutlined class="drag-handle"></DragOutlined>
-          </template>
-        </a-button>
-        <a-button @click="newValue.splice(index, 1)" style="margin-left:10px" type="link" danger>
-          <template #icon>
-            <DeleteOutlined></DeleteOutlined>
-          </template>
-        </a-button>
-        <template>
-          <slot :name="'bodyCell[' + column.dataIndex + ']'" v-bind="{ record: element, column }">
-            <a-input-number :min="column.min" :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
-              :parser="value => value.replace(/\$\s?|(,*)/g, '')" v-if="column.type == 'number'"
-              v-model:value="element[column.dataIndex]"></a-input-number>
-            <a-input v-else v-model:value="element[column.dataIndex]"></a-input>
-          </slot>
-        </template>
-      </a-card>
-    </template>
-  </draggable>
+  <a-card v-for="item in getItems()" v-model="newValue" class="relative">
+    <a-button @click="newValue.splice(index, 1)" type="link" danger class="absolute">
+      <template #icon>
+        <DeleteOutlined></DeleteOutlined>
+      </template>
+    </a-button>
+    <div>
+      <a-form-item >
+        <a-select
+        :options="newValue"
+        >
+        </a-select>
+      </a-form-item>
+    </div>
+  </a-card>
 </template>
 
 <script lang="ts">
@@ -43,6 +34,7 @@ import { isArray, isFunction } from '@/utils/is';
 import { DragOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import draggable from "vuedraggable";
 import type { FormInstance } from "ant-design-vue";
+import { fetchListInsurancesApi } from '@/utils/Patient'
 
 export default defineComponent({
   components: { draggable, DragOutlined, DeleteOutlined, PlusOutlined },
@@ -55,7 +47,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const isFirstLoaded = ref<Boolean>(false);
     const loading = ref(false);
-    const showAddColumn = ref(false);
+    const showAddItem = ref(false);
     const columnForm = ref({});
     const newValue = ref(toRaw(props.value));
     const formRef = ref<FormInstance>();
@@ -87,7 +79,7 @@ export default defineComponent({
 
     return {
 
-      getColumns() {
+      getItems() {
         if (!props.columns) {
           return []
         }
@@ -98,18 +90,17 @@ export default defineComponent({
           class: 'w-[70px]'
         }].concat(props.columns)
       },
-      addColumn() {
+      addItem() {
         formRef.value
           .validateFields()
           .then(value => {
-            showAddColumn.value = false;
+            showAddItem.value = false;
             if (!props.columns) {
               props.columns = []
             }
             props.columns.push({ title: value.dataIndex, dataIndex: value.dataIndex });
             formRef.value.resetFields();
           })
-
       },
       changeColumn(a, b) {
         console.log(a, b)
@@ -121,7 +112,7 @@ export default defineComponent({
         ghostClass: "ghost"
       },
       loading,
-      showAddColumn,
+      showAddItem,
       columnForm,
       formRef,
       newValue,

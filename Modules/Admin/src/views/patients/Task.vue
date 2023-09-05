@@ -6,7 +6,7 @@ import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import dayjs from 'dayjs';
-import { listProcess, getProcess } from "@/utils/Process";
+import { listProcess, getProcess } from "@/utils/Patient";
 
 const listProcessOptions = listProcess();
 const prefix = 'patient'
@@ -66,12 +66,12 @@ const closeDetail = function () {
     <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;"
     @close="closeDetail" :open="visible" width="50vw">
         <a-form layout="vertical" v-bind="$config.formConfig" ref="formRef" :model="formState" @finish="submit">
-            <div class="bg-gray-200 p-3">
+            <div class="p-3 bg-gray-200">
                 <a-button class="!hidden md:!inline-block" type="link" @click="closeDetail">
                     <template #icon>
                         <div class="flex">
                             <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500" />
-                            <span class="text-stone-500 ml-1">Back</span>
+                            <span class="ml-1 text-stone-500">Back</span>
                         </div>
                     </template>
                 </a-button>
@@ -80,7 +80,7 @@ const closeDetail = function () {
                     <template #icon>
                         <div class="flex">
                             <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500" />
-                            <span class="text-stone-500 ml-1">Back</span>
+                            <span class="ml-1 text-stone-500">Back</span>
                         </div>
                     </template>
                 </a-button>
@@ -90,24 +90,24 @@ const closeDetail = function () {
             </div>
             <div class="px-4 mt-5 overflow-y-auto" style="height:calc(100% - 60px)">
                 <div class="flex flex-wrap -mx-4">
-                    <h1 class="w-full px-4 flex flex-col">
+                    <h1 class="flex flex-col w-full px-4">
                         <div class="flex items-center leading-none whitespace-nowrap">
                             <span>{{ formState.full_name }}</span>
                         </div>
-                        <div class="text-gray-400 text-sm">#{{ formState.unify_number }}</div>
+                        <div class="text-sm text-gray-400">#{{ formState.unify_number }}</div>
                     </h1>
                     <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>List tasks of {{ formState.full_name }}</a-Divider>
                     <div class="w-full px-4">
                       
                         <div class="flex items-center font-medium">
-                            <div class="flex flex-grow items-center text-gray-900">
+                            <div class="flex items-center flex-grow text-gray-900">
                                 <!-- Component Start -->
-                                <div class="p-8 bg-yellow-100 rounded-xl border-red-400 w-full">
+                                <div class="w-full p-8 bg-yellow-100 border-red-400 rounded-xl">
                                     <div class="flex items-center mb-6">
-                                        <svg class="h-8 w-8 text-indigo-500 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg class="w-8 h-8 text-indigo-500 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                                         </svg>
-                                        <h4 class="font-semibold ml-3 text-lg">Need to do</h4>
+                                        <h4 class="ml-3 text-lg font-semibold">Need to do</h4>
                                     </div>
                                     <div>
                                         <input class="hidden" type="checkbox" id="task_1" checked>
@@ -172,7 +172,7 @@ const closeDetail = function () {
 
 
                     </div>
-                    <div class="w-full px-4 bg-gray-100 pb-3 mt-5">
+                    <div class="w-full px-4 pb-3 mt-5 bg-gray-100">
                         
                         <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0" plain>Recent history</a-Divider>
                         <div class="relative flex flex-col items-start p-4 mt-3 bg-white rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">

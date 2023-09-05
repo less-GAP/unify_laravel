@@ -6,7 +6,7 @@ import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import dayjs from 'dayjs';
-import { listProcess, getProcess } from "@/utils/Process";
+import { listProcess, getProcess } from "@/utils/Patient";
 
 const listProcessOptions = listProcess();
 const prefix = 'patient'
@@ -69,12 +69,12 @@ const closeDetail = function () {
     <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;"
         @close="closeDetail" :open="visible">
         <a-form layout="vertical" v-bind="$config.formConfig" ref="formRef" :model="formState" @finish="submit">
-            <div class="bg-gray-200 p-3">
+            <div class="p-3 bg-gray-200">
                 <a-button class="!hidden md:!inline-block" type="link" @click="closeDetail">
                     <template #icon>
                         <div class="flex">
                             <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500" />
-                            <span class="text-stone-500 ml-1">Back</span>
+                            <span class="ml-1 text-stone-500">Back</span>
                         </div>
                     </template>
                 </a-button>
@@ -83,7 +83,7 @@ const closeDetail = function () {
                     <template #icon>
                         <div class="flex">
                             <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500" />
-                            <span class="text-stone-500 ml-1">Back</span>
+                            <span class="ml-1 text-stone-500">Back</span>
                         </div>
                     </template>
                 </a-button>

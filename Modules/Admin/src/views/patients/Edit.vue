@@ -6,7 +6,7 @@ import {BaseIcon} from "@/components";
 import router from "@/router";
 import {useAuthStore} from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
-import { getProcess } from "@/utils/Process";
+import { getProcess } from "@/utils/Patient";
 import dayjs from 'dayjs';
 
 const prefix = 'patient'
@@ -21,7 +21,7 @@ import {
   fetchListInsurancesApi,
   fetchListDoctorsApi,
   fetchListDoctorStatusApi,
-} from "./meta";
+} from "@/utils/Patient";
 
 const listStates = fetchListStatesApi();
 const listInsurances = fetchListInsurancesApi();
