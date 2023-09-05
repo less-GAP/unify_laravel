@@ -1,13 +1,20 @@
 <script lang="ts" setup>
-import { reactive, h, ref, toRaw, computed } from "vue";
-import { mdiBackspace, mdiContentSave } from '@mdi/js';
-import {BaseIcon} from "@/components";
+import { reactive, h, ref, toRaw, computed, watch } from "vue";
+import { mdiBackspace, mdiContentSave, mdiPlusBoxMultipleOutline } from '@mdi/js';
+import { BaseIcon } from "@/components";
 
 import router from "@/router";
-import {useAuthStore} from "@/stores/auth";
+import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import { getProcess } from "@/utils/Patient";
+import InsuranceListEdit from "@/components/InsuranceListEdit.vue";
 import dayjs from 'dayjs';
+import {
+  fetchListStatesApi,
+  fetchListInsurancesApi,
+  fetchListDoctorsApi,
+  fetchListDoctorStatusApi,
+} from "@/utils/Patient";
 
 const prefix = 'patient'
 const {
@@ -15,13 +22,6 @@ const {
   createApi,
   // updateApi
 } = UseEloquentRouter(prefix)
-
-import {
-  fetchListStatesApi,
-  fetchListInsurancesApi,
-  fetchListDoctorsApi,
-  fetchListDoctorStatusApi,
-} from "@/utils/Patient";
 
 const listStates = fetchListStatesApi();
 const listInsurances = fetchListInsurancesApi();
@@ -52,9 +52,14 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  newCoverageValue: {
+    type: Array,
+    default: []
+  }
 })
 const emit = defineEmits(["close"]);
 const formState = reactive({});
+const newCoverage = ref(toRaw(props.newCoverageValue));
 
 const fetch = async function () {
   loading.value = true;
@@ -72,17 +77,17 @@ const fetch = async function () {
 fetch();
 
 const saler_id = computed(() => {
-  return formState.sale_user?formState.sale_user:authStore.user.id;
+  return formState.sale_user ? formState.sale_user : authStore.user.id;
 });
 const patient_process = computed(() => {
-  return formState.unify_process?formState.unify_process:0;
+  return formState.unify_process ? formState.unify_process : 0;
 });
 
 const submit = (status) => {
   formRef.value
     .validate()
     .then(() => {
-      if(formState.unify_status>1){ // die or inactive => to archive
+      if (formState.unify_status > 1) { // die or inactive => to archive
         formState.unify_inactive_at = dayjs().format('YYYY-MM-DD HH:mm:ss');
       }
       createApi({ ...formState, status: status }).then(rs => {
@@ -121,8 +126,10 @@ const closeDetail = function () {
         <a-space class="float-right">
           <a-tag v-if="formState.unify_status == 2" color="gray">Inactive</a-tag>
           <a-tag v-if="formState.unify_status == 3" color="gray">Decease</a-tag>
-          <a-tag v-if="formState.unify_process == 0" color="gray">{{ getProcess(formState.unify_process)?getProcess(formState.unify_process).label:'' }}</a-tag>
-          <a-tag v-if="formState.unify_process == 1" color="orange">{{ getProcess(formState.unify_process)?getProcess(formState.unify_process).label:'' }}</a-tag>
+          <a-tag v-if="formState.unify_process == 0" color="gray">{{
+            getProcess(formState.unify_process) ? getProcess(formState.unify_process).label : '' }}</a-tag>
+          <a-tag v-if="formState.unify_process == 1" color="orange">{{
+            getProcess(formState.unify_process) ? getProcess(formState.unify_process).label : '' }}</a-tag>
           <a-tag v-if="formState.unify_process == 2 && formState.unify_status < 2" color="blue">Running</a-tag>
           <a-button v-if="currentRoute.name == 'patient-add'" @click="submit('publish')" type="primary" class="uppercase">
             <div class="flex">
@@ -141,55 +148,56 @@ const closeDetail = function () {
       <div class="px-4 mt-5 overflow-y-auto" style="height:calc(100% - 60px);">
         <div class="flex flex-wrap -mx-4">
 
-          <h1 class="flex flex-col w-full px-4">
-              <div class="flex items-center leading-none whitespace-nowrap">
-                  <span>{{ formState.full_name }}</span>
-              </div>
-              <div class="text-sm text-gray-400">#{{ formState.unify_number }}</div>
+          <h1 v-if="currentRoute.name == 'patient-edit'" class="flex flex-col w-full px-4">
+            <div class="flex items-center leading-none whitespace-nowrap">
+              <span>{{ formState.full_name }}</span>
+            </div>
+            <div class="text-sm text-gray-400">#{{ formState.unify_number }}</div>
           </h1>
-
-
-          <a-Divider v-if="currentRoute.name=='patient-edit'" class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>Log</a-Divider>
+          <a-Divider v-if="currentRoute.name == 'patient-edit'" class="!font-bold !text-blue-700" dashed
+            orientation="left" orientation-margin="1rem" plain>Log</a-Divider>
           <div class="w-full px-4">
-            <a-form-item v-if="currentRoute.name=='patient-edit'" label="Note for this change" name="log_detail" :rules="[{required: true}]">
-              <a-textarea class="!rounded-none w-full" v-model:value="formState.log_detail" placeholder="Make a note of any changes you make to the patient record"
+            <a-form-item v-if="currentRoute.name == 'patient-edit'" label="Note for this change" name="log_detail"
+              :rules="[{ required: true }]">
+              <a-textarea class="!rounded-none w-full" v-model:value="formState.log_detail"
+                placeholder="Make a note of any changes you make to the patient record"
                 :auto-size="{ minRows: 2, maxRows: 10 }" />
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4 empty:hidden">
-            <a-form-item v-if="currentRoute.name=='patient-edit' && formState.unify_process==2" label="Status" :rules="[{required: true}]">
-              <a-select v-model:value="formState.unify_status" allowClear="" class="w-full"
-              :options="[
-              //   {
-              //   value:0,
-              //   label:'Waiting'
-              // },
-              {
-                value:1,
-                label:'Active'
-              },
-              {
-                value:2,
-                label:'Inactive'
-              },
-              {
-                value:3,
-                label:'Decease'
-              },
-              ]"
-              >
+            <a-form-item v-if="currentRoute.name == 'patient-edit' && formState.unify_process == 2" label="Status"
+              :rules="[{ required: true }]">
+              <a-select v-model:value="formState.unify_status" allowClear="" class="w-full" :options="[
+                //   {
+                //   value:0,
+                //   label:'Waiting'
+                // },
+                {
+                  value: 1,
+                  label: 'Active'
+                },
+                {
+                  value: 2,
+                  label: 'Inactive'
+                },
+                {
+                  value: 3,
+                  label: 'Decease'
+                },
+              ]">
               </a-select>
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4 empty:hidden">
-            <a-form-item v-if="currentRoute.name=='patient-edit' && formState.unify_process==2" label="Active date" :rules="[{required: true}]">
-              <a-date-picker class="w-full" :showTime="{ format: 'HH:mm' }"
-                            inputReadOnly
-                                v-model:value="formState.unify_active" valueFormat="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"
-                                :disabled="formState.unify_process != 2"></a-date-picker>
+            <a-form-item v-if="currentRoute.name == 'patient-edit' && formState.unify_process == 2" label="Active date"
+              :rules="[{ required: true }]">
+              <a-date-picker class="w-full" :showTime="{ format: 'HH:mm' }" inputReadOnly
+                v-model:value="formState.unify_active" valueFormat="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"
+                :disabled="formState.unify_process != 2"></a-date-picker>
             </a-form-item>
           </div>
-          <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>Sumary</a-Divider>
+          <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem"
+            plain>Sumary</a-Divider>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Full Name" name="full_name"
               :rules="[{ required: true, message: 'Please enter full name!' }]">
@@ -210,14 +218,13 @@ const closeDetail = function () {
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Date of Birth" name="dob" required>
-              <a-date-picker  v-model:value="formState.dob" valueFormat="YYYY-MM-DD" format="MM-DD-YYYY" inputReadOnly class="w-full"></a-date-picker>
+              <a-date-picker v-model:value="formState.dob" valueFormat="YYYY-MM-DD" format="MM-DD-YYYY" inputReadOnly
+                class="w-full"></a-date-picker>
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Gender" name="gender" :rules="[{ required: true, message: 'Please enter gender!' }]">
-              <a-select v-model:value="formState.gender" allowClear="" class="w-full"
-              :options="genderList"
-              >
+              <a-select v-model:value="formState.gender" allowClear="" class="w-full" :options="genderList">
               </a-select>
             </a-form-item>
           </div>
@@ -236,22 +243,20 @@ const closeDetail = function () {
               <a-input v-model:value="formState.phone" class="w-full"></a-input>
             </a-form-item>
           </div>
-          <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>Address</a-Divider>
+          <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem"
+            plain>Address</a-Divider>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Street" name="street" :rules="[{ required: true, message: 'Please enter street!' }]">
-
               <a-input v-model:value="formState.street" class="w-full"></a-input>
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Apt" name="apt" :rules="[{ message: 'Please enter apt!' }]">
-
               <a-input v-model:value="formState.apt" class="w-full"></a-input>
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="City" name="city" :rules="[{ required: true, message: 'Please enter city!' }]">
-
               <a-input v-model:value="formState.city" class="w-full"></a-input>
             </a-form-item>
           </div>
@@ -279,14 +284,49 @@ const closeDetail = function () {
               <a-input v-model:value="formState.sub_r" class="w-full"></a-input>
             </a-form-item>
           </div>
-          <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>Insurance</a-Divider>
+          <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem"
+            plain>Insurance</a-Divider>
           <div class="w-full px-4 mb-4">
-            <a-form-item label="Insurance coverages" name="insurance_coverages" v-if="formState.unify_process<2">
-              <a-checkbox-group name="insurance_coverages" v-model:value="formState.insurance_coverages"
-                :options="listInsurances"></a-checkbox-group>
-            </a-form-item>
+            <InsuranceListEdit :columns="[{
+              title: 'Coverage',
+              dataIndex: 'coverage'
+            }, {
+              title: 'Insurance ID',
+              dataIndex: 'insurance_id'
+            }, {
+              title: 'Active date',
+              dataIndex: 'active_date'
+            }, {
+              title: 'Expired date',
+              dataIndex: 'expired_date'
+            },
+            ]" v-model:value="formState.insurance_coverages"></InsuranceListEdit>
+            <!-- <a-button type="primary" @click="newCoverage.push({})">
+              <mdiPlusBoxMultipleOutline></mdiPlusBoxMultipleOutline>Add insurance
+            </a-button>
+            <div v-for="coverage in formState.insurance_coverages" v-model="newCoverage">
+              <div class="flex flex-wrap -mx-4">
+                <div class="w-1/4 px-4">
+                  <a-form-item label="Coverage">
+                    <a-select v-model:value="coverage.id" allowClear="" class="w-full" showSearch
+                      placeholder="Choose insurance" :options="listInsurances">
+                    </a-select>
+                  </a-form-item>
+                  <a-form-item label="ID Insurance">
+                    <a-input v-model:value="coverage.insurance_id"></a-input>
+                  </a-form-item>
+                  <a-form-item label="Active date">
+                    <a-date-picker valueFormat="YYYY-MM-DD" format="MM-DD-YYYY" inputReadOnly v-model:value="coverage.active_date"></a-date-picker>
+                  </a-form-item>
+                  <a-form-item label="Expired date">
+                    <a-date-picker valueFormat="YYYY-MM-DD" format="MM-DD-YYYY" inputReadOnly v-model:value="coverage.expired_date"></a-date-picker>
+                  </a-form-item>
+                </div>
+              </div>
+            </div> -->
           </div>
-          <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>Doctor</a-Divider>
+          <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem"
+            plain>Doctor</a-Divider>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Doctor" name="doctor">
               <a-select v-model:value="formState.doctor_id" allowClear="" class="w-full" showSearch
@@ -299,8 +339,7 @@ const closeDetail = function () {
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Doctor status" name="doctor_status">
-              <a-select v-model:value="formState.doctor_status" allowClear="" class="w-full"
-                placeholder="Choose status">
+              <a-select v-model:value="formState.doctor_status" allowClear="" class="w-full" placeholder="Choose status">
                 <a-select-option v-for="(status, index) in listDoctorStatus" :key="status.value" :value="status.value">{{
                   status.label
                 }}</a-select-option>
@@ -312,7 +351,8 @@ const closeDetail = function () {
               <a-input v-model:value="formState.doctor_comment" class="w-full"></a-input>
             </a-form-item>
           </div>
-          <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>Note</a-Divider>
+          <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem"
+            plain>Note</a-Divider>
           <div class="w-full px-4 mb-4 md:w-1/2">
             <a-form-item label="Note" name="note">
               <a-textarea class="!rounded-none w-full" v-model:value="formState.note"
@@ -346,6 +386,7 @@ const closeDetail = function () {
 .ant-form-item {
   margin-bottom: 0;
 }
+
 .ant-drawer-body {
   padding: 0 !important
 }

@@ -68,9 +68,11 @@ import BaseIcon from "./BaseIcon.vue"
 import RemoteSelect from "./RemoteSelect.vue"
 import InputTags from "./InputTags.vue"
 import DataListEdit from "./DataListEdit.vue"
+import InsuranceListEdit from "./InsuranceListEdit.vue"
 import ApiData from "./ApiData.vue"
 export {
   ApiData,
+  InsuranceListEdit,
   DataListEdit,
   InputTags,
   RemoteSelect,
