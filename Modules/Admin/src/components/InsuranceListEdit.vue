@@ -97,7 +97,9 @@ export default defineComponent({
       props.value = []
       emit('update', [])
     }
-
+    if (!Array.isArray(newValue.value)) {
+      newValue.value = []
+    }
     function handleChange(...args) {
       emit('change', ...args);
     }
