@@ -117,6 +117,9 @@ export default defineComponent({
     const newValue = ref(toRaw(props.value));
     const formRef = ref<FormInstance>();
 
+    if (!newValue.value) {
+      newValue.value = []
+    }
     if (!props.value) {
       props.value = []
       emit('update', [])
