@@ -8,7 +8,7 @@ import router from "@/router";
 import {
     fetchListStatesApi,
     fetchListInsurancesApi,
-} from "../patients/meta";
+} from "@/utils/Patient";
 
 const listStates = fetchListStatesApi();
 const listInsurances = fetchListInsurancesApi();
