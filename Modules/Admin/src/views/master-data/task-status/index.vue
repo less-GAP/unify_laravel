@@ -58,7 +58,12 @@ const fetch = async function () {
   loading.value = true
   var value = await fetchDetailApi(listKey)
   if (value.data) {
-    value.data.data = JSON.parse(value.data.data);
+    try {
+      value.data.data = JSON.parse(value.data.data);
+    } catch (e) {
+      console.log(e);
+      
+    }
     Object.assign(formState, value.data)
   }
   loading.value = false
