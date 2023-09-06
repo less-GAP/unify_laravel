@@ -19,7 +19,7 @@
   const loading = ref(false)
   const error = ref(null)
   const formState = reactive({
-    per_page: 50
+    per_page: 20
   });
   const formConfig = reactive({
     "validateTrigger": "submit",

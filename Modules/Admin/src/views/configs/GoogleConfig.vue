@@ -60,15 +60,16 @@
     @finish="submit"
   >
     
-      
+    <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0" plain>reCaptcha</a-Divider>
     <a-form-item name="recaptcha_site_key" label="Recaptcha Site Key">
-        <a-input autocomplete="off" v-model:value="formState.recaptcha_site_key" class="rounded border-gray-300"/>
+      <a-input autocomplete="off" v-model:value="formState.recaptcha_site_key" class="rounded border-gray-300"/>
     </a-form-item>
-
-    <a-form-item name="recaptcha_secret_key" label="Recaptcha Secret Key">
+      
+      <a-form-item name="recaptcha_secret_key" label="Recaptcha Secret Key">
         <a-input autocomplete="off" v-model:value="formState.recaptcha_secret_key" class="rounded border-gray-300"/>
     </a-form-item>
-
+        
+    <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0" plain>Google</a-Divider>
     <a-form-item name="google_id" label="Google ID">
         <a-input autocomplete="off" v-model:value="formState.google_id" class="rounded border-gray-300"/>
     </a-form-item>

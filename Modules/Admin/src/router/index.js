@@ -91,14 +91,14 @@ let routes = [
         name: "config-postspages",
         component: () => import("@/views/configs/PostsConfig.vue"),
       },
-      // {
-      //   meta: {
-      //     title: "QuickBooks Configuration",
-      //   },
-      //   path: "/configs/quickbooks",
-      //   name: "config-quickbooks",
-      //   component: () => import("@/views/configs/QuickBooksConfig.vue"),
-      // },
+      {
+        meta: {
+          title: "QuickBooks Configuration",
+        },
+        path: "/configs/quickbooks",
+        name: "config-quickbooks",
+        component: () => import("@/views/configs/QuickBooksConfig.vue"),
+      },
       {
         meta: {
           title: "CloudFlare Configuration",
@@ -117,20 +117,28 @@ let routes = [
       },
       {
         meta: {
+          title: "Marketing Configuration",
+        },
+        path: "/configs/marketing",
+        name: "config-marketing",
+        component: () => import("@/views/configs/MarketingConfig.vue"),
+      },
+      {
+        meta: {
           title: "Payment API Configuration",
         },
         path: "/configs/paymentapi",
         name: "config-paymentapi",
         component: () => import("@/views/configs/PaymentConfig.vue"),
       },
-      // {
-      //   meta: {
-      //     title: "Social Configuration",
-      //   },
-      //   path: "/configs/social",
-      //   name: "config-social",
-      //   component: () => import("@/views/configs/SocialConfig.vue"),
-      // },
+      {
+        meta: {
+          title: "Social Configuration",
+        },
+        path: "/configs/social",
+        name: "config-social",
+        component: () => import("@/views/configs/SocialConfig.vue"),
+      },
       {
         meta: {
           title: "SMTP Configuration",
