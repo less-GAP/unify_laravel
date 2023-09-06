@@ -58,7 +58,7 @@ class User extends Authenticatable
         'app_permissions'
     ];
     public function getAppPermissionsAttribute(){
-        if($this->hasRole('Super Admin')){
+        if($this->hasRole('Amin')){
             return ['*'];
         }
         $permissions = $this->permissions->toArray();

@@ -181,7 +181,7 @@ function registerTable({ reload }) {
   reloadTable = reload
 }
 
-console.log(auth.user.roles.find(x => x.name === 'Super Admin') !== false);
+console.log(auth.user.roles.find(x => x.name === 'Amin') !== false);
 
 </script>
 
@@ -205,8 +205,8 @@ console.log(auth.user.roles.find(x => x.name === 'Super Admin') !== false);
         <template #cellAction[editProcess]="{ item, actionMethod }">
           <a-tooltip title="Approve Patient" class="mr-1">
             <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto"
-              :disabled="((auth.user.roles.find(x => x.name === 'Super Admin') !== false && [1, 2, 3].includes(item.unify_status)) ? true : false)"
-              :class="((auth.user.roles.find(x => x.name === 'Super Admin') !== false && [1, 2, 3].includes(item.unify_status)) ? '!bg-gray-300 opacity-50' : '')">
+              :disabled="((auth.user.roles.find(x => x.name === 'Amin') !== false && [1, 2, 3].includes(item.unify_status)) ? true : false)"
+              :class="((auth.user.roles.find(x => x.name === 'Amin') !== false && [1, 2, 3].includes(item.unify_status)) ? '!bg-gray-300 opacity-50' : '')">
               <BaseIcon :path="mdiCheckOutline" class="w-4" />
             </a-button>
           </a-tooltip>

@@ -29,7 +29,27 @@ class DatabaseSeeder extends Seeder
         $admin = \App\Models\User::factory()->create([
             'full_name' => 'Admin',
             'username' => 'admin',
-            'email' => 'admin@test.com',
+            'email' => 'admin@unifymed.net',
+            'email_verified_at' => Carbon::now(),
+            'password' => \Hash::make('123456'),
+            'deleted' => 0,
+            'deleted_at' => null,
+            'deleted_by' => null,
+        ]);
+        $seller1 = \App\Models\User::factory()->create([
+            'full_name' => 'Nguyen Van A',
+            'username' => 'seller1',
+            'email' => 'seller1@unifymed.net',
+            'email_verified_at' => Carbon::now(),
+            'password' => \Hash::make('123456'),
+            'deleted' => 0,
+            'deleted_at' => null,
+            'deleted_by' => null,
+        ]);
+        $seller2 = \App\Models\User::factory()->create([
+            'full_name' => 'Nguyen Van B',
+            'username' => 'seller2',
+            'email' => 'seller2@unifymed.net',
             'email_verified_at' => Carbon::now(),
             'password' => \Hash::make('123456'),
             'deleted' => 0,
@@ -37,26 +57,22 @@ class DatabaseSeeder extends Seeder
             'deleted_by' => null,
         ]);
 
-        Role::create(['name' => 'Super Admin']);
-        $admin->assignRole('Super Admin');
-        $user = \App\Models\User::factory()->create([
-            'full_name' => 'User',
-            'username' => 'user',
-            'email' => 'user@test.com',
-            'email_verified_at' => Carbon::now(),
-            'password' => \Hash::make('123456'),
-            'deleted' => 0,
-            'deleted_at' => null,
-            'deleted_by' => null,
-        ]);
-        $role = Role::create(['name' => 'Writer']);
+        $role_admin     = Role::create(['name' => 'Admin']);
+        $role_seller    = Role::create(['name' => 'Seller']);
+        $role_staff     = Role::create(['name' => 'Staff']);
+
+        $admin->assignRole('Admin');
+        $seller1->assignRole('Seller');
+        $seller2->assignRole('Seller');
+
+
+
         Permission::findOrCreate('post.*');
         Permission::findOrCreate('patient.list');
         Permission::findOrCreate('file.*');
-        $role->givePermissionTo('post.*');
-        $role->givePermissionTo('patient.list');
-        $user->assignRole('Writer');
-        $user->givePermissionTo('file.*');
+        // $role_seller->givePermissionTo('post.*');
+        // $role_seller->givePermissionTo('patient.list');
+        // $user->givePermissionTo('file.*');
 
         \App\Models\MasterData::factory()->create([
             'list_key' => 'task-status',

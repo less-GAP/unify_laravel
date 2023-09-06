@@ -6,6 +6,7 @@ import {DataTable} from "@/components";
 import router from "@/router";
 import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
 import {UseDataTable} from "@/utils/UseDataTable";
+import {useAuthStore} from "@/stores/auth";
 
 const prefix = 'user'
 const {
@@ -15,7 +16,7 @@ const {
   updateApi
 } = UseEloquentRouter(prefix)
 const isShowModal = ref(false)
-
+const useAuthStore = useAuthStore();
 const itemActions = [
   {
     label: 'Edit',
@@ -97,9 +98,9 @@ function registerTable({reload}) {
         </a-popconfirm>
       </template>
       <template #cell[full_name]="{item,column}">
-        <img class="w-10 h-10 float-left rounded-full" :src="item.profile_photo_url"
+        <img class="float-left w-10 h-10 rounded-full" :src="item.profile_photo_url"
              :alt="item.full_name">
-        <div class="pl-3 float-left">
+        <div class="float-left pl-3">
           <div class="text-base font-semibold">{{ item.full_name }}</div>
           <div class="font-normal text-gray-500">{{ item.email }}</div>
         </div>
@@ -107,6 +108,9 @@ function registerTable({reload}) {
       <template #cell[status]="{item,column}">
         <a-switch @change="updateApi(item.id,{status:item.status})" checkedValue="active" unCheckedValue="inactive"
                   v-model:checked="item.status"/>
+      </template>
+      <template #cell[role]="{item,column}">
+
       </template>
     </DataTable>
 

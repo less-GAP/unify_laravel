@@ -96,7 +96,7 @@ const closeDetail = function () {
                     <h3 class="block w-full px-4 mb-4 leading-6"><strong>{{ formState.full_name }}</strong> <span
                             class="text-xs leading-6">{{ age(formState) }}</span></h3>
                     <div class="w-full px-4">
-                        <a-form-item required v-if="auth.user.roles.find(x => x.name === 'Super Admin') !== false" label="Choose process" name="unify_process">
+                        <a-form-item required v-if="auth.user.roles.find(x => x.name === 'Amin') !== false" label="Choose process" name="unify_process">
                             <a-select class="w-full" v-model:value="formState.unify_process"
                                 :options="listProcessOptions"></a-select>
                         </a-form-item>
