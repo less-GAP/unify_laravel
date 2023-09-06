@@ -16,7 +16,7 @@ const {
   updateApi
 } = UseEloquentRouter(prefix)
 const isShowModal = ref(false)
-const useAuthStore = useAuthStore();
+const currentUser = useAuthStore().user;
 const itemActions = [
   {
     label: 'Edit',
@@ -86,7 +86,7 @@ function registerTable({reload}) {
         >
           <a-button
             type="text"
-            v-if="item.role !== 'admin'"
+            v-if="currentUser.role !== 'admin'"
             danger
             :icon="h(DeleteOutlined)"
             label=""
