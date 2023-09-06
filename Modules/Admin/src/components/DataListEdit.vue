@@ -1,10 +1,23 @@
 <template>
   <div style="margin-bottom:15px">
-    <a-button style="margin-right:15px" v-if="editColumn" @click="showAddColumn =true;columnForm={}" type="primary">{{
-        __('Add Column')
-      }}
-    </a-button>
+    <a-space class="float-left">
 
+      <a-button @click="newValue.push({})">
+        <template #icon>
+          <PlusOutlined></PlusOutlined>
+        </template>
+        {{ __('Add Row') }}
+      </a-button>
+      <a-button style="margin-right:15px" v-if="editColumn" @click="showAddColumn =true;columnForm={}" type="primary">{{
+          __('Add Column')
+        }}
+      </a-button>
+    </a-space>
+    <a-space class="float-right">
+      <a-button v-if="drawEdit" @click="showDrawEdit" class="float-right" type="dashed" warning>Draw Edit</a-button>
+      <slot name="action">
+      </slot>
+    </a-space>
   </div>
   <div
     class="ant-table ant-table-ping-right ant-table-layout-fixed ant-table-fixed-header ant-table-fixed-column ant-table-scroll-horizontal ant-table-has-fix-right ant-table-small ant-table-bordered">
@@ -16,19 +29,14 @@
               v-for="(column,columnIndex) in getColumns()" scope="col">
             <slot name="column" v-bind="{column}">
               <template v-if="column.dataIndex=='action'">
-                <a-button @click="newValue.push({})">
-                  <template #icon>
-                    <PlusOutlined></PlusOutlined>
-                  </template>
-                  {{ __('Add Row') }}
-                </a-button>
+
               </template>
               <template v-else>
                 {{ column.title }}
                 <a-button size="small" v-if="editColumn && column.dataIndex !=='action'"
                           @click="columns.splice((columnIndex-1),1)" style="float:right" type="link" danger>
                   <template #icon>
-                    <Icon icon="ion:remove-outline"></Icon>
+                    <BaseIcon icon="ion:remove-outline"></BaseIcon>
                   </template>
                 </a-button>
               </template>
@@ -36,10 +44,11 @@
           </th>
         </tr>
         </thead>
-        <draggable v-bind="dragOptions" v-model="newValue" class="ant-table-tbody" handle=".drag-handle" tag="tbody">
+        <draggable v-bind="dragOptions" v-model="newValue" itemKey="value" class="ant-table-tbody" handle=".drag-handle"
+                   tag="tbody">
           <template #item="{ element ,index }">
             <tr class="ant-table-measure-row">
-              <td v-for="column in getColumns()" scope="row">
+              <td :data-label="column.title" v-for="column in getColumns()" scope="row">
                 <template v-if="column.dataIndex=='action'">
                   <div style="width:100px">
 
@@ -59,11 +68,15 @@
                 </template>
                 <template v-else>
                   <slot :name="'bodyCell['+column.dataIndex+']'" v-bind="{record:element,column}">
-                    <a-input-number :min="column.min"
+                    <a-input-number v-bind="column.props" :min="column.min"
                                     :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                                     :parser="value => value.replace(/\$\s?|(,*)/g, '')" v-if="column.type =='number'"
                                     v-model:value="element[column.dataIndex]"></a-input-number>
-                    <a-input v-else v-model:value="element[column.dataIndex]"></a-input>
+                    <a-switch v-bind="column.props" v-else-if="column.type =='switch'"
+                              v-model:checked="element[column.dataIndex]"></a-switch>
+                    <component :is="column.component" v-bind="column.props" v-else-if="column.type =='component'"
+                               v-model:value="element[column.dataIndex]"></component>
+                    <a-input v-bind="column.props" v-else v-model:value="element[column.dataIndex]"></a-input>
                   </slot>
                 </template>
               </td>
@@ -78,7 +91,7 @@
 
   <a-modal
     title="Add Column"
-    :open="showAddColumn"
+    v-model:visible="showAddColumn"
     @ok="addColumn"
   >
     <a-form style="margin:20px" ref="formRef" :model="columnForm" layout="vertical" name="form_in_modal">
@@ -92,6 +105,14 @@
     </a-form>
 
   </a-modal>
+  <a-drawer title="Draw edit" v-model:open="showEdit" width="50vw">
+    <a-form label-position="top" label-width="200px">
+      <a-form-item label="Data">
+        <a-textarea rows="10" v-model:value="jsonEdit" v-if="showEdit"></a-textarea>
+      </a-form-item>
+      <a-button class="mt-5" type="primary" @click="saveJson">Submit</a-button>
+    </a-form>
+  </a-drawer>
 </template>
 
 <script lang="ts">
@@ -99,16 +120,18 @@ import {computed, defineComponent, watch, ref, onMounted, unref, toRaw} from 'vu
 import {isArray, isFunction} from '@/utils/is';
 import {DragOutlined, DeleteOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import draggable from "vuedraggable";
+import BaseIcon from "./BaseIcon.vue";
 import type {FormInstance} from "ant-design-vue";
 
 export default defineComponent({
-  components: {draggable, DragOutlined, DeleteOutlined, PlusOutlined},
+  components: {draggable, DragOutlined, DeleteOutlined, PlusOutlined, BaseIcon},
   props: {
     value: Array,
     columns: Array,
     editColumn: Boolean,
+    drawEdit: {type: Boolean, default: true},
   },
-  emits: ['options-change', 'change'],
+  emits: ['options-change', 'update:value', 'change'],
   setup(props, {emit}) {
     const isFirstLoaded = ref<Boolean>(false);
     const loading = ref(false);
@@ -117,12 +140,12 @@ export default defineComponent({
     const newValue = ref(toRaw(props.value));
     const formRef = ref<FormInstance>();
 
-    if (!Array.isArray(newValue.value)) {
-      newValue.value = []
-    }
     if (!props.value) {
       props.value = []
-      emit('update', [])
+      emit('update:value', [])
+    }
+    if (!Array.isArray(newValue.value)) {
+      newValue.value = []
     }
 
     function handleChange(...args) {
@@ -143,10 +166,23 @@ export default defineComponent({
       },
       {deep: true},
     );
+    const showEdit = ref(false)
+    const jsonEdit = ref('')
 
+    const showDrawEdit = function () {
+      jsonEdit.value = JSON.stringify(toRaw(newValue.value))
+      showEdit.value = true
+    }
+    const saveJson = function () {
+      newValue.value = JSON.parse(jsonEdit.value)
+      showEdit.value = false
+    }
 
     return {
-
+      showEdit,
+      jsonEdit,
+      showDrawEdit,
+      saveJson,
       getColumns() {
         if (!props.columns) {
           return []
