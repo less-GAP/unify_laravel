@@ -142,7 +142,7 @@ reload()
     <div :loading="loading" class="flex items-center justify-between">
       <a-space>
 
-        <a-input
+        <a-input-search
           v-if="tableConfig.globalSearch"
           allow-clear
           @keyup.enter="reload"
@@ -191,12 +191,12 @@ reload()
             </a-menu>
           </template>
           <a-button>
-            Actions
+            Hành động
             <DownOutlined/>
           </a-button>
         </a-dropdown>
 
-        <a-button type="primary" v-if="addAction" @click="()=>{addAction(reload)}">Add new</a-button>
+        <a-button type="primary" v-if="addAction" @click="()=>{addAction(reload)}">Thêm mới</a-button>
 
       </a-space>
     </div>
@@ -221,7 +221,7 @@ reload()
         >
           <file-outlined style="margin:0 auto;font-size: 30px" />
         </div>
-        <div class="absolute whitespace-nowrap text-center overflow-hidden text-ellipsis -bottom-[40px] w-full pl-2 pr-2 ">
+        <div class="absolute whitespace-nowrap text-center overflow-hidden text-ellipsis -bottom-[40px] bg-white w-full pl-2 pr-2 ">
           {{ image.file_name }}
         </div>
       </div>
