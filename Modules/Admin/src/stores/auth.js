@@ -14,7 +14,7 @@ export const useAuthStore = defineStore("auth", {
     },
     hasPermission(permission) {
       const user = this.user
-      if (!user) {
+      if (!user && permission) {
         return false;
       }
       if (!permission || user?.app_permissions?.includes('*')) {
