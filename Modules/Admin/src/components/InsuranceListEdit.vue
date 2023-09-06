@@ -93,13 +93,11 @@ export default defineComponent({
     const newValue = ref(toRaw(props.value));
     const formRef = ref<FormInstance>();
 
-    if (!props.value) {
+    if (!Array.isArray(props.value)) {
       props.value = []
       emit('update', [])
     }
-    if (!Array.isArray(newValue.value)) {
-      newValue.value = []
-    }
+
     function handleChange(...args) {
       emit('change', ...args);
     }
@@ -114,7 +112,11 @@ export default defineComponent({
     watch(
       () => props.value,
       (value) => {
-        newValue.value = value
+        if (!Array.isArray(value)) {
+          newValue.value = []
+        } else {
+          newValue.value = value
+        }
       },
       {deep: true},
     );
