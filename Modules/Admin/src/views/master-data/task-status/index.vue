@@ -18,7 +18,7 @@ import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import DataListEdit from "@/components/DataListEdit.vue";
 
 const prefix = 'master-data'
-const listKey = 'patient-status'
+const listKey = 'task-status'
 const {
   fetchListApi,
   createApi,
@@ -56,8 +56,9 @@ const isShowModal = ref(false)
 const fetch = async function () {
   loading.value = true;
   loading.value = true
-  const value = await fetchDetailApi(listKey)
+  var value = await fetchDetailApi(listKey)
   if (value.data) {
+    value.data.data = JSON.parse(value.data.data);
     Object.assign(formState, value.data)
   }
   loading.value = false

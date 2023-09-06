@@ -7,11 +7,11 @@ import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 const items = ref([
 
     {
-      key: 'patient-status',
+      key: 'task-status',
       icon: () => h(AppstoreOutlined),
-      href: '/master-data/patient-status',
-      label: 'Patient Status',
-      title: 'Patient Status',
+      href: '/master-data/task-status',
+      label: 'Task Status',
+      title: 'Task Status',
     } ,
 
   ])

@@ -52,14 +52,9 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
-  newCoverageValue: {
-    type: Array,
-    default: []
-  }
 })
 const emit = defineEmits(["close"]);
 const formState = reactive({});
-const newCoverage = ref(toRaw(props.newCoverageValue));
 
 const fetch = async function () {
   loading.value = true;
@@ -67,7 +62,9 @@ const fetch = async function () {
   var id = currentRoute.params.id;
   if (nameRoute == 'patient-edit') {
     loading.value = true
-    const value = await fetchDetailApi(id)
+    var value = await fetchDetailApi(id)
+    //prepare data
+    value.data.insurance_coverages = JSON.parse(value.data.insurance_coverages);
     Object.assign(formState, value.data)
     loading.value = false
   } else {
@@ -90,6 +87,20 @@ const submit = (status) => {
       if (formState.unify_status > 1) { // die or inactive => to archive
         formState.unify_inactive_at = dayjs().format('YYYY-MM-DD HH:mm:ss');
       }
+      console.log(formState);
+      var insurance_coverages = [];
+      if (formState.insurance_coverages) {
+        formState.insurance_coverages.forEach((element, index) => {
+          insurance_coverages.push({
+            coverage: element.coverage,
+            insurance_id: element.insurance_id,
+            active_date: element.active_date,
+            expired_date: element.expired_date,
+          });
+        });
+      }
+      formState.insurance_coverages = insurance_coverages;
+      
       createApi({ ...formState, status: status }).then(rs => {
         Object.assign(formState, rs.data.result)
       });
@@ -295,35 +306,15 @@ const closeDetail = function () {
               dataIndex: 'insurance_id'
             }, {
               title: 'Active date',
-              dataIndex: 'active_date'
+              dataIndex: 'active_date',
+              type: 'date',
             }, {
               title: 'Expired date',
-              dataIndex: 'expired_date'
+              dataIndex: 'expired_date',
+              type: 'date',
             },
-            ]" v-model:value="formState.insurance_coverages"></InsuranceListEdit>
-            <!-- <a-button type="primary" @click="newCoverage.push({})">
-              <mdiPlusBoxMultipleOutline></mdiPlusBoxMultipleOutline>Add insurance
-            </a-button>
-            <div v-for="coverage in formState.insurance_coverages" v-model="newCoverage">
-              <div class="flex flex-wrap -mx-4">
-                <div class="w-1/4 px-4">
-                  <a-form-item label="Coverage">
-                    <a-select v-model:value="coverage.id" allowClear="" class="w-full" showSearch
-                      placeholder="Choose insurance" :options="listInsurances">
-                    </a-select>
-                  </a-form-item>
-                  <a-form-item label="ID Insurance">
-                    <a-input v-model:value="coverage.insurance_id"></a-input>
-                  </a-form-item>
-                  <a-form-item label="Active date">
-                    <a-date-picker valueFormat="YYYY-MM-DD" format="MM-DD-YYYY" inputReadOnly v-model:value="coverage.active_date"></a-date-picker>
-                  </a-form-item>
-                  <a-form-item label="Expired date">
-                    <a-date-picker valueFormat="YYYY-MM-DD" format="MM-DD-YYYY" inputReadOnly v-model:value="coverage.expired_date"></a-date-picker>
-                  </a-form-item>
-                </div>
-              </div>
-            </div> -->
+            ]" v-model:value="formState.insurance_coverages">
+          </InsuranceListEdit>
           </div>
           <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem"
             plain>Doctor</a-Divider>
