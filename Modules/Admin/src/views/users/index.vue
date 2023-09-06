@@ -6,7 +6,7 @@ import {DataTable} from "@/components";
 import router from "@/router";
 import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
 import {UseDataTable} from "@/utils/UseDataTable";
-import {useAuthStore} from "@/stores/auth";
+import { useAuthStore } from "@/stores/auth";
 
 const prefix = 'user'
 const {
@@ -16,7 +16,7 @@ const {
   updateApi
 } = UseEloquentRouter(prefix)
 const isShowModal = ref(false)
-const currentUser = useAuthStore().user;
+const auth = useAuthStore();
 const itemActions = [
   {
     label: 'Edit',
@@ -71,7 +71,6 @@ watch(router.currentRoute, (data) => {
 function registerTable({reload}) {
   reloadTable = reload
 }
-
 </script>
 
 <template>
@@ -86,7 +85,7 @@ function registerTable({reload}) {
         >
           <a-button
             type="text"
-            v-if="currentUser.role !== 'admin'"
+            v-if="auth.user.roles.find(x => x.name === 'Admin') !== false"
             danger
             :icon="h(DeleteOutlined)"
             label=""
