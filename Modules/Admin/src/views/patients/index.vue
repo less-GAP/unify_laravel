@@ -1,17 +1,17 @@
 <script setup>
-import {reactive, computed, ref, h, watch} from "vue";
+import { reactive, computed, ref, h, watch } from "vue";
 import SectionMain from "@/components/SectionMain.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import { useAuthStore } from "@/stores/auth";
-import {DataTablePatient} from "@/components";
+import { DataTablePatient } from "@/components";
 import router from "@/router";
-import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
-import {UseDataTable} from "@/utils/UseDataTable";
-import {DeleteOutlined} from '@ant-design/icons-vue';
-import {fetchListStatusPatientApi} from '@/utils/Patient';
+import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
+import { UseDataTable } from "@/utils/UseDataTable";
+import { DeleteOutlined } from '@ant-design/icons-vue';
+import { fetchListStatusPatientApi } from '@/utils/Patient';
 import dayjs from 'dayjs';
-import {mdiGenderMale, mdiGenderFemale, mdiCalendarCheckOutline, mdiHistory, mdiCheckOutline, mdiPencil, mdiAlertCircle} from '@mdi/js';
-import {BaseIcon} from "@/components";
+import { mdiGenderMale, mdiGenderFemale, mdiCalendarCheckOutline, mdiHistory, mdiCheckOutline, mdiPencil, mdiAlertCircle } from '@mdi/js';
+import { BaseIcon } from "@/components";
 import { now } from "moment";
 
 const prefix = 'patient'
@@ -24,8 +24,6 @@ const {
 const isShowModal = ref(false)
 const auth = useAuthStore();
 const listPatientStatus = fetchListStatusPatientApi();
-
-console.log(auth.user.role);
 
 const itemActions = [
   {
@@ -174,14 +172,16 @@ let reloadTable = () => {
 }
 
 watch(router.currentRoute, (currentRoute) => {
-  if (currentRoute.path === '/'+prefix) {
+  if (currentRoute.path === '/' + prefix) {
     reloadTable()
   }
 });
 
-function registerTable({reload}) {
+function registerTable({ reload }) {
   reloadTable = reload
 }
+
+console.log(auth.user.roles.find(x => x.name === 'Super Admin') !== false);
 
 </script>
 
@@ -198,28 +198,30 @@ function registerTable({reload}) {
         <template #cellAction[edit]="{ item, actionMethod }">
           <a-tooltip title="Edit" class="mr-1">
             <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto">
-              <BaseIcon :path="mdiPencil" class="w-4 !fill-blue-200"/>
+              <BaseIcon :path="mdiPencil" class="w-4 !fill-blue-200" />
             </a-button>
           </a-tooltip>
         </template>
         <template #cellAction[editProcess]="{ item, actionMethod }">
           <a-tooltip title="Approve Patient" class="mr-1">
-            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto" :disabled="((auth.user.role !== 'admin' || [1,2,3].includes(item.unify_status)) ? true : false)" :class="((auth.user.role !== 'admin' || [1,2,3].includes(item.unify_status)) ? '!bg-gray-300 opacity-50' : '')">
-              <BaseIcon :path="mdiCheckOutline" class="w-4"/>
+            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto"
+              :disabled="((auth.user.roles.find(x => x.name === 'Super Admin') !== false && [1, 2, 3].includes(item.unify_status)) ? true : false)"
+              :class="((auth.user.roles.find(x => x.name === 'Super Admin') !== false && [1, 2, 3].includes(item.unify_status)) ? '!bg-gray-300 opacity-50' : '')">
+              <BaseIcon :path="mdiCheckOutline" class="w-4" />
             </a-button>
           </a-tooltip>
         </template>
         <template #cellAction[addTask]="{ item, actionMethod }">
           <a-tooltip title="Add Task" class="mr-1">
             <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto">
-              <BaseIcon :path="mdiCalendarCheckOutline" class="w-4"/>
+              <BaseIcon :path="mdiCalendarCheckOutline" class="w-4" />
             </a-button>
           </a-tooltip>
         </template>
         <template #cellAction[history]="{ item, actionMethod }">
           <a-tooltip title="View History">
             <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto">
-              <BaseIcon :path="mdiHistory" class="w-4"/>
+              <BaseIcon :path="mdiHistory" class="w-4" />
             </a-button>
           </a-tooltip>
         </template>
@@ -233,25 +235,14 @@ function registerTable({reload}) {
         </template>
         <template #cell[status]="{ item, column }">
           <div class="flex justify-center">
-                <BaseIcon
-                :path="mdiAlertCircle"
-                class="flex-none text-red-600 !mr-0"
-                v-if="item.need_improve === 0 && item.unify_status !== 1"
-            />
+            <BaseIcon :path="mdiAlertCircle" class="flex-none text-red-600 !mr-0"
+              v-if="item.need_improve === 0 && item.unify_status !== 1" />
           </div>
         </template>
         <template #cell[full_name]="{ item, column }">
           <div class="flex flex-row items-center">
-            <BaseIcon
-                :path="mdiGenderMale"
-                class="flex-none !text-blue-600"
-                v-if="item.gender === 0"
-                />
-                <BaseIcon
-                :path="mdiGenderFemale"
-                class="flex-none text-pink-600"
-                v-if="item.gender === 1"
-            />
+            <BaseIcon :path="mdiGenderMale" class="flex-none !text-blue-600" v-if="item.gender === 0" />
+            <BaseIcon :path="mdiGenderFemale" class="flex-none text-pink-600" v-if="item.gender === 1" />
 
             <span class="pl-1">
               <a :href="'#/patient/' + item.id + '/detail'" class="text-blue-700 underline">{{ item.full_name }}</a>
@@ -259,13 +250,14 @@ function registerTable({reload}) {
           </div>
         </template>
         <template #cell[image]="{ item, column }">
-          <a-image height="50px" class="w-20 h-auto" :src="item.image_url" :alt="item.name"/>
+          <a-image height="50px" class="w-20 h-auto" :src="item.image_url" :alt="item.name" />
         </template>
         <template #cell[info]="{ item, column }">
           <div class="flex">
             <div><strong>Tel:</strong> {{ item.phone }}</div>
           </div>
-          <div class="block max-w-[380px] truncate">{{ item.street }}, {{ item.city }}, {{ item.state }}, {{ item.zip }}</div>
+          <div class="block max-w-[380px] truncate">{{ item.street }}, {{ item.city }}, {{ item.state }}, {{ item.zip }}
+          </div>
         </template>
         <!-- Update 3/9 23:34 : Merge showing process into status -->
         <!-- <template #cell[unify_process]="{ item, column }">
@@ -276,7 +268,7 @@ function registerTable({reload}) {
         </template> -->
         <template #cell[dob]="{ item, column }">
           <small>{{ dob_value(item) }}</small>
-          <br/><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
+          <br /><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
         </template>
         <template #cell[assigned]="{ item, column }">
 
