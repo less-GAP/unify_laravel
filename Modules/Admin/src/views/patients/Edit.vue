@@ -322,7 +322,7 @@ const closeDetail = function () {
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="State" name="state" :rules="[{ required: true, message: 'Please enter state!' }]">
               <a-select v-model:value="formState.state" allowClear="" class="w-full" showSearch
-                placeholder="Choose state">
+                placeholder="Select a state">
                 <a-select-option v-for="(state, index) in listStates" :key="state.code" :value="state.code">{{ state.name
                 }} ({{ state.code }})</a-select-option>
               </a-select>
@@ -369,7 +369,7 @@ const closeDetail = function () {
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Doctor" name="doctor">
               <a-select v-model:value="formState.doctor_id" allowClear="" class="w-full" showSearch
-                placeholder="Choose doctor">
+                placeholder="Select a doctor">
                 <a-select-option v-for="(doctor, index) in listDoctors" :key="doctor.value" :value="doctor.value">{{
                   doctor.label
                 }}</a-select-option>
@@ -378,7 +378,7 @@ const closeDetail = function () {
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Doctor status" name="doctor_status">
-              <a-select v-model:value="formState.doctor_status" allowClear="" class="w-full" placeholder="Choose status">
+              <a-select v-model:value="formState.doctor_status" allowClear="" class="w-full" placeholder="Select a status">
                 <a-select-option v-for="(status, index) in listDoctorStatus" :key="status.value" :value="status.value">{{
                   status.label
                 }}</a-select-option>
