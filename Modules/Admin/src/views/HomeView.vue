@@ -49,7 +49,7 @@ const transactionBarItems = computed(() => mainStore.history);
           color="!text-blue-500"
           :icon="mdiAccountMultiple"
           :number="512"
-          label="Clients"
+          label="Patients"
         />
         <CardBoxWidget
           class="text-red-500"
@@ -57,7 +57,7 @@ const transactionBarItems = computed(() => mainStore.history);
           :icon="mdiCartOutline"
           :number="7770"
           prefix="$"
-          label="Sales"
+          label="Deliveries"
         />
         <CardBoxWidget
           class="text-yellow-500"
@@ -65,7 +65,7 @@ const transactionBarItems = computed(() => mainStore.history);
           :icon="mdiChartTimelineVariant"
           :number="256"
           suffix="%"
-          label="Performance"
+          label="Pending"
         />
       </div>
 
