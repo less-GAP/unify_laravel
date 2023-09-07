@@ -56,7 +56,7 @@ class PatientFactory extends Factory
             'unify_deleted' => 0,
             'unify_deleted_at' => null,
             'unify_deleted_by' => null,
-            'sale_user' => rand(0,10),
+            'sale_user' => rand(0,3),
         ];
     }
 

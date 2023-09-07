@@ -64,11 +64,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                 ]
             ]
         )->routes(function () {
-
-        });
-
-        Route::prefix('/patient/detail')->group(function () {
-            Route::get('{id?}', \Modules\Admin\Actions\Patient\GetDetailAction::class . '@handle');
+            Route::get('/list', \Modules\Admin\Actions\Patient\GetListAction::class . '@handle');
         });
 
     EloquentRouter::prefix('websites')

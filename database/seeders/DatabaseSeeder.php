@@ -71,7 +71,7 @@ class DatabaseSeeder extends Seeder
         Permission::findOrCreate('patient.list');
         Permission::findOrCreate('file.*');
         // $role_seller->givePermissionTo('post.*');
-        // $role_seller->givePermissionTo('patient.list');
+        $role_seller->givePermissionTo('patient.list');
         // $user->givePermissionTo('file.*');
 
         \App\Models\MasterData::factory()->create([
