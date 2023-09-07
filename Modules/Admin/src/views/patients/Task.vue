@@ -6,7 +6,7 @@ import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import dayjs from 'dayjs';
-import { listProcess, getProcess } from "@/utils/Patient";
+import { listProcess, useNeedToDoList } from "@/utils/Patient";
 
 const listProcessOptions = listProcess();
 const prefix = 'patient'
@@ -36,6 +36,9 @@ const age = (formState) => {
   return formState.dob ? '(' + dayjs().diff(dayjs(formState.dob, dbFormat), 'year') + ' years old)' : '';
 };
 
+const needToDoLib = useNeedToDoList();
+var needToDoList = [];
+
 const fetch = async function () {
     loading.value = true;
     var id = router.currentRoute.value.params.id;
@@ -43,6 +46,13 @@ const fetch = async function () {
         loading.value = true
         const value = await fetchDetailApi(id)
         Object.assign(formState, value.data)
+        needToDoLib.forEach((item) => {
+            if(formState[item.key] == null){
+                needToDoList.push({
+                    ...item,
+                })
+            }
+        })
         loading.value = false
     } else {
         loading.value = false
@@ -109,7 +119,8 @@ const closeDetail = function () {
                                         </svg>
                                         <h4 class="ml-3 text-lg font-semibold">Need to do</h4>
                                     </div>
-                                    <div>
+
+                                    <div v-for="ntd in needToDoList">
                                         <input class="hidden" type="checkbox" id="task_1" checked>
                                         <label class="flex items-center h-10 px-2 rounded-lg cursor-pointer hover:bg-white" for="task_1">
                                             <span class="flex items-center justify-center w-5 h-5 text-transparent border-2 border-gray-900 rounded-full">
@@ -117,51 +128,7 @@ const closeDetail = function () {
                                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                                                 </svg>
                                             </span>
-                                            <span class="ml-4 text-sm">Weed front garden.</span>
-                                        </label>	
-                                    </div>
-                                    <div>
-                                        <input class="hidden" type="checkbox" id="task_2" checked>
-                                        <label class="flex items-center h-10 px-2 rounded-lg cursor-pointer hover:bg-white" for="task_2">
-                                            <span class="flex items-center justify-center w-5 h-5 text-transparent border-2 border-gray-900 rounded-full">
-                                                <svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                                </svg>
-                                            </span>
-                                            <span class="ml-4 text-sm">Chill and smoke some Old Toby.</span>
-                                        </label>	
-                                    </div>
-                                    <div>
-                                        <input class="hidden" type="checkbox" id="task_3">
-                                        <label class="flex items-center h-10 px-2 rounded-lg cursor-pointer hover:bg-white" for="task_3">
-                                            <span class="flex items-center justify-center w-5 h-5 text-transparent border-2 border-gray-900 rounded-full">
-                                                <svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                                </svg>
-                                            </span>
-                                            <span class="ml-4 text-sm">Keep ring secret and safe.</span>
-                                        </label>	
-                                    </div>
-                                    <div>
-                                        <input class="hidden" type="checkbox" id="task_4">
-                                        <label class="flex items-center h-10 px-2 rounded-lg cursor-pointer hover:bg-white" for="task_4">
-                                            <span class="flex items-center justify-center w-5 h-5 text-transparent border-2 border-gray-900 rounded-full">
-                                                <svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                                </svg>
-                                            </span>
-                                            <span class="ml-4 text-sm">Meet Gandalf at Bree.</span>
-                                        </label>	
-                                    </div>
-                                    <div>
-                                        <input class="hidden" type="checkbox" id="task_5">
-                                        <label class="flex items-center h-10 px-2 rounded-lg cursor-pointer hover:bg-white" for="task_5">
-                                            <span class="flex items-center justify-center w-5 h-5 text-transparent border-2 border-gray-900 rounded-full">
-                                                <svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                                </svg>
-                                            </span>
-                                            <span class="ml-4 text-sm">Destroy ring and defeat dark lord.</span>
+                                            <span class="ml-4 text-sm">{{ ntd.noti }}</span>
                                         </label>	
                                     </div>
                                 </div>
