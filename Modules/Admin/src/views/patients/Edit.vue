@@ -73,6 +73,20 @@ const fetch = async function () {
 }
 fetch();
 
+const checkAccess = () => {
+  if (auth.user.roles.find(x => x.name === 'Admin') !== undefined) {
+    return true;
+  } else if (auth.user.roles.find(x => x.name === 'Seller') !== undefined && formState.unify_process == 0 && formState.sale_user == auth.user.id) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+if (!checkAccess) {
+  router.replace({ path: '/' + prefix })
+}
+
 const saler_id = computed(() => {
   return formState.sale_user ? formState.sale_user : auth.user.id;
 });
@@ -100,13 +114,13 @@ const submit = (status) => {
         });
       }
       formState.insurance_coverages = insurance_coverages;
-      
+
       createApi({ ...formState, status: status }).then(rs => {
         Object.assign(formState, rs.data.result)
       });
     })
 };
-const submitApprove = (status) => {
+const submitApprove = () => {
   formRef.value
     .validate()
     .then(() => {
@@ -122,11 +136,12 @@ const submitApprove = (status) => {
         });
       }
       formState.insurance_coverages = insurance_coverages;
-      
+
       formState.unify_process = 1;
-      
-      updateApi({ ...formState, status: status }).then(rs => {
+
+      updateApi(formState.id, { ...formState }).then(rs => {
         Object.assign(formState, rs.data.result)
+        router.replace({ path: '/' + prefix })
       });
     })
 };
@@ -172,13 +187,16 @@ const closeDetail = function () {
               <span class="ml-1 text-white">Save And Active</span>
             </div>
           </a-button>
-          <a-button v-if="currentRoute.name == 'patient-edit' && auth.user.roles.find(x=>x.name === 'Seller') !== false" @click="submitApprove()" type="primary" class="uppercase !bg-green-500 hover:!bg-green-400">
+          <a-button
+            v-if="(currentRoute.name == 'patient-edit' && auth.user.roles.find(x => x.name === 'Seller') !== undefined && formState.unify_process == 0)"
+            @click="submitApprove" type="primary" class="uppercase !bg-green-500 hover:!bg-green-400">
             <div class="flex">
               <BaseIcon :path="mdiAccountArrowUp" class="w-4 text-white" />
               <span class="ml-1 text-white">Approve</span>
             </div>
           </a-button>
-          <a-button v-if="currentRoute.name == 'patient-edit'" @click="submit('publish')" type="primary" class="uppercase">
+          <a-button v-if="currentRoute.name == 'patient-edit'" @click="submit('publish')" type="primary"
+            class="uppercase">
             <div class="flex">
               <BaseIcon :path="mdiContentSave" class="w-4 text-white" />
               <span class="ml-1 text-white">Update</span>
@@ -344,7 +362,7 @@ const closeDetail = function () {
               type: 'date',
             },
             ]" v-model:value="formState.insurance_coverages">
-          </InsuranceListEdit>
+            </InsuranceListEdit>
           </div>
           <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem"
             plain>Doctor</a-Divider>
@@ -410,5 +428,4 @@ const closeDetail = function () {
 
 .ant-drawer-body {
   padding: 0 !important
-}
-</style>
+}</style>
