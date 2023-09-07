@@ -24,15 +24,14 @@ const {
 const isShowModal = ref(false)
 const auth = useAuthStore();
 const listPatientStatus = fetchListStatusPatientApi();
-
+if (auth.user.roles.find(x => x.name === 'Seller') !== false) {
+  console.log(1);
+}
 const itemActions = [
   {
     label: 'Edit',
     key: 'edit',
     show: (item) => {
-      return true;
-    },
-    conditionDisableButton: (item) => {
       return true;
     },
     action: (item, reload) => {
@@ -45,15 +44,6 @@ const itemActions = [
     show: (item) => {
       return true;
     },
-    conditionDisableButton: (item) => {
-      if (item.unify_status > 0) {
-        return false;
-      }
-      if (auth.user.roles.find(x => x.name === 'Admin') === false) {
-        return false;
-      }
-      return true;
-    },
     action: (item, reload) => {
       router.push(prefix + '/' + item.id + '/process')
     }
@@ -64,9 +54,6 @@ const itemActions = [
     show: (item) => {
       return true;
     },
-    conditionDisableButton: (item) => {
-      return true;
-    },
     action: (item, reload) => {
       router.push(prefix + '/' + item.id + '/task')
     }
@@ -75,9 +62,6 @@ const itemActions = [
     label: 'History',
     key: 'history',
     show: (item) => {
-      return true;
-    },
-    conditionDisableButton: (item) => {
       return true;
     },
     action: (item, reload) => {
@@ -209,16 +193,23 @@ function registerTable({ reload }) {
         </template> -->
         <template #cellAction[edit]="{ item, actionMethod }">
           <a-tooltip title="Edit" class="mr-1">
-            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto"
-              :disabled="((item.unify_process == 0 || auth.user.roles.find(x => x.name === 'Admin') === false) ? false : true)"
-              :class="((item.unify_process == 0 || auth.user.roles.find(x => x.name === 'Admin') === false) ? '' : '!bg-gray-300 opacity-50')">
+            <a-button class="justify-center !flex !p-1 !h-auto"
+              :disabled="((auth.user.roles.find(x => x.name === 'Admin') !== false)
+              || (auth.user.roles.find(x => x.name === 'Seller') !== false) && [null,1].includes(item.unify_process)  ? false : true)"
+              :class="((auth.user.roles.find(x => x.name === 'Admin') !== false) ? '' : '!bg-gray-300 opacity-50')"
+              @click="actionMethod">
               <BaseIcon :path="mdiPencil" class="w-4 !fill-blue-200" />
             </a-button>
           </a-tooltip>
         </template>
-        <template #cellAction[editProcess]="{ item, actionMethod, conditionMethod }">
+        <template #cellAction[editProcess]="{ item, actionMethod }">
           <a-tooltip title="Approve Patient" class="mr-1">
-            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto" :disabled="conditionMethod" :class="conditionMethod ? '!bg-gray-300 opacity-50' : ''">
+            <a-button class="justify-center !flex !p-1 !h-auto"
+              :disabled="(((auth.user.roles.find(x => x.name === 'Admin') !== false) && [null, 0, 1].includes(item.unify_process)
+                || (auth.user.roles.find(x => x.name === 'Seller') !== false) && [null, 0].includes(item.unify_process)) ? false : true)"
+              :class="(
+                (auth.user.roles.find(x => x.name === 'Admin') !== false) && [null, 0, 1].includes(item.unify_process)
+                || (auth.user.roles.find(x => x.name === 'Seller') !== false) && [null, 0].includes(item.unify_process)) ? '' : '!bg-gray-300 opacity-50'" @click="actionMethod">
               <BaseIcon :path="mdiCheckOutline" class="w-4" />
             </a-button>
           </a-tooltip>

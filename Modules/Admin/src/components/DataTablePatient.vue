@@ -250,9 +250,9 @@ reload()
                 <div class="flex flex-nowrap whitespace-nowrap">
                   <template v-for="itemAction in itemActions">
                     <slot :name="'cellAction[' + itemAction.key + ']'" v-if="itemAction.show(item)"
-                      v-bind="{ item, itemAction, actionMethod() { itemAction.action(item, reload) }, conditionMethod(){ itemAction.conditionDisableButton(item) } }">
-                      <a-button @click="itemAction.action(item, reload)" :disabled="itemAction.conditionDisableButton(item)"
-                        :class="itemAction.conditionDisableButton(item) ? '!bg-gray-300 opacity-50' : 'font-medium text-blue-600 dark:text-blue-500 hover:underline'"
+                      v-bind="{ item, itemAction, actionMethod() { itemAction.action(item, reload) } }">
+                      <a-button @click="itemAction.action(item, reload)"
+                        :class="itemAction.class || 'font-medium text-blue-600 dark:text-blue-500 hover:underline'"
                         type="link">
                         {{ itemAction.label }}
                       </a-button>
