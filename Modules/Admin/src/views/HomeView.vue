@@ -38,33 +38,30 @@ const transactionBarItems = computed(() => mainStore.history);
 
       <SectionTitleLineWithButton
         :icon="mdiChartTimelineVariant"
-        title="Overview"
+        title="Unify Health Care"
         main
       >
       </SectionTitleLineWithButton>
 
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-6">
         <CardBoxWidget
-          trend="12%"
-          trend-type="up"
-          color="text-emerald-500"
+          class="text-blue-500"
+          color="!text-blue-500"
           :icon="mdiAccountMultiple"
           :number="512"
           label="Clients"
         />
         <CardBoxWidget
-          trend="12%"
-          trend-type="down"
-          color="text-blue-500"
+          class="text-red-500"
+          color="!text-red-500"
           :icon="mdiCartOutline"
           :number="7770"
           prefix="$"
           label="Sales"
         />
         <CardBoxWidget
-          trend="Overflow"
-          trend-type="alert"
-          color="text-red-500"
+          class="text-yellow-500"
+          color="!text-yellow-500"
           :icon="mdiChartTimelineVariant"
           :number="256"
           suffix="%"
