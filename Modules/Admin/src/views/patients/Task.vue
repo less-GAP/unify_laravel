@@ -108,7 +108,6 @@ const closeDetail = function () {
                     </h1>
                     <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>List tasks of {{ formState.full_name }}</a-Divider>
                     <div class="w-full px-4">
-                      
                         <div class="flex items-center font-medium">
                             <div class="flex items-center flex-grow text-gray-900">
                                 <!-- Component Start -->
@@ -135,12 +134,8 @@ const closeDetail = function () {
                                 <!-- Component End  -->
                             </div>
                         </div>
-
-
-
                     </div>
                     <div class="w-full px-4 pb-3 mt-5 bg-gray-100">
-                        
                         <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0" plain>Recent history</a-Divider>
                         <div class="relative flex flex-col items-start p-4 mt-3 bg-white rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100" draggable="true">
                             <button class="absolute top-0 right-0 flex items-center justify-center hidden w-5 h-5 mt-3 mr-2 text-gray-500 rounded hover:bg-gray-200 hover:text-gray-700 group-hover:flex">

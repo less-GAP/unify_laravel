@@ -120,7 +120,8 @@ const submit = (status) => {
       });
     })
 };
-const submitApprove = () => {
+// Submit when seller approve profile from Waiting to Eligibility Check
+const submitSellerApprove = () => {
   formRef.value
     .validate()
     .then(() => {
@@ -189,7 +190,7 @@ const closeDetail = function () {
           </a-button>
           <a-button
             v-if="(currentRoute.name == 'patient-edit' && auth.user.roles.find(x => x.name === 'Seller') !== undefined && formState.unify_process == 0)"
-            @click="submitApprove" type="primary" class="uppercase !bg-green-500 hover:!bg-green-400">
+            @click="submitSellerApprove" type="primary" class="uppercase !bg-green-500 hover:!bg-green-400">
             <div class="flex">
               <BaseIcon :path="mdiAccountArrowUp" class="w-4 text-white" />
               <span class="ml-1 text-white">Approve</span>
