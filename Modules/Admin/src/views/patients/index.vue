@@ -32,6 +32,9 @@ const itemActions = [
     show: (item) => {
       return true;
     },
+    conditionDisableButton: (item) => {
+      return true;
+    },
     action: (item, reload) => {
       router.push(prefix + '/' + item.id + '/edit')
     }
@@ -40,6 +43,15 @@ const itemActions = [
     label: 'Approve Patient',
     key: 'editProcess',
     show: (item) => {
+      return true;
+    },
+    conditionDisableButton: (item) => {
+      if (item.unify_status > 0) {
+        return false;
+      }
+      if (auth.user.roles.find(x => x.name === 'Admin') === false) {
+        return false;
+      }
       return true;
     },
     action: (item, reload) => {
@@ -52,6 +64,9 @@ const itemActions = [
     show: (item) => {
       return true;
     },
+    conditionDisableButton: (item) => {
+      return true;
+    },
     action: (item, reload) => {
       router.push(prefix + '/' + item.id + '/task')
     }
@@ -60,6 +75,9 @@ const itemActions = [
     label: 'History',
     key: 'history',
     show: (item) => {
+      return true;
+    },
+    conditionDisableButton: (item) => {
       return true;
     },
     action: (item, reload) => {
@@ -177,8 +195,6 @@ function registerTable({ reload }) {
   reloadTable = reload
 }
 
-console.log(auth.user.roles.find(x => x.name === 'Admin') !== false);
-
 </script>
 
 <template>
@@ -195,17 +211,14 @@ console.log(auth.user.roles.find(x => x.name === 'Admin') !== false);
           <a-tooltip title="Edit" class="mr-1">
             <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto"
               :disabled="((item.unify_process == 0 || auth.user.roles.find(x => x.name === 'Admin') === false) ? false : true)"
-              :class="((item.unify_process == 0 || auth.user.roles.find(x => x.name === 'Admin') === false) ? '' : '!bg-gray-300 opacity-50')"
-              >
+              :class="((item.unify_process == 0 || auth.user.roles.find(x => x.name === 'Admin') === false) ? '' : '!bg-gray-300 opacity-50')">
               <BaseIcon :path="mdiPencil" class="w-4 !fill-blue-200" />
             </a-button>
           </a-tooltip>
         </template>
-        <template #cellAction[editProcess]="{ item, actionMethod }">
+        <template #cellAction[editProcess]="{ item, actionMethod, conditionMethod }">
           <a-tooltip title="Approve Patient" class="mr-1">
-            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto"
-              :disabled="((item.unify_status > 0 || auth.user.roles.find(x => x.name === 'Admin') === false) ? false : true)"
-              :class="((item.unify_status > 0 || auth.user.roles.find(x => x.name === 'Admin') === false) ? '' : '!bg-gray-300 opacity-50')">
+            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto" :disabled="conditionMethod" :class="conditionMethod ? '!bg-gray-300 opacity-50' : ''">
               <BaseIcon :path="mdiCheckOutline" class="w-4" />
             </a-button>
           </a-tooltip>
@@ -214,8 +227,7 @@ console.log(auth.user.roles.find(x => x.name === 'Admin') !== false);
           <a-tooltip title="Add Task" class="mr-1">
             <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto"
               :disabled="((auth.user.roles.find(x => x.name === 'Admin') === false) ? false : true)"
-              :class="((auth.user.roles.find(x => x.name === 'Admin') === false) ? '' : '!bg-gray-300 opacity-50')"
-              >
+              :class="((auth.user.roles.find(x => x.name === 'Admin') === false) ? '' : '!bg-gray-300 opacity-50')">
               <BaseIcon :path="mdiCalendarCheckOutline" class="w-4" />
             </a-button>
           </a-tooltip>
@@ -224,8 +236,7 @@ console.log(auth.user.roles.find(x => x.name === 'Admin') !== false);
           <a-tooltip title="View History">
             <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto"
               :disabled="((auth.user.roles.find(x => x.name === 'Admin') === false) ? false : true)"
-              :class="((auth.user.roles.find(x => x.name === 'Admin') === false) ? '' : '!bg-gray-300 opacity-50')"
-              >
+              :class="((auth.user.roles.find(x => x.name === 'Admin') === false) ? '' : '!bg-gray-300 opacity-50')">
               <BaseIcon :path="mdiHistory" class="w-4" />
             </a-button>
           </a-tooltip>

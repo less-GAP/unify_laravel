@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { reactive, h, ref, toRaw, computed, watch } from "vue";
-import { mdiBackspace, mdiContentSave, mdiPlusBoxMultipleOutline } from '@mdi/js';
+import { mdiBackspace, mdiContentSave, mdiAccountArrowUp } from '@mdi/js';
 import { BaseIcon } from "@/components";
 
 import router from "@/router";
@@ -20,7 +20,7 @@ const prefix = 'patient'
 const {
   fetchDetailApi,
   createApi,
-  // updateApi
+  updateApi
 } = UseEloquentRouter(prefix)
 
 const listStates = fetchListStatesApi();
@@ -28,7 +28,7 @@ const listInsurances = fetchListInsurancesApi();
 const listDoctors = fetchListDoctorsApi();
 const listDoctorStatus = fetchListDoctorStatusApi();
 const loading = ref(false);
-const authStore = useAuthStore();
+const auth = useAuthStore();
 const currentRoute = router.currentRoute.value;
 
 const genderList = [
@@ -74,7 +74,7 @@ const fetch = async function () {
 fetch();
 
 const saler_id = computed(() => {
-  return formState.sale_user ? formState.sale_user : authStore.user.id;
+  return formState.sale_user ? formState.sale_user : auth.user.id;
 });
 const patient_process = computed(() => {
   return formState.unify_process ? formState.unify_process : 0;
@@ -102,6 +102,30 @@ const submit = (status) => {
       formState.insurance_coverages = insurance_coverages;
       
       createApi({ ...formState, status: status }).then(rs => {
+        Object.assign(formState, rs.data.result)
+      });
+    })
+};
+const submitApprove = (status) => {
+  formRef.value
+    .validate()
+    .then(() => {
+      var insurance_coverages = [];
+      if (formState.insurance_coverages) {
+        formState.insurance_coverages.forEach((element, index) => {
+          insurance_coverages.push({
+            coverage: element.coverage,
+            insurance_id: element.insurance_id,
+            active_date: element.active_date,
+            expired_date: element.expired_date,
+          });
+        });
+      }
+      formState.insurance_coverages = insurance_coverages;
+      
+      formState.unify_process = 1;
+      
+      updateApi({ ...formState, status: status }).then(rs => {
         Object.assign(formState, rs.data.result)
       });
     })
@@ -148,7 +172,13 @@ const closeDetail = function () {
               <span class="ml-1 text-white">Save And Active</span>
             </div>
           </a-button>
-          <a-button v-else @click="submit('publish')" type="primary" class="uppercase">
+          <a-button v-if="currentRoute.name == 'patient-edit' && auth.user.roles.find(x=>x.name === 'Seller') !== false" @click="submitApprove()" type="primary" class="uppercase !bg-green-500 hover:!bg-green-400">
+            <div class="flex">
+              <BaseIcon :path="mdiAccountArrowUp" class="w-4 text-white" />
+              <span class="ml-1 text-white">Approve</span>
+            </div>
+          </a-button>
+          <a-button v-if="currentRoute.name == 'patient-edit'" @click="submit('publish')" type="primary" class="uppercase">
             <div class="flex">
               <BaseIcon :path="mdiContentSave" class="w-4 text-white" />
               <span class="ml-1 text-white">Update</span>
