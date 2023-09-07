@@ -47,7 +47,7 @@ const fetch = async function () {
         const value = await fetchDetailApi(id)
         Object.assign(formState, value.data)
         needToDoLib.forEach((item) => {
-            if(formState[item.key] == null){
+            if(formState[item.key] == null || formState[item.key] == 0){
                 needToDoList.push({
                     ...item,
                 })
