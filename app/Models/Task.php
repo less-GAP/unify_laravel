@@ -34,7 +34,7 @@ class Task extends Model
         'completed_at',
         'task_process',
         'created_by',
-        'assignee_id',
+        'assignees',
         'patient_id',
         'task_tag_id',
         'task_priority_id',

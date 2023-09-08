@@ -18,20 +18,30 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
     Route::prefix('/auth')->group(function () {
         Route::get('userInfo', GetUserInfoAction::class . '@handle');
     });
-//    Route::prefix('/user')->group(function () {
-//        Route::get('list', \Modules\Admin\Actions\User\GetUserListAction::class . '@handle');
-//        Route::post('activeList', \Modules\Admin\Actions\User\PostImageAction::class . '@handle');
-//        Route::post('', \Modules\Admin\Actions\User\PostUserAction::class . '@handle');
-//        Route::delete('{id}', DeleteUserAction::class . '@handle');
-//    });
+    //    Route::prefix('/user')->group(function () {
+    //        Route::get('list', \Modules\Admin\Actions\User\GetUserListAction::class . '@handle');
+    //        Route::post('activeList', \Modules\Admin\Actions\User\PostImageAction::class . '@handle');
+    //        Route::post('', \Modules\Admin\Actions\User\PostUserAction::class . '@handle');
+    //        Route::delete('{id}', DeleteUserAction::class . '@handle');
+    //    });
     EloquentRouter::prefix('user')
-        ->routes(function () {
-            Route::get('/options', \Modules\Admin\Actions\User\GetUserOptionsAction::class . '@handle');
-        })
-        ->handle(\App\Models\User::class,
+        ->handle(
+            \App\Models\User::class,
             [
-                'allowedIncludes'=> ['roles','roles.permissions','permissions'],
+                'allowedIncludes' => ['roles', 'roles.permissions', 'permissions'],
                 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,username')]
+            ]
+        )->routes(function () {
+            Route::get('/options', \Modules\Admin\Actions\User\GetUserOptionsAction::class . '@handle');
+            Route::get('list', \Modules\Admin\Actions\User\GetUserListAction::class . '@handle');
+        });
+
+    EloquentRouter::prefix('task')
+        ->handle(
+            \App\Models\Task::class,
+            [
+                // 'allowedIncludes' => ['roles', 'roles.permissions', 'permissions'],
+                // 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,name')]
             ]
         );
     // EloquentRouter::prefix('visa-application')
@@ -46,21 +56,21 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
     //         Route::post('/assign', \Modules\Admin\Actions\VisaApplication\PostAssignAction::class . '@handle');
     //     });
     EloquentRouter::prefix('post')
-        ->handle(\App\Models\Post::class,
+        ->handle(
+            \App\Models\Post::class,
             [
                 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'title')]
             ]
         )->routes(function () {
-
         });
 
     EloquentRouter::prefix('patient')
-        ->handle(\App\Models\Patient::class,
+        ->handle(
+            \App\Models\Patient::class,
             [
                 'allowedSorts' => ['id', 'name', 'updated_at'],
                 'allowedFilters' => [
-                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,phone,email')
-                    , AllowedFilter::custom('phone', new \App\Builder\Filters\SearchLikeMultipleField, 'phone')
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,phone,email'), AllowedFilter::custom('phone', new \App\Builder\Filters\SearchLikeMultipleField, 'phone')
                 ]
             ]
         )->routes(function () {
@@ -68,28 +78,29 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         });
 
     EloquentRouter::prefix('websites')
-        ->handle(\App\Models\Website::class,
+        ->handle(
+            \App\Models\Website::class,
             [
                 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name,domain')]
             ]
         )->routes(function () {
-
         });
     EloquentRouter::prefix('themes')
         ->routes(function () {
             Route::get('options', \Modules\Admin\Actions\Themes\GetOptionsAction::class . '@handle');
             Route::post('{id?}', \Modules\Admin\Actions\Themes\PostCreateUpdateAction::class . '@handle');
             Route::put('{id?}', \Modules\Admin\Actions\Themes\PostCreateUpdateAction::class . '@handle');
-
         })
-        ->handle(\App\Models\Theme::class,
+        ->handle(
+            \App\Models\Theme::class,
             [
                 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name')]
             ]
         );
 
     EloquentRouter::prefix('file')
-        ->handle(\App\Models\File::class,
+        ->handle(
+            \App\Models\File::class,
             [
                 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'file_name')]
             ]
@@ -99,7 +110,8 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         });
 
     EloquentRouter::prefix('email-template')
-        ->handle(\App\Models\EmailTemplate::class,
+        ->handle(
+            \App\Models\EmailTemplate::class,
             [
                 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'email_title,email_content')]
             ]
@@ -136,12 +148,10 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
     });
 
     EloquentRouter::prefix('master-data')
-        ->handle(\App\Models\MasterData::class,
-            [
-            ]
+        ->handle(
+            \App\Models\MasterData::class,
+            []
         )->routes(function () {
             Route::get('{listKey}/options', \Modules\Admin\Actions\MasterData\GetOptionsAction::class . '@handle');
         });
-
-
 });

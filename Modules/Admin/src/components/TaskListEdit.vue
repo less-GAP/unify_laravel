@@ -1,14 +1,13 @@
 <template>
-  <div style="margin-bottom:15px">
-    <a-button style="margin-right:15px" v-if="editColumn" @click="showAddColumn =true;columnForm={}" type="primary">{{
-        __('Add Column')
-      }}
-    </a-button>
-
-  </div>
   <div
     class="ant-table ant-table-ping-right ant-table-layout-fixed ant-table-fixed-header ant-table-fixed-column ant-table-scroll-horizontal ant-table-has-fix-right ant-table-small ant-table-bordered">
     <div class="ant-table-container">
+      <a-button @click="newValue.push({})" >
+        <template #icon>
+          <PlusOutlined></PlusOutlined>
+        </template>
+        Add Task
+      </a-button>
       <table>
         <thead class="ant-table-thead">
         <tr>
@@ -16,12 +15,6 @@
               v-for="(column,columnIndex) in getColumns()" scope="col">
             <slot name="column" v-bind="{column}">
               <template v-if="column.dataIndex=='action'">
-                <a-button @click="newValue.push({})">
-                  <template #icon>
-                    <PlusOutlined></PlusOutlined>
-                  </template>
-                  {{ __('Add Task') }}
-                </a-button>
               </template>
               <template v-else>
                 {{ column.title }}
@@ -41,21 +34,18 @@
             <tr class="ant-table-measure-row">
               <td v-for="column in getColumns()" scope="row">
                 <template v-if="column.dataIndex=='action'">
-                  <div style="width:100px">
-
+                  <div class="flex items-center justify-end">
                     <a-button type="link" primary>
                       <template #icon>
                         <DragOutlined class="drag-handle"></DragOutlined>
                       </template>
                     </a-button>
-
                     <a-button @click="newValue.splice(index,1)" style="margin-left:10px" type="link" danger>
                       <template #icon>
                         <DeleteOutlined></DeleteOutlined>
                       </template>
                     </a-button>
                   </div>
-
                 </template>
                 <template v-else>
                   <slot :name="'bodyCell['+column.dataIndex+']'" v-bind="{record:element,column}">
@@ -63,6 +53,12 @@
                                     :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                                     :parser="value => value.replace(/\$\s?|(,*)/g, '')" v-if="column.type =='number'"
                                     v-model:value="element[column.dataIndex]"></a-input-number>
+                    <a-switch v-else-if="column.type =='switchActive'" @change="updateApi(column.dataIndex,{is_completed:element[column.dataIndex]})" checkedValue="1" unCheckedValue="0"
+                    v-model:checked="element[column.dataIndex]"/>
+                    <a-date-picker v-else-if="column.type =='date'" v-model:value="element[column.dataIndex]" valueFormat="YYYY-MM-DD" format="MM-DD-YYYY"
+                      inputReadOnly class="w-full"></a-date-picker>
+                    <a-date-picker v-else-if="column.type =='dateTime'" :showTime="{ format: 'HH:mm' }" v-model:value="element[column.dataIndex]" valueFormat="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"
+                      inputReadOnly class="w-full"></a-date-picker>
                     <a-input v-else v-model:value="element[column.dataIndex]"></a-input>
                   </slot>
                 </template>
@@ -75,23 +71,6 @@
     </div>
 
   </div>
-
-  <a-modal
-    title="Add Column"
-    :open="showAddColumn"
-    @ok="addColumn"
-  >
-    <a-form style="margin:20px" ref="formRef" :model="columnForm" layout="vertical" name="form_in_modal">
-      <a-form-item
-        name="key"
-        label="Column Key"
-        :rules="[{ required: true, message: 'Please input group name!' }]"
-      >
-        <a-input v-model:value="columnForm.dataIndex"/>
-      </a-form-item>
-    </a-form>
-
-  </a-modal>
 </template>
 
 <script lang="ts">
@@ -117,9 +96,9 @@ export default defineComponent({
     const newValue = ref(toRaw(props.value));
     const formRef = ref<FormInstance>();
 
-    if (!props.value) {
+    if (!Array.isArray(props.value)) {
       props.value = []
-      emit('update', [])
+      emit('update:value', [])
     }
 
     function handleChange(...args) {
@@ -136,7 +115,11 @@ export default defineComponent({
     watch(
       () => props.value,
       (value) => {
-        newValue.value = value
+        if (!Array.isArray(value)) {
+          newValue.value = []
+        } else {
+          newValue.value = value
+        }
       },
       {deep: true},
     );
@@ -189,7 +172,9 @@ export default defineComponent({
 </script>
 
 <style>
-
+.ant-table-measure-row td:first-child{
+  width: 180px;
+}
 
 .flip-list-move {
   transition: transform 0.5s;

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->boolean('is_completed')->default(false);
             $table->dateTime('completed_at')->nullable();
             $table->unsignedBigInteger('created_by'); // nguoi giao task
-            $table->text('assignee_id')->nullable(); // nhung nguoi duoc nhan task
+            $table->text('assignees')->nullable(); // nhung nguoi duoc nhan task
             $table->unsignedBigInteger('patient_id')->nullable();
             $table->integer('task_tag_id')->nullable();
             $table->integer('task_priority_id')->default(0);
