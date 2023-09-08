@@ -122,7 +122,7 @@ const handleAddTask = () => {
             formTaskState.assignees = formTaskState.assigneesSelect.join(', ');
             try {
                 createTaskApi({ ...formTaskState }).then(rs => {
-                    if (formState.task_tag_id !== null) { // Update status task for patient
+                    if (formTaskState.task_tag_id !== null) { // Update status task for patient
                         updateApi(formState.id, { unify_task_status: formTaskState.task_tag_id })
                     }
                     // Object.assign(formTaskState, rs.data.result)
@@ -376,7 +376,7 @@ const handleAddTask = () => {
                 <div class="flex flex-wrap -mx-2">
                     <div class="w-full px-2 lg:w-1/2">
                         <a-form-item label="Status">
-                            <RemoteSelect class="w-full" v-model:value="formState.task_tag_id"
+                            <RemoteSelect class="w-full" v-model:value="formTaskState.task_tag_id"
                                 url="master-data/task-status/options">
                             </RemoteSelect>
                         </a-form-item>
