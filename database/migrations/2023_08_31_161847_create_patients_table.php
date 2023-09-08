@@ -18,7 +18,7 @@ return new class extends Migration
             $table->dateTime('unify_active')->nullable();
             $table->integer('unify_status')->nullable();
             $table->integer('unify_process')->nullable();
-            $table->integer('unify_task_status')->nullable();
+            $table->string('unify_task_status')->nullable();
 
             //data
             $table->string('full_name')->index();
