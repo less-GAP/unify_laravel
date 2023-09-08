@@ -34,21 +34,18 @@
             <tr class="ant-table-measure-row">
               <td v-for="column in getColumns()" scope="row">
                 <template v-if="column.dataIndex=='action'">
-                  <div style="width:100px">
-
+                  <div class="flex items-center justify-end">
                     <a-button type="link" primary>
                       <template #icon>
                         <DragOutlined class="drag-handle"></DragOutlined>
                       </template>
                     </a-button>
-
                     <a-button @click="newValue.splice(index,1)" style="margin-left:10px" type="link" danger>
                       <template #icon>
                         <DeleteOutlined></DeleteOutlined>
                       </template>
                     </a-button>
                   </div>
-
                 </template>
                 <template v-else>
                   <slot :name="'bodyCell['+column.dataIndex+']'" v-bind="{record:element,column}">
@@ -56,6 +53,8 @@
                                     :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                                     :parser="value => value.replace(/\$\s?|(,*)/g, '')" v-if="column.type =='number'"
                                     v-model:value="element[column.dataIndex]"></a-input-number>
+                    <a-date-picker  v-else-if="column.type =='date'" v-model:value="element[column.dataIndex]" valueFormat="YYYY-MM-DD" format="MM-DD-YYYY"
+                      inputReadOnly class="w-full"></a-date-picker>
                     <a-input v-else v-model:value="element[column.dataIndex]"></a-input>
                   </slot>
                 </template>
@@ -95,7 +94,7 @@ export default defineComponent({
 
     if (!Array.isArray(props.value)) {
       props.value = []
-      emit('update', [])
+      emit('update:value', [])
     }
 
     function handleChange(...args) {
@@ -169,7 +168,9 @@ export default defineComponent({
 </script>
 
 <style>
-
+.ant-table-measure-row td:first-child{
+  width: 180px;
+}
 
 .flip-list-move {
   transition: transform 0.5s;

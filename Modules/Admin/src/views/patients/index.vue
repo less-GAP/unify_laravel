@@ -40,10 +40,6 @@ const itemActions = [
     label: 'Approve Patient',
     key: 'editProcess',
     show: (item) => {
-      // [1,2,3].includes(item.unify_status)
-      // if(auth.user.role !== 'admin' || item.unify_status === 2 || item.unify_status === 3 || item.unify_status === 1){
-      //   return false;
-      // }
       return true;
     },
     action: (item, reload) => {
@@ -101,11 +97,11 @@ const columns = [
     key: 'unify_status',
     width: 100
   },
-  // {
-  //   title: 'PROCESS',
-  //   key: 'unify_process',
-  //   width: 125
-  // },
+  {
+    title: 'Task Status',
+    key: 'unify_task_status',
+    width: 125
+  },
   {
     title: 'DOB',
     key: 'dob',
@@ -180,9 +176,8 @@ watch(router.currentRoute, (currentRoute) => {
 function registerTable({ reload }) {
   reloadTable = reload
 }
-
-console.log(auth.user.roles.find(x => x.name === 'Super Admin') !== false);
-
+console.log(auth.user.roles.find(x => x.name === 'Admin'));
+console.log(auth.user.roles.find(x => x.name === 'Seller'));
 </script>
 
 <template>
@@ -197,30 +192,39 @@ console.log(auth.user.roles.find(x => x.name === 'Super Admin') !== false);
         </template> -->
         <template #cellAction[edit]="{ item, actionMethod }">
           <a-tooltip title="Edit" class="mr-1">
-            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto">
+            <a-button class="justify-center !flex !p-1 !h-auto"
+              :disabled="((auth.user.roles.find(x => x.name === 'Admin') !== undefined)
+                || (auth.user.roles.find(x => x.name === 'Seller') !== undefined) && item.unify_process == 0 ? false : true)"
+              :class="((auth.user.roles.find(x => x.name === 'Admin') !== undefined)
+                || (auth.user.roles.find(x => x.name === 'Seller') !== undefined) && item.unify_process == 0 ? '' : '!bg-gray-300 opacity-50')"
+              @click="actionMethod">
               <BaseIcon :path="mdiPencil" class="w-4 !fill-blue-200" />
             </a-button>
           </a-tooltip>
         </template>
         <template #cellAction[editProcess]="{ item, actionMethod }">
           <a-tooltip title="Approve Patient" class="mr-1">
-            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto"
-              :disabled="((auth.user.roles.find(x => x.name === 'Super Admin') !== false && [1, 2, 3].includes(item.unify_status)) ? true : false)"
-              :class="((auth.user.roles.find(x => x.name === 'Super Admin') !== false && [1, 2, 3].includes(item.unify_status)) ? '!bg-gray-300 opacity-50' : '')">
+            <a-button class="justify-center !flex !p-1 !h-auto"
+              :disabled="((auth.user.roles.find(x => x.name === 'Admin') !== undefined) && item.unify_process < 2 ? false : true)"
+              :class="(auth.user.roles.find(x => x.name === 'Admin') !== undefined) && item.unify_process < 2 ? '' : '!bg-gray-300 opacity-50'" @click="actionMethod">
               <BaseIcon :path="mdiCheckOutline" class="w-4" />
             </a-button>
           </a-tooltip>
         </template>
         <template #cellAction[addTask]="{ item, actionMethod }">
           <a-tooltip title="Add Task" class="mr-1">
-            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto">
+            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto"
+              :disabled="((auth.user.roles.find(x => x.name === 'Admin') !== undefined) ? false : true)"
+              :class="((auth.user.roles.find(x => x.name === 'Admin') !== undefined) ? '' : '!bg-gray-300 opacity-50')">
               <BaseIcon :path="mdiCalendarCheckOutline" class="w-4" />
             </a-button>
           </a-tooltip>
         </template>
         <template #cellAction[history]="{ item, actionMethod }">
           <a-tooltip title="View History">
-            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto">
+            <a-button @click="actionMethod" class="justify-center !flex !p-1 !h-auto"
+              :disabled="((auth.user.roles.find(x => x.name === 'Admin') !== undefined) ? false : true)"
+              :class="((auth.user.roles.find(x => x.name === 'Admin') !== undefined) ? '' : '!bg-gray-300 opacity-50')">
               <BaseIcon :path="mdiHistory" class="w-4" />
             </a-button>
           </a-tooltip>

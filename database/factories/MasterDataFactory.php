@@ -15,7 +15,7 @@ class MasterDataFactory extends Factory
     public function definition(): array
     {
         return [
-            'list_key' => 'patient-status',
+            'list_key' => 'task-status',
             'data' => [
                 [
                     "label"=>"Test",

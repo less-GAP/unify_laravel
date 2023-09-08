@@ -5,16 +5,15 @@ import {
   mdiAccountMultiple,
   mdiCartOutline,
   mdiChartTimelineVariant,
-  mdiMonitorCellphone,
-  mdiReload,
-  mdiGithub,
-  mdiChartPie,
 } from "@mdi/js";
 import * as chartConfig from "@/components/Charts/chart.config.js";
-import LineChart from "@/components/Charts/LineChart.vue";
 import SectionMain from "@/components/SectionMain.vue";
-import BaseButton from "@/components/BaseButton.vue";
+import CardBoxWidget from "@/components/CardBoxWidget.vue";
+import Calendar from "@/components/Calendar.vue";
+import CardBoxTransaction from "@/components/CardBoxTransaction.vue";
+import CardBoxClient from "@/components/CardBoxClient.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
+import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 
 const chartData = ref(null);
 
@@ -36,7 +35,67 @@ const transactionBarItems = computed(() => mainStore.history);
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <h1>Unify</h1>
+
+      <SectionTitleLineWithButton
+        :icon="mdiChartTimelineVariant"
+        title="Unify Health Care"
+        main
+      >
+      </SectionTitleLineWithButton>
+
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-6">
+        <CardBoxWidget
+          class="text-blue-500"
+          color="!text-blue-500"
+          :icon="mdiAccountMultiple"
+          :number="512"
+          label="Patients"
+        />
+        <CardBoxWidget
+          class="text-red-500"
+          color="!text-red-500"
+          :icon="mdiCartOutline"
+          :number="7770"
+          prefix="$"
+          label="Deliveries"
+        />
+        <CardBoxWidget
+          class="text-yellow-500"
+          color="!text-yellow-500"
+          :icon="mdiChartTimelineVariant"
+          :number="256"
+          suffix="%"
+          label="Pending"
+        />
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="flex flex-col justify-between">
+          <CardBoxTransaction
+            v-for="(transaction, index) in transactionBarItems"
+            :key="index"
+            :amount="transaction.amount"
+            :date="transaction.date"
+            :business="transaction.business"
+            :type="transaction.type"
+            :name="transaction.name"
+            :account="transaction.account"
+          />
+        </div>
+        <div class="flex flex-col justify-between">
+          <CardBoxClient
+            v-for="client in clientBarItems"
+            :key="client.id"
+            :name="client.name"
+            :login="client.login"
+            :date="client.created"
+            :progress="client.progress"
+          />
+        </div>
+      </div>
+
+      <Calendar />
+      
     </SectionMain>
   </LayoutAuthenticated>
 </template>

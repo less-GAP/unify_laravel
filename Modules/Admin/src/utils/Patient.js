@@ -256,6 +256,47 @@ const getProcess = function (value) {
     return list.find(item => item.value === value)
 }
 
+const useNeedToDoList = function () {
+    return [
+        {
+            key: 'full_name',
+            noti: 'Full Name need check & update',
+        },
+        {
+            key: 'last_name',
+            noti: 'Last Name need check & update',
+        },
+        {
+            key: 'first_name',
+            noti: 'First Name need check & update',
+        },
+        {
+            key: 'phone',
+            noti: 'Phone number need check & update',
+        },
+        {
+            key: 'dob',
+            noti: 'Date of birth need check & update',
+        },
+        {
+            key: 'street',
+            noti: 'Address need check & update',
+        },
+        {
+            key: 'insurance_coverages',
+            noti: 'Insurance Coverages need check & update',
+        },
+        {
+            key: 'doctor_id',
+            noti: 'Doctor for patient need check & update',
+        },
+        {
+            key: 'doctor_status',
+            noti: 'Doctor status need confirm and note',
+        },
+    ];
+}
+
 export {
     fetchListStatesApi,
     fetchListInsurancesApi,
@@ -263,5 +304,6 @@ export {
     fetchListStatusPatientApi,
     fetchListDoctorStatusApi,
     listProcess,
-    getProcess
+    getProcess,
+    useNeedToDoList,
 }

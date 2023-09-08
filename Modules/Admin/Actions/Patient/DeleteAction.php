@@ -7,7 +7,7 @@ namespace Modules\Admin\Actions\Patient;
 use App\Models\Patient;
 use Illuminate\Http\Request;
 
-class DeletePatientAction
+class DeleteAction
 {
     public function handle(Request $request)
     {

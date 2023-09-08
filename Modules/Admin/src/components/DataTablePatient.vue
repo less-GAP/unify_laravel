@@ -196,7 +196,8 @@ reload()
             <reload-outlined @click="reload" />
           </template>
         </a-button>
-        <a-button v-for="listAction in listActions" type="primary" @click="() => { listAction.action(reload) }">{{ listAction.label }}</a-button>
+        <a-button v-for="listAction in listActions" type="primary" @click="() => { listAction.action(reload) }">{{
+          listAction.label }}</a-button>
       </a-space>
     </div>
     <div class="flex-1 w-full my-5 overflow-auto bg-white border border-gray-200 rounded-lg shadow scroll-smooth">
@@ -207,9 +208,8 @@ reload()
           <thead class="font-semibold text-gray-400 uppercase bg-gray-50">
             <tr>
               <th v-if="showSelection" scope="col" width="40" class="px-1 py-2 text-center whitespace-nowrap">
-                <label class="w-full font-medium text-gray-900"> <input
-                    @change="toggleCheckAll" :value="true" v-model="checkAll" type="checkbox"
-                    class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                <label class="w-full font-medium text-gray-900"> <input @change="toggleCheckAll" :value="true"
+                    v-model="checkAll" type="checkbox" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
                 </label>
               </th>
 
@@ -227,11 +227,11 @@ reload()
           </thead>
           <tbody class="divide-y divide-gray-100">
             <tr v-for="(item, index) in tableData.data" :key="item[tableConfig.item_key]"
-              v-bind:class="{ 'border-b': (index % 2 === 0)}">
+              v-bind:class="{ 'border-b': (index % 2 === 0) }">
               <td v-if="showSelection" width="40" class="p-1 text-center whitespace-nowrap">
                 <label :for="'checkbox-table-search-' + item[tableConfig.item_key]"
-                  class="w-full font-medium text-gray-900"> <input
-                    v-model="selectedItems" :id="item[tableConfig.item_key]" :value="item" type="checkbox"
+                  class="w-full font-medium text-gray-900"> <input v-model="selectedItems"
+                    :id="item[tableConfig.item_key]" :value="item" type="checkbox"
                     class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
                 </label>
               </td>

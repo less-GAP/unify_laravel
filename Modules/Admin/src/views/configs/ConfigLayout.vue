@@ -37,18 +37,24 @@ const items = ref([
     href:'/configs/paymentapi',
     title: 'Payment API',
   },
-  // {
-  //   key: 'QuickBooks',
-  //   label: 'QuickBooks',
-  //   href:'/configs/quickbooks',
-  //   title: 'QuickBooks',
-  // },
-  // {
-  //   key: 'Social',
-  //   label: 'Social',
-  //   href:'/configs/social',
-  //   title: 'Social',
-  // },
+  {
+    key: 'QuickBooks',
+    label: 'QuickBooks',
+    href:'/configs/quickbooks',
+    title: 'QuickBooks',
+  },
+  {
+    key: 'Marketing',
+    label: 'Marketing',
+    href:'/configs/marketing',
+    title: 'Marketing',
+  },
+  {
+    key: 'Social',
+    label: 'Social',
+    href:'/configs/social',
+    title: 'Social',
+  },
   {
     key: 'smtp',
     // icon: () => h(AppstoreOutlined),

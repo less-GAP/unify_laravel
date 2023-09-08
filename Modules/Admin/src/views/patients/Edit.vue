@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { reactive, h, ref, toRaw, computed, watch } from "vue";
-import { mdiBackspace, mdiContentSave, mdiPlusBoxMultipleOutline } from '@mdi/js';
+import { mdiBackspace, mdiContentSave, mdiAccountArrowUp } from '@mdi/js';
 import { BaseIcon } from "@/components";
 
 import router from "@/router";
@@ -20,7 +20,7 @@ const prefix = 'patient'
 const {
   fetchDetailApi,
   createApi,
-  // updateApi
+  updateApi
 } = UseEloquentRouter(prefix)
 
 const listStates = fetchListStatesApi();
@@ -28,7 +28,7 @@ const listInsurances = fetchListInsurancesApi();
 const listDoctors = fetchListDoctorsApi();
 const listDoctorStatus = fetchListDoctorStatusApi();
 const loading = ref(false);
-const authStore = useAuthStore();
+const auth = useAuthStore();
 const currentRoute = router.currentRoute.value;
 
 const genderList = [
@@ -52,14 +52,9 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
-  newCoverageValue: {
-    type: Array,
-    default: []
-  }
 })
 const emit = defineEmits(["close"]);
 const formState = reactive({});
-const newCoverage = ref(toRaw(props.newCoverageValue));
 
 const fetch = async function () {
   loading.value = true;
@@ -67,7 +62,9 @@ const fetch = async function () {
   var id = currentRoute.params.id;
   if (nameRoute == 'patient-edit') {
     loading.value = true
-    const value = await fetchDetailApi(id)
+    var value = await fetchDetailApi(id)
+    //prepare data
+    value.data.insurance_coverages = JSON.parse(value.data.insurance_coverages);
     Object.assign(formState, value.data)
     loading.value = false
   } else {
@@ -76,8 +73,22 @@ const fetch = async function () {
 }
 fetch();
 
+const checkAccess = () => {
+  if (auth.user.roles.find(x => x.name === 'Admin') !== undefined) {
+    return true;
+  } else if (auth.user.roles.find(x => x.name === 'Seller') !== undefined && formState.unify_process == 0 && formState.sale_user == auth.user.id) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+if (!checkAccess) {
+  router.replace({ path: '/' + prefix })
+}
+
 const saler_id = computed(() => {
-  return formState.sale_user ? formState.sale_user : authStore.user.id;
+  return formState.sale_user ? formState.sale_user : auth.user.id;
 });
 const patient_process = computed(() => {
   return formState.unify_process ? formState.unify_process : 0;
@@ -90,8 +101,48 @@ const submit = (status) => {
       if (formState.unify_status > 1) { // die or inactive => to archive
         formState.unify_inactive_at = dayjs().format('YYYY-MM-DD HH:mm:ss');
       }
+      console.log(formState);
+      var insurance_coverages = [];
+      if (formState.insurance_coverages) {
+        formState.insurance_coverages.forEach((element, index) => {
+          insurance_coverages.push({
+            coverage: element.coverage,
+            insurance_id: element.insurance_id,
+            active_date: element.active_date,
+            expired_date: element.expired_date,
+          });
+        });
+      }
+      formState.insurance_coverages = insurance_coverages;
+
       createApi({ ...formState, status: status }).then(rs => {
         Object.assign(formState, rs.data.result)
+      });
+    })
+};
+// Submit when seller approve profile from Waiting to Eligibility Check
+const submitSellerApprove = () => {
+  formRef.value
+    .validate()
+    .then(() => {
+      var insurance_coverages = [];
+      if (formState.insurance_coverages) {
+        formState.insurance_coverages.forEach((element, index) => {
+          insurance_coverages.push({
+            coverage: element.coverage,
+            insurance_id: element.insurance_id,
+            active_date: element.active_date,
+            expired_date: element.expired_date,
+          });
+        });
+      }
+      formState.insurance_coverages = insurance_coverages;
+
+      formState.unify_process = 1;
+
+      updateApi(formState.id, { ...formState }).then(rs => {
+        Object.assign(formState, rs.data.result)
+        router.replace({ path: '/' + prefix })
       });
     })
 };
@@ -137,7 +188,16 @@ const closeDetail = function () {
               <span class="ml-1 text-white">Save And Active</span>
             </div>
           </a-button>
-          <a-button v-else @click="submit('publish')" type="primary" class="uppercase">
+          <a-button
+            v-if="(currentRoute.name == 'patient-edit' && auth.user.roles.find(x => x.name === 'Seller') !== undefined && formState.unify_process == 0)"
+            @click="submitSellerApprove" type="primary" class="uppercase !bg-green-500 hover:!bg-green-400">
+            <div class="flex">
+              <BaseIcon :path="mdiAccountArrowUp" class="w-4 text-white" />
+              <span class="ml-1 text-white">Approve</span>
+            </div>
+          </a-button>
+          <a-button v-if="currentRoute.name == 'patient-edit'" @click="submit('publish')" type="primary"
+            class="uppercase">
             <div class="flex">
               <BaseIcon :path="mdiContentSave" class="w-4 text-white" />
               <span class="ml-1 text-white">Update</span>
@@ -263,7 +323,7 @@ const closeDetail = function () {
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="State" name="state" :rules="[{ required: true, message: 'Please enter state!' }]">
               <a-select v-model:value="formState.state" allowClear="" class="w-full" showSearch
-                placeholder="Choose state">
+                placeholder="Select a state">
                 <a-select-option v-for="(state, index) in listStates" :key="state.code" :value="state.code">{{ state.name
                 }} ({{ state.code }})</a-select-option>
               </a-select>
@@ -295,42 +355,22 @@ const closeDetail = function () {
               dataIndex: 'insurance_id'
             }, {
               title: 'Active date',
-              dataIndex: 'active_date'
+              dataIndex: 'active_date',
+              type: 'date',
             }, {
               title: 'Expired date',
-              dataIndex: 'expired_date'
+              dataIndex: 'expired_date',
+              type: 'date',
             },
-            ]" v-model:value="formState.insurance_coverages"></InsuranceListEdit>
-            <!-- <a-button type="primary" @click="newCoverage.push({})">
-              <mdiPlusBoxMultipleOutline></mdiPlusBoxMultipleOutline>Add insurance
-            </a-button>
-            <div v-for="coverage in formState.insurance_coverages" v-model="newCoverage">
-              <div class="flex flex-wrap -mx-4">
-                <div class="w-1/4 px-4">
-                  <a-form-item label="Coverage">
-                    <a-select v-model:value="coverage.id" allowClear="" class="w-full" showSearch
-                      placeholder="Choose insurance" :options="listInsurances">
-                    </a-select>
-                  </a-form-item>
-                  <a-form-item label="ID Insurance">
-                    <a-input v-model:value="coverage.insurance_id"></a-input>
-                  </a-form-item>
-                  <a-form-item label="Active date">
-                    <a-date-picker valueFormat="YYYY-MM-DD" format="MM-DD-YYYY" inputReadOnly v-model:value="coverage.active_date"></a-date-picker>
-                  </a-form-item>
-                  <a-form-item label="Expired date">
-                    <a-date-picker valueFormat="YYYY-MM-DD" format="MM-DD-YYYY" inputReadOnly v-model:value="coverage.expired_date"></a-date-picker>
-                  </a-form-item>
-                </div>
-              </div>
-            </div> -->
+            ]" v-model:value="formState.insurance_coverages">
+            </InsuranceListEdit>
           </div>
           <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem"
             plain>Doctor</a-Divider>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Doctor" name="doctor">
               <a-select v-model:value="formState.doctor_id" allowClear="" class="w-full" showSearch
-                placeholder="Choose doctor">
+                placeholder="Select a doctor">
                 <a-select-option v-for="(doctor, index) in listDoctors" :key="doctor.value" :value="doctor.value">{{
                   doctor.label
                 }}</a-select-option>
@@ -339,7 +379,7 @@ const closeDetail = function () {
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Doctor status" name="doctor_status">
-              <a-select v-model:value="formState.doctor_status" allowClear="" class="w-full" placeholder="Choose status">
+              <a-select v-model:value="formState.doctor_status" allowClear="" class="w-full" placeholder="Select a status">
                 <a-select-option v-for="(status, index) in listDoctorStatus" :key="status.value" :value="status.value">{{
                   status.label
                 }}</a-select-option>
@@ -389,5 +429,4 @@ const closeDetail = function () {
 
 .ant-drawer-body {
   padding: 0 !important
-}
-</style>
+}</style>
