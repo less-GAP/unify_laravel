@@ -2,12 +2,6 @@
   <div
     class="ant-table ant-table-ping-right ant-table-layout-fixed ant-table-fixed-header ant-table-fixed-column ant-table-scroll-horizontal ant-table-has-fix-right ant-table-small ant-table-bordered">
     <div class="ant-table-container">
-      <a-button @click="newValue.push({})" >
-        <template #icon>
-          <PlusOutlined></PlusOutlined>
-        </template>
-        Add Task
-      </a-button>
       <table>
         <thead class="ant-table-thead">
         <tr>
@@ -53,7 +47,7 @@
                                     :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                                     :parser="value => value.replace(/\$\s?|(,*)/g, '')" v-if="column.type =='number'"
                                     v-model:value="element[column.dataIndex]"></a-input-number>
-                    <a-switch v-else-if="column.type =='switchActive'" @change="updateApi(column.dataIndex,{is_completed:element[column.dataIndex]})" checkedValue="1" unCheckedValue="0"
+                    <a-switch v-else-if="column.type =='switchActive'" checkedValue="1" unCheckedValue="0"
                     v-model:checked="element[column.dataIndex]"/>
                     <a-date-picker v-else-if="column.type =='date'" v-model:value="element[column.dataIndex]" valueFormat="YYYY-MM-DD" format="MM-DD-YYYY"
                       inputReadOnly class="w-full"></a-date-picker>

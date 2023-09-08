@@ -1,20 +1,24 @@
 <script setup>
-import { reactive, h, ref, toRaw, computed } from "vue";
-import { mdiBackspace, mdiContentSave } from '@mdi/js';
+import { reactive, ref} from "vue";
+import { mdiBackspace } from '@mdi/js';
 import { BaseIcon } from "@/components";
 import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import { useNeedToDoList } from "@/utils/Patient";
-import TaskListEdit from "@/components/TaskListEdit.vue";
 import { PlusOutlined } from '@ant-design/icons-vue';
 import {RemoteSelect} from "@/components";
+import TaskListEdit from "@/components/TaskListEdit.vue";
 import Api from "@/utils/Api";
 const prefix = 'patient'
 const {
     fetchDetailApi,
     updateApi,
 } = UseEloquentRouter(prefix);
+
+const fetchTaskByPatientApi = function (params) {
+    return Api.get('task/list', { ...params })
+};
 
 defineProps({
     value: {
@@ -35,22 +39,25 @@ var needToDoList = [];
 const fetch = async function () {
     loading.value = true;
     var id = router.currentRoute.value.params.id;
-    if (id !== 'new') {
-        loading.value = true
-        const value = await fetchDetailApi(id)
-        Object.assign(formState, value.data)
-        needToDoLib.forEach((item) => {
-            if (formState[item.key] == null || formState[item.key] == 0) {
-                needToDoList.push({
-                    value: item.key,
-                    label: item.noti,
-                })
-            }
-        })
-        loading.value = false
-    } else {
-        loading.value = false
-    }
+    const patient = await fetchDetailApi(id)
+    const tasks = await fetchTaskByPatientApi({
+        patient_id: id,
+        per_page: -1,
+        is_completed: 0,
+    });
+    console.log(tasks.data.data);
+    Object.assign(formState, patient.data)
+    formState.tasks =  tasks.data.data
+
+    needToDoLib.forEach((item) => {
+        if (formState[item.key] == null || formState[item.key] == 0) {
+            needToDoList.push({
+                value: item.key,
+                label: item.noti,
+            })
+        }
+    })
+    loading.value = false
 }
 fetch();
 const submit = () => {
@@ -94,7 +101,7 @@ const createTaskApi = function (data) {
     return Api.post('task', data)
 };
 // on click Add task
-const addTasks = function () {
+const addTask = function () {
     var listChecked = document.querySelectorAll('.listNeedToDo input:checked');
     var txt = "";
     listChecked.forEach((item) => {
@@ -111,9 +118,13 @@ const handleAddTask = () => {
         .validate()
         .then(() => {
             formTaskState.created_by = auth.user.id
-            formTaskState.assignees = formTaskState.assignees.join(', ');
+            formTaskState.patient_id = formState.id
+            formTaskState.assignees = formTaskState.assigneesSelect.join(', ');
             try{
                 createTaskApi({ ...formTaskState }).then(rs => {
+                    if(formState.task_tag_id !== null){ // Update status task for patient
+                        updateApi(formState.id, { unify_task_status: formTaskState.task_tag_id })
+                    }
                     // Object.assign(formTaskState, rs.data.result)
                 });
                 confirmLoading.value = true;
@@ -126,6 +137,13 @@ const handleAddTask = () => {
             }
         })
 };
+
+const taskColumns = [
+  { title: '', dataIndex: 'action' },
+  { title: 'Name', dataIndex: 'name' },
+  { title: 'Assignees', dataIndex: 'assignees' },
+  { title: 'Due date', dataIndex: 'deadline_at' },
+];
 </script>
 <template>
     <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;"
@@ -197,32 +215,15 @@ const handleAddTask = () => {
                                             </label>
                                         </div>
                                     </div>
-                                    <a-button @click="addTasks" class="mt-4" type="primary">
-                                        <PlusOutlined></PlusOutlined>
-                                        Add Task
-                                    </a-button>
                                 </div>
                                 <!-- Check Need to do - End  -->
                                 <!-- Task list -->
-                                <div class="w-full px-8 py-4 mt-4">
-                                    <TaskListEdit :columns="[{
-                                        title: 'Complete',
-                                        dataIndex: 'complete',
-                                        type: 'switchActive'
-                                    }, {
-                                        title: 'Task name',
-                                        dataIndex: 'name'
-                                    }, {
-                                        title: 'Due date',
-                                        dataIndex: 'due_date',
-                                        type: 'datetime',
-                                    }, {
-                                        title: 'Assignees',
-                                        dataIndex: 'assignees',
-                                        type: 'select',
-                                    },
-                                    ]">
-                                    </TaskListEdit>
+                                <div class="w-full py-4">
+                                    <a-button @click="addTask" class="mt-4" type="primary">
+                                        <PlusOutlined></PlusOutlined>
+                                        Add Task
+                                    </a-button>
+                                    <a-table :data-source="formState.tasks" :columns="taskColumns" size="small" class="mt-4"></a-table>
                                 </div>
                             </div>
                         </div>
@@ -357,7 +358,7 @@ const handleAddTask = () => {
                     </div>
                 </div>
                 <a-form-item label="Assignees" required>
-                    <a-select :options="listUserAssignees" v-model:value="formTaskState.assignees" mode="multiple">
+                    <a-select :options="listUserAssignees" v-model:value="formTaskState.assigneesSelect" mode="multiple">
                     </a-select>
                 </a-form-item>
                 <a-form-item label="Description">

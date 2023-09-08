@@ -44,7 +44,10 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             \App\Models\Task::class,
             [
                 // 'allowedIncludes' => ['roles', 'roles.permissions', 'permissions'],
-                // 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,name')]
+                'allowedFilters' => [
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,name'),
+                    AllowedFilter::exact('patient_id')
+                    ]
             ]
         );
     // EloquentRouter::prefix('visa-application')
