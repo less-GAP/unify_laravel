@@ -279,7 +279,7 @@ reload();
                   v-else-if="column.key == 'unify_task_status'"
                   v-bind="{ item, column, index }"
                 >
-                  <a-tag v-if="item.unify_task_status !== null" :class="'!bg-['+item.unify_task_status.background_color+'] !text-['+item.unify_task_status.color+']'">{{
+                  <a-tag v-if="item.unify_task_status !== null" :style="'background-color: '+item.unify_task_status.background_color+'; color: '+item.unify_task_status.color+'; border-color: currentColor' ">{{
                     item.unify_task_status.label
                   }}</a-tag>
                 </slot>
