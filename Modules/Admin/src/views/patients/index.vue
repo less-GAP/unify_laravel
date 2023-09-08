@@ -24,45 +24,60 @@ import { BaseIcon } from "@/components";
 const prefix = "patient";
 const { fetchListApi } = UseEloquentRouter(prefix);
 const auth = useAuthStore();
+// const html_patient_task_status = async (item) => {
+//   if(item.unify_task_status !== null){
+//     await getStatusPatient(item.unify_task_status).then((res) => {
+//       item.unify_task_status = res;
+//     });
+//     console.log(item.unify_task_status);
+//     if (item.unify_task_status !== null) {
+//       // let task_status = JSON.parse(item.unify_task_status);
+//       // for (let i = 0; i < task_status.length; i++) {
+//       //   html += `<a-tag color="${task_status[i].color}">${task_status[i].name}</a-tag>`;
+//       // }
+//     }
+//   }
+//   return item.unify_task_status;
+// };
 
 const itemActions = [
   {
     label: "Edit",
     key: "edit",
-    show: (_) => {
+    show: (item) => {
       return true;
     },
-    action: (_) => {
+    action: (item) => {
       router.push(prefix + "/" + item.id + "/edit");
     },
   },
   {
     label: "Approve Patient",
     key: "editProcess",
-    show: (_) => {
+    show: (item) => {
       return true;
     },
-    action: (_) => {
+    action: (item) => {
       router.push(prefix + "/" + item.id + "/process");
     },
   },
   {
     label: "Add Task",
     key: "addTask",
-    show: (_) => {
+    show: (item) => {
       return true;
     },
-    action: (_) => {
+    action: (item) => {
       router.push(prefix + "/" + item.id + "/task");
     },
   },
   {
     label: "History",
     key: "history",
-    show: (_) => {
+    show: (item) => {
       return true;
     },
-    action: (_) => {
+    action: (item) => {
       router.push(prefix + "/" + item.id + "/history");
     },
   },
@@ -123,9 +138,9 @@ const columns = [
     width: 40,
   },
 ];
+
 const customFormat = "MM-DD-YYYY";
 const dbFormat = "YYYY-MM-DD"; // format of datepicker
-
 const dob_value = (item) => {
   return item.dob ? dayjs(item.dob, dbFormat).format(customFormat) : "-";
 };
@@ -350,7 +365,7 @@ console.log(auth.user.roles);
           <br /><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
         </template>
         <template #cell[unify_task_status]="{ item, column }">
-          {{ getStatusPatient(unify_task_status) }}
+          {{ item.unify_task_status }}
         </template>
         <template #cell[assigned]="{ item, column }">
           <!-- <a-avatar-group>
