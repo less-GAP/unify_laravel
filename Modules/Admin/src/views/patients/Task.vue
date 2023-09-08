@@ -17,7 +17,7 @@ const {
 } = UseEloquentRouter(prefix);
 
 const fetchTaskByPatientApi = function (patient_id) {
-    return Api.get('task/list?filter[patient_id]='+patient_id);
+    return Api.get('task/list?filter[patient_id]=' + patient_id);
 };
 
 defineProps({
@@ -43,7 +43,6 @@ const fetch = async function () {
     var id = router.currentRoute.value.params.id;
     const patient = await fetchDetailApi(id)
     const tasks = await fetchTaskByPatientApi(id);
-    Object.assign(formState, patient.data)
     tasks.data.data.forEach((item) => {
         item.assignees = item.assignees.split(', ');
         if (item.patient_id === formState.id) {
@@ -52,8 +51,8 @@ const fetch = async function () {
             }
         }
     })
+    Object.assign(formState, patient.data)
     console.log(formState.tasks);
-
     needToDoLib.forEach((item) => {
         if (formState[item.key] == null || formState[item.key] == 0) {
             needToDoList.push({
@@ -218,7 +217,7 @@ const handleAddTask = () => {
                                         <PlusOutlined></PlusOutlined>
                                         Add Task
                                     </a-button>
-                                    <table class="w-full mt-4 table-auto" v-if="formState.tasks.length">
+                                    <table class="w-full mt-4 table-auto">
                                         <thead class="text-xs font-semibold text-gray-400 uppercase bg-gray-50">
                                             <th></th>
                                             <th>Name</th>
@@ -240,7 +239,8 @@ const handleAddTask = () => {
                                                 </td>
                                                 <td>
                                                     <div class="flex">
-                                                        <div class="item-assignee" v-for="assignee in task.assignees" :key="assignee">
+                                                        <div class="item-assignee" v-for="assignee in task.assignees"
+                                                            :key="assignee">
                                                             <a-avatar-group>
                                                                 <a-tooltip title="Ant User" placement="top">
                                                                     <a-avatar style="background-color: #87d068">K</a-avatar>
