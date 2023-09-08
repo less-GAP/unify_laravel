@@ -29,7 +29,10 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             \App\Models\User::class,
             [
                 'allowedIncludes' => ['roles', 'roles.permissions', 'permissions'],
-                'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,username')]
+                'allowedFilters' => [
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,username')
+                    ,AllowedFilter::custom('roles.name', new \App\Builder\Filters\SearchRelationShip, 'roles.name')
+                ]
             ]
         )->routes(function () {
             Route::get('/options', \Modules\Admin\Actions\User\GetUserOptionsAction::class . '@handle');
@@ -116,8 +119,6 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'email_title,email_content')]
             ]
         );
-
-
 
 
     Route::prefix('/config')->group(function () {
