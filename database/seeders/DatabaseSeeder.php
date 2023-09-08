@@ -36,6 +36,16 @@ class DatabaseSeeder extends Seeder
             'deleted_at' => null,
             'deleted_by' => null,
         ]);
+        $seller = \App\Models\User::factory()->create([
+            'full_name' => 'Nguyen Thi Hong',
+            'username' => 'seller',
+            'email' => 'seller@unifymed.net',
+            'email_verified_at' => Carbon::now(),
+            'password' => \Hash::make('123456'),
+            'deleted' => 0,
+            'deleted_at' => null,
+            'deleted_by' => null,
+        ]);
         $seller1 = \App\Models\User::factory()->create([
             'full_name' => 'Nguyen Van A',
             'username' => 'seller1',
@@ -56,23 +66,48 @@ class DatabaseSeeder extends Seeder
             'deleted_at' => null,
             'deleted_by' => null,
         ]);
+        $seller3 = \App\Models\User::factory()->create([
+            'full_name' => 'Tran Van B',
+            'username' => 'seller3',
+            'email' => 'seller3@unifymed.net',
+            'email_verified_at' => Carbon::now(),
+            'password' => \Hash::make('123456'),
+            'deleted' => 0,
+            'deleted_at' => null,
+            'deleted_by' => null,
+        ]);
 
-        $role_admin     = Role::create(['name' => 'Admin']);
-        $role_seller    = Role::create(['name' => 'Seller']);
-        $role_staff     = Role::create(['name' => 'Staff']);
+        $role_admin             = Role::create(['name' => 'Admin']);
+
+        $role_seller_manager    = Role::create(['name' => 'Seller Manager']);
+        $role_seller            = Role::create(['name' => 'Seller']);
+
+        $role_staff_manager     = Role::create(['name' => 'Staff Manager']);
+        $role_staff             = Role::create(['name' => 'Staff']);
 
         $admin->assignRole('Admin');
+        $seller->assignRole('Seller Manager');
         $seller1->assignRole('Seller');
         $seller2->assignRole('Seller');
+        $seller3->assignRole('Seller');
 
-
-
-        Permission::findOrCreate('post.*');
+        // Permission::findOrCreate('post.*');
         Permission::findOrCreate('patient.list');
+        Permission::findOrCreate('patient.create');
+        Permission::findOrCreate('patient.edit');
+
+        Permission::findOrCreate('task.*');
+        Permission::findOrCreate('task.list');
+        Permission::findOrCreate('task.create');
+        Permission::findOrCreate('task.assign');
+        Permission::findOrCreate('task.working');
+        Permission::findOrCreate('task.review');
+
         Permission::findOrCreate('file.*');
+
         // $role_seller->givePermissionTo('post.*');
-        $role_seller->givePermissionTo('patient.list');
-        // $user->givePermissionTo('file.*');
+        $role_seller->givePermissionTo(['patient.list', 'patient.create','patient.edit', 'task.working', 'file.*']);
+        $role_seller_manager->givePermissionTo('task.*','patient.list', 'patient.create', 'file.*');
 
         \App\Models\MasterData::factory()->create([
             'list_key' => 'task-status',
@@ -80,7 +115,7 @@ class DatabaseSeeder extends Seeder
             'created_by' => 'admin',
         ]);
 
-        \App\Models\Patient::factory()->count(30)->create();
+        \App\Models\Patient::factory()->count(50)->create();
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
         // Re-enable foreign key checks
