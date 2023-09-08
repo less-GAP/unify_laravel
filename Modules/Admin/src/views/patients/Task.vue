@@ -1,14 +1,14 @@
 <script setup>
-import { reactive, ref} from "vue";
-import { mdiBackspace } from '@mdi/js';
+import { reactive, ref } from "vue";
+import { mdiBackspace, mdiBookEdit } from '@mdi/js';
 import { BaseIcon } from "@/components";
 import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import { useNeedToDoList } from "@/utils/Patient";
 import { PlusOutlined } from '@ant-design/icons-vue';
-import {RemoteSelect} from "@/components";
-import TaskListEdit from "@/components/TaskListEdit.vue";
+import { RemoteSelect } from "@/components";
+import dayjs from "dayjs";
 import Api from "@/utils/Api";
 const prefix = 'patient'
 const {
@@ -16,8 +16,8 @@ const {
     updateApi,
 } = UseEloquentRouter(prefix);
 
-const fetchTaskByPatientApi = function (params) {
-    return Api.get('task/list', { ...params })
+const fetchTaskByPatientApi = function (patient_id) {
+    return Api.get('task/list?filter[patient_id]='+patient_id);
 };
 
 defineProps({
@@ -29,7 +29,9 @@ defineProps({
         default: true
     },
 });
-const formState = reactive({});
+const formState = reactive({
+    tasks: [],
+});
 const formRef = ref();
 const loading = ref(false);
 const auth = useAuthStore();
@@ -40,14 +42,17 @@ const fetch = async function () {
     loading.value = true;
     var id = router.currentRoute.value.params.id;
     const patient = await fetchDetailApi(id)
-    const tasks = await fetchTaskByPatientApi({
-        patient_id: id,
-        per_page: -1,
-        is_completed: 0,
-    });
-    console.log(tasks.data.data);
+    const tasks = await fetchTaskByPatientApi(id);
     Object.assign(formState, patient.data)
-    formState.tasks =  tasks.data.data
+    tasks.data.data.forEach((item) => {
+        item.assignees = item.assignees.split(', ');
+        if (item.patient_id === formState.id) {
+            if (auth.user.roles.find(x => x.name === 'Admin') !== false || item.assignees.includes(auth.user.id)) {
+                formState.tasks.push(item)
+            }
+        }
+    })
+    console.log(formState.tasks);
 
     needToDoLib.forEach((item) => {
         if (formState[item.key] == null || formState[item.key] == 0) {
@@ -79,11 +84,7 @@ const fetchListUserApi = function () {
 };
 var listUserAssignees = [];
 const fetchListUser = async function () {
-    const value = await fetchListUserApi({
-        per_page: -1,
-        // page: 1,
-        // role: 'doctor'
-    })
+    const value = await fetchListUserApi()
     listUserAssignees = value.data.map((item) => {
         item.label = item.full_name
         item.value = item.id
@@ -120,9 +121,9 @@ const handleAddTask = () => {
             formTaskState.created_by = auth.user.id
             formTaskState.patient_id = formState.id
             formTaskState.assignees = formTaskState.assigneesSelect.join(', ');
-            try{
+            try {
                 createTaskApi({ ...formTaskState }).then(rs => {
-                    if(formState.task_tag_id !== null){ // Update status task for patient
+                    if (formState.task_tag_id !== null) { // Update status task for patient
                         updateApi(formState.id, { unify_task_status: formTaskState.task_tag_id })
                     }
                     // Object.assign(formTaskState, rs.data.result)
@@ -132,18 +133,12 @@ const handleAddTask = () => {
                     openModal.value = false;
                     confirmLoading.value = false;
                 }, 2000);
-            }catch(e){
+            } catch (e) {
                 console.log(e)
             }
         })
 };
 
-const taskColumns = [
-  { title: '', dataIndex: 'action' },
-  { title: 'Name', dataIndex: 'name' },
-  { title: 'Assignees', dataIndex: 'assignees' },
-  { title: 'Due date', dataIndex: 'deadline_at' },
-];
 </script>
 <template>
     <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;"
@@ -223,7 +218,43 @@ const taskColumns = [
                                         <PlusOutlined></PlusOutlined>
                                         Add Task
                                     </a-button>
-                                    <a-table :data-source="formState.tasks" :columns="taskColumns" size="small" class="mt-4"></a-table>
+                                    <table class="w-full mt-4 table-auto" v-if="formState.tasks.length">
+                                        <thead class="text-xs font-semibold text-gray-400 uppercase bg-gray-50">
+                                            <th></th>
+                                            <th>Name</th>
+                                            <th>Assignees</th>
+                                            <th>Due date</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="task in formState.tasks" :key="task.id">
+                                                <td>
+                                                    <a-button type="link" @click="addTask">
+                                                        <mdiBookEdit></mdiBookEdit>
+                                                    </a-button>
+                                                    <a-button type="link" @click="addTask">
+                                                        <PlusOutlined></PlusOutlined>
+                                                    </a-button>
+                                                </td>
+                                                <td>
+                                                    {{ task.name }}
+                                                </td>
+                                                <td>
+                                                    <div class="flex">
+                                                        <div class="item-assignee" v-for="assignee in task.assignees" :key="assignee">
+                                                            <a-avatar-group>
+                                                                <a-tooltip title="Ant User" placement="top">
+                                                                    <a-avatar style="background-color: #87d068">K</a-avatar>
+                                                                </a-tooltip>
+                                                            </a-avatar-group>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    {{ dayjs(task.deadline_at).format('HH:mm MM-DD-YYYY') }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -345,7 +376,8 @@ const taskColumns = [
                 <div class="flex flex-wrap -mx-2">
                     <div class="w-full px-2 lg:w-1/2">
                         <a-form-item label="Status">
-                            <RemoteSelect class="w-full" v-model:value="formState.task_tag_id" url="master-data/task-status/options">
+                            <RemoteSelect class="w-full" v-model:value="formState.task_tag_id"
+                                url="master-data/task-status/options">
                             </RemoteSelect>
                         </a-form-item>
                     </div>

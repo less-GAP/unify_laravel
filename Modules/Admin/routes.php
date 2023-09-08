@@ -45,8 +45,9 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             [
                 // 'allowedIncludes' => ['roles', 'roles.permissions', 'permissions'],
                 'allowedFilters' => [
-                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,name'),
-                    AllowedFilter::exact('patient_id')
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name'),
+                    AllowedFilter::exact('patient_id'),
+                    AllowedFilter::exact('is_completed'),
                     ]
             ]
         );
