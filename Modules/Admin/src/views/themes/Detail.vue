@@ -88,7 +88,7 @@ const detectPostDetail = async (url) => {
   postDetail.value = rs.data
 };
 const back = () => {
-  router.push('/products');
+  router.replace('/products');
 };
 const appendFile = function(name, files){
   // console.log(44,name, files)

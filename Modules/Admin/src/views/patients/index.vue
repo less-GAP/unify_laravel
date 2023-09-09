@@ -33,7 +33,7 @@ const itemActions = [
       return true;
     },
     action: (item) => {
-      router.push(prefix + "/" + item.id + "/edit");
+      router.replace(prefix + "/" + item.id + "/edit");
     },
   },
   {
@@ -63,7 +63,7 @@ const itemActions = [
       return true;
     },
     action: (item) => {
-      router.push(prefix + "/" + item.id + "/history");
+      router.replace(prefix + "/" + item.id + "/history");
     },
   },
 ];
@@ -72,7 +72,7 @@ const listActions = [
     label: "Add",
     action: (_) => {
       //showEditUser({}, reload)
-      router.push(prefix + "/new");
+      router.replace(prefix + "/new");
     },
   },
 ];

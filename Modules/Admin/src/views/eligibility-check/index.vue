@@ -56,7 +56,7 @@ const submit = async () => {
         // Submit the form data
         const response = await createApi({ ...formState });
         if (response.status === 200) {
-            router.push('thank-you');
+            router.replace('thank-you');
         } else {
             alert('Something went wrong!');
         }

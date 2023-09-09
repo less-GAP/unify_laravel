@@ -39,7 +39,7 @@ const tableConfig = {
   api: fetchListApi,
   addAction: (reload) => {
     //showEditUser({}, reload)
-    router.push('/' + prefix + '/new')
+    router.replace('/' + prefix + '/new')
   },
   itemActions: [
     {
@@ -48,7 +48,7 @@ const tableConfig = {
       icon: mdiDelete,
       key: 'edit',
       action(item, reload) {
-        router.push('/' + prefix + '/' + item.id)
+        router.replace('/' + prefix + '/' + item.id)
       }
     },
     {

@@ -52,7 +52,7 @@ const defaultNewValue = {
   'sale_user': '',
 }
 const back = () => {
-  router.push('/' + prefix);
+  router.replace('/' + prefix);
 };
 export {
   back,
