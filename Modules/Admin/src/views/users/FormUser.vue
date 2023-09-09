@@ -13,9 +13,29 @@ const {
 } = UseEloquentRouter(prefix)
 
 const loading = ref(false);
-
 const formRef = ref();
-
+const listRoles = ref([
+  {
+    value: 'Admin',
+    label: 'Admin'
+  },
+  {
+    value: 'Seller Manager',
+    label: 'Seller Manager'
+  },
+  {
+    value: 'Seller',
+    label: 'Seller'
+  },
+  {
+    value: 'Staff Manager',
+    label: 'Staff Manager'
+  },
+  {
+    value: 'Staff',
+    label: 'Staff'
+  },
+]);
 
 const formState = reactive({
   isNew: true,
@@ -47,6 +67,7 @@ const submit = () => {
     .then(() => {
       createApi({...formState}).then(rs => {
         Object.assign(formState, rs.data.result)
+        console.log(formState);
       });
     })
 };
@@ -57,14 +78,16 @@ const closeDetail = function () {
 </script>
 
 <template>
-  <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;"
-            @close="closeDetail" :open="true" width="80vw">
+  <a-drawer
+:closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;"
+            :open="true" width="80vw" @close="closeDetail">
     <a-form
       autocomplete="off"
       v-bind="$config.formConfig"
       @finish="submit"
     >
-      <div style="height:50px;"
+      <div
+style="height:50px;"
            class=" ">
         <a-button class="float-left" type="link" @click="closeDetail">
           <template #icon>
@@ -73,11 +96,11 @@ const closeDetail = function () {
         </a-button>
         <a-space class="float-right" align="right">
           <!--                <a-button v-if="formState.rule_detect_category_link" @click="detectCategory" :loading="loadingDraft" >Test Category</a-button>-->
-          <a-button @click="submit()" :loading="loading" type="primary">Save</a-button>
+          <a-button :loading="loading" type="primary" @click="submit()">Save</a-button>
         </a-space>
       </div>
       <a-form-item name="username" label="UserName" :rules="[{ required: true }]">
-        <a-input autocomplete="off" v-model:value="formState.username"/>
+        <a-input v-model:value="formState.username" autocomplete="off"/>
       </a-form-item>
       <a-form-item name="full_name" label="Full Name" :rules="[{ required: true }]">
         <a-input v-model:value="formState.full_name"/>
@@ -85,18 +108,18 @@ const closeDetail = function () {
       <a-form-item name="email" label="Email" :rules="[{ type: 'email',required: true  }]">
         <a-input v-model:value="formState.email"/>
       </a-form-item>
-      <a-form-item label="Role" name="role">
-        <a-radio-group v-model:value="formState.role">
-          <a-radio value="user" name="type">User</a-radio>
-          <a-radio value="admin" name="type">Admin</a-radio>
-        </a-radio-group>
+      <a-form-item label="Role" name="role" required>
+        <a-select v-model:value="formState.role"
+        :options="listRoles"
+        >
+        </a-select>
       </a-form-item>
       <a-form-item
         label="Password"
         name="password"
         :rules="formState.isNew?[{ required: true, message: 'Please input your password!' }]:[]"
       >
-        <a-input-password autocomplete="off" v-model:value="formState.password">
+        <a-input-password v-model:value="formState.password" autocomplete="off">
           <template #prefix>
             <LockOutlined class="site-form-item-icon"/>
           </template>
