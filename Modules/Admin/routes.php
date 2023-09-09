@@ -3,6 +3,7 @@
 use App\Builder\EloquentRouter;
 use App\Models\EmailTemplate;
 use App\Models\Product;
+use App\Services\FirebaseService;
 use Illuminate\Support\Facades\Route;
 use Modules\Admin\Actions\GetUserInfoAction;
 use Modules\Admin\Actions\User\DeleteUserAction;
@@ -13,7 +14,10 @@ Route::get('/', function () {
     return 'admin api';
 });
 Route::post('auth/login', \Modules\Admin\Actions\Auth\PostLoginAction::class . '@handle');
-
+Route::get('test', function (){
+    app(FirebaseService::class)->updateVersion('test');
+    return 323;
+});
 Route::middleware([AdminIsAuthenticated::class])->group(function () {
     Route::prefix('/auth')->group(function () {
         Route::get('userInfo', GetUserInfoAction::class . '@handle');
