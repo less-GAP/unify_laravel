@@ -43,7 +43,7 @@ const itemActions = [
       return true;
     },
     action: (item) => {
-      router.push(prefix + "/" + item.id + "/process");
+      router.to(prefix + "/" + item.id + "/process");
     },
   },
   {
@@ -53,7 +53,7 @@ const itemActions = [
       return true;
     },
     action: (item) => {
-      router.push(prefix + "/" + item.id + "/task");
+      router.replace(prefix + "/" + item.id + "/task");
     },
   },
   {

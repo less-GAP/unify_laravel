@@ -66,6 +66,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         ->handle(
             \App\Models\Post::class,
             [
+
                 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'title')]
             ]
         )->routes(function () {
@@ -75,6 +76,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         ->handle(
             \App\Models\Patient::class,
             [
+                'allowedIncludes' => ['tasks'],
                 'allowedSorts' => ['id', 'name', 'updated_at'],
                 'allowedFilters' => [
                     AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,phone,email'), AllowedFilter::custom('phone', new \App\Builder\Filters\SearchLikeMultipleField, 'phone')
