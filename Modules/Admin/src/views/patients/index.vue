@@ -43,7 +43,7 @@ const itemActions = [
       return true;
     },
     action: (item) => {
-      router.to(prefix + "/" + item.id + "/process");
+      router.replace(prefix + "/" + item.id + "/process");
     },
   },
   {
