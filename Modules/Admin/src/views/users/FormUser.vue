@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { reactive, h, ref, toRaw, computed } from "vue";
 import { CloseCircleOutlined, ArrowLeftOutlined } from '@ant-design/icons-vue';
+import { mdiBackspace, mdiContentSave, mdiAccountArrowUp } from '@mdi/js';
 import router from "@/router";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import ApiData from "@/components/ApiData.vue";
 import { useAuthStore } from "@/stores/auth";
+import { notification } from "ant-design-vue";
 
 const prefix = 'user'
 const {
@@ -38,14 +40,14 @@ const listRoles = ref([
     label: 'Staff'
   },
 ]);
-
 const formState = reactive({
   isNew: true,
   full_name: "",
   username: "",
   email: "",
-  role: "",
+  roles: "",
   password: "",
+  isDefaultSeller: false,
 });
 
 const fetch = async function () {
@@ -69,8 +71,13 @@ const submit = () => {
   formRef.value
     .validate()
     .then(() => {
-      console.log(formState.roles);
-
+      if (formState.roles === null) {
+        notification.error({
+          message: 'Error',
+          description: 'Please select role',
+        });
+        return false;
+      }
       createApi({ ...formState }).then(rs => {
         Object.assign(formState, rs.data.result)
       });
@@ -82,49 +89,91 @@ const closeDetail = function () {
 </script>
 
 <template>
-  <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;" :open="true"
-    width="80vw" @close="closeDetail">
+  <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;" :open="true" @close="closeDetail" width="30vw">
     <a-form autocomplete="off" v-bind="$config.formConfig" :model="formState" ref="formRef" @finish="submit">
-      <div style="height:50px;" class=" ">
-        <a-button class="float-left" type="link" @click="closeDetail">
+      <div class="p-3 bg-gray-200">
+        <a-button class="!hidden md:!inline-block" type="link" @click="closeDetail">
           <template #icon>
-            <ArrowLeftOutlined />
+            <div class="flex">
+              <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500" />
+              <span class="ml-1 text-stone-500">Back</span>
+            </div>
           </template>
         </a-button>
-        <a-space class="float-right" align="right">
-          <a-button :loading="loading" type="primary" @click="submit()">Save</a-button>
+        <a-button class="!inline-flex items-center justify-center md:!hidden !w-8 !h-8 !p-0" type="link"
+          @click="closeDetail">
+          <template #icon>
+            <div class="flex">
+              <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500" />
+              <span class="ml-1 text-stone-500">Back</span>
+            </div>
+          </template>
+        </a-button>
+        <a-space class="float-right">
+          <a-button @click="submit" type="primary" class="uppercase">
+            <div class="flex">
+              <BaseIcon :path="mdiContentSave" class="w-4 text-white" />
+              <span class="ml-1 text-white">Save</span>
+            </div>
+          </a-button>
         </a-space>
       </div>
-      <a-form-item name="username" label="UserName" :rules="[{ require: true }]" v-if="!formState.isNew && auth.user.roles.find(x => x.name === 'Admin') !== false">
-        <a-input v-model:value="formState.username" autocomplete="off" />
-      </a-form-item>
-      <a-form-item name="username" label="UserName" :rules="[{ require: true }]" v-else>
-        <a-input v-model:value="formState.username" autocomplete="off" readonly/>
-      </a-form-item>
-      <a-form-item name="full_name" label="Full Name" :rules="[{ required: true }]">
-        <a-input v-model:value="formState.full_name" />
-      </a-form-item>
-      <a-form-item name="email" label="Email" :rules="[{ type: 'email', required: true }]">
-        <a-input v-model:value="formState.email" />
-      </a-form-item>
-      <a-form-item label="Role" name="role" required v-if="!formState.isNew && auth.user.roles.find(x => x.name === 'Admin') !== false">
-        <a-select v-model:value="formState.roles" :options="listRoles">
-        </a-select>
-      </a-form-item>
-      <a-form-item label="Role" name="role" required v-else>
-        <a-input v-model:value="formState.roles" readonly>
-        </a-input>
-      </a-form-item>
-      <a-form-item label="Password" name="password"
-        :rules="formState.isNew ? [{ required: true, message: 'Please input your password!' }] : []">
-        <a-input-password v-model:value="formState.password" autocomplete="off">
-          <template #prefix>
-            <LockOutlined class="site-form-item-icon" />
-          </template>
-        </a-input-password>
-      </a-form-item>
-
+      <div class="px-4 mt-5 overflow-y-auto" style="height:calc(100% - 60px);">
+        <a-form-item label="UserName" :rules="[{ require: true }]"
+          v-if="!formState.isNew && auth.user.roles.find(x => x.name === 'Admin') !== false">
+          <a-input v-model:value="formState.username" autocomplete="off" />
+        </a-form-item>
+        <a-form-item label="UserName" :rules="[{ require: true }]" v-else>
+          <a-input v-model:value="formState.username" autocomplete="off" readonly />
+        </a-form-item>
+        <a-form-item label="Full Name" :rules="[{ required: true }]">
+          <a-input v-model:value="formState.full_name" />
+        </a-form-item>
+        <a-form-item label="Email" :rules="[{ type: 'email', required: true }]">
+          <a-input v-model:value="formState.email" />
+        </a-form-item>
+        <a-form-item label="Role" v-if="!formState.isNew && auth.user.roles.find(x => x.name === 'Admin') !== false">
+          <a-select v-model:value="formState.roles" :options="listRoles">
+          </a-select>
+        </a-form-item>
+        <a-form-item label="Role" v-else>
+          <a-input v-model:value="formState.roles" readonly>
+          </a-input>
+        </a-form-item>
+        <a-form-item
+          v-if="auth.user.roles.find(x => x.name === 'Admin') !== false && ['Seller', 'Seller Manager'].includes(formState.roles)">
+          <a-checkbox v-model:checked="formState.isDefaultSeller"></a-checkbox>
+          <span class="ml-4">Is default Seller</span>
+        </a-form-item>
+        <a-form-item label="Password"
+          :rules="formState.isNew ? [{ required: true, message: 'Please input your password!' }] : []">
+          <a-input-password v-model:value="formState.password" autocomplete="off">
+            <template #prefix>
+              <LockOutlined class="site-form-item-icon" />
+            </template>
+          </a-input-password>
+        </a-form-item>
+      </div>
 
     </a-form>
   </a-drawer>
 </template>
+
+<style>
+.ant-input {
+  border-color: #d9d9d9 !important;
+  border-radius: 5px !important;
+}
+
+.ant-modal-wrap {
+  z-index: 100001 !important;
+}
+
+.ant-form-item {
+  margin-bottom: 0;
+}
+
+.ant-drawer-body {
+  padding: 0 !important
+}
+</style>
