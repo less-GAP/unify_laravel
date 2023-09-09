@@ -37,6 +37,8 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         )->routes(function () {
             Route::get('/options', \Modules\Admin\Actions\User\GetUserOptionsAction::class . '@handle');
             Route::get('list', \Modules\Admin\Actions\User\GetUserListAction::class . '@handle');
+            Route::post('', \Modules\Admin\Actions\User\PostUserAction::class . '@handle');
+            Route::delete('{id}', \Modules\Admin\Actions\User\DeleteUserAction::class . '@handle');
         });
 
     EloquentRouter::prefix('task')

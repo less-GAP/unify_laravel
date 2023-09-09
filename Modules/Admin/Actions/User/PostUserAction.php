@@ -13,13 +13,16 @@ class PostUserAction
     public function handle(CreateUserRequest $request)
     {
         $data = $request->all();
-        if(!empty($data['password'])){
-            $data['password'] = \Hash::make( $data['password']);
+        if (!empty($data['password'])) {
+            $data['password'] = \Hash::make($data['password']);
         }
-       $result = User::updateOrCreate(['id'=>$request->input('id')],$data);
+        $result = User::updateOrCreate(['id' => $request->input('id')], $data);
+        if (!empty($data['roles'])) {
+            $result->syncRoles($data['roles']);
+        }
         return [
-          'result' =>  $result,
-          'message' =>  $request->input('id')?'Update User Successfully!':'Create User Successfully!'
+            'result' =>  $result,
+            'message' =>  $request->input('id') ? 'Update User Successfully!' : 'Create User Successfully!'
         ];
     }
 }
