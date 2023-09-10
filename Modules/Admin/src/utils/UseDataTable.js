@@ -3,6 +3,7 @@ export function UseDataTable(fetchListApi, _tableConfig = {}) {
     api: fetchListApi,
     filter: {..._tableConfig.filter},
     showReload: _tableConfig.showReload!==null?_tableConfig.showReload:false,
+    showPagination: _tableConfig.showPagination!==null?_tableConfig.showPagination:true,
     columns:  _tableConfig.columns?_tableConfig.columns:[],
     config: {
       columns: [],

@@ -38,7 +38,7 @@ class EloquentRouter
         $prefix = $this->prefix;
 
         Route::prefix($prefix)->group(function () use ($config) {
-            $apiList = ['list', 'all', 'detail', 'create', 'update', 'delete'];
+            $apiList = ['list', 'all', 'detail', 'create', 'update', 'relations', 'delete'];
             if (!empty($config['apiList'])) {
                 $apiList = $config['apiList'];
             }
@@ -67,6 +67,18 @@ class EloquentRouter
                     return $this->getDetail($request);
                 });
             }
+            if (in_array('relations', $apiList)) {
+                Route::get('/{id}/{relation}', function (Request $request) {
+                    return $this->getRelation($request);
+                });
+                Route::post('/{id}/{relation}/{relationId}', function (Request $request) {
+                    return $this->attachRelation($request);
+                });
+                Route::delete('/{id}/{relation}/{relationId}', function (Request $request) {
+                    return $this->detachRelation($request);
+                });
+            }
+
             if (in_array('delete', $apiList)) {
                 Route::delete('{id}', function (Request $request) {
                     return $this->delete($request);
@@ -86,6 +98,7 @@ class EloquentRouter
             ->paginate($request->input('perPage', 15))
             ->appends($request->query());
     }
+
     public function getAll(Request $request)
     {
         return QueryBuilder::for($this->model)
@@ -94,7 +107,7 @@ class EloquentRouter
             ->allowedFilters($this->config['allowedFilters'] ?? [])
             ->allowedSorts($this->config['allowedSorts'] ?? 'id')
             ->groupBy(\DB::raw($this->config['groupBy'] ?? 'id'))
-            ->limit($request->input('limit',$this->config['limit']??100))
+            ->limit($request->input('limit', $this->config['limit'] ?? 100))
             ->get();
     }
 
@@ -106,6 +119,63 @@ class EloquentRouter
             $query->where($model->getKeyName(), $id);
         }
         return $query->with($this->config['allowedIncludes'] ?? [])->first();
+    }
+
+    public function getRelation(Request $request)
+    {
+        $model = new $this->model;
+        $query = $this->model::query();
+        if ($id = $request->route('id')) {
+            $query->where($model->getKeyName(), $id);
+        }
+        $model = $query->first();
+
+        $relation = $request->route('relation');
+        if (!$model || !$relation) {
+            return [];
+        }
+        return $model->$relation->toArray();
+    }
+
+    public function attachRelation(Request $request)
+    {
+        $model = new $this->model;
+        $query = $this->model::query();
+        if ($id = $request->route('id')) {
+            $query->where($model->getKeyName(), $id);
+        }
+        $model = $query->first();
+
+        $relation = $request->route('relation');
+        if (!$model || !$relation) {
+            return [];
+        }
+        $id = $request->route('relationId');
+        $model->$relation()->attach([$id]);
+        return [
+            'message' => 'Success!'
+        ];
+    }
+
+    public function detachRelation(Request $request)
+    {
+        $model = new $this->model;
+        $query = $this->model::query();
+        if ($id = $request->route('id')) {
+            $query->where($model->getKeyName(), $id);
+        }
+        $model = $query->first();
+
+        $relation = $request->route('relation');
+        if (!$model || !$relation) {
+            return [];
+        }
+        $id = $request->route('relationId');
+        $model->$relation()->detach([$id]);
+        return [
+            'message' => 'Success!'
+        ];
+
     }
 
     public function delete(Request $request)
@@ -128,13 +198,14 @@ class EloquentRouter
             'message' => $request->input($model->getKeyName()) ? 'Update Successfully!' : 'Create Successfully!'
         ];
     }
+
     public function update(Request $request)
     {
         $data = $request->all();
         $result = $this->model::find($request->route('id'))->update($data);
         return [
             'result' => $result,
-            'message' =>'Update Successfully!'
+            'message' => 'Update Successfully!'
         ];
     }
 

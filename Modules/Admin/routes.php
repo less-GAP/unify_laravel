@@ -31,7 +31,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                 'allowedIncludes' => ['roles', 'roles.permissions', 'permissions'],
                 'allowedFilters' => [
                     AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,username')
-                    ,AllowedFilter::custom('roles.name', new \App\Builder\Filters\SearchRelationShip, 'roles.name')
+                    , AllowedFilter::custom('roles.name', new \App\Builder\Filters\SearchRelationShip, 'roles.name')
                 ]
             ]
         )->routes(function () {
@@ -50,7 +50,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                     AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name'),
                     AllowedFilter::exact('patient_id'),
                     AllowedFilter::exact('is_completed'),
-                    ]
+                ]
             ]
         );
     // EloquentRouter::prefix('visa-application')
@@ -163,4 +163,22 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         )->routes(function () {
             Route::get('{listKey}/options', \Modules\Admin\Actions\MasterData\GetOptionsAction::class . '@handle');
         });
+    EloquentRouter::prefix('permissions')
+        ->handle(\App\Models\Permission::class,
+            [
+                'allowedFilters' => [
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name')
+
+                ]
+            ]
+        );
+    EloquentRouter::prefix('roles')
+        ->handle(\App\Models\Role::class,
+            [
+                'allowedFilters' => [
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name')
+
+                ]
+            ]
+        );
 });

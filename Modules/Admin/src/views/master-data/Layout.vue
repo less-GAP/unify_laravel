@@ -13,6 +13,20 @@ const items = ref([
       label: 'Task Status',
       title: 'Task Status',
     } ,
+  {
+      key: 'User Roles',
+      icon: () => h(AppstoreOutlined),
+      href: '/master-data/roles',
+      label: 'Roles',
+      title: 'Roles',
+    } ,
+  {
+      key: 'permissions',
+      icon: () => h(AppstoreOutlined),
+      href: '/master-data/permissions',
+      label: 'Permissions',
+      title: 'Permissions',
+    } ,
 
   ])
 ;
@@ -27,7 +41,7 @@ function menuClick({item}) {
 <template>
   <LayoutAuthenticated>
     <a-layout>
-      <a-menu @click="menuClick" mode="horizontal" :items="items">
+      <a-menu :selectedKeys="[$appState.currentRoute?.name]" @click="menuClick" mode="horizontal" :items="items">
       </a-menu>
       <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
