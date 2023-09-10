@@ -184,7 +184,7 @@ const closeDetail = function () {
           <a-tag v-if="formState.unify_process == 2 && formState.unify_status < 2" color="blue">Running</a-tag>
           <ApiData url="master-data/task-status" method="GET" :params="{}">
             <template #default="{ data }">
-              <a-select class="w-[200px]" v-model:value="formState.unify_task_status" :options="JSON.parse(data.data)">
+              <a-select class="w-[200px]" v-model:value="formState.unify_task_status" :options="JSON.parse(data.data)" placeholder="Select status for profile">
               </a-select>
             </template>
           </ApiData>
