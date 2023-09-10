@@ -1,5 +1,6 @@
 <script setup>
 import {reactive, ref, h, watch} from "vue";
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons-vue';
 import SectionMain from "@/components/SectionMain.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import {DataTable} from "@/components";
@@ -20,6 +21,7 @@ const auth = useAuthStore();
 const itemActions = [
   {
     label: 'Edit',
+    key: 'edit',
     action: (item, reload) => {
       //showEditUser({}, reload)
       router.replace(prefix + '/' + item.id)
@@ -27,6 +29,7 @@ const itemActions = [
   },
   {
     label: 'Delete',
+    key: 'delete',
     class: 'font-medium !text-red-600 dark:text-red-500 hover:underline',
     confirm:true,
     action(item, reload) {
@@ -49,8 +52,7 @@ const listActions = [
 const columns = [
   {title: 'Username',width:200, key: 'username'}
   , {title: 'Name', key: 'full_name'}
-  , {title: 'Role', key: 'role'}
-  , {title: 'Status', key: 'status'}
+  , {title: 'Role', key: 'roles'}
 ]
 
 
@@ -71,11 +73,22 @@ watch(router.currentRoute, (data) => {
 function registerTable({reload}) {
   reloadTable = reload
 }
+console.log(auth.user);
 </script>
 
 <template>
   <LayoutAuthenticated>
     <DataTable @register="registerTable"  v-bind="tableConfig">
+      <template #cellAction[edit]="{item,actionMethod}">
+          <a-button
+            type="text"
+            primary
+            :icon="h(EditOutlined)"
+            label=""
+            :outline="true"
+          >
+          </a-button>
+      </template>
       <template #cellAction[delete]="{item,actionMethod}">
         <a-popconfirm
           title="Are you sure delete this user?"
@@ -91,7 +104,6 @@ function registerTable({reload}) {
             label=""
             :outline="true"
           >
-
           </a-button>
 
         </a-popconfirm>
@@ -104,12 +116,14 @@ function registerTable({reload}) {
           <div class="font-normal text-gray-500">{{ item.email }}</div>
         </div>
       </template>
-      <template #cell[status]="{item,column}">
-        <a-switch @change="updateApi(item.id,{status:item.status})" checkedValue="active" unCheckedValue="inactive"
-                  v-model:checked="item.status"/>
+      <template #cell[deleted]="{item,column}">
+        <a-switch @change="updateApi(item.id,{deleted:item.deleted})" checkedValue="active" unCheckedValue="inactive"
+                  v-model:checked="item.deleted"/>
       </template>
-      <template #cell[role]="{item,column}">
-
+      <template #cell[roles]="{item,column}">
+        <div v-for="role in item.roles" :key="role.id">
+          <a-tag>{{ role.name }}</a-tag>
+        </div>
       </template>
     </DataTable>
 
