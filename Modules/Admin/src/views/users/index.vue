@@ -73,7 +73,7 @@ watch(router.currentRoute, (data) => {
 function registerTable({reload}) {
   reloadTable = reload
 }
-console.log(auth.user);
+
 </script>
 
 <template>
@@ -83,6 +83,8 @@ console.log(auth.user);
           <a-button
             type="text"
             primary
+            @click="actionMethod"
+            v-if="$auth.hasPermission('user.edit')"
             :icon="h(EditOutlined)"
             label=""
             :outline="true"
@@ -98,7 +100,7 @@ console.log(auth.user);
         >
           <a-button
             type="text"
-            v-if="auth.user.roles.find(x => x.name === 'Admin') !== false"
+            v-if="$auth.hasPermission('user.delete')"
             danger
             :icon="h(DeleteOutlined)"
             label=""
