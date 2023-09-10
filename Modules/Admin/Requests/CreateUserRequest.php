@@ -5,6 +5,7 @@ namespace Modules\Admin\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
+use Illuminate\Validation\Rule;
 
 class CreateUserRequest extends FormRequest
 {
@@ -26,10 +27,16 @@ class CreateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'username' => 'required|unique:users,username,' . $this->input('id'),
+            'username' => [
+                'required',
+                Rule::unique('users')->ignore($this->input('id')),
+            ],
             'full_name' => 'required',
-            'email' => 'required|email|unique:users,email'. $this->input('id'),
-            'role' => 'required',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users')->ignore($this->input('id')),
+            ],
         ];
     }
 

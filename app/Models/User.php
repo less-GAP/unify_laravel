@@ -55,8 +55,12 @@ class User extends Authenticatable
 
     protected $appends = [
         'profile_photo_url',
+        'roles_id',
         'app_permissions'
     ];
+    public function getRolesIdAttribute(){
+        return $this->roles->pluck('id');
+    }
     public function getAppPermissionsAttribute(){
         if($this->hasRole('Admin')){
             return ['*'];

@@ -25,6 +25,12 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
     //        Route::delete('{id}', DeleteUserAction::class . '@handle');
     //    });
     EloquentRouter::prefix('user')
+        ->routes(function () {
+            Route::get('/options', \Modules\Admin\Actions\User\GetUserOptionsAction::class . '@handle');
+            Route::get('list', \Modules\Admin\Actions\User\GetUserListAction::class . '@handle');
+            Route::post('{id?}', \Modules\Admin\Actions\User\PostUserAction::class . '@handle');
+            Route::delete('{id}', \Modules\Admin\Actions\User\DeleteUserAction::class . '@handle');
+        })
         ->handle(
             \App\Models\User::class,
             [
@@ -34,12 +40,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                     , AllowedFilter::custom('roles.name', new \App\Builder\Filters\SearchRelationShip, 'roles.name')
                 ]
             ]
-        )->routes(function () {
-            Route::get('/options', \Modules\Admin\Actions\User\GetUserOptionsAction::class . '@handle');
-            Route::get('list', \Modules\Admin\Actions\User\GetUserListAction::class . '@handle');
-            Route::post('', \Modules\Admin\Actions\User\PostUserAction::class . '@handle');
-            Route::delete('{id}', \Modules\Admin\Actions\User\DeleteUserAction::class . '@handle');
-        });
+        );
 
     EloquentRouter::prefix('task')
         ->handle(

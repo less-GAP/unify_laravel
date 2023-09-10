@@ -17,8 +17,8 @@ class PostUserAction
             $data['password'] = \Hash::make($data['password']);
         }
         $result = User::updateOrCreate(['id' => $request->input('id')], $data);
-        if (!empty($data['roles'])) {
-            $result->syncRoles($data['roles']);
+        if (!empty($data['roles_id'])) {
+            $result->syncRoles($data['roles_id']);
         }
         return [
             'result' =>  $result,

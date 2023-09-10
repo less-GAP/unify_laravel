@@ -26,7 +26,6 @@ return new class extends Migration
             $table->integer('deleted')->default(0);
             $table->dateTime('deleted_at')->nullable();
             $table->integer('deleted_by')->nullable();
-
             $table->timestamps();
         });
     }

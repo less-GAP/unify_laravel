@@ -45,7 +45,7 @@ const formState = reactive({
   full_name: "",
   username: "",
   email: "",
-  roles: "",
+  roles_id: [],
   password: "",
   isDefaultSeller: false,
 });
@@ -131,9 +131,9 @@ const closeDetail = function () {
         <a-form-item label="Email" :rules="[{ type: 'email', required: true }]">
           <a-input v-model:value="formState.email"/>
         </a-form-item>
-        <a-form-item label="Role" v-if="!formState.isNew">
-          <RemoteSelect url="roles/all" labelKey="name" valueKey="id" :readonly="!$auth.hasPermission('user.updateRole')"
-                    v-model:value="formState.roles" :options="listRoles">
+        <a-form-item label="Role" >
+          <RemoteSelect mode="multiple" url="roles/all" labelKey="name" valueKey="id" :readonly="!$auth.hasPermission('user.updateRole')"
+                    v-model:value="formState.roles_id" >
           </RemoteSelect>
         </a-form-item>
 
