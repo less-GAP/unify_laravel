@@ -114,7 +114,6 @@ const fetchListStatusPatientApi = async function () {
 const getStatusPatient = async function (value) {
   var list = await fetchListStatusPatientApi().then((res) => res.data);
   list = JSON.parse(list.data)
-  console.log(list);
   return list.find((item) => item.value === value);
 };
 
