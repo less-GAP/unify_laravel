@@ -213,10 +213,6 @@ const submit = async () => {
                 </div>
                 <div class="relative z-0 w-full mb-6 group">
                     <SignaturePanel></SignaturePanel>
-                    <button id="clear-signature"
-                        class="absolute z-20 px-2 py-1 text-sm text-white bg-gray-400 border-0 rounded-sm top-2 left-2">
-                        Clear
-                    </button>
                     <a-input type="file" name="uploadSignature" id="uploadSignature" class="!hidden"></a-input>
                 </div>
 
