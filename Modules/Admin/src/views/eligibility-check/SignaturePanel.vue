@@ -1,10 +1,10 @@
 <template>
-    <div>
+    <div class="relative w-max">
         <canvas ref="signatureCanvas" :height="canvasHeight" :width="canvasWidth" class="border border-gray-300"></canvas>
-        <button type="button" @click="clearSignature(event)" id="clear-signature"
-            class="absolute z-20 px-2 py-1 text-sm text-white bg-gray-400 border-0 rounded-sm top-2 left-2">
+        <a href="javascript:void(0)" @click.prevent="clearSignature"
+            class="absolute z-20 px-2 py-1 text-sm !text-white !bg-gray-400 !border-0 rounded-sm top-2 left-2">
             Clear
-        </button>
+        </a>
     </div>
 </template>
   
@@ -17,13 +17,15 @@ const isMobile = () => {
 
 export default {
     data() {
-        return isMobile() ? {
-            canvasHeight: 250,
-            canvasWidth: 300,
-        } : {
-            canvasHeight: 500,
-            canvasWidth: 600,
-        };
+        return isMobile()
+            ? {
+                canvasHeight: 250,
+                canvasWidth: 300,
+            }
+            : {
+                canvasHeight: 500,
+                canvasWidth: 600,
+            };
     },
     mounted() {
         this.initializeCanvas();
@@ -55,24 +57,23 @@ export default {
                 return [positionX, positionY];
             };
 
-
             const handlePointerDown = (event) => {
                 writingMode = true;
                 ctx.beginPath();
                 const [positionX, positionY] = getCursorPosition(event);
                 ctx.moveTo(positionX, positionY);
-            }
+            };
 
             const handlePointerUp = () => {
                 writingMode = false;
-            }
+            };
 
             const handlePointerMove = (event) => {
-                if (!writingMode) return
+                if (!writingMode) return;
                 const [positionX, positionY] = getCursorPosition(event);
                 ctx.lineTo(positionX, positionY);
                 ctx.stroke();
-            }
+            };
 
             // Prevent touchmove event from scrolling the page
             canvas.addEventListener('touchmove', (event) => {
@@ -102,8 +103,7 @@ export default {
                 passive: true
             });
         },
-        clearSignature(event) {
-            event.preventDefault();
+        clearSignature() {
             const canvas = this.$refs.signatureCanvas;
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -112,4 +112,7 @@ export default {
 };
 </script>
   
-<style></style>
+<style scoped>
+/* Add any component-specific styles here */
+</style>
+  
