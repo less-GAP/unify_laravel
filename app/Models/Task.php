@@ -43,7 +43,7 @@ class Task extends Model
         'deleted_by',
     ];
 
-    public function patient() : BelongsTo
+    public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);
     }
@@ -54,8 +54,8 @@ class Task extends Model
      * @var array<int, string>
      */
     protected $hidden = [
-//        'password',
-//        'remember_token',
+        //        'password',
+        //        'remember_token',
     ];
 
     /**
@@ -72,13 +72,4 @@ class Task extends Model
         // 'image_url',
         // 'tags'
     ];
-
-
-    // public function getImageUrlAttribute()
-    // {
-    //     if ($this->image != '') {
-    //         return url($this->image, '', env('APP_ENV') == 'local' ? false : true);
-    //     }
-    //     return '';
-    // }
 }

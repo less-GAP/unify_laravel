@@ -103,7 +103,6 @@ async function reload() {
       const statusPromises = tableData.value.data.map(async (item) => {
         if (item.unify_task_status !== null) {
           const status = await getStatusPatient(item.unify_task_status);
-          console.log("status", status);
           item.unify_task_status = status;
         }
       });

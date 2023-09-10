@@ -1,13 +1,14 @@
 <script setup>
 import { reactive, ref } from "vue";
-import { mdiBackspace, mdiBookEdit } from '@mdi/js';
+import { notification } from "ant-design-vue";
+import { mdiBackspace, mdiDeleteOffOutline, mdiPencil } from '@mdi/js';
 import { BaseIcon } from "@/components";
 import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import { useNeedToDoList } from "@/utils/Patient";
 import { PlusOutlined } from '@ant-design/icons-vue';
-import { RemoteSelect, ApiData } from "@/components";
+import { ApiData } from "@/components";
 import dayjs from "dayjs";
 import Api from "@/utils/Api";
 
@@ -45,15 +46,14 @@ const fetch = async function () {
   const patient = await fetchDetailApi(id)
   const tasks = await fetchTaskByPatientApi(id);
   tasks.data.data.forEach((item) => {
-    item.assignees = item.assignees.split(', ');
     if (item.patient_id === formState.id) {
-      if (auth.user.roles.find(x => x.name === 'Admin') !== false || item.assignees.includes(auth.user.id)) {
+      item.assignees = item.assignees.split(', ');
+      if ($auth.hasPermission('Admin') || item.assignees.includes(auth.user.id)) {
         formState.tasks.push(item)
       }
     }
   })
   Object.assign(formState, patient.data, true)
-  console.log(formState.tasks);
   needToDoLib.forEach((item) => {
     if (formState[item.key] == null || formState[item.key] == 0) {
       needToDoList.push({
@@ -92,6 +92,27 @@ const fetchListUser = async function () {
   })
 }
 fetchListUser();
+
+const nameAssignee = (id_user, isFull) => {
+  const user = listUserAssignees.find((item) => {
+    return item.id == id_user;
+  });
+
+  if (user && user.full_name) {
+    const fullNameParts = user.full_name.split(" ");
+    if(isFull){
+      return user.full_name;
+    }else{
+      if (fullNameParts.length >= 2) {
+        const lastWord = fullNameParts[fullNameParts.length - 1];
+        if (lastWord.length > 0) {
+          return lastWord.charAt(0);
+        }
+      }
+    }
+  }
+  return "N/A";
+};
 
 // Handle Modal Add Task
 const openModal = ref(false);
@@ -138,7 +159,23 @@ const handleAddTask = () => {
       }
     })
 };
-BaseIcon
+
+const editTask = function (id) {
+  router.push({ path: '/task/' + id })
+}
+
+const deleteTask = function (id) {
+  updateTaskApi(id, { 
+    deleted: 1,
+    deleted_by: auth.user.id,
+    deleted_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+  }).then(rs => {
+    notification.success({
+      message: 'Delete task success!',
+    });
+  });
+}
+
 </script>
 <template>
   <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;"
@@ -191,7 +228,7 @@ BaseIcon
                     <h4 class="ml-3 text-lg font-semibold">Need to do</h4>
                   </div>
                   <div class="listNeedToDo">
-                    <div v-for="ntd in needToDoList">
+                    <div v-for="ntd in needToDoList" :key="ntd.value">
                       <input class="hidden" :id="ntd.value" type="checkbox" :value="ntd.label">
                       <label class="flex items-center h-10 px-2 rounded-lg cursor-pointer hover:bg-white"
                         :for="ntd.value">
@@ -211,11 +248,11 @@ BaseIcon
                 <!-- Check Need to do - End  -->
                 <!-- Task list -->
                 <div class="w-full py-4">
-                  <a-button @click="addTask" class="mt-4" type="primary">
+                  <a-button @click="addTask" class="mt-4" type="primary" v-if="$auth.hasPermission('task.assign')">
                     <PlusOutlined></PlusOutlined>
                     Add Task
                   </a-button>
-                  <table class="w-full mt-4 table-auto">
+                  <table class="w-full mt-4 table-auto" v-if="formState.tasks.length > 0">
                     <thead class="text-xs font-semibold text-gray-400 uppercase bg-gray-50">
                       <th></th>
                       <th>Name</th>
@@ -223,31 +260,33 @@ BaseIcon
                       <th>Due date</th>
                     </thead>
                     <tbody>
-                      <tr v-for="task in formState.tasks">
-                        <td>
-                          <a-button type="link" @click="addTask">
-                            <BaseIcon :path="mdiBookEdit"></BaseIcon>
-                          </a-button>
-                          <a-button type="link" @click="addTask">
-                            <PlusOutlined></PlusOutlined>
-                          </a-button>
+                      <tr v-for="task in formState.tasks" :key="task.id">
+                        <td width="120px">
+                          <div class="flex flex-wrap justify-center">
+                            <a-button type="link" @click="editTask(task.id)" v-if="$auth.hasPermission('task.edit')" class="!px-2">
+                              <BaseIcon :path="mdiPencil" class="text-current"></BaseIcon>
+                            </a-button>
+                            <a-button type="link" @click="deleteTask(task.id)" v-if="$auth.hasPermission('task.delete')" danger class="!px-2">
+                              <BaseIcon :path="mdiDeleteOffOutline" class="text-current"></BaseIcon>
+                            </a-button>
+                            </div>
                         </td>
                         <td>
                           {{ task.name }}
                         </td>
                         <td>
                           <div class="flex">
-                            <div class="item-assignee" v-for="assignee in task.assignees" :key="assignee">
+                            <div class="item-assignee" v-for="id_assignee in task.assignees.split(', ')" :key="id_assignee">
                               <a-avatar-group>
-                                <a-tooltip title="Ant User" placement="top">
-                                  <a-avatar style="background-color: #87d068">K</a-avatar>
+                                <a-tooltip :title="nameAssignee(id_assignee, true)" placement="top">
+                                  <a-avatar style="background-color: #87d068">{{ nameAssignee(id_assignee) }}</a-avatar>
                                 </a-tooltip>
                               </a-avatar-group>
                             </div>
                           </div>
                         </td>
                         <td>
-                          {{ dayjs(task.deadline_at).format('HH:mm MM-DD-YYYY') }}
+                          {{ task.deadline_at ? dayjs(task.deadline_at).format('HH:mm MM-DD-YYYY') : '' }}
                         </td>
                       </tr>
                     </tbody>
