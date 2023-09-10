@@ -11,15 +11,15 @@ const formState = reactive({})
   <LayoutAuthenticated>
     <SectionMain>
       <a-divider>ApiData Component</a-divider>
-      <RemoteSelect class="w-[200px]" v-model:value="formState.patient_status" url="master-data/task-status/options">
+      <RemoteSelect class="w-[200px]" v-model:value="formState.patient_status" url="master-data/task-status">
       </RemoteSelect>
-      <ApiData url="master-data/task-status/options" method="GET" :params="{}">
+      <ApiData url="master-data/task-status" method="GET" :params="{}">
         <template #default="{data}">
-          {{ data }}
+          {{ data.data }}
         </template>
       </ApiData>
       <a-divider>Remote Select Component</a-divider>
-      <RemoteSelect class="w-[200px]" v-model:value="formState.patient_status" url="master-data/task-status/options">
+      <RemoteSelect class="w-[200px]" v-model:value="formState.patient_status" url="master-data/task-status">
       </RemoteSelect>
       <a-divider>Combine and reload</a-divider>
       <RemoteSelect class="w-[200px]" labelKey="full_name" valueKey="id" v-model:value="formState.user" url="user/all">
