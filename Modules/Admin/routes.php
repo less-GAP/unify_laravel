@@ -168,8 +168,8 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         ->handle(\App\Models\Permission::class,
             [
                 'allowedFilters' => [
-                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name')
-
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name'),
+                    AllowedFilter::exact('status'),
                 ]
             ]
         );

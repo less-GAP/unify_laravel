@@ -8,6 +8,7 @@ import ApiData from "@/components/ApiData.vue";
 import {useAuthStore} from "@/stores/auth";
 import {notification} from "ant-design-vue";
 import {RemoteSelect} from "@/components";
+
 const prefix = 'user'
 const {
   fetchDetailApi,
@@ -131,14 +132,20 @@ const closeDetail = function () {
         <a-form-item label="Email" :rules="[{ type: 'email', required: true }]">
           <a-input v-model:value="formState.email"/>
         </a-form-item>
-        <a-form-item label="Role" >
-          <RemoteSelect mode="multiple" url="roles/all" labelKey="name" valueKey="id" :readonly="!$auth.hasPermission('user.updateRole')"
-                    v-model:value="formState.roles_id" >
+        <a-form-item label="Role">
+          <RemoteSelect mode="multiple" url="roles/all" labelKey="name" valueKey="id"
+                        :readonly="!$auth.hasPermission('user.updateRole')"
+                        v-model:value="formState.roles_id">
+            <template #option="{option,valueKey,labelKey}">
+              <a-select-option :disabled="option.status!=='active'" :value="option[valueKey]">
+                {{ option[labelKey] }}
+              </a-select-option>
+            </template>
           </RemoteSelect>
         </a-form-item>
 
         <a-form-item>
-          <label >
+          <label>
             <a-checkbox v-model:checked="formState.isDefaultSeller"></a-checkbox>
             <span class="ml-4">Is default Seller</span>
           </label>

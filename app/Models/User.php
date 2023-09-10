@@ -5,9 +5,11 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Traits\HasProfilePhoto;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -70,5 +72,28 @@ class User extends Authenticatable
             $permissions = array_merge($permissions , $role->permissions->toArray());
         }
         return collect($permissions)->pluck('name')->toArray();
+    }
+    /**
+     * A model may have multiple roles.
+     */
+    public function roles(): BelongsToMany
+    {
+        $relation = $this->morphToMany(
+            config('permission.models.role'),
+            'model',
+            config('permission.table_names.model_has_roles'),
+            config('permission.column_names.model_morph_key'),
+            PermissionRegistrar::$pivotRole
+        )->where('status','active');
+
+        if (! PermissionRegistrar::$teams) {
+            return $relation;
+        }
+
+        return $relation->wherePivot(PermissionRegistrar::$teamsKey, getPermissionsTeamId())
+            ->where(function ($q) {
+                $teamField = config('permission.table_names.roles').'.'.PermissionRegistrar::$teamsKey;
+                $q->whereNull($teamField)->orWhere($teamField, getPermissionsTeamId());
+            });
     }
 }

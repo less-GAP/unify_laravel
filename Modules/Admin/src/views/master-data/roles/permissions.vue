@@ -81,7 +81,7 @@ function registerTable({reload}) {
 }
 
 async function addPermission(reload) {
-  await attachRelationShipApi(roleID, 'permissions',  formAdd.id)
+  await attachRelationShipApi(roleID, 'permissions', formAdd.id)
   formAdd.id = null
   reload()
 }
@@ -117,12 +117,14 @@ function getDataID(data) {
           <a-form :model="formAdd" validate-trigger="submit" @finish="addPermission(reload)" layout="inline">
             <a-form-item class="w-[200px]" name="id" :rules="[{required:true}]">
               <RemoteSelect labelKey="name" valueKey="id" v-model:value="formAdd.id"
-                            url="permissions/all">
-                                <template #option="{option,valueKey,labelKey}">
-                                  <a-select-option :disabled="getDataID(data).includes(option[valueKey])" :value="option[valueKey]">
-                                    {{ option[labelKey] }}
-                                  </a-select-option>
-                                </template>
+                            url="permissions/all?filter[status]=active">
+                <template #option="{option,valueKey,labelKey}">
+
+                  <a-select-option  :disabled="getDataID(data).includes(option[valueKey])"
+                                   :value="option[valueKey]">
+                    {{ option[labelKey] }}
+                  </a-select-option>
+                </template>
               </RemoteSelect>
             </a-form-item>
             <a-form-item>
