@@ -109,10 +109,12 @@ const fetchListDoctorsApi = function () {
   ];
 };
 const fetchListStatusPatientApi = async function () {
-  return await Api.get("master-data/task-status/options");
+  return await Api.get("master-data/task-status");
 };
 const getStatusPatient = async function (value) {
   var list = await fetchListStatusPatientApi().then((res) => res.data);
+  list = JSON.parse(list.data)
+  console.log(list);
   return list.find((item) => item.value === value);
 };
 

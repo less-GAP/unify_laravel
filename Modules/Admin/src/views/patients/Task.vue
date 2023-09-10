@@ -357,8 +357,6 @@ BaseIcon
                 <img class="w-6 h-6 ml-auto rounded-full" src="https://randomuser.me/api/portraits/men/64.jpg">
               </div>
             </div>
-
-
           </div>
         </div>
       </div>

@@ -171,7 +171,7 @@ watch(router.currentRoute, (currentRoute) => {
 function registerTable({ reload }) {
   reloadTable = reload;
 }
-console.log(auth.user.roles);
+console.log();
 </script>
 
 <template>
@@ -181,9 +181,6 @@ console.log(auth.user.roles);
         <template #header>
           <h2>Patient List</h2>
         </template>
-        <!-- <template #filter="{tableConfig,filter,reload}">
-                    <a-input @keypress="reload" v-model:value="filter.phone" placeholder="Phone"></a-input>
-        </template> -->
         <template #cellAction[edit]="{ item, actionMethod }">
           <a-tooltip title="Edit" class="mr-1">
             <a-button class="justify-center !flex !p-1 !h-auto" :disabled="auth.user.roles.find((x) => x.name === 'Admin') !== undefined ||
