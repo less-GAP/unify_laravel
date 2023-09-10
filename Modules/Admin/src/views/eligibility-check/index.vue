@@ -44,15 +44,24 @@ const createApi = function (params) {
 
 const submit = async () => {
     try {
+        console.log(formState.insurance_coverages);
         await formRef.value.validate();
         // Combine first_name and last_name to create full_name
         formState.full_name = formState.first_name + ' ' + formState.last_name;
-        formState.unify_data = 'Weight: ' + formState.weight + 'Height: ' + formState.height + 'Doctor Name: ' + formState.doctor_name;
-        if (!formState.insurance_coverages) {
-            formState.insurance_coverages = null;
-        }else{
-            formState.insurance_coverages = JSON.stringify(formState.insurance_coverages);
+        formState.unify_data = 'Weight: ' + formState.weight + '\nHeight: ' + formState.height + '\nDoctor Name: ' + formState.doctor_name;
+        var insurance_coverages = [];
+        if (formState.insurance_coverages) {
+            formState.insurance_coverages.forEach((element, index) => {
+                insurance_coverages.push({
+                    coverage: element,
+                    insurance_id: null,
+                    active_date: null,
+                    expired_date: null,
+                });
+            });
         }
+        formState.insurance_coverages = insurance_coverages;
+        
         // Submit the form data
         const response = await createApi({ ...formState });
         if (response.status === 200) {
@@ -81,13 +90,13 @@ const submit = async () => {
                     <div class="relative z-0 w-full mb-6 group">
                         <label for="first_name"
                             class="inline-block mb-1 text-sm font-medium text-gray-600">Firstname</label>
-                        <a-input type="text" name="first_name" id="first_name" v-model:value="formState.first_name"
+                        <a-input name="first_name" id="first_name" v-model:value="formState.first_name"
                             class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                             required></a-input>
                     </div>
                     <div class="relative z-0 w-full mb-6 group">
                         <label for="last_name" class="inline-block mb-1 text-sm font-medium text-gray-600">Lastname</label>
-                        <a-input type="text" name="last_name" id="last_name" v-model:value="formState.last_name"
+                        <a-input name="last_name" id="last_name" v-model:value="formState.last_name"
                             class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                             required></a-input>
                     </div>
@@ -106,7 +115,7 @@ const submit = async () => {
                     </label>
                     <div class="relative hidden w-full" id="insurance_info">
                         <div class="relative z-0 w-full mb-6 group">
-                            <label class="inline-block mb-1 text-sm font-medium text-gray-600">Choose the insurance plan you
+                            <label class="block w-full mb-1 text-sm font-medium text-gray-600">Choose the insurance plan you
                                 have joined:</label>
                             <a-checkbox-group name="insurance_coverages" :options="listInsurances"
                                 v-model:value="formState.insurance_coverages" class="block"></a-checkbox-group>
@@ -117,17 +126,17 @@ const submit = async () => {
                     <div class="relative z-0 w-full mb-6 group">
                         <label for="doctor_name" class="inline-block mb-1 text-sm font-medium text-gray-600">Doctor
                             Name</label>
-                        <a-input type="text" name="doctor_name" id="doctor_name" v-model:value="formState.doctor_name"
+                        <a-input name="doctor_name" id="doctor_name" v-model:value="formState.doctor_name"
                             class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"></a-input>
                     </div>
                     <div class="relative z-0 w-full mb-6 group">
                         <label for="weight" class="inline-block mb-1 text-sm font-medium text-gray-600">Weight</label>
-                        <a-input type="text" name="weight" id="weight" v-model:value="formState.weight"
+                        <a-input name="weight" id="weight" v-model:value="formState.weight"
                             class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"></a-input>
                     </div>
                     <div class="relative z-0 w-full mb-6 group">
                         <label for="height" class="inline-block mb-1 text-sm font-medium text-gray-600">Height</label>
-                        <a-input type="text" name="height" id="height" v-model:value="formState.height"
+                        <a-input name="height" id="height" v-model:value="formState.height"
                             class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"></a-input>
                     </div>
                 </div>
@@ -135,7 +144,7 @@ const submit = async () => {
                 <div class="grid md:grid-cols-2 md:gap-6">
                     <div class="relative z-0 w-full mb-6 group">
                         <label for="phone" class="inline-block mb-1 text-sm font-medium text-gray-600">Phone</label>
-                        <a-input type="text" name="phone" id="phone" required v-model:value="formState.phone"
+                        <a-input name="phone" id="phone" required v-model:value="formState.phone"
                             class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"></a-input>
                     </div>
                     <div class="relative z-0 w-full mb-6 group">
@@ -162,25 +171,25 @@ const submit = async () => {
 
                 <div class="relative z-0 w-full mb-6 group">
                     <label for="address" class="inline-block mb-1 text-sm font-medium text-gray-600">Address</label>
-                    <a-input type="text" name="street" id="address" v-model:value="formState.street"
+                    <a-input name="street" id="address" v-model:value="formState.street"
                         class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"></a-input>
                 </div>
                 <div class="grid md:grid-cols-2 md:gap-6">
                     <div class="relative z-0 w-full mb-6 group">
                         <label for="apt" class="inline-block mb-1 text-sm font-medium text-gray-600">Apt</label>
-                        <a-input type="text" name="apt" id="apt" v-model:value="formState.atp"
+                        <a-input name="apt" id="apt" v-model:value="formState.atp"
                             class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"></a-input>
                     </div>
                     <div class="relative z-0 w-full mb-6 group">
                         <label for="zip" class="inline-block mb-1 text-sm font-medium text-gray-600">ZIP</label>
-                        <a-input type="text" name="zip" id="zip" v-model:value="formState.zip"
+                        <a-input name="zip" id="zip" v-model:value="formState.zip"
                             class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"></a-input>
                     </div>
                 </div>
                 <div class="grid md:grid-cols-2 md:gap-6">
                     <div class="relative z-0 w-full mb-6 group">
                         <label for="city" class="inline-block mb-1 text-sm font-medium text-gray-600">City</label>
-                        <a-input type="text" name="city" id="city" v-model:value="formState.city"
+                        <a-input name="city" id="city" v-model:value="formState.city"
                             class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"></a-input>
                     </div>
                     <div class="relative z-0 w-full mb-6 group" v-if="listStates">

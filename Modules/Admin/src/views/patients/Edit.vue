@@ -101,7 +101,6 @@ const submit = (status) => {
       if (formState.unify_status > 1) { // die or inactive => to archive
         formState.unify_inactive_at = dayjs().format('YYYY-MM-DD HH:mm:ss');
       }
-      console.log(formState);
       var insurance_coverages = [];
       if (formState.insurance_coverages) {
         formState.insurance_coverages.forEach((element, index) => {
