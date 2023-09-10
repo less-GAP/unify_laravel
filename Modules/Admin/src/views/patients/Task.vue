@@ -99,16 +99,16 @@ const nameAssignee = (id_user, isFull) => {
   });
 
   if (user && user.full_name) {
-    const fullNameParts = user.full_name.split(" ");
     if(isFull){
       return user.full_name;
     }else{
-      if (fullNameParts.length >= 2) {
+      const fullNameParts = user.full_name.split(" ");
+      // if (fullNameParts.length >= 2) {
         const lastWord = fullNameParts[fullNameParts.length - 1];
         if (lastWord.length > 0) {
           return lastWord.charAt(0);
         }
-      }
+      // }
     }
   }
   return "N/A";
@@ -247,6 +247,7 @@ const deleteTask = function (id) {
                 </div>
                 <!-- Check Need to do - End  -->
                 <!-- Task list -->
+                <a-input v-model:value="formState.tasks" class="!hidden"></a-input>
                 <div class="w-full py-4">
                   <a-button @click="addTask" class="mt-4" type="primary" v-if="$auth.hasPermission('task.assign')">
                     <PlusOutlined></PlusOutlined>
