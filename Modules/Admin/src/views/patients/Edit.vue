@@ -2,7 +2,7 @@
 import { reactive, h, ref, toRaw, computed, watch } from "vue";
 import { mdiBackspace, mdiContentSave, mdiAccountArrowUp } from '@mdi/js';
 import { BaseIcon } from "@/components";
-
+import { ApiData } from "@/components";
 import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
@@ -182,6 +182,12 @@ const closeDetail = function () {
           <a-tag v-if="formState.unify_process == 1" color="orange">{{
             getProcess(formState.unify_process) ? getProcess(formState.unify_process).label : '' }}</a-tag>
           <a-tag v-if="formState.unify_process == 2 && formState.unify_status < 2" color="blue">Running</a-tag>
+          <ApiData url="master-data/task-status" method="GET" :params="{}">
+            <template #default="{ data }">
+              <a-select class="w-[200px]" v-model:value="formState.unify_task_status" :options="JSON.parse(data.data)">
+              </a-select>
+            </template>
+          </ApiData>
           <a-button v-if="currentRoute.name == 'patient-add'" @click="submit('publish')" type="primary" class="uppercase">
             <div class="flex">
               <BaseIcon :path="mdiContentSave" class="w-4 text-white" />

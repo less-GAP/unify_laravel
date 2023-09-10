@@ -287,9 +287,6 @@ console.log();
           <small>{{ dob_value(item) }}</small>
           <br /><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
         </template>
-        <template #cell[unify_task_status]="{ item, column }">
-          {{ item.unify_task_status }}
-        </template>
         <template #cell[assigned]="{ item, column }">
           <!-- <a-avatar-group>
             <a-avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel&key=1"/>

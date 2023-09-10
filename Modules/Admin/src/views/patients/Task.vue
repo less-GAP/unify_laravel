@@ -144,9 +144,9 @@ const handleAddTask = () => {
       formTaskState.assignees = formTaskState.assigneesSelect.join(', ');
       try {
         createTaskApi({ ...formTaskState }).then(rs => {
-          if (formTaskState.task_tag_id !== null) { // Update status task for patient
-            updateApi(formState.id, { unify_task_status: formTaskState.task_tag_id })
-          }
+          // if (formTaskState.task_tag_id !== null) { // Update status task for patient
+          //   updateApi(formState.id, { unify_task_status: formTaskState.task_tag_id })
+          // }
           // Object.assign(formTaskState, rs.data.result)
         });
         confirmLoading.value = true;
@@ -160,8 +160,14 @@ const handleAddTask = () => {
     })
 };
 
-const editTask = function (id) {
-  router.push({ path: '/task/' + id })
+const editTask = async function (id) {
+  // router.push({ path: '/task/' + id })
+  const task = await Api.get('task/' + id);
+  task.data.assigneesSelect = task.data.assignees.split(', ').map(Number);
+
+  Object.assign(formTaskState, task.data);
+  console.log(formTaskState.assigneesSelect);
+  openModal.value = true;
 }
 
 const deleteTask = function (id) {
@@ -409,7 +415,8 @@ const deleteTask = function (id) {
           <a-input v-model:value="formTaskState.name"></a-input>
         </a-form-item>
         <div class="flex flex-wrap -mx-2">
-          <div class="w-full px-2 lg:w-1/2">
+          <!--- 11/9 edit unify_task_status on edit patient
+            <div class="w-full px-2 lg:w-1/2">
             <a-form-item label="Status">
               <ApiData url="master-data/task-status" method="GET" :params="{}">
                 <template #default="{ data }">
@@ -419,7 +426,8 @@ const deleteTask = function (id) {
               </ApiData>
             </a-form-item>
           </div>
-          <div class="w-full px-2 lg:w-1/2">
+          --->
+          <div class="w-full px-2">
             <a-form-item label="Due date">
               <a-date-picker class="w-full" :showTime="{ format: 'HH:mm' }" inputReadOnly
                 v-model:value="formTaskState.deadline_at" valueFormat="YYYY-MM-DD HH:mm:ss"
