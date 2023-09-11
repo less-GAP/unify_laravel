@@ -15,6 +15,8 @@ return new class extends Migration {
             $table->string('name')->index();
             $table->text('description')->nullable();
             $table->string('status');
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();
             $table->timestamps();
