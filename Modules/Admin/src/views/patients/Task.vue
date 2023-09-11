@@ -19,7 +19,7 @@ const {
 } = UseEloquentRouter(prefix);
 
 const fetchTaskByPatientApi = function (patient_id) {
-  return Api.get('task/list?filter[patient_id]=' + patient_id);
+  return Api.get('task/list?filter[patient_id]=' + patient_id + '&filter[deleted]=0');
 };
 
 const updateTaskApi = function (id, data) {

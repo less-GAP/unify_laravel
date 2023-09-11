@@ -50,6 +50,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                 'allowedFilters' => [
                     AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name'),
                     AllowedFilter::exact('patient_id'),
+                    AllowedFilter::exact('deleted'),
                     AllowedFilter::exact('is_completed'),
                 ]
             ]

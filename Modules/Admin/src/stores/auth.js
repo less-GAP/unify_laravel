@@ -12,6 +12,22 @@ export const useAuthStore = defineStore("auth", {
     setUser(user) {
       this.user = user
     },
+    oneCharName(isFull) {
+      const user = this.user
+    
+      if (user && user.full_name) {
+        if(isFull){
+          return user.full_name;
+        }else{
+          const fullNameParts = user.full_name.split(" ");
+            const lastWord = fullNameParts[fullNameParts.length - 1];
+            if (lastWord.length > 0) {
+              return lastWord.charAt(0);
+            }
+        }
+      }
+      return "N/A";
+    },
     hasPermission(permission) {
       const user = this.user
       if (!user && permission) {

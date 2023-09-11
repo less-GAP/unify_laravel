@@ -2,7 +2,8 @@
 import { computed, ref, toRaw, h } from "vue";
 import { Input } from "@/components/index";
 import { ReloadOutlined } from "@ant-design/icons-vue";
-import { getStatusPatient } from "@/utils/Patient";
+import { fetchListStatusPatientApi } from "@/utils/Patient";
+import Api from "@/utils/Api";
 
 const emit = defineEmits(["register"]);
 
@@ -84,11 +85,22 @@ function getFilter() {
   }
   return rs;
 }
+const fetchListUserApi = function () {
+  return Api.get('user/all')
+};
+
+const fetchTaskByPatientApi = function (patient_id) {
+  return Api.get('task/list?filter[patient_id]=' + patient_id + '&filter[deleted]=0');
+};
 
 async function reload() {
   if (props.api) {
     loading.value = true;
     try {
+      var listUserAssignees = await fetchListUserApi().then((res) => res.data);
+      var listStatusPatient = await fetchListStatusPatientApi().then((res) => res.data);
+      listStatusPatient = JSON.parse(listStatusPatient.data)
+      
       const rs = await props.api({
         perPage: props.pagination.perPage,
         sort: orderBy.value,
@@ -102,9 +114,14 @@ async function reload() {
 
       const statusPromises = tableData.value.data.map(async (item) => {
         if (item.unify_task_status !== null) {
-          const status = await getStatusPatient(item.unify_task_status);
+          const status = listStatusPatient.find((status) => {
+            return status.value == item.unify_task_status;
+          })
           item.unify_task_status = status;
         }
+        // if (item.assigned !== null) {
+        //   item.assigned = oneCharName(item.assigned);
+        // }
       });
 
       await Promise.all(statusPromises);
@@ -281,6 +298,12 @@ reload();
                   <a-tag v-if="item.unify_task_status !== null" :style="'background-color: '+item.unify_task_status.background_color+'; color: '+item.unify_task_status.color+'; border-color: currentColor' ">{{
                     item.unify_task_status.label
                   }}</a-tag>
+                </slot>
+                <slot
+                  v-else-if="column.key == 'assigned'"
+                  v-bind="{ item, column, index }"
+                >
+                
                 </slot>
                 <slot
                   v-else

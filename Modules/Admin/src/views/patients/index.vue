@@ -171,7 +171,6 @@ watch(router.currentRoute, (currentRoute) => {
 function registerTable({ reload }) {
   reloadTable = reload;
 }
-console.log();
 </script>
 
 <template>
