@@ -65,7 +65,6 @@ const fetch = async function () {
     if(item.key == 'doctor_id' && formState[item.key] !== null){
       return;
     }
-    console.log(item.key, formState[item.key]);
     needToDoList.push({
       value: item.key,
       label: item.noti,

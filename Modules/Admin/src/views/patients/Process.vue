@@ -2,7 +2,7 @@
 import { reactive, h, ref, toRaw, computed } from "vue";
 import { mdiBackspace, mdiContentSave } from '@mdi/js';
 import { notification } from "ant-design-vue";
-import {BaseIcon} from "@/components";
+import { BaseIcon } from "@/components";
 import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
@@ -39,10 +39,10 @@ const age = (formState) => {
     return formState.dob ? '(' + dayjs().diff(dayjs(formState.dob, dbFormat), 'year') + ' years old)' : '';
 };
 const openNotificationWithIcon = (type) => {
-  notification[type]({
-    message: 'Warning: Need to do',
-    description: 'Please check list need to do on Task tab and complete it before Approve new patient',
-  });
+    notification[type]({
+        message: 'Warning: Need to do',
+        description: 'Please check list need to do on Task tab and complete it before Approve new patient',
+    });
 };
 const fetch = async function () {
     loading.value = true;
@@ -52,11 +52,16 @@ const fetch = async function () {
         const value = await fetchDetailApi(id)
         Object.assign(formState, value.data)
         needToDoLib.forEach((item) => {
-            if(formState[item.key] == null || formState[item.key] == 0){
-                needToDoList.push({
-                    ...item,
-                })
+            if (formState[item.key] != null && formState[item.key] !== 0) {
+                return;
             }
+            if (item.key == 'doctor_id' && formState[item.key] !== null) {
+                return;
+            }
+            needToDoList.push({
+                value: item.key,
+                label: item.noti,
+            })
         })
         loading.value = false
     } else {
@@ -68,7 +73,7 @@ const submit = () => {
     formRef.value
         .validate()
         .then(() => {
-            if(needToDoList.length > 0 && formState.unify_process == 2){
+            if (needToDoList.length > 0 && formState.unify_process == 2) {
                 openNotificationWithIcon('warning') // check need to do before approve
                 return false;
             }
@@ -115,15 +120,15 @@ const closeDetail = function () {
                     <h3 class="block w-full px-4 mb-4 leading-6"><strong>{{ formState.full_name }}</strong> <span
                             class="text-xs leading-6">{{ age(formState) }}</span></h3>
                     <div class="w-full px-4">
-                        <a-form-item required v-if="auth.user.roles.find(x => x.name === 'Admin') !== false" label="Choose process" name="unify_process">
+                        <a-form-item required v-if="auth.user.roles.find(x => x.name === 'Admin') !== false"
+                            label="Choose process" name="unify_process">
                             <a-select class="w-full" v-model:value="formState.unify_process"
                                 :options="listProcessOptions"></a-select>
                         </a-form-item>
-                        <a-form-item required label="Active date" v-if="formState.unify_process == 2">
-                            <a-date-picker class="w-full" :showTime="{ format: 'HH:mm' }"
-                            inputReadOnly
-                                v-model:value="formState.unify_active" valueFormat="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"
-                                :disabled="formState.unify_process != 2"></a-date-picker>
+                        <a-form-item required label="Publish date" v-if="formState.unify_process == 2">
+                            <a-date-picker class="w-full" :showTime="{ format: 'HH:mm' }" inputReadOnly
+                                v-model:value="formState.unify_active" valueFormat="YYYY-MM-DD HH:mm:ss"
+                                format="HH:mm MM-DD-YYYY" :disabled="formState.unify_process != 2"></a-date-picker>
                         </a-form-item>
                         <a-form-item required label="Notes for this change" name="log_detail">
                             <a-textarea class="w-full" v-model:value="formState.log_detail" :rows="4"
@@ -138,6 +143,6 @@ const closeDetail = function () {
 
 <style>
 .ant-drawer-body {
-  padding: 0 !important
+    padding: 0 !important
 }
 </style>

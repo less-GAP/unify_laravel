@@ -111,7 +111,7 @@ fetch();
                                 </span>
                             </li>
                             <li class="flex items-center py-3" v-if="formState.unify_status === 1">
-                                <span>Active date</span>
+                                <span>Publish date</span>
                                 <span class="ml-auto text-xs">{{ dayjs(formState.unify_active, 'YYYY-MM-DD HH:mm:ss').format('HH:mm MM-DD-YYYY') }}</span>
                             </li>
                             <li class="flex items-center py-3">
