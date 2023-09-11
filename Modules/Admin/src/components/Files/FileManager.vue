@@ -200,7 +200,7 @@ reload()
 
       </a-space>
     </div>
-    <div class="mt-12 mb-12 grid grid-cols-2 md:grid-cols-6  gap-4">
+    <div class="mt-12 mb-12 grid grid-cols-2 md:grid-cols-6 gap-4">
       <div v-for="file in inProgressFiles"
            class="cursor-pointer border-2 border-gray-100  hover:border-blue-700  h-[150px] mb-5  rounded-lg overflow:hidden">
         <a-progress type="circle" :percent="file.percent"/>
@@ -225,9 +225,14 @@ reload()
           {{ image.file_name }}
         </div>
       </div>
+      <div class="col-span-2 md:col-span-6 w-full bg-white shadow rounded-lg overflow-hidden" v-if="!tableData.data">
+        <a-skeleton active class="p-10" />
+      </div>
+      <div class="col-span-2 md:col-span-6 w-full bg-white shadow rounded-lg overflow-hidden"
+        v-if="tableData.data?.length === 0 && pagination.total === 0">
+        <a-empty class="my-10" :description="false" />
+      </div>
     </div>
-    <!--     <a-empty v-else/>-->
-    <br>
     <a-pagination v-if="pagination?.total" :showSizeChanger="showSizeChanger" @change="reload"
                   v-model:current="pagination.page"
                   v-model:pageSize="pagination.perPage" :total="pagination.total">

@@ -19,7 +19,7 @@ class GetDetailAction
         }
         return [
             'code' => 1,
-            'message' => 'Success!',
+            'message' => 'Update success ! !',
             'data' => $customerGroup
         ];
     }

@@ -23,7 +23,7 @@ class PostAction
 
             $output = [
                 'code' => 1,
-                'message' => 'Success!',
+                'message' => 'Update success !!',
                 'data' => $customerGroup
             ];
         } catch (\Throwable $e) {

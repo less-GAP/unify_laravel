@@ -18,7 +18,7 @@ class PostActiveListAction
 
             $output = [
                 'code' => 1,
-                'message' => 'Success!',
+                'message' => 'Update success !!',
                 'data' => []
             ];
         } catch (\Throwable $e) {

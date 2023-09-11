@@ -5,8 +5,10 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Customer extends Model
+class Customer extends Authenticatable
 {
 
     /**
@@ -14,7 +16,7 @@ class Customer extends Model
      *
      * @var array<int, string>
      */
-    use HasFactory;
+    use HasFactory, HasApiTokens;
 
     protected $table = 'customers';
 
@@ -26,7 +28,11 @@ class Customer extends Model
         'phone',
         'email_verified_at',
         'status',
-        'customer_group'
+        'customer_group',
+        'social_auth_id',
+        'social_auth_type',
+        'username',
+        'password'
     ];
 
     /**
@@ -35,8 +41,10 @@ class Customer extends Model
      * @var array<int, string>
      */
     protected $hidden = [
-//        'password',
+        'password',
 //        'remember_token',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
     ];
 
     /**
@@ -55,6 +63,9 @@ class Customer extends Model
     public function getCustomerGroupNameAttribute()
     {
         $cus = CustomerGroup::where('id', $this->customer_group)->first();
+        if (!isset($cus->name)) {
+            return 'N/A';
+        }
         return $cus->name;
     }
 

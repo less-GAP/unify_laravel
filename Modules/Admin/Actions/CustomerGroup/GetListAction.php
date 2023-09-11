@@ -13,9 +13,7 @@ class GetListAction
     {
         $query = CustomerGroup::query();
         if ($search = $request->input('search')) {
-            $query->where('name', 'like', '%' . $search . '%')
-                ->orWhere('email', 'like', '%' . $search . '%')
-                ->orWhere('phone', 'like', '%' . $search . '%');
+            $query->where('name', 'like', '%' . $search . '%');
         }
         return $query->paginate($request->input('perPage', 15));
     }

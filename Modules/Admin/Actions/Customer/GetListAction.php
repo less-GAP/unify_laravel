@@ -17,6 +17,7 @@ class GetListAction
                 ->orWhere('email', 'like', '%' . $search . '%')
                 ->orWhere('phone', 'like', '%' . $search . '%');
         }
-        return $query->paginate($request->input('perPage', 15));
+        $query->orderBy('id', 'DESC');
+        return $query->paginate($request->input('perPage',20));
     }
 }

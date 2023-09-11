@@ -25,7 +25,8 @@ class DatabaseSeeder extends Seeder
         \App\Models\MasterData::truncate();
         Role::truncate();
         Permission::truncate();
-
+        \App\Models\Customer::truncate();
+        \App\Models\Customer::factory()->count(10)->create();
         $admin = \App\Models\User::factory()->create([
             'full_name' => 'Admin',
             'username' => 'admin',

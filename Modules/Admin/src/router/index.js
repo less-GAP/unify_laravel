@@ -1,12 +1,18 @@
-import {createRouter, createWebHashHistory} from "vue-router";
+import {
+  createRouter,
+  createWebHashHistory
+} from "vue-router";
 import Home from "@/views/HomeView.vue";
-import {useAuthStore} from "@/stores/auth";
-import {useAppStateStore} from "@/stores/appState";
+import {
+  useAuthStore
+} from "@/stores/auth";
+import {
+  useAppStateStore
+} from "@/stores/appState";
 
 const publicPages = ['/login'];
 
-let routes = [
-  {
+let routes = [{
     meta: {
       isPublic: true,
     },
@@ -65,7 +71,30 @@ let routes = [
   },
 
 
-
+  {
+    meta: {
+      title: "Customer",
+    },
+    path: "/customers",
+    name: "customers",
+    component: () => import("@/views/customers/index.vue"),
+  },
+  {
+    meta: {
+      title: "Customer",
+    },
+    path: "/customer-group",
+    name: "customer-group",
+    component: () => import("@/views/customer-group/index.vue"),
+  },
+  {
+    meta: {
+      title: "Customer",
+    },
+    path: "/customer-group/:id",
+    name: "customer-group-detail",
+    component: () => import("@/views/customer-group/Detail.vue"),
+  },
 
   {
     meta: {
@@ -74,8 +103,7 @@ let routes = [
     path: "/configs",
     name: "configs",
     component: () => import("@/views/configs/ConfigLayout.vue"),
-    children: [
-      {
+    children: [{
         meta: {
           title: "General Configuration",
         },
@@ -156,8 +184,7 @@ let routes = [
     path: "/emails",
     name: "emails",
     component: () => import("@/views/emails/EmailLayout.vue"),
-    children: [
-      {
+    children: [{
         meta: {
           title: "Email Templates",
         },
@@ -210,7 +237,8 @@ let routes = [
     component: () => import("@/views/LoginView.vue"),
   },
 ];
-const modules = import.meta.globEager('./../views/**/router.js');
+const modules =
+  import.meta.globEager('./../views/**/router.js');
 
 Object.keys(modules).forEach((key) => {
   const mod = modules[key].default || {};
@@ -220,13 +248,15 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
-    return savedPosition || {top: 0};
+    return savedPosition || {
+      top: 0
+    };
   },
 });
 router.beforeEach(async (to) => {
   // redirect to login page if not logged in and trying to access a restricted page
   const auth = useAuthStore();
-  if(!auth.hasPermission(to.meta?.permission)){
+  if (!auth.hasPermission(to.meta?.permission)) {
     // alert('Permission Denied');
     return '';
   }

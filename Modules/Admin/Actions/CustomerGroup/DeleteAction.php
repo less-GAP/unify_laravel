@@ -16,13 +16,13 @@ class DeleteAction
             $del = $query->find($request->route('id'))->delete();
             $output = [
                 'code' => 1,
-                'message' => 'Success!',
+                'message' => 'Update success !',
                 'data' => $del
             ];
         } catch (\Throwable $e) {
             $output = [
                 'code' => 0,
-                'message' => 'Thất bại ! ' . $e->getMessage(),
+                'message' => 'Update failed ! ' . $e->getMessage(),
                 'data' => $request->route('id')
             ];
         }
