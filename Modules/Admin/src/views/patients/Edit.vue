@@ -112,7 +112,11 @@ const submit = (status) => {
           });
         });
       }
-      formState.insurance_coverages = insurance_coverages;
+      if (insurance_coverages.length) {
+            formState.insurance_coverages = JSON.stringify(toRaw(insurance_coverages))
+        }else{
+            formState.insurance_coverages = null
+        }
 
       createApi({ ...formState, status: status }).then(rs => {
         Object.assign(formState, rs.data.result)
@@ -135,7 +139,11 @@ const submitSellerApprove = () => {
           });
         });
       }
-      formState.insurance_coverages = insurance_coverages;
+      if (insurance_coverages.length) {
+            formState.insurance_coverages = JSON.stringify(toRaw(insurance_coverages))
+        }else{
+            formState.insurance_coverages = null
+        }
 
       formState.unify_process = 1;
 
