@@ -6,6 +6,7 @@ use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 use Modules\Admin\Actions\GetUserInfoAction;
 use Modules\Admin\Actions\User\DeleteUserAction;
+use Modules\Admin\Actions\Customer\DeleteCustomerAction;
 use Modules\Admin\Middleware\AdminIsAuthenticated;
 use Spatie\QueryBuilder\AllowedFilter;
 
@@ -135,18 +136,19 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         Route::post('/', \Modules\Admin\Actions\Config\PostAction::class . '@handle');
         Route::post('/testSmtp', \Modules\Admin\Actions\Config\PostTestSmtpAction::class . '@handle');
     });
-    // Route::prefix('/customer')->group(function () {
-    //     Route::get('list', \Modules\Admin\Actions\Customer\GetListAction::class . '@handle');
-    //     Route::post('activeList', \Modules\Admin\Actions\Customer\PostActiveListAction::class . '@handle');
-    // });
+    Route::prefix('/customer')->group(function () {
+        Route::get('list', \Modules\Admin\Actions\Customer\GetListAction::class . '@handle');
+        Route::post('activeList', \Modules\Admin\Actions\Customer\PostActiveListAction::class . '@handle');
+        Route::delete('{id}', DeleteCustomerAction::class . '@handle');
+    });
 
-    // Route::prefix('/customer-group')->group(function () {
-    //     Route::get('list', \Modules\Admin\Actions\CustomerGroup\GetListAction::class . '@handle');
-    //     Route::post('', \Modules\Admin\Actions\CustomerGroup\PostAction::class . '@handle');
-    //     Route::get('{id}', \Modules\Admin\Actions\CustomerGroup\GetDetailAction::class . '@handle');
-    //     Route::post('activeList', \Modules\Admin\Actions\CustomerGroup\PostActiveListAction::class . '@handle');
-    //     Route::delete('{id}', \Modules\Admin\Actions\CustomerGroup\DeleteAction::class . '@handle');
-    // });
+    Route::prefix('/customer-group')->group(function () {
+        Route::get('list', \Modules\Admin\Actions\CustomerGroup\GetListAction::class . '@handle');
+        Route::post('', \Modules\Admin\Actions\CustomerGroup\PostAction::class . '@handle');
+        Route::get('{id}', \Modules\Admin\Actions\CustomerGroup\GetDetailAction::class . '@handle');
+        Route::post('activeList', \Modules\Admin\Actions\CustomerGroup\PostActiveListAction::class . '@handle');
+        Route::delete('{id}', \Modules\Admin\Actions\CustomerGroup\DeleteAction::class . '@handle');
+    });
 
     Route::prefix('/countries')->group(function () {
         Route::get('list', \Modules\Admin\Actions\Countries\GetListAction::class . '@handle');
