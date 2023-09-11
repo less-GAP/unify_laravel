@@ -262,7 +262,7 @@ const closeDetail = function () {
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4 empty:hidden">
-            <a-form-item v-if="currentRoute.name == 'patient-edit' && formState.unify_process == 2" label="Active date"
+            <a-form-item v-if="currentRoute.name == 'patient-edit' && formState.unify_process == 2" label="Publish date"
               :rules="[{ required: true }]">
               <a-date-picker class="w-full" :showTime="{ format: 'HH:mm' }" inputReadOnly
                 v-model:value="formState.unify_active" valueFormat="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"
