@@ -73,14 +73,14 @@ const cancel = function () {
     @finish="submit"
   >
     <a-row class="w-full">
-      <a-form-item class="md:w-[200px] w-full mr-5" name="smtp_server" label="SMTP Server"
+      <a-form-item class="md:w-[200px] w-full !mr-5" name="smtp_server" label="SMTP Server"
                    :rules="[{ required: true }]">
         <a-input placeholder="domain.com" autocomplete="off" class="rounded-lg" v-model:value="formState.smtp_server"/>
       </a-form-item>
-      <a-form-item class="md:w-[200px] w-full mr-5" name="smtp_port" label="SMTP Port" :rules="[{ required: true }]">
+      <a-form-item class="md:w-[200px] w-full !mr-5" name="smtp_port" label="SMTP Port" :rules="[{ required: true }]">
         <a-input placeholder="25" autocomplete="off" class="rounded-lg" v-model:value="formState.smtp_port"/>
       </a-form-item>
-      <a-form-item class="md:w-[200px] w-full mr-5" name="smtp_security" label="Security" :rules="[{ required: true }]">
+      <a-form-item class="md:w-[200px] w-full !mr-5" name="smtp_security" label="Security" :rules="[{ required: true }]">
 
         <a-select
         ref="select"
@@ -95,21 +95,21 @@ const cancel = function () {
     </a-row>
 
     <a-row class="w-full">
-      <a-form-item class="md:w-[200px] w-full mr-5" name="smtp_user" label="User" :rules="[{ required: true }]">
+      <a-form-item class="md:w-[200px] w-full !mr-5" name="smtp_user" label="User" :rules="[{ required: true }]">
         <a-input placeholder="User" autocomplete="off" class="rounded-lg" v-model:value="formState.smtp_user"/>
       </a-form-item>
-      <a-form-item class="md:w-[200px] w-full mr-5" name="smtp_password" label="Password" :rules="[{ required: true }]">
+      <a-form-item class="md:w-[200px] w-full !mr-5" name="smtp_password" label="Password" :rules="[{ required: true }]">
         <a-input placeholder="Password" type="password" autocomplete="off" class="rounded-lg" v-model:value="formState.smtp_password"/>
       </a-form-item>
     </a-row>
     <a-row class="w-full">
-      <a-form-item class="md:w-[200px] w-full mr-5" name="smtp_email_from" label="From email"
+      <a-form-item class="md:w-[200px] w-full !mr-5" name="smtp_email_from" label="From email"
                    :rules="[{ required: true }]">
         <a-input placeholder="test@madelab.io" autocomplete="off" class="rounded-lg" v-model:value="formState.smtp_email_from"/>
       </a-form-item>
     </a-row>
     <a-row class="w-full">
-      <a-form-item class="md:w-[200px] w-full mr-5" name="smtp_email_from_name" label="From name"
+      <a-form-item class="md:w-[200px] w-full !mr-5" name="smtp_email_from_name" label="From name"
                    :rules="[{ required: true }]">
         <a-input placeholder="MADE" autocomplete="off" class="rounded-lg" v-model:value="formState.smtp_email_from_name"/>
       </a-form-item>
