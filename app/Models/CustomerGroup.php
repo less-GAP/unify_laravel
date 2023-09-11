@@ -22,8 +22,6 @@ class CustomerGroup extends Model
 
     protected $fillable = [
         'name',
-        'email',
-        'phone',
         'description',
         'status',
     ];
