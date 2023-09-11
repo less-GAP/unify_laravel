@@ -9,7 +9,16 @@ import {
   mdiCardAccountDetails,
   mdiMessageText,
   mdiEmail,
-  mdiTooltipAccount
+  mdiTooltipAccount,
+  mdiTruckDelivery,
+  mdiGift,
+  mdiStorefront,
+  mdiCloudDownload,
+  mdiChartAreasplineVariant,
+  mdiFileExport,
+  mdiDoctor,
+  mdiClockTimeTwo,
+  mdiStarCircle
 } from "@mdi/js";
 
 export default [{
@@ -27,6 +36,29 @@ export default [{
     icon: mdiCardAccountDetails,
     label: "Patient",
   },
+  {
+    to: null,
+    label: "Inventory",
+  },
+  {
+    to: "/delivery",
+    label: "Delivery",
+    icon: mdiTruckDelivery,
+    disable: true,
+  },
+  {
+    to: "/warehouse",
+    label: "Warehouse",
+    icon: mdiStorefront,
+    disable: true,
+  },
+  {
+    to: "/product",
+    label: "Product",
+    icon: mdiGift,
+    disable: true,
+  },
+
   {
     to: null,
     label: "Marketing",
@@ -67,10 +99,50 @@ export default [{
     ],
   },
   {
+    to: "/doctors",
+    label: "Doctors",
+    icon: mdiDoctor,
+    disable: true,
+  },
+  {
+    to: "/points",
+    label: "Point",
+    icon: mdiStarCircle,
+    disable: true,
+  },
+  {
     permission: 'file.list',
     label: "File Manager",
     icon: mdiImageMultiple,
     to: "/files",
+  },
+  {
+    to: null,
+    label: "System",
+  },
+  {
+    to: "/report",
+    label: "Report",
+    icon: mdiChartAreasplineVariant,
+    disable: true,
+  },
+  {
+    to: "/logs",
+    label: "Logs",
+    icon: mdiClockTimeTwo,
+    disable: true,
+  },
+  {
+    to: "/forms",
+    label: "Forms",
+    icon: mdiFileExport,
+    disable: true,
+  },
+  {
+    label: "Backup",
+    icon: mdiCloudDownload,
+    to: "/backup",
+    disable: true,
   },
   {
     to: null,
