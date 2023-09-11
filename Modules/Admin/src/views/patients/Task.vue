@@ -22,6 +22,10 @@ const fetchTaskByPatientApi = function (patient_id) {
   return Api.get('task/list?filter[patient_id]=' + patient_id);
 };
 
+const updateTaskApi = function (id, data) {
+  return Api.put('task/' + id, data);
+};
+
 defineProps({
   value: {
     type: Object,
@@ -46,7 +50,7 @@ const fetch = async function () {
   const patient = await fetchDetailApi(id)
   const tasks = await fetchTaskByPatientApi(id);
   tasks.data.data.forEach((item) => {
-    if (item.patient_id === formState.id) {
+    if (item.patient_id === formState.id && item.deleted === 0) {
       item.assignees = item.assignees.split(', ');
       if ($auth.hasPermission('Admin') || item.assignees.includes(auth.user.id)) {
         formState.tasks.push(item)
@@ -55,12 +59,17 @@ const fetch = async function () {
   })
   Object.assign(formState, patient.data, true)
   needToDoLib.forEach((item) => {
-    if (formState[item.key] == null || formState[item.key] == 0) {
-      needToDoList.push({
-        value: item.key,
-        label: item.noti,
-      })
+    if (formState[item.key] != null && formState[item.key] !== 0) {
+      return;
     }
+    if(item.key == 'doctor_id' && formState[item.key] !== null){
+      return;
+    }
+    console.log(item.key, formState[item.key]);
+    needToDoList.push({
+      value: item.key,
+      label: item.noti,
+    })
   })
   loading.value = false
 }
