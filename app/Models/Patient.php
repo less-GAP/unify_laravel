@@ -29,6 +29,7 @@ class Patient extends Model
         'last_name',
         'first_name',
         'dob',
+        'signature',
         'height',
         'weight',
         'gender',
@@ -81,7 +82,7 @@ class Patient extends Model
 
         if ($lastPatient) {
             $nextUnifyNumber = $lastPatient->unify_number + 1;
-            
+
             while (self::find($nextUnifyNumber)) {
                 $nextUnifyNumber++;
             }

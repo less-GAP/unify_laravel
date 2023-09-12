@@ -14,6 +14,7 @@ Route::get('/', function () {
     return 'admin api';
 });
 Route::post('auth/login', \Modules\Admin\Actions\Auth\PostLoginAction::class . '@handle');
+Route::post('submit-patient', \Modules\Admin\Actions\SubmitPatientAction::class . '@handle');
 
 Route::middleware([AdminIsAuthenticated::class])->group(function () {
     Route::prefix('/auth')->group(function () {

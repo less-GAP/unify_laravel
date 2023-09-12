@@ -46,6 +46,7 @@ return new class extends Migration
             $table->text('products')->nullable();
 
             $table->text('note')->nullable();
+            $table->longtext('signature')->nullable();
             $table->text('unify_data')->nullable(); // merge weight, height and name of doctor the patient chooses
 
             // confirm by doctor

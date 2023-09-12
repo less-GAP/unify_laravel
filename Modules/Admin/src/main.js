@@ -17,25 +17,26 @@ import {useTranslation} from "@/utils/Translation";
 import Antd from 'ant-design-vue';
 import {useAppStateStore} from "@/stores/appState";
 import Format from "@/utils/Format";
+import Vue3Signature from "vue3-signature"
 import * as config from "@/config";
 /* Init Pinia */
 const pinia = createPinia();
 pinia.use(piniaPersist)
 /* Create Vue app */
-const myApp = createApp(App).use(router).use(pinia)
+const myApp = createApp(App).use(Vue3Signature).use(router).use(pinia)
 /* Init Pinia stores */
 const mainStore = useMainStore(pinia);
 const styleStore = useStyleStore(pinia);
 const authStore = useAuthStore();
 const appState = useAppStateStore();
-const tranlation = useTranslation();
+const translation = useTranslation();
 myApp.config.globalProperties.$config = config;
 myApp.config.globalProperties.$auth = authStore;
 myApp.config.globalProperties.$api = Api;
 myApp.config.globalProperties.$format = Format;
 myApp.config.globalProperties.$style = styleStore;
 myApp.config.globalProperties.$appState = appState;
-myApp.config.globalProperties.__ = tranlation.__;
+myApp.config.globalProperties.__ = translation.__;
 myApp.config.globalProperties.$url = url;
 myApp.use(Antd).mount("#app");
 /* Fetch sample data */
