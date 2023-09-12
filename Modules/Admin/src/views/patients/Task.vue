@@ -45,13 +45,14 @@ const needToDoLib = useNeedToDoList();
 var needToDoList = [];
 const fetch = async function () {
   loading.value = true;
+  needToDoList = [];
   var id = router.currentRoute.value.params.id;
   const patient = await fetchDetailApi(id)
   const tasks = await fetchTaskByPatientApi(id);
   tasks.data.data.forEach((item) => {
     if (item.patient_id === formState.id && item.deleted === 0) {
       item.assignees = item.assignees.split(', ');
-      if ($auth.hasPermission('Admin') || item.assignees.includes(auth.user.id)) {
+      if (auth.hasPermission('Admin') || item.assignees.includes(auth.user.id)) {
         formState.tasks.push(item)
       }
     }
@@ -152,11 +153,7 @@ const handleAddTask = () => {
       formTaskState.assignees = formTaskState.assigneesSelect.join(', ');
       try {
         createTaskApi({ ...formTaskState }).then(rs => {
-          // if (formTaskState.task_tag_id !== null) { // Update status task for patient
-          //   updateApi(formState.id, { unify_task_status: formTaskState.task_tag_id })
-          // }
-          // Object.assign(formTaskState, rs.data.result)
-
+          fetch()
         });
         confirmLoading.value = true;
         setTimeout(() => {
