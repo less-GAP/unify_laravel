@@ -18,7 +18,8 @@ import {
   mdiFileExport,
   mdiDoctor,
   mdiClockTimeTwo,
-  mdiStarCircle
+  mdiStarCircle,
+  mdiTooltipQuestion
 } from "@mdi/js";
 
 export default [{
@@ -143,6 +144,11 @@ export default [{
     icon: mdiCloudDownload,
     to: "/backup",
     disable: true,
+  },
+  {
+    label: "FAQs",
+    icon: mdiTooltipQuestion,
+    to: "/faqs",
   },
   {
     to: null,

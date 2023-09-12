@@ -69,7 +69,22 @@ let routes = [{
     name: "post-detail",
     component: () => import("@/views/posts/Detail.vue"),
   },
-
+  {
+    meta: {
+      title: "FAQs",
+    },
+    path: "/faqs",
+    name: "faqs",
+    component: () => import("@/views/faqs/index.vue"),
+  },
+  {
+    meta: {
+      title: "FAQs Detail",
+    },
+    path: "/faqs/:id",
+    name: "faqs-detail",
+    component: () => import("@/views/faqs/Detail.vue"),
+  },
 
   {
     meta: {

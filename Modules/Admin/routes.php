@@ -152,6 +152,12 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         Route::delete('{id}', \Modules\Admin\Actions\CustomerGroup\DeleteAction::class . '@handle');
     });
 
+    Route::prefix('/faqs')->group(function () {
+        Route::get('list', \Modules\Admin\Actions\FAQs\GetListAction::class . '@handle');
+        Route::post('', \Modules\Admin\Actions\FAQs\PostAction::class . '@handle');
+        Route::get('{id}', \Modules\Admin\Actions\FAQs\GetDetailAction::class . '@handle');
+    });
+
     Route::prefix('/countries')->group(function () {
         Route::get('list', \Modules\Admin\Actions\Countries\GetListAction::class . '@handle');
         Route::get('all', \Modules\Admin\Actions\Countries\GetAllAction::class . '@handle');
