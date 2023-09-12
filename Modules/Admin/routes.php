@@ -20,12 +20,6 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
     Route::prefix('/auth')->group(function () {
         Route::get('userInfo', GetUserInfoAction::class . '@handle');
     });
-    //    Route::prefix('/user')->group(function () {
-    //        Route::get('list', \Modules\Admin\Actions\User\GetUserListAction::class . '@handle');
-    //        Route::post('activeList', \Modules\Admin\Actions\User\PostImageAction::class . '@handle');
-    //        Route::post('', \Modules\Admin\Actions\User\PostUserAction::class . '@handle');
-    //        Route::delete('{id}', DeleteUserAction::class . '@handle');
-    //    });
     EloquentRouter::prefix('user')
         ->routes(function () {
             Route::get('/options', \Modules\Admin\Actions\User\GetUserOptionsAction::class . '@handle');
@@ -56,18 +50,10 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                     AllowedFilter::exact('is_completed'),
                 ]
             ]
+        )->routes(function (){
+            Route::get('list', \Modules\Admin\Actions\Task\GetListAction::class . '@handle');
+            }
         );
-    // EloquentRouter::prefix('visa-application')
-    //     ->handle(\App\Models\VisaApplication::class,
-    //         [
-    //             'allowedIncludes' => ['applicants', 'history', 'assignees'],
-    //             'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'contact_name,contact_email,mobile_phone')]
-    //         ]
-    //     )->routes(function () {
-    //         Route::post('/', \Modules\Admin\Actions\VisaApplication\PostIndexAction::class . '@handle');
-    //         Route::post('/status', \Modules\Admin\Actions\VisaApplication\PostStatusAction::class . '@handle');
-    //         Route::post('/assign', \Modules\Admin\Actions\VisaApplication\PostAssignAction::class . '@handle');
-    //     });
     EloquentRouter::prefix('post')
         ->handle(
             \App\Models\Post::class,

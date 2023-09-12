@@ -18,7 +18,12 @@ const {
 } = UseEloquentRouter(prefix);
 
 const fetchTaskByPatientApi = function (patient_id) {
-  return Api.get('task/list?filter[patient_id]=' + patient_id + '&filter[deleted]=0');
+  return Api.get('task/list', {
+    params: {
+      patient_id: patient_id,
+      deleted: 0
+    }
+  });
 };
 
 const updateTaskApi = function (id, data) {
@@ -50,7 +55,7 @@ const fetch = async function () {
   const tasks = await fetchTaskByPatientApi(id);
   tasks.data.data.forEach((item) => {
     if (item.patient_id === formState.id && item.deleted === 0) {
-      item.assignees = item.assignees.split(', ');
+      // item.assignees = item.assignees;
       if (auth.hasPermission('Admin') || item.assignees.includes(auth.user.id)) {
         formState.tasks.push(item)
       }
@@ -61,7 +66,7 @@ const fetch = async function () {
     if (formState[item.key] != null && formState[item.key] !== 0) {
       return;
     }
-    if(item.key == 'doctor_id' && formState[item.key] !== null){
+    if (item.key == 'doctor_id' && formState[item.key] !== null) {
       return;
     }
     needToDoList.push({
@@ -106,15 +111,15 @@ const nameAssignee = (id_user, isFull) => {
   });
 
   if (user && user.full_name) {
-    if(isFull){
+    if (isFull) {
       return user.full_name;
-    }else{
+    } else {
       const fullNameParts = user.full_name.split(" ");
       // if (fullNameParts.length >= 2) {
-        const lastWord = fullNameParts[fullNameParts.length - 1];
-        if (lastWord.length > 0) {
-          return lastWord.charAt(0);
-        }
+      const lastWord = fullNameParts[fullNameParts.length - 1];
+      if (lastWord.length > 0) {
+        return lastWord.charAt(0);
+      }
       // }
     }
   }
@@ -149,7 +154,7 @@ const handleAddTask = () => {
     .then(() => {
       formTaskState.created_by = auth.user.id
       formTaskState.patient_id = formState.id
-      formTaskState.assignees = formTaskState.assigneesSelect.join(', ');
+      formTaskState.assignees = JSON.stringify(formTaskState.assignees);
       try {
         createTaskApi({ ...formTaskState }).then(rs => {
           fetch()
@@ -166,12 +171,10 @@ const handleAddTask = () => {
 };
 
 const editTask = async function (id) {
-  // router.push({ path: '/task/' + id })
   const task = await Api.get('task/' + id);
-  task.data.assigneesSelect = task.data.assignees.split(', ').map(Number);
-
+  task.data.assignees = JSON.parse(task.data.assignees);
   Object.assign(formTaskState, task.data);
-  console.log(formTaskState.assigneesSelect);
+  fetch()
   openModal.value = true;
 }
 
@@ -181,10 +184,27 @@ const deleteTask = function (id) {
     deleted_by: auth.user.id,
     deleted_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
   }).then(rs => {
+    fetch()
     notification.success({
       message: 'Delete task success!',
     });
   });
+}
+
+const formatDescription = function (description) {
+  if (description !== null && typeof description === 'string') {
+    return description.replace(/\n/g, '<br>');
+  } else {
+    return '';
+  }
+}
+
+const assigneesArray = function (assignees) {
+  if (assignees !== null && typeof assignees === 'string') {
+    return JSON.parse(assignees);
+  } else {
+    return [];
+  }
 }
 
 </script>
@@ -258,7 +278,6 @@ const deleteTask = function (id) {
                 </div>
                 <!-- Check Need to do - End  -->
                 <!-- Task list -->
-                <a-input v-model:value="formState.tasks" class="!hidden"></a-input>
                 <div class="w-full py-4">
                   <a-button @click="addTask" class="mt-4" type="primary" v-if="$auth.hasPermission('task.assign')">
                     <PlusOutlined></PlusOutlined>
@@ -266,40 +285,48 @@ const deleteTask = function (id) {
                   </a-button>
                   <table class="w-full mt-4 table-auto" v-if="formState.tasks.length > 0">
                     <thead class="text-xs font-semibold text-gray-400 uppercase bg-gray-50">
-                      <th></th>
-                      <th>Name</th>
+                      <th class="text-center">Task</th>
+                      <th>Name - Description</th>
                       <th>Assignees</th>
                       <th>Due date</th>
                     </thead>
                     <tbody>
                       <tr v-for="task in formState.tasks" :key="task.id">
-                        <td width="120px">
-                          <div class="flex flex-wrap justify-center">
-                            <a-button type="link" @click="editTask(task.id)" v-if="$auth.hasPermission('task.edit')" class="!px-2">
-                              <BaseIcon :path="mdiPencil" class="text-current"></BaseIcon>
-                            </a-button>
-                            <a-button type="link" @click="deleteTask(task.id)" v-if="$auth.hasPermission('task.delete')" danger class="!px-2">
-                              <BaseIcon :path="mdiDeleteOffOutline" class="text-current"></BaseIcon>
-                            </a-button>
+                        <template v-if="task.deleted === 0">
+                          <td width="120px">
+                            <div class="flex flex-wrap justify-center">
+                              <a-button type="link" @click="editTask(task.id)" v-if="auth.hasPermission('task.edit')"
+                                class="!px-2">
+                                <BaseIcon :path="mdiPencil" class="text-current"></BaseIcon>
+                              </a-button>
+                              <a-button type="link" @click="deleteTask(task.id)" v-if="auth.hasPermission('task.delete')"
+                                danger class="!px-2">
+                                <BaseIcon :path="mdiDeleteOffOutline" class="text-current"></BaseIcon>
+                              </a-button>
                             </div>
-                        </td>
-                        <td>
-                          {{ task.name }}
-                        </td>
-                        <td>
-                          <div class="flex">
-                            <div class="item-assignee" v-for="id_assignee in task.assignees.split(', ')" :key="id_assignee">
-                              <a-avatar-group>
-                                <a-tooltip :title="nameAssignee(id_assignee, true)" placement="top">
-                                  <a-avatar style="background-color: #87d068">{{ nameAssignee(id_assignee) }}</a-avatar>
-                                </a-tooltip>
-                              </a-avatar-group>
+                          </td>
+                          <td>
+                            <h4>{{ task.name }}</h4>
+                            <div class="pl-1 text-xs text-gray-400" v-html="formatDescription(task.description)">
                             </div>
-                          </div>
-                        </td>
-                        <td>
-                          {{ task.deadline_at ? dayjs(task.deadline_at).format('HH:mm MM-DD-YYYY') : '' }}
-                        </td>
+                          </td>
+                          <td>
+                            <div class="flex">
+                                <div class="item-assignee" v-for="id_assignee in assigneesArray(task.assignees)"
+                                  :key="id_assignee">
+                                  <a-avatar-group>
+                                    <a-tooltip :title="nameAssignee(id_assignee, true)" placement="top">
+                                      <a-avatar style="background-color: #87d068">{{ nameAssignee(id_assignee)
+                                      }}</a-avatar>
+                                    </a-tooltip>
+                                  </a-avatar-group>
+                                </div>
+                            </div>
+                          </td>
+                          <td width="140px" class="text-xs">
+                            {{ task.deadline_at ? dayjs(task.deadline_at).format('HH:mm MM-DD-YYYY') : '' }}
+                          </td>
+                        </template>
                       </tr>
                     </tbody>
                   </table>
@@ -441,7 +468,7 @@ const deleteTask = function (id) {
           </div>
         </div>
         <a-form-item label="Assignees" required>
-          <a-select :options="listUserAssignees" v-model:value="formTaskState.assigneesSelect" mode="multiple">
+          <a-select :options="listUserAssignees" v-model:value="formTaskState.assignees" mode="multiple">
           </a-select>
         </a-form-item>
         <a-form-item label="Description">
