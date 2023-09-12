@@ -27,6 +27,22 @@ const tableConfig = {
         router.push('/faqs/' + item.id)
       }
     },
+    {
+      label: '',
+      class: 'font-medium text-red-600 dark:text-red-500 hover:underline',
+      icon: mdiDelete,
+      key: 'delete',
+      action(item, reload) {
+        Api.delete('faqs/' + item.id).then(rs => {
+          notification[rs.data.code == 0 ? 'error' : 'success']({
+            message: 'Notification',
+            description: rs.data.message,
+          });
+        }).finally(() => {
+          reload();
+        });
+      }
+    }
   ],
   columns: [
     { title: 'Position', key: 'position' },
@@ -73,6 +89,12 @@ const tableConfig = {
   <LayoutAuthenticated>
     <SectionMain>
       <DataTable v-bind="tableConfig">
+        <template #cellAction[delete]="{ item, actionMethod }">
+          <a-popconfirm title="Do you want delete this?" ok-text="Yes" cancel-text="No" @confirm="actionMethod">
+            <a-button type="text" danger :icon="h(DeleteOutlined)" label="" :outline="true">
+            </a-button>
+          </a-popconfirm>
+        </template>
         <template #cellAction[edit]="{ item, actionMethod }">
           <a-button type="text" :icon="h(FormOutlined)" label="" :outline="true" @click="actionMethod">
           </a-button>

@@ -156,6 +156,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         Route::get('list', \Modules\Admin\Actions\FAQs\GetListAction::class . '@handle');
         Route::post('', \Modules\Admin\Actions\FAQs\PostAction::class . '@handle');
         Route::get('{id}', \Modules\Admin\Actions\FAQs\GetDetailAction::class . '@handle');
+        Route::delete('{id}', \Modules\Admin\Actions\FAQs\DeleteAction::class . '@handle');
     });
 
     Route::prefix('/countries')->group(function () {
