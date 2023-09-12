@@ -14,6 +14,8 @@ class GetListAction
     {
         $query = Patient::query();
         $user = Auth::user();
+
+        $query->with('tasks');
         
         if(!$user->hasRole('Admin')){
             $query->where('sale_user', $user->id);

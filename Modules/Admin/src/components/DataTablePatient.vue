@@ -89,15 +89,28 @@ const fetchListUserApi = function () {
   return Api.get('user/all')
 };
 
-const fetchTaskByPatientApi = function (patient_id) {
-  return Api.get('task/list?filter[patient_id]=' + patient_id + '&filter[deleted]=0');
+const nameAssignee = (user, isFull) => {
+  if (user && user.full_name) {
+    if (isFull) {
+      return user.full_name;
+    } else {
+      const fullNameParts = user.full_name.split(" ");
+      // if (fullNameParts.length >= 2) {
+      const lastWord = fullNameParts[fullNameParts.length - 1];
+      if (lastWord.length > 0) {
+        return lastWord.charAt(0);
+      }
+      // }
+    }
+  }
+  return "N/A";
 };
 
 async function reload() {
   if (props.api) {
     loading.value = true;
     try {
-      var listUserAssignees = await fetchListUserApi().then((res) => res.data);
+      var listUserAll = await fetchListUserApi().then((res) => res.data);
       var listStatusPatient = await fetchListStatusPatientApi().then((res) => res.data);
       listStatusPatient = JSON.parse(listStatusPatient.data)
       
@@ -111,20 +124,29 @@ async function reload() {
 
       tableData.value = rs.data;
       props.pagination.total = rs.data?.total ? rs.data.total : 0;
-
-      const statusPromises = tableData.value.data.map(async (item) => {
+      const prepareData = tableData.value.data.map(async (item) => {
+        item.assignees = [];
         if (item.unify_task_status !== null) {
           const status = listStatusPatient.find((status) => {
             return status.value == item.unify_task_status;
           })
           item.unify_task_status = status;
         }
-        // if (item.assigned !== null) {
-        //   item.assigned = oneCharName(item.assigned);
-        // }
+        if(item.tasks !== null){
+          item.tasks.forEach((task) => {
+            if(task.assignees !== null){
+              JSON.parse(task.assignees).forEach((assignee) => {
+                const user = listUserAll.find((user) => {
+                  return user.id == assignee;
+                })
+                item.assignees.push(user);
+              })
+            }
+          })
+        }
       });
 
-      await Promise.all(statusPromises);
+      await Promise.all(prepareData);
     } catch (error) {
       console.error("Error reloading data:", error);
     } finally {
@@ -303,7 +325,25 @@ reload();
                   v-else-if="column.key == 'assigned'"
                   v-bind="{ item, column, index }"
                 >
-                
+                  <div class="flex">
+                    <div
+                      v-for="user_assignee in item.assignees"
+                      :key="user_assignee"
+                      class="item-assignee"
+                    >
+                      <a-avatar-group>
+                        <a-tooltip
+                          :title="nameAssignee(user_assignee, true)"
+                          placement="top"
+                        >
+                          <a-avatar
+                            style="background-color: #87d068"
+                            >{{ nameAssignee(user_assignee) }}</a-avatar
+                          >
+                        </a-tooltip>
+                      </a-avatar-group>
+                    </div>
+                  </div>
                 </slot>
                 <slot
                   v-else
