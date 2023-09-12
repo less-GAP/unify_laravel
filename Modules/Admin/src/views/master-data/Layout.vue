@@ -5,7 +5,6 @@ import router from "@/router";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 
 const items = ref([
-
     {
       key: 'task-status',
       icon: () => h(AppstoreOutlined),
