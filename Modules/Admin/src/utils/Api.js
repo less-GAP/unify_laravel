@@ -15,9 +15,9 @@ Api.interceptors.request.use(function (config) {
   if (requestConfig.method.toLowerCase() == 'post' || requestConfig.method.toLowerCase() == 'put') {
     message.loading({content: 'Submit...', key, duration: 1});
   }
-  if (requestConfig.method.toLowerCase() == 'get') {
-    hideMessage = message.loading({content: 'Loading...', key, duration: 10});
-  }
+  // if (requestConfig.method.toLowerCase() == 'get') {
+  //   hideMessage = message.loading({content: 'Loading...', key, duration: 10});
+  // }
   return config;
 }, function (error) {
   // Do something with request error
@@ -32,7 +32,7 @@ Api.interceptors.response.use((response) => {
   {
     message.info({content: response?.data?.message,key, duration: 1});
   }
-  if (requestConfig.method.toLowerCase() == 'get') {
+  if (requestConfig.method.toLowerCase() == 'get' && hideMessage) {
     hideMessage()
   }
   return response;

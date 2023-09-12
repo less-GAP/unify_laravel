@@ -43,7 +43,6 @@ const loading = ref(false);
 const auth = useAuthStore();
 const needToDoLib = useNeedToDoList();
 var needToDoList = [];
-
 const fetch = async function () {
   loading.value = true;
   var id = router.currentRoute.value.params.id;
@@ -140,6 +139,7 @@ const addTask = function () {
   formTaskState.description = txt
   formTaskState.name = 'Check & Update for ' + formState.full_name;
   openModal.value = true;
+
 }
 
 // on click OK
@@ -156,6 +156,7 @@ const handleAddTask = () => {
           //   updateApi(formState.id, { unify_task_status: formTaskState.task_tag_id })
           // }
           // Object.assign(formTaskState, rs.data.result)
+
         });
         confirmLoading.value = true;
         setTimeout(() => {
@@ -179,7 +180,7 @@ const editTask = async function (id) {
 }
 
 const deleteTask = function (id) {
-  updateTaskApi(id, { 
+  updateTaskApi(id, {
     deleted: 1,
     deleted_by: auth.user.id,
     deleted_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
