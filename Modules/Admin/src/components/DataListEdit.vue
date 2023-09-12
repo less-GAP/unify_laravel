@@ -50,13 +50,13 @@
             <tr class="ant-table-measure-row">
               <td :data-label="column.title" v-for="column in getColumns()" scope="row">
                 <template v-if="column.dataIndex=='action'">
-                  <div style="width:100px">
+                  <div style="width:80px">
 
-                    <a-button type="link" primary>
+                    <!-- <a-button type="link" primary>
                       <template #icon>
                         <DragOutlined class="drag-handle"></DragOutlined>
                       </template>
-                    </a-button>
+                    </a-button> -->
 
                     <a-button @click="newValue.splice(index,1)" style="margin-left:10px" type="link" danger>
                       <template #icon>
