@@ -19,6 +19,22 @@ class GetListAction
             $query->whereRaw("FIND_IN_SET(?, assignees) > 0", [$user->id]);
         }
 
+        if ($search = $request->input('search')) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+        if ($request->input('patient_id') !== null) {
+            $query->where('patient_id', $request->input('patient_id'));
+        }
+        if ($request->input('is_completed') !== null) {
+            $query->where('is_completed', $request->input('is_completed'));
+        }
+
+        if ($request->input('deleted') !== null) {
+            $query->where('deleted', $request->input('deleted'));
+        }else{
+            $query->where('deleted', 0);
+        }
+
         if ($request->input('sort') !== null) {
             switch ($request->input('sort')) {
                 case '-id':
@@ -37,20 +53,8 @@ class GetListAction
                     $query->orderBy('id', $request->input('order', 'DESC'));
                     break;
             }
-        }
-
-        if ($search = $request->input('search')) {
-            $query->where('name', 'like', '%' . $search . '%');
-        }
-        if ($request->input('patient_id') !== null) {
-            $query->where('patient_id', $request->input('patient_id'));
-        }
-        if ($request->input('is_completed') !== null) {
-            $query->where('is_completed', $request->input('is_completed'));
-        }
-
-        if ($request->input('deleted') !== null) {
-            $query->where('deleted', $request->input('deleted'));
+        }else{
+            $query->orderBy('id', $request->input('order', 'DESC'));
         }
 
         return $query->paginate($request->input('perPage', 20));

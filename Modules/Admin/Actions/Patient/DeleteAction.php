@@ -14,9 +14,9 @@ class DeleteAction
         try {
             $query = Patient::query();
             $del = $query->find($request->route('id'))->update([
-                'delete' => 1,
-                'deleted_at' => now(),
-                'deleted_by' => auth()->user()->id
+                'unify_deleted' => 1,
+                'unify_deleted_at' => now(),
+                'unify_deleted_by' => auth()->user()->id
             ]);
             $output = [
                 'code' => 1,

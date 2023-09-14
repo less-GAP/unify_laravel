@@ -15,7 +15,9 @@ class GetListAction
         $query = Patient::query();
         $user = Auth::user();
 
-        $query->with('tasks');
+        $query->with(['tasks' => function ($query_task) {
+            $query_task->orderBy('created_at', 'ASC');
+        }]);
         
         if(!$user->hasRole('Admin')){
             $query->where('sale_user', $user->id);
@@ -23,6 +25,16 @@ class GetListAction
             if($user->hasRole('Seller')){
                 $query->where('unify_process', '=', '0');
             }
+        }
+
+        if ($search = $request->input('search')) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+
+        if ($request->input('deleted') !== null) {
+            $query->where('unify_deleted', $request->input('deleted'));
+        }else{
+            $query->where('unify_deleted', 0);
         }
 
         if ($request->input('sort') !== null) {
@@ -43,14 +55,8 @@ class GetListAction
                     $query->orderBy('id', $request->input('order', 'DESC'));
                     break;
             }
-        }
-
-        if ($search = $request->input('search')) {
-            $query->where('name', 'like', '%' . $search . '%');
-        }
-
-        if ($request->input('deleted') !== null) {
-            $query->where('deleted', $request->input('deleted'));
+        }else{
+            $query->orderBy('id', $request->input('order', 'DESC'));
         }
 
         return $query->paginate($request->input('perPage', 15));

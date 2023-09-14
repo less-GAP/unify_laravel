@@ -55,6 +55,19 @@ const completeTask = function (id, actionAfterComplete = null) {
     });
   });
 };
+const reviewTask = function (id, status, actionReviewComplete = null) {
+  if(!status) return false
+  updateTaskApi(id, {
+    task_process: status ? 3 : 0, // true => done, false => waiting for rework
+  }).then((rs) => {
+    if (actionReviewComplete) {
+      actionReviewComplete();
+    }
+    notification.success({
+      message: status ? "You reviewed & accepted this task!" : "You reviewed & rejected this task! Assignees will rework!",
+    });
+  });
+};
 
 const workingTask = function (id, actionAfterWorking = null, pending = false) {
   updateTaskApi(id, {
@@ -71,4 +84,4 @@ const workingTask = function (id, actionAfterWorking = null, pending = false) {
   });
 };
 
-export { deleteTask, completeTask, workingTask, getStatusTask, statusTasks };
+export { deleteTask, completeTask, workingTask, reviewTask, getStatusTask, statusTasks };

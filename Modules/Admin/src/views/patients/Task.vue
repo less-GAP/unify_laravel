@@ -11,6 +11,7 @@ import {
   mdiCalendarClockOutline,
   mdiUploadOutline,
   mdiLink,
+  mdiAccountCheckOutline,
   mdiReply
 } from "@mdi/js";
 import { BaseIcon } from "@/components";
@@ -27,6 +28,7 @@ import {
   deleteTask,
   completeTask,
   workingTask,
+  reviewTask,
   getStatusTask
 } from "@/utils/Task";
 
@@ -394,6 +396,17 @@ const age = (dob) => {
                                     class="text-current hover:text-blue-500"></BaseIcon>
                                 </a-button>
                               </a-tooltip>
+                              <a-tooltip title="Review">
+                                <a-popconfirm placement="leftBottom" title="Review this task" ok-text="Accept Done" cancel-text="Reject"
+                                  @confirm="reviewTask(task.id, true, fetch)" @cancel="reviewTask(task.id, false, fetch)">
+                                  <a-button v-if="auth.hasPermission('task.review') &&
+                                    task.is_completed == 1
+                                    " type="link" class="!px-0">
+                                    <BaseIcon :path="mdiAccountCheckOutline" class="text-current hover:text-green-500">
+                                    </BaseIcon>
+                                  </a-button>
+                                </a-popconfirm>
+                              </a-tooltip>
                               <a-tooltip title="Edit">
                                 <a-button v-if="auth.hasPermission('task.edit') &&
                                   task.is_completed !== 1
@@ -528,6 +541,7 @@ const age = (dob) => {
       </div>
     </a-form>
 
+    <!-- Modal Add Task -->
     <a-modal v-model:open="openModal" append-to-body title="Add Task" :confirm-loading="confirmLoading"
       @ok="handleAddTask">
       <a-form v-bind="$config.formConfig" ref="formTaskRef" layout="vertical" :model="formTaskState">
@@ -551,6 +565,8 @@ const age = (dob) => {
         </a-form-item>
       </a-form>
     </a-modal>
+
+    <!-- Modal Detail Task -->
     <a-modal v-model:open="openModalDetail" append-to-body :title="taskDetail.name" width="1000px"
       :confirm-loading="confirmLoading">
       <div class="detail">
@@ -619,7 +635,7 @@ const age = (dob) => {
         <a-form>
           <a-divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0" plain>Comments &
             Logs</a-divider>
-          <div class="mt-4">
+          <div class="mt-4"><!--Log created-->
             <div class="flex items-center gap-2">
               <a-avatar-group>
                 <a-avatar style="background-color: orange">{{ nameAssignee(taskDetail.created_by) }}</a-avatar>
@@ -629,6 +645,32 @@ const age = (dob) => {
                   <small class="font-normal">created this task.</small>
                   <small class="float-right font-normal">{{ dayjs(taskDetail.created_at).fromNow() }}</small>
                 </h5>
+              </div>
+            </div>
+            <div class="mt-4"><!--Log completed-->
+              <div class="flex items-center gap-2">
+                <a-avatar-group>
+                  <a-avatar style="background-color: orange">{{ nameAssignee(taskDetail.created_by) }}</a-avatar>
+                </a-avatar-group>
+                <div class="w-full">
+                  <h5 class="font-semibold">{{ nameAssignee(taskDetail.created_by, true) }}
+                    <small class="font-normal">have completed this task.</small>
+                    <small class="float-right font-normal">{{ dayjs(taskDetail.completed_at).fromNow() }}</small>
+                  </h5>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4" v-if="taskDetail.deleted != 0"><!--Log deleted-->
+              <div class="flex items-center gap-2">
+                <a-avatar-group>
+                  <a-avatar style="background-color: orange">{{ nameAssignee(taskDetail.deleted_by) }}</a-avatar>
+                </a-avatar-group>
+                <div class="w-full">
+                  <h5 class="font-semibold">{{ nameAssignee(taskDetail.deleted_by, true) }}
+                    <small class="font-normal">have deleted this task.</small>
+                    <small class="float-right font-normal">{{ dayjs(taskDetail.deleted_at).fromNow() }}</small>
+                  </h5>
+                </div>
               </div>
             </div>
             <div class="mt-4">
@@ -708,6 +750,7 @@ const age = (dob) => {
         }">Ok</a-button>
       </template>
     </a-modal>
+
   </a-drawer>
 </template>
 
