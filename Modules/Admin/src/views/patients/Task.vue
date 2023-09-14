@@ -647,7 +647,7 @@ const age = (dob) => {
                 </h5>
               </div>
             </div>
-            <div class="mt-4"><!--Log completed-->
+            <div class="mt-4" v-if="taskDetail.is_completed != 0"><!--Log completed-->
               <div class="flex items-center gap-2">
                 <a-avatar-group>
                   <a-avatar style="background-color: orange">{{ nameAssignee(taskDetail.created_by) }}</a-avatar>
