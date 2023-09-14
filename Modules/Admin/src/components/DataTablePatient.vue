@@ -139,7 +139,9 @@ async function reload() {
                 const user = listUserAll.find((user) => {
                   return user.id == assignee;
                 })
-                item.assignees.push(user);
+                if(item.assignees.findIndex((assignee) => assignee.id == user.id) === -1){
+                  item.assignees.push(user);
+                }
               })
             }
           })
