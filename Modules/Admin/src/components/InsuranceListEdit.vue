@@ -53,6 +53,8 @@
                                     :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                                     :parser="value => value.replace(/\$\s?|(,*)/g, '')" v-if="column.type =='number'"
                                     v-model:value="element[column.dataIndex]"></a-input-number>
+                    <!-- <a-select  v-else-if="column.type =='select'" v-model:value="element[column.dataIndex]" class="w-full" :options=""></a-select> -->
+
                     <a-date-picker  v-else-if="column.type =='date'" v-model:value="element[column.dataIndex]" valueFormat="YYYY-MM-DD" format="MM-DD-YYYY"
                       inputReadOnly class="w-full"></a-date-picker>
                     <a-input v-else v-model:value="element[column.dataIndex]"></a-input>

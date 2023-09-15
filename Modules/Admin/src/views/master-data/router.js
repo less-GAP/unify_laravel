@@ -18,6 +18,14 @@ export default [{
     },
     {
       meta: {
+        title: "Insurance Coverage",
+      },
+      path: "/master-data/insurance",
+      name: "insurance",
+      component: () => import("./insurance/index.vue"),
+    },
+    {
+      meta: {
         title: "Permissions",
       },
       path: "/master-data/permissions",

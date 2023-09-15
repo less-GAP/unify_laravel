@@ -1,6 +1,6 @@
 <script setup>
 import {ref, h} from "vue";
-import {AppstoreOutlined, MailOutlined} from '@ant-design/icons-vue';
+import {AppstoreOutlined, SecurityScanOutlined} from '@ant-design/icons-vue';
 import router from "@/router";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 
@@ -11,6 +11,13 @@ const items = ref([
       href: '/master-data/task-status',
       label: 'Task Status',
       title: 'Task Status',
+    } ,
+    {
+      key: 'insurance',
+      icon: () => h(SecurityScanOutlined),
+      href: '/master-data/insurance',
+      label: 'Insurance Coverage',
+      title: 'Insurance Coverage',
     } ,
   {
       key: 'User Roles',

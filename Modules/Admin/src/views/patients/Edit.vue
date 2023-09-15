@@ -362,7 +362,8 @@ const closeDetail = function () {
           <div class="w-full px-4 mb-4">
             <InsuranceListEdit :columns="[{
               title: 'Coverage',
-              dataIndex: 'coverage'
+              dataIndex: 'coverage',
+              type: 'select',
             }, {
               title: 'Insurance ID',
               dataIndex: 'insurance_id'

@@ -91,7 +91,7 @@
 
   <a-modal
     title="Add Column"
-    v-model:visible="showAddColumn"
+    :open="showAddColumn"
     @ok="addColumn"
   >
     <a-form style="margin:20px" ref="formRef" :model="columnForm" layout="vertical" name="form_in_modal">
@@ -179,10 +179,17 @@ export default defineComponent({
       newValue.value = JSON.parse(jsonEdit.value)
       showEdit.value = false
     }
+    const parseIntValue = function (value) {
+      if (value === undefined || value === null) {
+        return 0
+      }
+      return parseInt(value)
+    }
 
     return {
       showEdit,
       jsonEdit,
+      parseIntValue,
       showDrawEdit,
       saveJson,
       getColumns() {
