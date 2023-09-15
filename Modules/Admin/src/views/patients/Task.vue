@@ -178,14 +178,12 @@ const handleAddTask = () => {
     formTaskState.patient_id = formState.id;
     formTaskState.assignees = JSON.stringify(formTaskState.assignees);
     try {
-      createTaskApi({ ...formTaskState }).then((rs) => {
-        fetch();
-      });
       confirmLoading.value = true;
-      setTimeout(() => {
-        openModal.value = false;
+      createTaskApi({ ...formTaskState }).then((rs) => {
         confirmLoading.value = false;
-      }, 2000);
+        fetch();
+        openModal.value = false;
+      });
     } catch (e) {
       console.log(e);
     }

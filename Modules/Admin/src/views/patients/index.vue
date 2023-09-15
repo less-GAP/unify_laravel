@@ -160,7 +160,7 @@ const tableConfig = UseDataTable(fetchListApi, {
   listActions,
   itemActions,
 });
-let reloadTable = () => { };
+let reloadTable = () => {};
 
 watch(router.currentRoute, (currentRoute) => {
   if (currentRoute.path === "/" + prefix) {
@@ -182,67 +182,106 @@ function registerTable({ reload }) {
         </template>
         <template #cellAction[edit]="{ item, actionMethod }">
           <a-tooltip title="Edit" class="mr-1">
-            <a-button class="justify-center !flex !p-1 !h-auto" :disabled="auth.user.roles.find((x) => x.name === 'Admin') !== undefined ||
+            <a-button
+              class="justify-center !flex !p-1 !h-auto"
+              :disabled="
+                auth.user.roles.find((x) => x.name === 'Admin') !== undefined ||
                 (auth.user.roles.find((x) => x.name === 'Seller') !==
                   undefined &&
                   item.unify_process == 0)
-                ? false
-                : true
-              " :class="auth.user.roles.find((x) => x.name === 'Admin') !== undefined ||
-      (auth.user.roles.find((x) => x.name === 'Seller') !==
-        undefined &&
-        item.unify_process == 0)
-      ? ''
-      : '!bg-gray-300 opacity-50'
-    " @click="actionMethod">
+                  ? false
+                  : true
+              "
+              :class="
+                auth.user.roles.find((x) => x.name === 'Admin') !== undefined ||
+                (auth.user.roles.find((x) => x.name === 'Seller') !==
+                  undefined &&
+                  item.unify_process == 0)
+                  ? ''
+                  : '!bg-gray-300 opacity-50'
+              "
+              @click="actionMethod"
+            >
               <BaseIcon :path="mdiPencil" class="w-4 !fill-blue-200" />
             </a-button>
           </a-tooltip>
         </template>
         <template #cellAction[editProcess]="{ item, actionMethod }">
           <a-tooltip title="Approve Patient" class="mr-1">
-            <a-button class="justify-center !flex !p-1 !h-auto" :disabled="auth.user.roles.find((x) => x.name === 'Admin') !== undefined &&
+            <a-button
+              class="justify-center !flex !p-1 !h-auto"
+              :disabled="
+                auth.user.roles.find((x) => x.name === 'Admin') !== undefined &&
                 item.unify_process < 2
-                ? false
-                : true
-              " :class="auth.user.roles.find((x) => x.name === 'Admin') !== undefined &&
-      item.unify_process < 2
-      ? ''
-      : '!bg-gray-300 opacity-50'
-    " @click="actionMethod">
+                  ? false
+                  : true
+              "
+              :class="
+                auth.user.roles.find((x) => x.name === 'Admin') !== undefined &&
+                item.unify_process < 2
+                  ? ''
+                  : '!bg-gray-300 opacity-50'
+              "
+              @click="actionMethod"
+            >
               <BaseIcon :path="mdiCheckOutline" class="w-4" />
             </a-button>
           </a-tooltip>
         </template>
         <template #cellAction[addTask]="{ item, actionMethod }">
           <a-tooltip title="Add Task" class="mr-1">
-            <a-button class="justify-center !flex !p-1 !h-auto" :disabled="auth.user.roles.find((x) => x.name === 'Admin') !== undefined
-                ? false
-                : true
-              " :class="auth.user.roles.find((x) => x.name === 'Admin') !== undefined
-      ? ''
-      : '!bg-gray-300 opacity-50'
-    " @click="actionMethod">
+            <a-button
+              class="justify-center !flex !p-1 !h-auto"
+              :disabled="
+                auth.user.roles.find((x) => x.name === 'Admin') !== undefined
+                  ? false
+                  : true
+              "
+              :class="
+                auth.user.roles.find((x) => x.name === 'Admin') !== undefined
+                  ? ''
+                  : '!bg-gray-300 opacity-50'
+              "
+              @click="actionMethod"
+            >
               <BaseIcon :path="mdiCalendarCheckOutline" class="w-4" />
             </a-button>
           </a-tooltip>
         </template>
         <template #cellAction[history]="{ item, actionMethod }">
           <a-tooltip title="View History">
-            <a-button class="justify-center !flex !p-1 !h-auto" :disabled="auth.user.roles.find((x) => x.name === 'Admin') !== undefined
-                ? false
-                : true
-              " :class="auth.user.roles.find((x) => x.name === 'Admin') !== undefined
-      ? ''
-      : '!bg-gray-300 opacity-50'
-    " @click="actionMethod">
+            <a-button
+              class="justify-center !flex !p-1 !h-auto"
+              :disabled="
+                auth.user.roles.find((x) => x.name === 'Admin') !== undefined
+                  ? false
+                  : true
+              "
+              :class="
+                auth.user.roles.find((x) => x.name === 'Admin') !== undefined
+                  ? ''
+                  : '!bg-gray-300 opacity-50'
+              "
+              @click="actionMethod"
+            >
               <BaseIcon :path="mdiHistory" class="w-4" />
             </a-button>
           </a-tooltip>
         </template>
         <template #cellAction[delete]="{ item, actionMethod }">
-          <a-popconfirm title="Do you want to delete?" ok-text="Yes" cancel-text="No" @confirm="actionMethod">
-            <a-button type="text" danger :icon="h(DeleteOutlined)" label="" :outline="true"></a-button>
+          <a-popconfirm
+            title="Do you want to delete?"
+            ok-text="Yes"
+            cancel-text="No"
+            @confirm="actionMethod"
+          >
+            <a-button
+              type="text"
+              danger
+              :icon="h(DeleteOutlined)"
+              label=""
+              :outline="true"
+            ></a-button>
           </a-popconfirm>
         </template>
         <template #cell[id]="{ item, column }">
@@ -250,22 +289,42 @@ function registerTable({ reload }) {
         </template>
         <template #cell[status]="{ item, column }">
           <div class="flex justify-center">
-            <BaseIcon v-if="item.need_improve === 0 && item.unify_status !== 1" :path="mdiAlertCircle"
-              class="flex-none text-red-600 !mr-0" />
+            <BaseIcon
+              v-if="item.need_improve === 0 && item.unify_status !== 1"
+              :path="mdiAlertCircle"
+              class="flex-none text-red-600 !mr-0"
+            />
           </div>
         </template>
         <template #cell[full_name]="{ item, column }">
           <div class="flex flex-row items-center">
-            <BaseIcon v-if="item.gender === 0" :path="mdiGenderMale" class="flex-none !text-blue-600" />
-            <BaseIcon v-if="item.gender === 1" :path="mdiGenderFemale" class="flex-none text-pink-600" />
+            <BaseIcon
+              v-if="item.gender === 0"
+              :path="mdiGenderMale"
+              class="flex-none !text-blue-600"
+            />
+            <BaseIcon
+              v-if="item.gender === 1"
+              :path="mdiGenderFemale"
+              class="flex-none text-pink-600"
+            />
 
             <span class="pl-1">
-              <a :href="'#/patient/' + item.id + '/detail'" class="text-blue-700 underline">{{ item.full_name }}</a>
+              <a
+                :href="'#/patient/' + item.id + '/detail'"
+                class="text-blue-700 underline"
+                >{{ item.full_name }}</a
+              >
             </span>
           </div>
         </template>
         <template #cell[image]="{ item, column }">
-          <a-image height="50px" class="w-20 h-auto" :src="item.image_url" :alt="item.name" />
+          <a-image
+            height="50px"
+            class="w-20 h-auto"
+            :src="item.image_url"
+            :alt="item.name"
+          />
         </template>
         <template #cell[info]="{ item, column }">
           <div class="flex">
@@ -308,19 +367,27 @@ function registerTable({ reload }) {
         </template>
         <template #cell[unify_status]="{ item, column }">
           <a-tag v-if="item.unify_process === 0" color="yellow">Waiting</a-tag>
-          <a-tag v-else-if="item.unify_process === 1" color="orange">Eligibility Check</a-tag>
+          <a-tag v-else-if="item.unify_process === 1" color="orange"
+            >Eligibility Check</a-tag
+          >
           <a-tag v-else-if="item.unify_status === 1" color="green">
             <div class="pt-1 leading-none">Active</div>
             <div class="pb-1 leading-none">
-              <small>({{
-                dayjs(item.unify_active, "YYYY-MM-DD HH:mm:ss").format(
-                  "HH:mm MM-DD-YYYY"
-                )
-              }})</small>
+              <small
+                >({{
+                  dayjs(item.unify_active, "YYYY-MM-DD HH:mm:ss").format(
+                    "HH:mm MM-DD-YYYY"
+                  )
+                }})</small
+              >
             </div>
           </a-tag>
-          <a-tag v-else-if="item.unify_status === 2" color="gray">Inactive</a-tag>
-          <a-tag v-else-if="item.unify_status === 3" color="gray">Decease</a-tag>
+          <a-tag v-else-if="item.unify_status === 2" color="gray"
+            >Inactive</a-tag
+          >
+          <a-tag v-else-if="item.unify_status === 3" color="gray"
+            >Decease</a-tag
+          >
         </template>
       </DataTablePatient>
       <router-view></router-view>

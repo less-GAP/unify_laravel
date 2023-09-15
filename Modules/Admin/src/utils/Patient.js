@@ -55,45 +55,9 @@ const fetchListStatesApi = function () {
     { code: "WY", name: "Wyoming" },
   ];
 };
-const fetchListInsurancesApi = function () {
-  // return Api.get('insurance' + '/list', {params});
-  return [
-    {
-      value: "medicaid",
-      label: "Medicaid",
-      status: 1,
-    },
-    {
-      value: "medicare_a",
-      label: "Medicare A",
-      status: 1,
-    },
-    {
-      value: "medicare_b",
-      label: "Medicare B",
-      status: 1,
-    },
-    {
-      value: "hcbs_elderly_blind_&_disabled_waiver",
-      label: "HCBS Elderly, Blind & Disabled Waiver",
-      status: 1,
-    },
-    {
-      value: "specified_low_income_medicare_beneficiary",
-      label: "Specified Low-Income Medicare Beneficiary",
-      status: 1,
-    },
-    {
-      value: "behavioral_health_benefits",
-      label: "Behavioral Health Benefits",
-      status: 1,
-    },
-    {
-      value: "bha_benefit_plan",
-      label: "BHA Benefit Plan",
-      status: 1,
-    },
-  ];
+const fetchListInsurancesApi = async function () {
+  const list = await Api.get("master-data/insurance").then((res) => res.data);
+  return JSON.parse(list.data);
 };
 const fetchListDoctorsApi = function () {
   // return Api.get('doctor' + '/list', { params });

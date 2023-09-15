@@ -104,8 +104,6 @@ const submit = (status) => {
       const new_insurance_coverages = formState.insurance_coverages;
       var insurance_coverages = ref([]);
       if (formState.insurance_coverages) {
-        console.log(formState.insurance_coverages);
-        
         formState.insurance_coverages.forEach((element, index) => {
           insurance_coverages.value.push({
             coverage: element.coverage,
