@@ -101,10 +101,13 @@ const submit = (status) => {
       if (formState.unify_status > 1) { // die or inactive => to archive
         formState.unify_inactive_at = dayjs().format('YYYY-MM-DD HH:mm:ss');
       }
-      var insurance_coverages = [];
+      const new_insurance_coverages = formState.insurance_coverages;
+      var insurance_coverages = ref([]);
       if (formState.insurance_coverages) {
+        console.log(formState.insurance_coverages);
+        
         formState.insurance_coverages.forEach((element, index) => {
-          insurance_coverages.push({
+          insurance_coverages.value.push({
             coverage: element.coverage,
             insurance_id: element.insurance_id,
             active_date: element.active_date,
@@ -112,14 +115,15 @@ const submit = (status) => {
           });
         });
       }
-      if (insurance_coverages.length) {
-            formState.insurance_coverages = JSON.stringify(toRaw(insurance_coverages))
-        }else{
-            formState.insurance_coverages = null
-        }
+      if (insurance_coverages.value.length) {
+        formState.insurance_coverages = JSON.stringify(toRaw(insurance_coverages.value))
+      } else {
+        formState.insurance_coverages = null
+      }
 
       createApi({ ...formState, status: status }).then(rs => {
         Object.assign(formState, rs.data.result)
+        formState.insurance_coverages = new_insurance_coverages;
       });
     })
 };
@@ -128,10 +132,11 @@ const submitSellerApprove = () => {
   formRef.value
     .validate()
     .then(() => {
-      var insurance_coverages = [];
+      const new_insurance_coverages = formState.insurance_coverages;
+      var insurance_coverages = ref([]);
       if (formState.insurance_coverages) {
         formState.insurance_coverages.forEach((element, index) => {
-          insurance_coverages.push({
+          insurance_coverages.value.push({
             coverage: element.coverage,
             insurance_id: element.insurance_id,
             active_date: element.active_date,
@@ -139,16 +144,17 @@ const submitSellerApprove = () => {
           });
         });
       }
-      if (insurance_coverages.length) {
-            formState.insurance_coverages = JSON.stringify(toRaw(insurance_coverages))
-        }else{
-            formState.insurance_coverages = null
-        }
+      if (insurance_coverages.value.length) {
+        formState.insurance_coverages = JSON.stringify(toRaw(insurance_coverages.value))
+      } else {
+        formState.insurance_coverages = null
+      }
 
       formState.unify_process = 1;
 
       updateApi(formState.id, { ...formState }).then(rs => {
         Object.assign(formState, rs.data.result)
+        formState.insurance_coverages = new_insurance_coverages;
         router.replace({ path: '/' + prefix })
       });
     })
@@ -191,7 +197,8 @@ const closeDetail = function () {
           <a-tag v-if="formState.unify_process == 2 && formState.unify_status < 2" color="blue">Running</a-tag>
           <ApiData url="master-data/task-status" method="GET" :params="{}">
             <template #default="{ data }">
-              <a-select class="w-[200px]" v-model:value="formState.unify_task_status" :options="JSON.parse(data.data)" placeholder="Select status for profile">
+              <a-select class="w-[200px]" v-model:value="formState.unify_task_status" :options="JSON.parse(data.data)"
+                placeholder="Select status for profile">
               </a-select>
             </template>
           </ApiData>
@@ -361,9 +368,8 @@ const closeDetail = function () {
             plain>Insurance</a-Divider>
           <div class="w-full px-4 mb-4">
             <InsuranceListEdit :columns="[{
-              title: 'Coverage',
+              title: 'Insurance Coverage',
               dataIndex: 'coverage',
-              type: 'select',
             }, {
               title: 'Insurance ID',
               dataIndex: 'insurance_id'
@@ -393,7 +399,8 @@ const closeDetail = function () {
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Doctor status" name="doctor_status">
-              <a-select v-model:value="formState.doctor_status" allowClear="" class="w-full" placeholder="Select a status">
+              <a-select v-model:value="formState.doctor_status" allowClear="" class="w-full"
+                placeholder="Select a status">
                 <a-select-option v-for="(status, index) in listDoctorStatus" :key="status.value" :value="status.value">{{
                   status.label
                 }}</a-select-option>

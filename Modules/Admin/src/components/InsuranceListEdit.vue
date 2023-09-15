@@ -4,43 +4,43 @@
     <div class="ant-table-container">
       <table>
         <thead class="ant-table-thead">
-        <tr>
-          <th class="ant-table-cell ant-table-cell-ellipsis" v-class="column.class"
-              v-for="(column,columnIndex) in getColumns()" scope="col">
-            <slot name="column" v-bind="{column}">
-              <template v-if="column.dataIndex=='action'">
-                <a-button @click="newValue.push({})">
-                  <template #icon>
-                    <PlusOutlined></PlusOutlined>
-                  </template>
-                  {{ __('Add Coverage') }}
-                </a-button>
-              </template>
-              <template v-else>
-                {{ column.title }}
-                <a-button size="small" v-if="editColumn && column.dataIndex !=='action'"
-                          @click="columns.splice((columnIndex-1),1)" style="float:right" type="link" danger>
-                  <template #icon>
-                    <Icon icon="ion:remove-outline"></Icon>
-                  </template>
-                </a-button>
-              </template>
-            </slot>
-          </th>
-        </tr>
+          <tr>
+            <th class="ant-table-cell ant-table-cell-ellipsis" v-class="column.class"
+              v-for="(column, columnIndex) in getColumns()" scope="col">
+              <slot name="column" v-bind="{ column }">
+                <template v-if="column.dataIndex == 'action'">
+                  <a-button @click="newValue.push({})">
+                    <template #icon>
+                      <PlusOutlined></PlusOutlined>
+                    </template>
+                    {{ __('Add Coverage') }}
+                  </a-button>
+                </template>
+                <template v-else>
+                  {{ column.title }}
+                  <a-button size="small" v-if="editColumn && column.dataIndex !== 'action'"
+                    @click="columns.splice((columnIndex - 1), 1)" style="float:right" type="link" danger>
+                    <template #icon>
+                      <Icon icon="ion:remove-outline"></Icon>
+                    </template>
+                  </a-button>
+                </template>
+              </slot>
+            </th>
+          </tr>
         </thead>
         <draggable v-bind="dragOptions" v-model="newValue" class="ant-table-tbody" handle=".drag-handle" tag="tbody">
-          <template #item="{ element ,index }">
+          <template #item="{ element, index }">
             <tr class="ant-table-measure-row">
               <td v-for="column in getColumns()" scope="row">
-                <template v-if="column.dataIndex=='action'">
+                <template v-if="column.dataIndex == 'action'">
                   <div class="flex items-center justify-end">
                     <a-button type="link" primary>
                       <template #icon>
                         <DragOutlined class="drag-handle"></DragOutlined>
                       </template>
                     </a-button>
-                    <a-button @click="newValue.splice(index,1)" style="margin-left:10px" type="link" danger>
+                    <a-button @click="newValue.splice(index, 1)" style="margin-left:10px" type="link" danger>
                       <template #icon>
                         <DeleteOutlined></DeleteOutlined>
                       </template>
@@ -48,15 +48,18 @@
                   </div>
                 </template>
                 <template v-else>
-                  <slot :name="'bodyCell['+column.dataIndex+']'" v-bind="{record:element,column}">
+                  <slot :name="'bodyCell[' + column.dataIndex + ']'" v-bind="{ record: element, column }">
                     <a-input-number :min="column.min"
-                                    :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
-                                    :parser="value => value.replace(/\$\s?|(,*)/g, '')" v-if="column.type =='number'"
-                                    v-model:value="element[column.dataIndex]"></a-input-number>
-                    <!-- <a-select  v-else-if="column.type =='select'" v-model:value="element[column.dataIndex]" class="w-full" :options=""></a-select> -->
+                      :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                      :parser="value => value.replace(/\$\s?|(,*)/g, '')" v-if="column.type == 'number'"
+                      v-model:value="element[column.dataIndex]"></a-input-number>
 
-                    <a-date-picker  v-else-if="column.type =='date'" v-model:value="element[column.dataIndex]" valueFormat="YYYY-MM-DD" format="MM-DD-YYYY"
-                      inputReadOnly class="w-full"></a-date-picker>
+                    <a-select v-else-if="column.dataIndex == 'coverage'" v-model:value="element[column.dataIndex]"
+                      class="w-full" :options="listCoverage">
+                    </a-select>
+
+                    <a-date-picker v-else-if="column.type == 'date'" v-model:value="element[column.dataIndex]"
+                      valueFormat="YYYY-MM-DD" format="MM-DD-YYYY" inputReadOnly class="w-full"></a-date-picker>
                     <a-input v-else v-model:value="element[column.dataIndex]"></a-input>
                   </slot>
                 </template>
@@ -72,27 +75,39 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, watch, ref, onMounted, unref, toRaw} from 'vue';
-import {isArray, isFunction} from '@/utils/is';
-import {DragOutlined, DeleteOutlined, PlusOutlined} from '@ant-design/icons-vue';
+import { computed, defineComponent, watch, ref, onMounted, unref, toRaw } from 'vue';
+import { isArray, isFunction } from '@/utils/is';
+import { DragOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import draggable from "vuedraggable";
-import type {FormInstance} from "ant-design-vue";
+import type { FormInstance } from "ant-design-vue";
+import Api from '@/utils/Api';
 
 export default defineComponent({
-  components: {draggable, DragOutlined, DeleteOutlined, PlusOutlined},
+  components: { draggable, DragOutlined, DeleteOutlined, PlusOutlined },
   props: {
     value: Array,
     columns: Array,
     editColumn: Boolean,
   },
   emits: ['options-change', 'change'],
-  setup(props, {emit}) {
+  setup(props, { emit }) {
     const isFirstLoaded = ref<Boolean>(false);
     const loading = ref(false);
     const showAddColumn = ref(false);
     const columnForm = ref({});
     const newValue = ref(toRaw(props.value));
     const formRef = ref<FormInstance>();
+    const listCoverage = ref([]);
+
+    onMounted(async () => {
+      const { data } = await Api.get('master-data/insurance');
+      listCoverage.value = JSON.parse(data.data).map((item) => {
+        return {
+          label: item.label,
+          value: item.value,
+        };
+      });
+    });
 
     if (!Array.isArray(props.value)) {
       props.value = []
@@ -108,7 +123,7 @@ export default defineComponent({
       (value) => {
         emit('update:value', value)
       },
-      {deep: true},
+      { deep: true },
     );
     watch(
       () => props.value,
@@ -119,7 +134,7 @@ export default defineComponent({
           newValue.value = value
         }
       },
-      {deep: true},
+      { deep: true },
     );
 
 
@@ -144,7 +159,7 @@ export default defineComponent({
             if (!props.columns) {
               props.columns = []
             }
-            props.columns.push({title: value.dataIndex, dataIndex: value.dataIndex});
+            props.columns.push({ title: value.dataIndex, dataIndex: value.dataIndex });
             formRef.value.resetFields();
           })
 
@@ -159,6 +174,7 @@ export default defineComponent({
         ghostClass: "ghost"
       },
       loading,
+      listCoverage,
       showAddColumn,
       columnForm,
       formRef,
@@ -170,7 +186,7 @@ export default defineComponent({
 </script>
 
 <style>
-.ant-table-measure-row td:first-child{
+.ant-table-measure-row td:first-child {
   width: 180px;
 }
 
