@@ -74,6 +74,7 @@ const submit = () => {
   formRef.value
     .validate()
     .then(() => {
+      formState.updated_by = auth.user.id;
       formState.full_name = formState.first_name + ' ' + formState.last_name;
       createApi({ ...formState }).then(rs => {
         Object.assign(formState, rs.data.result)
@@ -216,6 +217,11 @@ const closeDetail = function () {
               <a-input v-model:value="formState.phone" class="w-full"></a-input>
             </a-form-item>
           </div>
+          <div class="w-full px-4 mb-4">
+            <a-form-item label="Certificate" name="certificate">
+              <a-input v-model:value="formState.certificate" class="w-full"></a-input>
+            </a-form-item>
+          </div>
           <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem"
             plain>Address</a-Divider>
           <div class="w-full px-4 mb-4">
@@ -232,7 +238,7 @@ const closeDetail = function () {
             <a-form-item label="State" name="state" :rules="[{ required: true, message: 'Please enter state!' }]">
               <a-select v-model:value="formState.state" allowClear="" class="w-full" showSearch
                 placeholder="Select a state">
-                <a-select-option v-for="state in listStates" :key="state.value" :value="state.value">{{ state.label
+                <a-select-option v-for="state in listStates" :key="state.value" :value="state.label">{{ state.label
                 }} ({{ state.value }})</a-select-option>
               </a-select>
             </a-form-item>

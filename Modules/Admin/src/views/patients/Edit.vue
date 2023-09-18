@@ -341,7 +341,7 @@ const closeDetail = function () {
             <a-form-item label="State" name="state" :rules="[{ required: true, message: 'Please enter state!' }]">
               <a-select v-model:value="formState.state" allowClear="" class="w-full" showSearch
                 placeholder="Select a state">
-                <a-select-option v-for="state in listStates" :key="state.value" :value="state.value">{{ state.label
+                <a-select-option v-for="state in listStates" :key="state.value" :value="state.label">{{ state.label
                 }} ({{ state.value }})</a-select-option>
               </a-select>
             </a-form-item>

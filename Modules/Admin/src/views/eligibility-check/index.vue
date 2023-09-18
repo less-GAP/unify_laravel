@@ -336,7 +336,7 @@ const submit = () => {
                 <a-select-option
                   v-for="state in listStates"
                   :key="state.value"
-                  :value="state.value"
+                  :value="state.label"
                   >{{ state.label }} ({{ state.value }})
                 </a-select-option>
               </a-select>
