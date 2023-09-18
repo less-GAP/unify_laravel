@@ -25,8 +25,6 @@ import {notification} from 'ant-design-vue';
 import type {UploadProps} from 'ant-design-vue';
 
 import {InputTags, InputUploadGetPath, FilePicker} from "@/components";
-import {createApi, newModel, formConfig, fetchDetailApi} from "./meta";
-import {back} from "./meta";
 
 const mainStore = useMainStore();
 
