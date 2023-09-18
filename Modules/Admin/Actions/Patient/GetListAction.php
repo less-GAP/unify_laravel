@@ -28,8 +28,18 @@ class GetListAction
             }
         }
 
-        if ($search = $filter['search']) {
-            $query->where('full_name', 'like', '%' . $search . '%');
+        if($filter){
+            if (isset($filter['search'])) {
+                $query->where('full_name', 'like', '%' . $filter['search'] . '%')
+                ->orWhere('unify_number', 'like', '%' . $filter['search'] . '%')
+                ->orWhere('phone', 'like', '%' . $filter['search'] . '%');
+            }
+            if (isset($filter['doctor_id'])) {
+                $query->where('doctor_id', $filter['doctor_id']);
+            }
+            if (isset($filter['sale_user'])) {
+                $query->where('sale_user', $filter['sale_user']);
+            }
         }
 
         if ($request->input('deleted') !== null) {

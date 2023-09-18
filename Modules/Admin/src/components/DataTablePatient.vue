@@ -2,7 +2,7 @@
 import { computed, ref, toRaw, h } from "vue";
 import { Input } from "@/components/index";
 import { ReloadOutlined } from "@ant-design/icons-vue";
-import { fetchListStatusPatientApi } from "@/utils/Patient";
+import { fetchListStatusPatientApi, fetchListDoctorsApi } from "@/utils/Patient";
 import Api from "@/utils/Api";
 
 const emit = defineEmits(["register"]);
@@ -71,7 +71,6 @@ const tableConfig = {
   ...props.tableConfig,
 };
 const tableData = ref({});
-const statusTaskRaw = ref({});
 const filter = ref({
   search: "",
   ...props.filter,
@@ -88,6 +87,9 @@ function getFilter() {
 const fetchListUserApi = function () {
   return Api.get('user/all')
 };
+
+const listDoctors = ref([]);
+const listUserAll = ref([]);
 
 const nameAssignee = (user, isFull) => {
   if (user && user.full_name) {
@@ -110,7 +112,12 @@ async function reload() {
   if (props.api) {
     loading.value = true;
     try {
-      var listUserAll = await fetchListUserApi().then((res) => res.data);
+      listDoctors.value = await fetchListDoctorsApi();
+      listUserAll.value = await fetchListUserApi().then((res) => res.data);
+      listUserAll.value.map((user) => {
+        user.value = user.id;
+        user.label = user.full_name;
+      })
       var listStatusPatient = await fetchListStatusPatientApi().then((res) => res.data);
       listStatusPatient = JSON.parse(listStatusPatient.data)
       
@@ -136,7 +143,7 @@ async function reload() {
           item.tasks.forEach((task) => {
             if(task.assignees !== null){
               JSON.parse(task.assignees).forEach((assignee) => {
-                const user = listUserAll.find((user) => {
+                const user = listUserAll.value.find((user) => {
                   return user.id == assignee;
                 })
                 if(item.assignees.findIndex((assignee) => assignee.id == user.id) === -1){
@@ -188,12 +195,29 @@ reload();
           v-model:value="filter.search"
           allow-clear
           style="max-width: 300px"
-          placeholder="Enter to search..."
+          placeholder="Search by name, number, phone"
           :loading="loading"
           @search="reload"
           @keyup.enter="reload"
         />
-        <slot name="filter" v-bind="{ tableConfig, filter, reload }"></slot>
+        <a-select
+          v-model:value="filter.doctor_id"
+          show-search
+          style="width: 200px"
+          placeholder="Filter by doctor"
+          :options="listDoctors"
+          @change="reload"
+        >
+        </a-select>
+        <a-select
+          v-model:value="filter.sale_user"
+          show-search
+          style="width: 200px"
+          placeholder="Filter by creator"
+          :options="listUserAll"
+          @change="reload"
+        >
+        </a-select>
         <slot name="sort" v-bind="{ tableConfig, sort, filter, reload }">
           <a-select
             v-if="showSort"

@@ -3,18 +3,18 @@ const fetchListInsurancesApi = async function () {
   const list = await Api.get("master-data/insurance").then((res) => res.data);
   return JSON.parse(list.data);
 };
-const fetchListDoctorsApi = function () {
-  // return Api.get('doctor' + '/list', { params });
-  return [
-    {
-      value: 0,
-      label: "Dr. John Doe",
-    },
-    {
-      value: 1,
-      label: "Dr. Mike Donald",
-    },
-  ];
+const fetchListDoctorsApi = async function () {
+  var list = await Api.get('doctor/list').then((res) => res.data);
+  var data = [];
+  list.data.forEach((item) => {
+    data.push(
+      {
+        value: item.id,
+        label: item.full_name,
+      }
+    )
+  })
+  return data;
 };
 const fetchListStatusPatientApi = async function () {
   return await Api.get("master-data/task-status");
@@ -26,7 +26,6 @@ const getStatusPatient = async function (value) {
 };
 
 const fetchListDoctorStatusApi = function () {
-  // return Api.get('doctor' + '/list_status', { params });
   return [
     {
       value: 0,
