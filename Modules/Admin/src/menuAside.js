@@ -100,10 +100,10 @@ export default [{
     ],
   },
   {
-    to: "/doctors",
+    to: "/doctor",
+    permission: "doctor.list",
     label: "Doctors",
     icon: mdiDoctor,
-    disable: true,
   },
   {
     to: "/points",

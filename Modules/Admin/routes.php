@@ -32,12 +32,24 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             [
                 'allowedIncludes' => ['roles', 'roles.permissions', 'permissions'],
                 'allowedFilters' => [
-                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,username')
-                    , AllowedFilter::custom('roles.name', new \App\Builder\Filters\SearchRelationShip, 'roles.name')
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,username'), AllowedFilter::custom('roles.name', new \App\Builder\Filters\SearchRelationShip, 'roles.name')
                 ]
             ]
         );
 
+    EloquentRouter::prefix('doctor')
+        ->handle(
+            \App\Models\Doctor::class,
+            [
+                'allowedFilters' => [
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name'),
+                ]
+            ]
+        )->routes(
+            function () {
+                Route::get('list', \Modules\Admin\Actions\Doctor\GetListAction::class . '@handle');
+            }
+        );
     EloquentRouter::prefix('task')
         ->handle(
             \App\Models\Task::class,
@@ -50,8 +62,9 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                     AllowedFilter::exact('is_completed'),
                 ]
             ]
-        )->routes(function (){
-            Route::get('list', \Modules\Admin\Actions\Task\GetListAction::class . '@handle');
+        )->routes(
+            function () {
+                Route::get('list', \Modules\Admin\Actions\Task\GetListAction::class . '@handle');
             }
         );
     EloquentRouter::prefix('post')
@@ -162,7 +175,8 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             Route::get('{listKey}/options', \Modules\Admin\Actions\MasterData\GetOptionsAction::class . '@handle');
         });
     EloquentRouter::prefix('permissions')
-        ->handle(\App\Models\Permission::class,
+        ->handle(
+            \App\Models\Permission::class,
             [
                 'allowedFilters' => [
                     AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name'),
@@ -171,7 +185,8 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             ]
         );
     EloquentRouter::prefix('roles')
-        ->handle(\App\Models\Role::class,
+        ->handle(
+            \App\Models\Role::class,
             [
                 'allowedFilters' => [
                     AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name')

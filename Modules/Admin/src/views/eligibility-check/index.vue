@@ -5,12 +5,12 @@ import { useAuthStore } from "@/stores/auth";
 import router from "@/router";
 import Api from "@/utils/Api";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
-import { fetchListStatesApi, fetchListInsurancesApi } from "@/utils/Patient";
+import { fetchListInsurancesApi } from "@/utils/Patient";
+import listStates from "@/utils/States";
 
 const configNames = ["default_seller"];
 const defaultSeller = ref();
 
-const listStates = fetchListStatesApi();
 const listInsurances = fetchListInsurancesApi();
 const genderList = [
   {
@@ -335,9 +335,9 @@ const submit = () => {
               >
                 <a-select-option
                   v-for="state in listStates"
-                  :key="state.code"
-                  :value="state.code"
-                  >{{ state.name }} ({{ state.code }})
+                  :key="state.value"
+                  :value="state.value"
+                  >{{ state.label }} ({{ state.value }})
                 </a-select-option>
               </a-select>
             </a-form-item>

@@ -70,7 +70,7 @@ const itemActions = [
 const listActions = [
   {
     label: "Add",
-    action: (_) => {
+    action: (item) => {
       //showEditUser({}, reload)
       router.replace(prefix + "/new");
     },
