@@ -4,7 +4,9 @@ import { Input } from "@/components/index";
 import { ReloadOutlined } from "@ant-design/icons-vue";
 import { fetchListStatusPatientApi, fetchListDoctorsApi } from "@/utils/Patient";
 import Api from "@/utils/Api";
+import { useAuthStore } from "@/stores/auth";
 
+const auth = useAuthStore();
 const emit = defineEmits(["register"]);
 
 const props = defineProps({
@@ -90,6 +92,28 @@ const fetchListUserApi = function () {
 
 const listDoctors = ref([]);
 const listUserAll = ref([]);
+const listStatusPatient = ref([
+  {
+    value: 'waiting',
+    label: 'Waiting',
+  },
+  {
+    value: 'eligibility_check',
+    label: 'Eligibility Check',
+  },
+  {
+    value: 'active',
+    label: 'Active',
+  },
+  {
+    value: 'inactive',
+    label: 'Inactive',
+  },
+  {
+    value: 'decease',
+    label: 'Decease',
+  },
+]);
 
 const nameAssignee = (user, isFull) => {
   if (user && user.full_name) {
@@ -194,13 +218,15 @@ reload();
           v-if="tableConfig.globalSearch"
           v-model:value="filter.search"
           allow-clear
-          style="max-width: 300px"
+          style="max-width: 380px"
           placeholder="Search by name, number, phone"
           :loading="loading"
           @search="reload"
           @keyup.enter="reload"
         />
         <a-select
+          v-if="auth.hasPermission('patient.filter.doctor')"
+          :allowClear="true"
           v-model:value="filter.doctor_id"
           show-search
           style="width: 200px"
@@ -210,6 +236,8 @@ reload();
         >
         </a-select>
         <a-select
+          v-if="auth.hasPermission('patient.filter.seller')"
+          :allowClear="true"
           v-model:value="filter.sale_user"
           show-search
           style="width: 200px"
@@ -218,9 +246,21 @@ reload();
           @change="reload"
         >
         </a-select>
+        <a-select
+          v-if="auth.hasPermission('patient.filter.status')"
+          :allowClear="true"
+          v-model:value="filter.status"
+          show-search
+          style="width: 200px"
+          placeholder="Filter by status"
+          :options="listStatusPatient"
+          @change="reload"
+        >
+        </a-select>
         <slot name="sort" v-bind="{ tableConfig, sort, filter, reload }">
           <a-select
             v-if="showSort"
+            :allowClear="true"
             v-model:value="orderBy"
             style="width: 140px"
             placeholder="Order by..."

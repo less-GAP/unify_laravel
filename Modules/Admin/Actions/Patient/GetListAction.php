@@ -40,6 +40,27 @@ class GetListAction
             if (isset($filter['sale_user'])) {
                 $query->where('sale_user', $filter['sale_user']);
             }
+            if (isset($filter['status'])) {
+                switch ($filter['status']){
+                    case 'waiting':
+                        $query->where('unify_process', '=', 0);
+                        break;
+                    case 'eligibility_check':
+                        $query->where('unify_process', '=', 1);
+                        break;
+                    case 'active':
+                        $query->where('unify_status', '=', 1);
+                        break;
+                    case 'inactive':
+                        $query->where('unify_status', '=', 2);
+                        break;
+                    case 'decease':
+                        $query->where('unify_status', '=', 3);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         if ($request->input('deleted') !== null) {
