@@ -13,8 +13,9 @@ class GetListAction
     public function handle(Request $request)
     {
         $query = Doctor::query();
+        $filter = $request->filter;
 
-        if ($search = $request->input('search')) {
+        if ($search = $filter['search']) {
             $query->where('full_name', 'like', '%' . $search . '%');
         }
 

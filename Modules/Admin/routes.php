@@ -42,7 +42,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             \App\Models\Doctor::class,
             [
                 'allowedFilters' => [
-                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name'),
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name'),
                 ]
             ]
         )->routes(

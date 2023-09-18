@@ -14,6 +14,7 @@ class GetListAction
     {
         $query = Patient::query();
         $user = Auth::user();
+        $filter = $request->filter;
 
         $query->with(['tasks' => function ($query_task) {
             $query_task->orderBy('created_at', 'ASC');
@@ -27,8 +28,8 @@ class GetListAction
             }
         }
 
-        if ($search = $request->input('search')) {
-            $query->where('name', 'like', '%' . $search . '%');
+        if ($search = $filter['search']) {
+            $query->where('full_name', 'like', '%' . $search . '%');
         }
 
         if ($request->input('deleted') !== null) {
