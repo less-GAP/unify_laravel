@@ -6,9 +6,7 @@ import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import dayjs from 'dayjs';
-import { listProcess, getProcess } from "@/utils/Process";
 
-const listProcessOptions = listProcess();
 const prefix = 'patient'
 const {
     fetchDetailApi,
@@ -97,7 +95,7 @@ const closeDetail = function () {
                     </h1>
                     <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>History</a-Divider>
                     <div class="w-full px-4 pl-6">
-                      
+
                         <a-timeline>
                             <a-timeline-item color="green">
                                 <template #dot>
