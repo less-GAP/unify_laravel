@@ -1,39 +1,38 @@
 version: '3'
 
 services:
-    evisa_app:
-        build: .
-        container_name: evisa_app
-        working_dir: /var/www
-        command: 'bash -c "composer install && php artisan serve   --host=0.0.0.0 --port=8002"'
+    app:
+        image: registry.digitalocean.com/lessgap/unify:latest
+        working_dir: /app
         volumes:
-            - ./php.ini:/usr/local/etc/php/php.ini
-            - ./:/var/www
-            - ./database.sqlite:/var/www/database.sqlite
-            - ./public/index.php:/var/www/public/index.php
-        networks:
-            - apisix
+            - app-volume:/app
+            - ./.env:/app/.env
+            - ./storage:/app/storage
+            - ./storage/upload:/app/public/upload
     nginx:
         build: ./docker/nginx
-        container_name: evisa
-        depends_on:
-            - evisa_app
         volumes:
-            - ./public:/var/www/public
+            - app-volume:/app
             - ./docker/nginx/conf.d/server.conf:/etc/nginx/conf.d/server.conf
-            - ./storage/uploads:/var/www/public/uploads
+            - ./storage/upload:/app/public/upload
+            - ./public/static:/app/public/static
         environment:
-            NGINX_NO_CACHE: ${NGINX_NO_CACHE}
+            NGINX_NO_CACHE: 0
             NGINX_PAGESPEED: 1
             NGINX_PAGESPEED_IMG: 1
             NGINX_PAGESPEED_JS: 1
             NGINX_PAGESPEED_CSS: 1
         restart: on-failure
-        networks:
-            - apisix
-networks:
-    apisix:
-        external: true
-
-
+        depends_on:
+            - app
+        ports:
+            - ${APP_PORT}:9100
+    redis:
+        image: 'redis'
+        restart: unless-stopped
+        environment:
+            - REDIS_PASSWORD=${REDIS_PASSWORD}
+volumes:
+    app-volume:
+        driver: local
 
