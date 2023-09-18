@@ -86,19 +86,23 @@ class DatabaseSeeder extends Seeder
         $role_staff_manager = Role::create(['name' => 'Staff Manager']);
         $role_staff = Role::create(['name' => 'Staff']);
 
+        Permission::findOrCreate('patient.*');
         Permission::findOrCreate('patient.list');
         Permission::findOrCreate('patient.create');
         Permission::findOrCreate('patient.edit');
 
+        Permission::findOrCreate('doctor.*');
         Permission::findOrCreate('doctor.list');
         Permission::findOrCreate('doctor.create');
         Permission::findOrCreate('doctor.edit');
 
+        Permission::findOrCreate('user.*');
         Permission::findOrCreate('user.list');
         Permission::findOrCreate('user.create');
         Permission::findOrCreate('user.edit');
         Permission::findOrCreate('user.delete');
 
+        Permission::findOrCreate('task.*');
         Permission::findOrCreate('task.list');
         Permission::findOrCreate('task.create');
         Permission::findOrCreate('task.assign');

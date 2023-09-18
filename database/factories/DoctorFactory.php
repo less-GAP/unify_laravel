@@ -38,6 +38,8 @@ class DoctorFactory extends Factory
             'deleted' => 0,
             'deleted_at' => null,
             'deleted_by' => null,
+            'updated_by' => rand(1,5),
+            'created_by' => rand(1,5),
         ];
     }
 

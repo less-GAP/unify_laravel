@@ -40,6 +40,8 @@ class Doctor extends Model
         'deleted',
         'deleted_at',
         'deleted_by',
+        'updated_by',
+        'created_by',
     ];
 
     /**

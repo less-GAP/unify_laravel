@@ -69,12 +69,18 @@ const checkAccess = () => {
 if (!checkAccess) {
   router.replace({ path: '/' + prefix })
 }
+console.log(auth.user.id);
 
 const submit = () => {
   formRef.value
     .validate()
     .then(() => {
-      formState.updated_by = auth.user.id;
+      if(currentRoute === 'doctor-add'){
+        formState.created_by = auth.user.id;
+        formState.updated_by = auth.user.id;
+      }else{
+        formState.updated_by = auth.user.id;
+      }
       formState.full_name = formState.first_name + ' ' + formState.last_name;
       createApi({ ...formState }).then(rs => {
         Object.assign(formState, rs.data.result)
