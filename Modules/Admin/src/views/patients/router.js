@@ -11,7 +11,7 @@ export default [{
     {
       meta: {
         title: "Add Patient",
-        permission:'patient.add',
+        permission:'patient.create',
       },
       path: "/patient/new",
       name: "patient-add",
@@ -20,6 +20,7 @@ export default [{
     {
       meta: {
         title: "Edit Patient",
+        permission:'patient.edit',
       },
       path: "/patient/:id/edit",
       name: "patient-edit",
@@ -28,6 +29,7 @@ export default [{
     {
       meta: {
         title: "Approve Patient",
+        permission:'patient.approve',
       },
       path: "/patient/:id/process",
       name: "patient-process",
@@ -36,6 +38,7 @@ export default [{
     {
       meta: {
         title: "Patient Tasks",
+        permission:'task.list',
       },
       path: "/patient/:id/task",
       name: "patient-task",
@@ -44,6 +47,7 @@ export default [{
     {
       meta: {
         title: "Patient History",
+        permission:'patient.history',
       },
       path: "/patient/:id/history",
       name: "patient-history",
@@ -54,6 +58,7 @@ export default [{
 {
   meta: {
     title: "Patient Detail",
+    permission:'patient.view',
   },
   path: "/patient/:id/detail",
   name: "patient-detail",

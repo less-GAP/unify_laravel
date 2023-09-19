@@ -215,9 +215,8 @@ const formatDescription = function (description) {
 const assigneesArray = function (assignees) {
   if (assignees !== null && typeof assignees === "string") {
     return JSON.parse(assignees);
-  } else {
-    return [];
   }
+  return [];
 };
 
 const submitComment = function (id) {
@@ -342,7 +341,7 @@ const age = (dob) => {
                             <div class="text-xs text-gray-400" v-html="formatDescription(task.description)"></div>
                           </td>
                           <td style="width: 0; min-width: 127px;">
-                            <div class="flex">
+                            <div v-if="task.assignees !== undefined" class="flex">
                               <div v-for="id_assignee in assigneesArray(
                                 task.assignees
                               )" :key="id_assignee" class="item-assignee">
@@ -375,7 +374,7 @@ const age = (dob) => {
                             <div class="flex flex-wrap justify-center space-x-1">
                               <a-tooltip title="Complete">
                                 <a-button v-if="(auth.hasPermission('task.assign') ||
-                                  assigneesArray.includes(auth.user.id) ||
+                                   task.assignees && assigneesArray(task.assignees).includes(auth.user.id) ||
                                   auth.hasPermission('task.review')) &&
                                   task.is_completed === 0
                                   " type="link" class="!px-0" @click="completeTask(task.id, fetch)">
@@ -385,7 +384,7 @@ const age = (dob) => {
                               </a-tooltip>
                               <a-tooltip :title="task.task_process === 0 ? 'Working' : 'Pending'">
                                 <a-button v-if="(auth.hasPermission('task.working') ||
-                                  assigneesArray.includes(auth.user.id) ||
+                                  task.assignees && assigneesArray(task.assignees).includes(auth.user.id) ||
                                   auth.hasPermission('task.review')) &&
                                   task.is_completed === 0
                                   " type="link" class="!px-0"

@@ -290,7 +290,11 @@ reload(true);
           type="primary"
           @click="
             () => {
-              listAction.action(reload);
+              if(listAction.permission){
+                listAction.action(reload);
+              }else{
+                return false;
+              }
             }
           "
           >{{ listAction.label }}</a-button

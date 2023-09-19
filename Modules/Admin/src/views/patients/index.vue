@@ -70,8 +70,8 @@ const itemActions = [
 const listActions = [
   {
     label: "Add",
+    permission: auth.hasPermission("patient.create"),
     action: (item) => {
-      //showEditUser({}, reload)
       router.replace(prefix + "/new");
     },
   },
@@ -294,7 +294,7 @@ function registerTable({reload}) {
 
             <span class="pl-1">
               <a
-                @click="router.push('patient/' + item.id + '/detail')"
+                @click="auth.hasPermission('patient.view') ? router.push('patient/' + item.id + '/detail') : 'javascript:void(0)'"
                 class="text-blue-700 underline cursor-pointer"
               >{{ item.full_name }}</a
               >
