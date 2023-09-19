@@ -191,8 +191,12 @@ class EloquentRouter
     {
         $model = new $this->model;
         $data = $request->all();
-        $result = $this->model::updateOrCreate([$model->getKeyName() => $request->input($model->getKeyName())], $data);
-
+        $result = $this->model::where([$model->getKeyName() => $request->input($model->getKeyName())])->first();
+        if ($result) {
+            $result->fill($data)->save();
+        } else {
+            $result = $this->model::create($data);
+        }
         return [
             'result' => $result,
             'message' => $request->input($model->getKeyName()) ? 'Update Successfully!' : 'Create Successfully!'

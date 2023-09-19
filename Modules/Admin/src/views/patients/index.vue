@@ -160,13 +160,13 @@ const tableConfig = UseDataTable(fetchListApi, {
   listActions,
   itemActions,
 });
-let reloadTable = () => {};
 
 watch(router.currentRoute, (currentRoute) => {
   if (currentRoute.path === "/" + prefix) {
     reloadTable();
   }
 });
+let reloadTable = () => {};
 
 function registerTable({ reload }) {
   reloadTable = reload;

@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        activity()->disableLogging();
 
         \App\Models\User::truncate();
         \App\Models\Patient::truncate();
@@ -178,11 +179,10 @@ class DatabaseSeeder extends Seeder
             ]),
             'created_by' => 'admin',
         ]);
-
         \App\Models\Patient::factory()->count(50)->create();
         \App\Models\Doctor::factory()->count(5)->create();
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
-
+        activity()->enableLogging();
         // Re-enable foreign key checks
     }
 }

@@ -16,6 +16,7 @@
         "laravel/tinker": "^2.8",
         "protonemedia/laravel-splade": "1.4.15.1",
         "spatie/crawler": "^8.0",
+        "spatie/laravel-activitylog": "^4.7",
         "spatie/laravel-permission": "^5.11",
         "spatie/laravel-query-builder": "^5.2",
         "symfony/dom-crawler": "^6.3"

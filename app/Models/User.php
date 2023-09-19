@@ -9,13 +9,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\Traits\CausesActivity;
 use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens ,HasRoles  , HasFactory, Notifiable ,HasProfilePhoto;
+    use HasApiTokens ,HasRoles  , HasFactory, Notifiable ,HasProfilePhoto ,CausesActivity;
 
     /**
      * The attributes that are mass assignable.

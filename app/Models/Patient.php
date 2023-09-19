@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Patient extends Model
 {
@@ -13,7 +15,7 @@ class Patient extends Model
      *
      * @var array<int, string>
      */
-    use HasFactory;
+    use HasFactory,LogsActivity;
 
     protected $table = 'patients';
 
@@ -59,6 +61,14 @@ class Patient extends Model
         'sale_user',
     ];
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->setDescriptionForEvent(fn(string $eventName) => request()->input('log_detail'))
+            ->dontSubmitEmptyLogs();
+    }
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);

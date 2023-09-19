@@ -2,6 +2,12 @@ export function UseDataTable(fetchListApi, _tableConfig = {}) {
   const tableConfig = {
     api: fetchListApi,
     filter: {..._tableConfig.filter},
+    pagination: {
+      page: 1,
+      total: 0,
+      perPage: 20
+      , ..._tableConfig.pagination
+    },
     showReload: _tableConfig.showReload!==null?_tableConfig.showReload:false,
     showPagination: _tableConfig.showPagination!==null?_tableConfig.showPagination:true,
     columns:  _tableConfig.columns?_tableConfig.columns:[],

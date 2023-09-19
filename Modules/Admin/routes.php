@@ -90,27 +90,22 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         )->routes(function () {
             Route::get('/list', \Modules\Admin\Actions\Patient\GetListAction::class . '@handle');
         });
-
-    EloquentRouter::prefix('websites')
+    EloquentRouter::prefix('activity')
         ->handle(
-            \App\Models\Website::class,
+            \App\Models\LogActivity::class,
             [
-                'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name,domain')]
+                'allowedIncludes' => ['user'],
+                'allowedSorts' => ['id'],
+                'allowedFilters' => [
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'description')
+                    , AllowedFilter::exact('causer_id')
+                    , AllowedFilter::exact('subject_id')
+                    , AllowedFilter::exact('subject_type')
+                ]
             ]
         )->routes(function () {
         });
-    EloquentRouter::prefix('themes')
-        ->routes(function () {
-            Route::get('options', \Modules\Admin\Actions\Themes\GetOptionsAction::class . '@handle');
-            Route::post('{id?}', \Modules\Admin\Actions\Themes\PostCreateUpdateAction::class . '@handle');
-            Route::put('{id?}', \Modules\Admin\Actions\Themes\PostCreateUpdateAction::class . '@handle');
-        })
-        ->handle(
-            \App\Models\Theme::class,
-            [
-                'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name')]
-            ]
-        );
+
 
     EloquentRouter::prefix('file')
         ->handle(
