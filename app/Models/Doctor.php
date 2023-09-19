@@ -6,6 +6,8 @@ use App\Traits\CreatedUpdatedByAdmin;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Doctor extends Model
 {
@@ -16,7 +18,7 @@ class Doctor extends Model
      *
      * @var array<int, string>
      */
-    use HasFactory, CreatedUpdatedByAdmin;
+    use HasFactory, CreatedUpdatedByAdmin, LogsActivity;
 
     protected $table = 'doctors';
 
@@ -44,6 +46,15 @@ class Doctor extends Model
         'created_by',
     ];
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->setDescriptionForEvent(fn(string $eventName) => request()->input('log_detail',$eventName))
+            ->dontSubmitEmptyLogs();
+    }
+    
     /**
      * Get the user that owns the Doctor
      *

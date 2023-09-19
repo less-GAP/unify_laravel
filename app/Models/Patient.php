@@ -15,7 +15,7 @@ class Patient extends Model
      *
      * @var array<int, string>
      */
-    use HasFactory,LogsActivity;
+    use HasFactory, LogsActivity;
 
     protected $table = 'patients';
 
@@ -69,6 +69,7 @@ class Patient extends Model
             ->setDescriptionForEvent(fn(string $eventName) => request()->input('log_detail',$eventName))
             ->dontSubmitEmptyLogs();
     }
+    
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
