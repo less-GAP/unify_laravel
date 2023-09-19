@@ -3,12 +3,12 @@ import router from "@/router";
 import SectionMain from "@/components/SectionMain.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import dayjs from "dayjs";
-import { h, watch } from "vue";
-import { useAuthStore } from "@/stores/auth";
-import { DataTablePatient } from "@/components";
-import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
-import { UseDataTable } from "@/utils/UseDataTable";
-import { DeleteOutlined } from "@ant-design/icons-vue";
+import {h, watch} from "vue";
+import {useAuthStore} from "@/stores/auth";
+import {DataTablePatient} from "@/components";
+import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
+import {UseDataTable} from "@/utils/UseDataTable";
+import {DeleteOutlined} from "@ant-design/icons-vue";
 import {
   mdiGenderMale,
   mdiGenderFemale,
@@ -18,11 +18,11 @@ import {
   mdiPencil,
   mdiAlertCircle,
 } from "@mdi/js";
-import { BaseIcon } from "@/components";
-import { getStatusPatient } from "@/utils/Patient";
+import {BaseIcon} from "@/components";
+import {getStatusPatient} from "@/utils/Patient";
 
 const prefix = "patient";
-const { fetchListApi } = UseEloquentRouter(prefix);
+const {fetchListApi} = UseEloquentRouter(prefix);
 const auth = useAuthStore();
 var item = {};
 const itemActions = [
@@ -166,9 +166,10 @@ watch(router.currentRoute, (currentRoute) => {
     reloadTable();
   }
 });
-let reloadTable = () => {};
+let reloadTable = () => {
+};
 
-function registerTable({ reload }) {
+function registerTable({reload}) {
   reloadTable = reload;
 }
 </script>
@@ -202,7 +203,7 @@ function registerTable({ reload }) {
               "
               @click="actionMethod"
             >
-              <BaseIcon :path="mdiPencil" class="w-4 !fill-blue-200" />
+              <BaseIcon :path="mdiPencil" class="w-4 !fill-blue-200"/>
             </a-button>
           </a-tooltip>
         </template>
@@ -224,7 +225,7 @@ function registerTable({ reload }) {
               "
               @click="actionMethod"
             >
-              <BaseIcon :path="mdiCheckOutline" class="w-4" />
+              <BaseIcon :path="mdiCheckOutline" class="w-4"/>
             </a-button>
           </a-tooltip>
         </template>
@@ -244,7 +245,7 @@ function registerTable({ reload }) {
               "
               @click="actionMethod"
             >
-              <BaseIcon :path="mdiCalendarCheckOutline" class="w-4" />
+              <BaseIcon :path="mdiCalendarCheckOutline" class="w-4"/>
             </a-button>
           </a-tooltip>
         </template>
@@ -264,7 +265,7 @@ function registerTable({ reload }) {
               "
               @click="actionMethod"
             >
-              <BaseIcon :path="mdiHistory" class="w-4" />
+              <BaseIcon :path="mdiHistory" class="w-4"/>
             </a-button>
           </a-tooltip>
         </template>
@@ -311,9 +312,9 @@ function registerTable({ reload }) {
 
             <span class="pl-1">
               <a
-                :href="'#/patient/' + item.id + '/detail'"
+                @click="router.push('patient/' + item.id + '/detail')"
                 class="text-blue-700 underline"
-                >{{ item.full_name }}</a
+              >{{ item.full_name }}</a
               >
             </span>
           </div>
@@ -343,7 +344,7 @@ function registerTable({ reload }) {
         </template> -->
         <template #cell[dob]="{ item, column }">
           <small>{{ dob_value(item) }}</small>
-          <br /><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
+          <br/><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
         </template>
         <template #cell[assigned]="{ item, column }">
           <!-- <a-avatar-group>
@@ -368,13 +369,14 @@ function registerTable({ reload }) {
         <template #cell[unify_status]="{ item, column }">
           <a-tag v-if="item.unify_process === 0" color="yellow">Waiting</a-tag>
           <a-tag v-else-if="item.unify_process === 1" color="orange"
-            >Eligibility Check</a-tag
+          >Eligibility Check
+          </a-tag
           >
           <a-tag v-else-if="item.unify_status === 1" color="green">
             <div class="pt-1 leading-none">Active</div>
             <div class="pb-1 leading-none">
               <small
-                >({{
+              >({{
                   dayjs(item.unify_active, "YYYY-MM-DD HH:mm:ss").format(
                     "HH:mm MM-DD-YYYY"
                   )
@@ -383,10 +385,12 @@ function registerTable({ reload }) {
             </div>
           </a-tag>
           <a-tag v-else-if="item.unify_status === 2" color="gray"
-            >Inactive</a-tag
+          >Inactive
+          </a-tag
           >
           <a-tag v-else-if="item.unify_status === 3" color="gray"
-            >Decease</a-tag
+          >Decease
+          </a-tag
           >
         </template>
       </DataTablePatient>

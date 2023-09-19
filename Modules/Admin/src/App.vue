@@ -2,7 +2,13 @@
   <a-config-provider v-bind="$style.antdv" :getPopupContainer="getPopupContainer">
     <c-reset/>
     <a-style-provider hash-priority="high">
-      <router-view/>
+      <router-view v-slot="{ Component }">
+        <transition>
+          <keep-alive>
+            <component :is="Component" />
+          </keep-alive>
+        </transition>
+      </router-view>
     </a-style-provider>
   </a-config-provider>
 </template>

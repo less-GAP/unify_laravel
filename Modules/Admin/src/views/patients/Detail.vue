@@ -77,7 +77,7 @@ fetch();
         <SectionMain>
 
             <div class="p-5">
-                <a-button class="!hidden md:!inline-block" type="link" @click="router.replace('/'+ prefix)">
+                <a-button class="!hidden md:!inline-block" type="link" @click="router.back()">
                     <template #icon>
                         <div class="flex">
                             <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500" />
