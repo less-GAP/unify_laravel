@@ -87,6 +87,7 @@ const submit = () => {
   formState.unify_process = 0;
   formState.sale_user = saler_id.value;
   formState.signature = signaturePanel.value.save("image/png");
+  formState.log_detail = "submit patient form";
 
   // Submit the form data
   Api.post("submit-patient", { ...formState }).then((rs) => {
@@ -279,7 +280,7 @@ const submit = () => {
           >
             <a-input
               id="address"
-              v-model:value="formState.address"
+              v-model:value="formState.street"
               name="street"
               class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer !shadow-none"
             ></a-input>
