@@ -36,6 +36,7 @@ const formatDateTime = (datetime) => {
 
 const listInsurances = ref([]);
 const doctorObj = ref([]);
+const listUploadFiles = ref([]);
 const formState = reactive({})
 const loading = ref(false);
 const doctorStatusObj = ref([]);
@@ -58,23 +59,30 @@ const fetch = async function () {
             });
         }
         Object.assign(formState, rs.data)
-        if(formState.doctor_status != undefined){
+        if (formState.doctor_status != undefined) {
             doctorStatusObj.value = fetchListDoctorStatusApi().find(item => item.value === formState.doctor_status);
         }
-        if(formState.sale_user){
+        if (formState.sale_user) {
             Api.get(`user/${formState.sale_user}`).then((res) => {
                 if (res.status === 200) {
                     formState.sale_user_object = res.data.full_name;
                 }
             });
         }
-        if(formState.doctor_id){
+        if (formState.doctor_id) {
             Api.get(`doctor/${formState.doctor_id}`).then((res) => {
                 if (res.status === 200) {
                     doctorObj.value = res.data;
                 }
             });
         }
+        if (formState.signature) {
+            listUploadFiles.value.push({
+                name: 'Signature',
+                url: formState.signature
+            });
+        }
+
         loading.value = false
     } else {
         loading.value = false
@@ -251,14 +259,20 @@ fetch();
                                                 <div class="flex items-start">
                                                     <BaseIcon :path="mdiCheckAll" class="w-6 mr-2 text-teal-600" />
                                                     <div class="flex flex-col">
-                                                        <h4>Coverage: <span class="text-teal-600">{{ item.coverage }}</span></h4>
+                                                        <h4>Coverage: <span class="text-teal-600">{{ item.coverage }}</span>
+                                                        </h4>
                                                         <div class="text-base">
-                                                            <div>ID: <span class="text-teal-600">{{ item.insurance_id ?? 'N/A' }}</span></div>
-                                                            <div>Active date: <span class="text-teal-600">{{ item.active_date ?
-                                                                dayjs(item.active_date, "YYYY-MM-DD").format("MM-DD-YYYY") :
+                                                            <div>ID: <span class="text-teal-600">{{ item.insurance_id ??
                                                                 'N/A' }}</span></div>
-                                                            <div>Expired date: <span class="text-teal-600">{{ item.expired_date ?
-                                                                dayjs(item.expired_date, "YYYY-MM-DD").format("MM-DD-YYYY") :
+                                                            <div>Active date: <span class="text-teal-600">{{
+                                                                item.active_date ?
+                                                                dayjs(item.active_date,
+                                                                    "YYYY-MM-DD").format("MM-DD-YYYY") :
+                                                                'N/A' }}</span></div>
+                                                            <div>Expired date: <span class="text-teal-600">{{
+                                                                item.expired_date ?
+                                                                dayjs(item.expired_date,
+                                                                    "YYYY-MM-DD").format("MM-DD-YYYY") :
                                                                 'N/A' }}</span></div>
                                                         </div>
                                                     </div>
@@ -314,15 +328,23 @@ fetch();
 
                         <!-- Experience and education -->
                         <div class="p-5 text-gray-600 bg-white rounded-lg shadow hover:text-gray-700 hover:shadow">
-
-                            <div class="grid grid-cols-2">
-                                <div>
-                                    <div class="flex items-center mb-3 space-x-2 font-semibold leading-8 text-gray-900">
-                                        <span clas="text-green-500">
-                                            <BaseIcon :path="mdiFolderMultipleImage" class="w-6" />
-                                        </span>
-                                        <span class="tracking-wide">FILES</span>
-                                    </div>
+                            <div class="flex items-center mb-3 space-x-2 font-semibold leading-8 text-gray-900">
+                                <span clas="text-green-500">
+                                    <BaseIcon :path="mdiFolderMultipleImage" class="w-6" />
+                                </span>
+                                <span class="tracking-wide">FILES</span>
+                            </div>
+                            <div v-if="listUploadFiles.length == 0" class="flex flex-wrap -mx-4">
+                                <div
+                                    class="flex flex-col items-center justify-center w-24 h-24 mx-auto my-2 text-gray-400 bg-gray-100 rounded-lg">
+                                    <BaseIcon :path="mdiFolderMultipleImage" class="w-12" />
+                                    <div class="mt-2 text-sm">No files</div>
+                                </div>
+                            </div>
+                            <div v-else class="flex flex-wrap -mx-4">
+                                <div v-for="(image, index) in listUploadFiles" :key="index" class="item-upload">
+                                    <a-image :width="200" class="p-4"
+                                        :src="image.url" :alt="image.name" />
                                 </div>
                             </div>
                         </div>
