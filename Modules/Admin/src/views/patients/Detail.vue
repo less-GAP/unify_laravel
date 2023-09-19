@@ -13,6 +13,7 @@ import SectionMain from "@/components/SectionMain.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import {
     fetchListInsurancesApi,
+    fetchListDoctorStatusApi
 } from "@/utils/Patient";
 
 const prefix = "patient";
@@ -34,8 +35,10 @@ const formatDateTime = (datetime) => {
 };
 
 const listInsurances = ref([]);
+const doctorObj = ref([]);
 const formState = reactive({})
 const loading = ref(false);
+const doctorStatusObj = ref([]);
 
 const fetch = async function () {
     loading.value = true;
@@ -55,10 +58,20 @@ const fetch = async function () {
             });
         }
         Object.assign(formState, rs.data)
+        if(formState.doctor_status != undefined){
+            doctorStatusObj.value = fetchListDoctorStatusApi().find(item => item.value === formState.doctor_status);
+        }
         if(formState.sale_user){
             Api.get(`user/${formState.sale_user}`).then((res) => {
                 if (res.status === 200) {
                     formState.sale_user_object = res.data.full_name;
+                }
+            });
+        }
+        if(formState.doctor_id){
+            Api.get(`doctor/${formState.doctor_id}`).then((res) => {
+                if (res.status === 200) {
+                    doctorObj.value = res.data;
                 }
             });
         }
@@ -263,8 +276,8 @@ fetch();
                                     </div>
                                     <ul class="space-y-2 list-inside">
                                         <li>
-                                            <div class="text-teal-600">Masters Degree in Oxford</div>
-                                            <div class="text-xs text-gray-500">March 2020 - Now</div>
+                                            <div class="text-teal-600">{{ doctorObj.full_name }}</div>
+                                            <div class="text-xs text-gray-500">{{ doctorStatusObj.label }}</div>
                                         </li>
                                     </ul>
                                     <div class="mt-3">
