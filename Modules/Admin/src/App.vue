@@ -4,7 +4,7 @@
     <a-style-provider hash-priority="high">
       <router-view v-slot="{ Component }">
         <transition>
-          <keep-alive>
+          <keep-alive :max="5">
             <component :is="Component" />
           </keep-alive>
         </transition>

@@ -313,7 +313,7 @@ function registerTable({reload}) {
             <span class="pl-1">
               <a
                 @click="router.push('patient/' + item.id + '/detail')"
-                class="text-blue-700 underline"
+                class="text-blue-700 cursor-pointer underline"
               >{{ item.full_name }}</a
               >
             </span>
