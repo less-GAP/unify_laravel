@@ -11,7 +11,7 @@ import listStates from "@/utils/States";
 const configNames = ["default_seller"];
 const defaultSeller = ref();
 
-const listInsurances = fetchListInsurancesApi();
+const listInsurances = ref([]);
 const genderList = [
   {
     value: 0,
@@ -24,6 +24,13 @@ const genderList = [
 ];
 const formState = reactive({});
 const formRef = ref();
+
+function fetch (){
+  fetchListInsurancesApi().then((result) => {
+    listInsurances.value = result;
+  });
+}
+fetch()
 
 const showInsurance = (e) => {
   if (e.target.checked) {
@@ -74,6 +81,7 @@ const submit = () => {
   } else {
     formState.insurance_coverages = null;
   }
+  
 
   formState.unify_process = 0;
   formState.sale_user = saler_id.value;
