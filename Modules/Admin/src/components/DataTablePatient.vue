@@ -132,9 +132,11 @@ const nameAssignee = (user, isFull) => {
   return "N/A";
 };
 
-async function reload() {
+async function reload(showLoading = false) {
   if (props.api) {
-    loading.value = true;
+    if (showLoading) {
+      loading.value = true;
+    }
     try {
       listDoctors.value = await fetchListDoctorsApi();
       listUserAll.value = await fetchListUserApi().then((res) => res.data);
@@ -144,7 +146,7 @@ async function reload() {
       })
       var listStatusPatient = await fetchListStatusPatientApi().then((res) => res.data);
       listStatusPatient = JSON.parse(listStatusPatient.data)
-      
+
       const rs = await props.api({
         perPage: props.pagination.perPage,
         sort: orderBy.value,
@@ -202,7 +204,7 @@ function toggleCheckAll() {
   }
 }
 
-reload();
+reload(true);
 </script>
 
 <template>
