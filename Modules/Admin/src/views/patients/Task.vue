@@ -677,7 +677,7 @@ const age = (dob) => {
                   <a-avatar style="background-color: blue">J</a-avatar>
                 </a-avatar-group>
                 <div class="w-full">
-                  <h5 class="mb-2">Jeremy Tomlinson
+                  <h5 class="mb-2 font-semibold">Jeremy Tomlinson
                     <small class="float-right">5 hours ago</small>
                   </h5>
                   <p>Nice work, makes me think of The Money Pit.</p>
@@ -692,7 +692,7 @@ const age = (dob) => {
                         <a-avatar style="background-color: yellow; color:#333">T</a-avatar>
                       </a-avatar-group>
                       <div class="w-full">
-                        <h5 class="mb-2">Thelma Fridley
+                        <h5 class="mb-2 font-semibold">Thelma Fridley
                           <small class="float-right">3 hours ago</small>
                         </h5>
                         <p>i'm in the middle of a timelapse animation myself! (Very different though.) Awesome stuff.</p>
@@ -712,7 +712,7 @@ const age = (dob) => {
                   <a-avatar style="background-color: orange">K</a-avatar>
                 </a-avatar-group>
                 <div class="w-full">
-                  <h5 class="mb-2">Kevin Martinez
+                  <h5 class="mb-2 font-semibold">Kevin Martinez
                     <small class="float-right">1 day ago</small>
                   </h5>
                   <p>It would be very nice to have.</p>
