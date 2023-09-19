@@ -24,7 +24,7 @@ const {
 } = UseEloquentRouter(prefix)
 
 const listInsurances = fetchListInsurancesApi();
-const listDoctors = fetchListDoctorsApi();
+const listDoctors = ref([]);
 const listDoctorStatus = fetchListDoctorStatusApi();
 const loading = ref(false);
 const auth = useAuthStore();
@@ -59,6 +59,7 @@ const fetch = async function () {
   loading.value = true;
   var nameRoute = currentRoute.name;
   var id = currentRoute.params.id;
+  listDoctors.value = await fetchListDoctorsApi();
   if (nameRoute == 'patient-edit') {
     loading.value = true
     var value = await fetchDetailApi(id)
