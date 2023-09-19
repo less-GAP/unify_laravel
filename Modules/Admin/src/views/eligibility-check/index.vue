@@ -56,6 +56,7 @@ const saler_id = computed(() => {
 const submit = () => {
   // Combine first_name and last_name to create full_name
   formState.full_name = formState.first_name + " " + formState.last_name;
+  formState.unify_data = '';
   if (formState.weight !== undefined) {
     formState.unify_data += "Weight: " + formState.weight;
   }
@@ -379,7 +380,7 @@ const submit = () => {
         <div class="relative z-0 w-full mb-6 group">
           <a-textarea
             v-model:value="formState.note"
-            class="!rounded-none"
+            class="!rounded-none !px-2"
             :auto-size="{ minRows: 2, maxRows: 5 }"
           />
         </div>
@@ -407,5 +408,8 @@ const submit = () => {
   display: inline-block;
   font-weight: 500;
   color: rgb(75 85 99);
+}
+.uni-main-container textarea.ant-input{
+  padding: 4px !important;
 }
 </style>
