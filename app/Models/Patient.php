@@ -66,7 +66,7 @@ class Patient extends Model
         return LogOptions::defaults()
             ->logAll()
             ->logOnlyDirty()
-            ->setDescriptionForEvent(fn(string $eventName) => request()->input('log_detail'))
+            ->setDescriptionForEvent(fn(string $eventName) => request()->input('log_detail',$eventName))
             ->dontSubmitEmptyLogs();
     }
     public function tasks(): HasMany
