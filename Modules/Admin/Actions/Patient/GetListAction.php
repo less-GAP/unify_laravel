@@ -20,10 +20,12 @@ class GetListAction
             $query_task->orderBy('created_at', 'ASC');
         }]);
         
-        if(!$user->hasRole('Admin')){
-            $query->where('sale_user', $user->id);
-            
-            if($user->hasRole('Seller')){
+        if(!$user->hasPermissionTo('Admin')){
+            if($user->hasPermissionTo('Seller')){
+                $query->where('sale_user', $user->id);
+            }
+
+            if($user->hasPermissionTo('Seller') || $user->hasPermissionTo('Seller Manager')){
                 $query->where('unify_process', '=', '0');
             }
         }

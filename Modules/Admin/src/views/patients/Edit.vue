@@ -65,6 +65,15 @@ const fetch = async function () {
     var value = await fetchDetailApi(id)
     //prepare data
     value.data.insurance_coverages = JSON.parse(value.data.insurance_coverages);
+
+    if (
+      !auth.hasPermission('Admin') &&  // is not admin
+      !(auth.hasPermission('Seller') && value.data.unify_process == 0 && value.data.sale_user == auth.user.id) && // not (is seller and profile is waiting)
+      !(auth.hasPermission('Seller Manager') && value.data.unify_process == 0) // not (is seller and profile is waiting)
+      ) {
+      router.replace({ path: '/' + prefix })
+    }
+    
     Object.assign(formState, value.data)
     loading.value = false
   } else {
@@ -73,19 +82,7 @@ const fetch = async function () {
 }
 fetch();
 
-const checkAccess = () => {
-  if (auth.user.roles.find(x => x.name === 'Admin') !== undefined) {
-    return true;
-  } else if (auth.user.roles.find(x => x.name === 'Seller') !== undefined && formState.unify_process == 0 && formState.sale_user == auth.user.id) {
-    return true;
-  } else {
-    return false;
-  }
-}
 
-if (!checkAccess) {
-  router.replace({ path: '/' + prefix })
-}
 
 const saler_id = computed(() => {
   return formState.sale_user ? formState.sale_user : auth.user.id;
@@ -207,7 +204,7 @@ const closeDetail = function () {
             </div>
           </a-button>
           <a-button
-            v-if="(currentRoute.name == 'patient-edit' && auth.user.roles.find(x => x.name === 'Seller') !== undefined && formState.unify_process == 0)"
+            v-if="(currentRoute.name == 'patient-edit' && (auth.hasPermission('Seller') || auth.hasPermission('Seller Manager')) && formState.unify_process == 0)"
             @click="submitSellerApprove" type="primary" class="uppercase !bg-green-500 hover:!bg-green-400">
             <div class="flex">
               <BaseIcon :path="mdiAccountArrowUp" class="w-4 text-white" />

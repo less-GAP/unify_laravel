@@ -39,22 +39,26 @@ export default [{
   },
   {
     to: null,
+    permission: 'inventory.list',
     label: "Inventory",
   },
   {
     to: "/delivery",
+    permission: 'delivery.list',
     label: "Delivery",
     icon: mdiTruckDelivery,
     disable: true,
   },
   {
     to: "/warehouse",
+    permission: 'warehouse.list',
     label: "Warehouse",
     icon: mdiStorefront,
     disable: true,
   },
   {
     to: "/product",
+    permission: 'product.list',
     label: "Product",
     icon: mdiGift,
     disable: true,
@@ -66,12 +70,14 @@ export default [{
   },
   {
     to: "/email",
+    permission: 'email.list',
     label: "Email",
     icon: mdiMessageText,
     disable: true,
   },
   {
     to: "/sms",
+    permission: 'sms.list',
     label: "SMS",
     icon: mdiEmail,
     disable: true,
@@ -107,6 +113,7 @@ export default [{
   },
   {
     to: "/points",
+    permission: 'points.list',
     label: "Point",
     icon: mdiStarCircle,
     disable: true,
@@ -124,23 +131,27 @@ export default [{
   {
     to: "/report",
     label: "Report",
+    permission: 'report.list',
     icon: mdiChartAreasplineVariant,
     disable: true,
   },
   {
     to: "/logs",
+    permission: 'logs.list',
     label: "Logs",
     icon: mdiClockTimeTwo,
     disable: true,
   },
   {
     to: "/forms",
+    permission: 'forms.list',
     label: "Forms",
     icon: mdiFileExport,
     disable: true,
   },
   {
     label: "Backup",
+    permission: 'backup.list',
     icon: mdiCloudDownload,
     to: "/backup",
     disable: true,
@@ -152,6 +163,7 @@ export default [{
   },
   {
     to: null,
+    permission: 'setting',
     label: "Platform",
   },
   {

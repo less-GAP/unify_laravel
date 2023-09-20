@@ -10,6 +10,8 @@ use App\Traits\HasTags;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Task extends Model
 {
@@ -20,7 +22,7 @@ class Task extends Model
      *
      * @var array<int, string>
      */
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'tasks';
 
@@ -42,6 +44,15 @@ class Task extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->setDescriptionForEvent(fn(string $eventName) => request()->input('log_detail',$eventName))
+            ->dontSubmitEmptyLogs();
+    }
 
     public function patient(): BelongsTo
     {

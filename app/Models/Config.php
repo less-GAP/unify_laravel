@@ -5,6 +5,8 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Config extends Model
 {
@@ -14,7 +16,7 @@ class Config extends Model
      *
      * @var array<int, string>
      */
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'configs';
 
@@ -24,6 +26,16 @@ class Config extends Model
         'name',
         'value',
     ];
+
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->setDescriptionForEvent(fn(string $eventName) => request()->input('log_detail',$eventName))
+            ->dontSubmitEmptyLogs();
+    }
 
     /**
      * The attributes that should be hidden for serialization.

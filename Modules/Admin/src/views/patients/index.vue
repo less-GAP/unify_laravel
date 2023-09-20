@@ -47,7 +47,7 @@ const itemActions = [
     },
   },
   {
-    label: "Add Task",
+    label: "Task",
     key: "addTask",
     show: (item) => {
       return true;
@@ -70,8 +70,8 @@ const itemActions = [
 const listActions = [
   {
     label: "Add",
+    permission: auth.hasPermission("patient.create"),
     action: (item) => {
-      //showEditUser({}, reload)
       router.replace(prefix + "/new");
     },
   },
@@ -186,20 +186,10 @@ function registerTable({reload}) {
             <a-button
               class="justify-center !flex !p-1 !h-auto"
               :disabled="
-                auth.user.roles.find((x) => x.name === 'Admin') !== undefined ||
-                (auth.user.roles.find((x) => x.name === 'Seller') !==
-                  undefined &&
-                  item.unify_process == 0)
-                  ? false
-                  : true
+                auth.hasPermission('patient.edit') ? false : true
               "
               :class="
-                auth.user.roles.find((x) => x.name === 'Admin') !== undefined ||
-                (auth.user.roles.find((x) => x.name === 'Seller') !==
-                  undefined &&
-                  item.unify_process == 0)
-                  ? ''
-                  : '!bg-gray-300 opacity-50'
+                auth.hasPermission('patient.edit')  ? '' : '!bg-gray-300 opacity-50'
               "
               @click="actionMethod"
             >
@@ -212,13 +202,13 @@ function registerTable({reload}) {
             <a-button
               class="justify-center !flex !p-1 !h-auto"
               :disabled="
-                auth.user.roles.find((x) => x.name === 'Admin') !== undefined &&
+                auth.hasPermission('patient.approve')  &&
                 item.unify_process < 2
                   ? false
                   : true
               "
               :class="
-                auth.user.roles.find((x) => x.name === 'Admin') !== undefined &&
+                auth.hasPermission('patient.approve')  &&
                 item.unify_process < 2
                   ? ''
                   : '!bg-gray-300 opacity-50'
@@ -230,19 +220,11 @@ function registerTable({reload}) {
           </a-tooltip>
         </template>
         <template #cellAction[addTask]="{ item, actionMethod }">
-          <a-tooltip title="Add Task" class="mr-1">
+          <a-tooltip title="View Task" class="mr-1">
             <a-button
               class="justify-center !flex !p-1 !h-auto"
-              :disabled="
-                auth.user.roles.find((x) => x.name === 'Admin') !== undefined
-                  ? false
-                  : true
-              "
-              :class="
-                auth.user.roles.find((x) => x.name === 'Admin') !== undefined
-                  ? ''
-                  : '!bg-gray-300 opacity-50'
-              "
+              :disabled="auth.hasPermission('task.list') ? false : true"
+              :class=" auth.hasPermission('task.list') ? '' : '!bg-gray-300 opacity-50'"
               @click="actionMethod"
             >
               <BaseIcon :path="mdiCalendarCheckOutline" class="w-4"/>
@@ -254,12 +236,12 @@ function registerTable({reload}) {
             <a-button
               class="justify-center !flex !p-1 !h-auto"
               :disabled="
-                auth.user.roles.find((x) => x.name === 'Admin') !== undefined
+                auth.hasPermission('patient.history')
                   ? false
                   : true
               "
               :class="
-                auth.user.roles.find((x) => x.name === 'Admin') !== undefined
+                auth.hasPermission('patient.history')
                   ? ''
                   : '!bg-gray-300 opacity-50'
               "
@@ -312,8 +294,8 @@ function registerTable({reload}) {
 
             <span class="pl-1">
               <a
-                @click="router.push('patient/' + item.id + '/detail')"
-                class="text-blue-700 cursor-pointer underline"
+                @click="auth.hasPermission('patient.view') ? router.push('patient/' + item.id + '/detail') : 'javascript:void(0)'"
+                class="text-blue-700 underline cursor-pointer"
               >{{ item.full_name }}</a
               >
             </span>

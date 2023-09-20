@@ -6,6 +6,8 @@ namespace App\Models;
 use App\Traits\CreatedUpdatedByAdmin;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class MasterData extends Model
 {
@@ -15,7 +17,7 @@ class MasterData extends Model
      *
      * @var array<int, string>
      */
-    use HasFactory,CreatedUpdatedByAdmin;
+    use HasFactory, CreatedUpdatedByAdmin, LogsActivity;
 
     protected $table = 'master_data';
     protected $keyType = 'string';
@@ -27,6 +29,15 @@ class MasterData extends Model
         'list_key',
         'data'
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->setDescriptionForEvent(fn(string $eventName) => request()->input('log_detail',$eventName))
+            ->dontSubmitEmptyLogs();
+    }
 
     /**
      * The attributes that should be hidden for serialization.

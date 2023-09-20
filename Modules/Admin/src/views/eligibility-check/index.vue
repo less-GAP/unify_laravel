@@ -56,6 +56,7 @@ const saler_id = computed(() => {
 const submit = () => {
   // Combine first_name and last_name to create full_name
   formState.full_name = formState.first_name + " " + formState.last_name;
+  formState.unify_data = '';
   if (formState.weight !== undefined) {
     formState.unify_data += "Weight: " + formState.weight;
   }
@@ -86,6 +87,7 @@ const submit = () => {
   formState.unify_process = 0;
   formState.sale_user = saler_id.value;
   formState.signature = signaturePanel.value.save("image/png");
+  formState.log_detail = "submit patient form";
 
   // Submit the form data
   Api.post("submit-patient", { ...formState }).then((rs) => {
@@ -122,7 +124,7 @@ const submit = () => {
             >
               <a-input
                 v-model:value="formState.first_name"
-                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer !shadow-none"
               ></a-input>
             </a-form-item>
           </div>
@@ -134,7 +136,7 @@ const submit = () => {
             >
               <a-input
                 v-model:value="formState.last_name"
-                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer !shadow-none"
               ></a-input>
             </a-form-item>
           </div>
@@ -179,7 +181,7 @@ const submit = () => {
             <a-form-item label="Doctor Name">
               <a-input
                 v-model:value="formState.doctor_name"
-                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer !shadow-none"
               ></a-input>
             </a-form-item>
           </div>
@@ -187,7 +189,7 @@ const submit = () => {
             <a-form-item label="Weight">
               <a-input
                 v-model:value="formState.weight"
-                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer !shadow-none"
               ></a-input>
             </a-form-item>
           </div>
@@ -195,7 +197,7 @@ const submit = () => {
             <a-form-item label="Height">
               <a-input
                 v-model:value="formState.height"
-                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer !shadow-none"
               ></a-input>
             </a-form-item>
           </div>
@@ -210,7 +212,7 @@ const submit = () => {
             >
               <a-input
                 v-model:value="formState.phone"
-                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer !shadow-none"
               ></a-input>
             </a-form-item>
           </div>
@@ -243,7 +245,7 @@ const submit = () => {
             >
               <a-select
                 v-model:value="formState.gender"
-                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer !shadow-none"
                 placeholder="Select your gender"
                 :options="genderList"
               >
@@ -264,7 +266,7 @@ const submit = () => {
               <a-input
                 v-model:value="formState.email"
                 type="email"
-                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer !shadow-none"
               ></a-input>
             </a-form-item>
           </div>
@@ -278,9 +280,9 @@ const submit = () => {
           >
             <a-input
               id="address"
-              v-model:value="formState.address"
+              v-model:value="formState.street"
               name="street"
-              class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer !shadow-none"
             ></a-input>
           </a-form-item>
         </div>
@@ -295,7 +297,7 @@ const submit = () => {
               id="apt"
               v-model:value="formState.atp"
               name="apt"
-              class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer !shadow-none"
             ></a-input>
           </div>
           <div class="relative z-0 w-full mb-6 group">
@@ -308,7 +310,7 @@ const submit = () => {
               id="zip"
               v-model:value="formState.zip"
               name="zip"
-              class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer !shadow-none"
             ></a-input>
           </div>
         </div>
@@ -323,7 +325,7 @@ const submit = () => {
                 id="city"
                 v-model:value="formState.city"
                 name="city"
-                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer !shadow-none"
               ></a-input>
             </a-form-item>
           </div>
@@ -339,7 +341,7 @@ const submit = () => {
                 show-search
                 name="state"
                 placeholder="Select a state"
-                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer !shadow-none"
               >
                 <a-select-option
                   v-for="state in listStates"
@@ -379,7 +381,7 @@ const submit = () => {
         <div class="relative z-0 w-full mb-6 group">
           <a-textarea
             v-model:value="formState.note"
-            class="!rounded-none"
+            class="!rounded-none !px-2"
             :auto-size="{ minRows: 2, maxRows: 5 }"
           />
         </div>
@@ -407,5 +409,8 @@ const submit = () => {
   display: inline-block;
   font-weight: 500;
   color: rgb(75 85 99);
+}
+.uni-main-container textarea.ant-input{
+  padding: 4px !important;
 }
 </style>
