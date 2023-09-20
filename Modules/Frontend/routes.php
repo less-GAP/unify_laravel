@@ -5,7 +5,7 @@ use Modules\Frontend\Actions\PatientForm;
 
 Route::post('api/patient/new', \Modules\Admin\Actions\Patient\PostAction::class . '@handle');
 Route::middleware(['splade'])->group(function () {
-    Route::get('/',  PatientForm::class.'@handle')->name('home');
+    Route::get('/', PatientForm::class . '@handle')->name('home');
     // Route::get('/apply',  fn () => view('Frontend::apply'))->name('apply');
     // Route::get('/checkout',  CheckoutVisaApplication::class.'@handle')->name('checkout');
     // Route::post('/visa-application', PostVisaApplication::class.'@handle')->name('visa-application');
