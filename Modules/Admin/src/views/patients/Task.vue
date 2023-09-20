@@ -433,8 +433,7 @@ const age = (dob) => {
 
           <!-- History -->
           <div class="w-full px-4 pb-3 mt-5 bg-gray-100">
-            <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0" plain>Recent
-              history
+            <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0" plain>Recent history
             </a-Divider>
             <div
               class="relative flex flex-col items-start p-4 mt-3 bg-white rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100"
@@ -447,11 +446,8 @@ const age = (dob) => {
                   </path>
                 </svg>
               </button>
-              <span
-                class="flex items-center h-6 px-3 text-xs font-semibold text-green-500 bg-green-100 rounded-full">Dev</span>
               <h4 class="mt-3 text-sm font-medium">
-                This is the title of the card for the thing that needs to be
-                done.
+                This is the title of the card for the thing that needs to be done.
               </h4>
               <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-400">
                 <div class="flex items-center">

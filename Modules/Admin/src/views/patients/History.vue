@@ -7,6 +7,7 @@ import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import dayjs from "dayjs";
 import { UseDataTable } from "@/utils/UseDataTable";
+import Api from "@/utils/Api";
 
 const prefix = "activity";
 const patientId = router.currentRoute.value.params.id;
@@ -34,6 +35,7 @@ defineProps({
     default: true,
   },
 });
+const patient = reactive({});
 const formState = reactive({});
 const formRef = ref();
 const loading = ref(false);
@@ -53,7 +55,9 @@ const fetch = async function () {
   if (id !== "new") {
     loading.value = true;
     const value = await fetchDetailApi(id);
-    Object.assign(formState, value.data.data);
+    const response = await Api.get(`/patient/${patientId}`);
+    Object.assign(patient, response.data.data);
+    Object.assign(formState, value.data);
     loading.value = false;
   } else {
     loading.value = false;
@@ -103,18 +107,14 @@ const closeDetail = function () {
       </div>
       <div class="px-4 mt-5 overflow-y-auto" style="height: calc(100% - 60px)">
         <div class="flex flex-wrap -mx-4">
-          <ApiData :url="'patient/' + patientId">
-            <template #default="{ data }">
-              <h1 class="flex flex-col w-full px-4">
-                <div class="flex items-center leading-none whitespace-nowrap">
-                  <span>{{ data.full_name }}</span>
-                </div>
-                <div class="text-sm text-gray-400">
-                  #{{ data.unify_number }}
-                </div>
-              </h1>
-            </template>
-          </ApiData>
+          <h1 class="flex flex-col w-full px-4">
+            <div class="flex items-center leading-none whitespace-nowrap">
+              <span>{{ patient.full_name }}</span>
+            </div>
+            <div class="text-sm text-gray-400">
+              #{{ patient.unify_number }}
+            </div>
+          </h1>
 
           <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>
             History
@@ -154,5 +154,9 @@ const closeDetail = function () {
 <style>
 .ant-drawer-body {
   padding: 0 !important;
+}
+
+.ant-timeline .ant-timeline-item{
+  padding-bottom: 0 !important;
 }
 </style>

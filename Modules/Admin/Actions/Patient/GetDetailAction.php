@@ -33,17 +33,19 @@ class GetDetailAction
                 $assignees = array_merge($assignees, json_decode($task->assignees));
             }
         }
-        if ($user->hasRole('Admin') || $user->hasPermissionTo('patient.view')) {
+        $result_success = [
+            'status' => 200,
+            'message' => 'Success!',
+            'data' => $patient
+        ];
+        if ($user->hasRole('Admin')){
+            return $result_success;
+        } else if ($user->hasPermissionTo('patient.view')) {
             if (
                 $user->hasRole('Seller') && $patient->sale_user == $user->id && $patient->unify_process == 0 ||
                 $user->hasRole('Seller') && in_array($user->id, $assignees)  ||
                 $user->hasRole('Seller Manager') && $patient->unify_process == 0
             ) {
-                $result_success = [
-                    'status' => 200,
-                    'message' => 'Success!',
-                    'data' => $patient
-                ];
                 return $result_success;
             }
         }
