@@ -204,7 +204,7 @@ const closeDetail = function () {
             </div>
           </a-button>
           <a-button
-            v-if="(currentRoute.name == 'patient-edit' && auth.user.roles.find(x => x.name === 'Seller') !== undefined && formState.unify_process == 0)"
+            v-if="(currentRoute.name == 'patient-edit' && (auth.hasPermission('Seller') || auth.hasPermission('Seller Manager')) && formState.unify_process == 0)"
             @click="submitSellerApprove" type="primary" class="uppercase !bg-green-500 hover:!bg-green-400">
             <div class="flex">
               <BaseIcon :path="mdiAccountArrowUp" class="w-4 text-white" />
