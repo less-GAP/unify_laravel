@@ -5,7 +5,7 @@
       <router-view  v-slot="{ Component }">
         <transition>
           <keep-alive :max="5">
-            <component :is="Component"/>
+            <component :key="$route.fullPath" :is="Component"/>
           </keep-alive>
         </transition>
       </router-view>
