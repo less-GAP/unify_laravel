@@ -47,10 +47,11 @@ const fetch = async function () {
     const rsInsurances = await fetchListInsurancesApi();
     listInsurances.value = rsInsurances;
     const rs = await fetchDetailApi(id);
-    if (rs.status == 200) {
-        if (rs.data.insurance_coverages && rs.data.insurance_coverages.length > 0) {
-            rs.data.insurance_coverages = JSON.parse(rs.data.insurance_coverages);
-            rs.data.insurance_coverages.map((item) => {
+    const data = rs.data;
+    if (data.status == 200) {
+        if (data.data.insurance_coverages && data.data.insurance_coverages.length > 0) {
+            data.data.insurance_coverages = JSON.parse(data.data.insurance_coverages);
+            data.data.insurance_coverages.map((item) => {
                 return listInsurances.value.find((insurance) => {
                     if (insurance.value === item.coverage) {
                         item.coverage = insurance.label;
@@ -58,7 +59,7 @@ const fetch = async function () {
                 });
             });
         }
-        Object.assign(formState, rs.data)
+        Object.assign(formState, data.data)
         if (formState.doctor_status != undefined) {
             doctorStatusObj.value = fetchListDoctorStatusApi().find(item => item.value === formState.doctor_status);
         }

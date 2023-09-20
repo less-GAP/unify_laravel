@@ -66,32 +66,29 @@ const fetch = async function () {
   loading.value = true;
   needToDoList = [];
   var id = router.currentRoute.value.params.id;
-  const patient = await fetchDetailApi(id);
-  const tasks = await fetchTaskByPatientApi(id);
-  tasks.data.data.forEach((item) => {
-    if (item.patient_id === formState.id && item.deleted === 0) {
-      // item.assignees = item.assignees;
-      if (
-        auth.hasPermission("Admin") ||
-        item.assignees.includes(auth.user.id)
-      ) {
-        formState.tasks.push(item);
+  const response = await fetchDetailApi(id);
+  if(response.data.status === 200){
+    const data = response.data.data;
+    Object.assign(formState, data, true);
+    needToDoLib.forEach((item) => {
+      if (formState[item.key] != null && formState[item.key] !== 0) {
+        return;
       }
-    }
-  });
-  Object.assign(formState, patient.data, true);
-  needToDoLib.forEach((item) => {
-    if (formState[item.key] != null && formState[item.key] !== 0) {
-      return;
-    }
-    if (item.key == "doctor_id" && formState[item.key] !== null) {
-      return;
-    }
-    needToDoList.push({
-      value: item.key,
-      label: item.noti,
+      if (item.key == "doctor_id" && formState[item.key] !== null) {
+        return;
+      }
+      needToDoList.push({
+        value: item.key,
+        label: item.noti,
+      });
     });
-  });
+  }else{
+    notification.error({
+      message: "Error",
+      description: response.data.message,
+    });
+    router.replace({ path: "/" + prefix });
+  }
   loading.value = false;
 };
 fetch();
@@ -160,6 +157,9 @@ const addTask = function () {
     txt += "- " + item.value + "\n";
   });
   formTaskState.description = txt;
+  formTaskState.assignees = [{
+    value: formState.sale_user,
+  }];
   formTaskState.name = "Check & Update for " + formState.full_name;
   openModal.value = true;
 };
@@ -181,8 +181,8 @@ const handleAddTask = () => {
       confirmLoading.value = true;
       createTaskApi({ ...formTaskState }).then((rs) => {
         confirmLoading.value = false;
-        fetch();
         openModal.value = false;
+        fetch();
       });
     } catch (e) {
       console.log(e);
@@ -277,11 +277,10 @@ const age = (dob) => {
               <span>{{ formState.full_name }}</span>
             </div>
             <div class="text-sm text-gray-400">
-              #{{ formState.unify_number }}
+              #{{ formState.unify_number }} - <span class="mb-2 text-xs text-stone-400">Seller: {{ nameAssignee(formState.sale_user, true) }}</span>
             </div>
           </h1>
-          <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>List
-            tasks of {{ formState.full_name }}
+          <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>List tasks of {{ formState.full_name }}
           </a-Divider>
           <div class="w-full px-4">
             <div class="flex items-center font-medium">

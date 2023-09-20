@@ -53,7 +53,7 @@ const fetch = async function () {
   if (id !== "new") {
     loading.value = true;
     const value = await fetchDetailApi(id);
-    Object.assign(formState, value.data);
+    Object.assign(formState, value.data.data);
     loading.value = false;
   } else {
     loading.value = false;
