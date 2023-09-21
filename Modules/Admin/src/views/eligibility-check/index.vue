@@ -275,11 +275,11 @@ const submit = () => {
         <div class="relative z-0 w-full mb-6 group">
           <a-form-item
             label="Address"
-            name="address"
+            name="street"
             :rules="[{ required: true, message: 'Please enter address!' }]"
           >
             <a-input
-              id="address"
+              id="street"
               v-model:value="formState.street"
               name="street"
               class="block w-full px-0 py-1 text-base font-bold text-gray-900 uppercase bg-white border-0 border-b-2 !border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer !shadow-none"
