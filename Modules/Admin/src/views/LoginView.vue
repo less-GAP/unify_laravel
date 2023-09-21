@@ -34,18 +34,18 @@ const submit = async () => {
           <div class="w-full h-100">
 
 
-            <h1 class="mt-12 text-xl font-bold leading-tight md:text-2xl">Log in to your account</h1>
+            <h1 class="mt-12 mb-6 text-xl font-bold leading-tight md:text-2xl">Log in to your account</h1>
 
-            <a-form @submit="submit" :model="form" class="mt-6" action="#" method="POST">
-              <a-input-item name="username" :rules="[{ required: true, message: 'Please input your username!' }]" label="">
+            <a-form @submit="submit" :model="form" class="" action="#" method="POST">
+              <a-form-item name="username" :rules="[{ required: true, message: 'Please input your username!' }]" label="">
                 <label class="block text-gray-700">Username</label>
                 <input v-model="form.username"  name=""  placeholder="Username" class="w-full px-4 py-3 mt-2 bg-gray-200 border rounded-lg focus:border-blue-500 focus:bg-white focus:outline-none" autofocus autocomplete required>
-              </a-input-item>
+              </a-form-item>
 
-              <a-input-item :rules="[{ required: true, message: 'Please input your username!' }]" name="password" class="mt-4">
+              <a-form-item :rules="[{ required: true, message: 'Please input your username!' }]" name="password" class="mt-4">
                 <label class="block text-gray-700">Password</label>
                 <input v-model="form.password"  type="password" name=""  placeholder="Enter Password" minlength="6" class="w-full px-4 py-3 mt-2 bg-gray-200 border rounded-lg focus:border-blue-500 focus:bg-white focus:outline-none" required>
-              </a-input-item>
+              </a-form-item>
 
               <div class="mt-2 text-right">
                 <a href="#" class="text-sm font-semibold text-gray-700 hover:text-blue-700 focus:text-blue-700">Forgot Password?</a>

@@ -11,7 +11,9 @@ import {
   mdiCalendarClockOutline,
   mdiUploadOutline,
   mdiLink,
+  mdiTrashCan,
   mdiAccountCheckOutline,
+  mdiCheckboxMarkedCircle,
   mdiReply
 } from "@mdi/js";
 import { BaseIcon } from "@/components";
@@ -57,6 +59,7 @@ defineProps({
 const formState = reactive({
   tasks: [],
 });
+const taskHistory = ref([]);
 const formRef = ref();
 const loading = ref(false);
 const auth = useAuthStore();
@@ -66,32 +69,40 @@ const fetch = async function () {
   loading.value = true;
   needToDoList = [];
   var id = router.currentRoute.value.params.id;
-  const patient = await fetchDetailApi(id);
-  const tasks = await fetchTaskByPatientApi(id);
-  tasks.data.data.forEach((item) => {
-    if (item.patient_id === formState.id && item.deleted === 0) {
-      // item.assignees = item.assignees;
-      if (
-        auth.hasPermission("Admin") ||
-        item.assignees.includes(auth.user.id)
-      ) {
-        formState.tasks.push(item);
+  const response = await fetchDetailApi(id);
+  const responseTask = await fetchTaskByPatientApi(id);
+  taskHistory.value = responseTask.data;
+  if (taskHistory.value.length > 0) {
+    taskHistory.value.forEach((item, index) => {
+      if (item.task_process != 3 || item.deleted != 1) {
+        taskHistory.value.splice(index, 1);
       }
-    }
-  });
-  Object.assign(formState, patient.data, true);
-  needToDoLib.forEach((item) => {
-    if (formState[item.key] != null && formState[item.key] !== 0) {
-      return;
-    }
-    if (item.key == "doctor_id" && formState[item.key] !== null) {
-      return;
-    }
-    needToDoList.push({
-      value: item.key,
-      label: item.noti,
+      item.assignees = JSON.parse(item.assignees);
     });
-  });
+  }
+  console.log(taskHistory.value);
+  if (response.data.status === 200) {
+    const data = response.data.data;
+    Object.assign(formState, data, true);
+    needToDoLib.forEach((item) => {
+      if (formState[item.key] != null && formState[item.key] !== 0) {
+        return;
+      }
+      if (item.key == "doctor_id" && formState[item.key] !== null) {
+        return;
+      }
+      needToDoList.push({
+        value: item.key,
+        label: item.noti,
+      });
+    });
+  } else {
+    notification.error({
+      message: "Error",
+      description: response.data.message,
+    });
+    router.replace({ path: "/" + prefix });
+  }
   loading.value = false;
 };
 fetch();
@@ -160,6 +171,9 @@ const addTask = function () {
     txt += "- " + item.value + "\n";
   });
   formTaskState.description = txt;
+  formTaskState.assignees = [{
+    value: formState.sale_user,
+  }];
   formTaskState.name = "Check & Update for " + formState.full_name;
   openModal.value = true;
 };
@@ -181,8 +195,8 @@ const handleAddTask = () => {
       confirmLoading.value = true;
       createTaskApi({ ...formTaskState }).then((rs) => {
         confirmLoading.value = false;
-        fetch();
         openModal.value = false;
+        fetch();
       });
     } catch (e) {
       console.log(e);
@@ -277,17 +291,18 @@ const age = (dob) => {
               <span>{{ formState.full_name }}</span>
             </div>
             <div class="text-sm text-gray-400">
-              #{{ formState.unify_number }}
+              #{{ formState.unify_number }} - <span class="mb-2 text-xs text-stone-400">Seller: {{
+                nameAssignee(formState.sale_user, true) }}</span>
             </div>
           </h1>
           <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>List
             tasks of {{ formState.full_name }}
           </a-Divider>
-          <div class="w-full px-4">
+          <div class="w-full px-4 bg-gray-100">
             <div class="flex items-center font-medium">
               <div class="flex flex-wrap items-center flex-grow text-gray-900">
                 <!-- Check Need to do - Start -->
-                <div v-if="needToDoList.length > 0" class="w-full p-8 bg-yellow-100 border-red-400 rounded-xl">
+                <div v-if="needToDoList.length > 0" class="w-full p-8 mt-5 bg-yellow-100 border-red-400 rounded-xl">
                   <div class="flex items-center mb-6">
                     <svg class="w-8 h-8 text-indigo-500 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none"
                       viewBox="0 0 24 24" stroke="currentColor">
@@ -316,32 +331,99 @@ const age = (dob) => {
                 </div>
                 <!-- Check Need to do - End  -->
                 <!-- Task list -->
-                <div class="w-full py-4">
+                <div class="w-full pb-4">
                   <a-button v-if="$auth.hasPermission('task.assign')" class="mt-4" type="primary" @click="addTask">
                     <PlusOutlined></PlusOutlined>
                     Add Task
                   </a-button>
-                  <table v-if="formState.tasks.length > 0" class="w-full mt-4 table-auto table-task">
-                    <thead class="text-xs font-semibold text-gray-400 uppercase bg-gray-50">
-                      <th>Task</th>
-                      <th class="text-center">Assignees</th>
-                      <th class="text-center">Due date</th>
-                      <th class="text-center">Task Progress</th>
-                      <th class="text-center">Action</th>
-                    </thead>
-                    <tbody>
-                      <tr v-for="task in formState.tasks" :key="task.id">
-                        <template v-if="task.deleted !== 1 && task.task_process != 3">
-                          <td>
-                            <h4 :style="checkOutDate(task) ? 'color: red;' : ''">
-                              <a @click="detailTask(task)">{{ task.name }}<span v-if="checkOutDate(task)" color="red"
-                                  class="text-xs text-red-900"> (Out date)</span>
-                              </a>
-                            </h4>
-                            <div class="text-xs text-gray-400" v-html="formatDescription(task.description)"></div>
-                          </td>
-                          <td style="width: 0; min-width: 127px;">
-                            <div v-if="task.assignees !== undefined" class="flex">
+                  <div v-if="formState.tasks.length > 0" class="">
+                    <div v-for="task in formState.tasks" :key="task.id" class="">
+                      <template v-if="task.deleted != 1 && task.task_process != 3">
+                        <div
+                          class="relative flex flex-col items-start p-4 mt-3 bg-white rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100"
+                          draggable="true">
+                          <div class="absolute top-0 right-0 flex items-center mt-3 mr-2 space-x-1 action">
+                            <a-tooltip title="Complete">
+                              <a-button v-if="(auth.hasPermission('task.assign') ||
+                                task.assignees && assigneesArray(task.assignees).includes(auth.user.id) ||
+                                auth.hasPermission('task.review')) &&
+                                task.is_completed === 0
+                                " type="link" class="!px-0" @click="completeTask(task.id, fetch)">
+                                <BaseIcon :path="mdiCheckCircleOutline" class="text-current hover:text-green-500">
+                                </BaseIcon>
+                              </a-button>
+                            </a-tooltip>
+                            <a-tooltip :title="task.task_process === 0 ? 'Working' : 'Pending'">
+                              <a-button v-if="(auth.hasPermission('task.working') ||
+                                task.assignees && assigneesArray(task.assignees).includes(auth.user.id) ||
+                                auth.hasPermission('task.review')) &&
+                                task.is_completed === 0
+                                " type="link" class="!px-0"
+                                @click="workingTask(task.id, fetch, task.task_process === 1)">
+                                <BaseIcon :path="task.task_process === 0 ? mdiPauseCircleOutline : mdiPlayCircleOutline"
+                                  class="text-current hover:text-blue-500"></BaseIcon>
+                              </a-button>
+                            </a-tooltip>
+                            <a-tooltip title="Review">
+                              <a-popconfirm placement="leftBottom" title="Review this task" ok-text="Accept Done"
+                                cancel-text="Reject" @confirm="reviewTask(task.id, true, fetch)"
+                                @cancel="reviewTask(task.id, false, fetch)">
+                                <a-button v-if="auth.hasPermission('task.review') &&
+                                  task.is_completed == 1
+                                  " type="link" class="!px-0">
+                                  <BaseIcon :path="mdiAccountCheckOutline" class="text-current hover:text-green-500">
+                                  </BaseIcon>
+                                </a-button>
+                              </a-popconfirm>
+                            </a-tooltip>
+                            <a-tooltip title="Edit">
+                              <a-button v-if="auth.hasPermission('task.edit') &&
+                                task.is_completed !== 1
+                                " type="link" class="!px-0" @click="editTask(task.id)">
+                                <BaseIcon :path="mdiPencil" class="text-current hover:text-blue-500"></BaseIcon>
+                              </a-button>
+                            </a-tooltip>
+                            <a-tooltip title="Delete">
+                              <a-popconfirm title="Are you sure delete this task?" ok-text="Yes" cancel-text="No">
+                                <a-button v-if="auth.hasPermission('task.delete') &&
+                                  task.is_completed !== 1
+                                  " type="link" danger class="!px-0" @click="deleteTask(task.id, fetch)">
+                                  <BaseIcon :path="mdiDeleteOffOutline" class="text-current hover:text-orange-500">
+                                  </BaseIcon>
+                                </a-button>
+                              </a-popconfirm>
+                            </a-tooltip>
+                          </div>
+                          <h4 :style="checkOutDate(task) ? 'color: red;' : ''" class="text-sm font-medium">
+                            <a-tag v-if="getStatusTask(task.task_process)"
+                              :color="getStatusTask(task.task_process).color" class="!mr-2">
+                              <template #icon>
+                                <CheckCircleOutlined v-if="task.task_process === 3" />
+                                <SyncOutlined v-if="task.task_process === 1" :spin="true" />
+                                <ClockCircleOutlined v-if="[null, 0].includes(task.task_process)" />
+                              </template>
+                              {{ getStatusTask(task.task_process).label }}
+                            </a-tag>
+                            <a @click="detailTask(task)">{{ task.name }}<span v-if="checkOutDate(task)" color="red"
+                                class="text-xs text-red-900"> (Out date)</span>
+                            </a>
+                          </h4>
+                          <div class="text-xs text-gray-400" v-html="formatDescription(task.description)"></div>
+                          <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-400">
+                            <div class="flex items-center">
+                              <svg class="w-4 h-4 text-gray-300 fill-current" xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd"
+                                  d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                  clip-rule="evenodd"></path>
+                              </svg>
+                              <span class="ml-1 leading-none" v-html="task.deadline_at
+                                ? dayjs(task.deadline_at).format(
+                                  'HH:mm MM-DD-YYYY'
+                                )
+                                : ''"></span>
+                            </div>
+                            <div v-if="task.assignees !== undefined" class="flex ml-auto">
                               <div v-for="id_assignee in assigneesArray(
                                 task.assignees
                               )" :key="id_assignee" class="item-assignee">
@@ -352,186 +434,66 @@ const age = (dob) => {
                                 </a-avatar-group>
                               </div>
                             </div>
-                          </td>
-                          <td width="100px" class="text-xs" v-html="task.deadline_at
-                            ? dayjs(task.deadline_at).format(
-                              'HH:mm MM-DD-YYYY'
-                            ).replace(' ', '<br>')
-                            : ''">
-                          </td>
-                          <td style="width: 0; min-width: 127px;">
-                            <a-tag v-if="getStatusTask(task.task_process)"
-                              :color="getStatusTask(task.task_process).color">
-                              <template #icon>
-                                <CheckCircleOutlined v-if="task.task_process === 3" />
-                                <SyncOutlined v-if="task.task_process === 1" :spin="true" />
-                                <ClockCircleOutlined v-if="[null, 0].includes(task.task_process)" />
-                              </template>
-                              {{ getStatusTask(task.task_process).label }}
-                            </a-tag>
-                          </td>
-                          <td width="150px">
-                            <div class="flex flex-wrap justify-center space-x-1">
-                              <a-tooltip title="Complete">
-                                <a-button v-if="(auth.hasPermission('task.assign') ||
-                                   task.assignees && assigneesArray(task.assignees).includes(auth.user.id) ||
-                                  auth.hasPermission('task.review')) &&
-                                  task.is_completed === 0
-                                  " type="link" class="!px-0" @click="completeTask(task.id, fetch)">
-                                  <BaseIcon :path="mdiCheckCircleOutline" class="text-current hover:text-green-500">
-                                  </BaseIcon>
-                                </a-button>
-                              </a-tooltip>
-                              <a-tooltip :title="task.task_process === 0 ? 'Working' : 'Pending'">
-                                <a-button v-if="(auth.hasPermission('task.working') ||
-                                  task.assignees && assigneesArray(task.assignees).includes(auth.user.id) ||
-                                  auth.hasPermission('task.review')) &&
-                                  task.is_completed === 0
-                                  " type="link" class="!px-0"
-                                  @click="workingTask(task.id, fetch, task.task_process === 1)">
-                                  <BaseIcon :path="task.task_process === 0 ? mdiPauseCircleOutline : mdiPlayCircleOutline"
-                                    class="text-current hover:text-blue-500"></BaseIcon>
-                                </a-button>
-                              </a-tooltip>
-                              <a-tooltip title="Review">
-                                <a-popconfirm placement="leftBottom" title="Review this task" ok-text="Accept Done" cancel-text="Reject"
-                                  @confirm="reviewTask(task.id, true, fetch)" @cancel="reviewTask(task.id, false, fetch)">
-                                  <a-button v-if="auth.hasPermission('task.review') &&
-                                    task.is_completed == 1
-                                    " type="link" class="!px-0">
-                                    <BaseIcon :path="mdiAccountCheckOutline" class="text-current hover:text-green-500">
-                                    </BaseIcon>
-                                  </a-button>
-                                </a-popconfirm>
-                              </a-tooltip>
-                              <a-tooltip title="Edit">
-                                <a-button v-if="auth.hasPermission('task.edit') &&
-                                  task.is_completed !== 1
-                                  " type="link" class="!px-0" @click="editTask(task.id)">
-                                  <BaseIcon :path="mdiPencil" class="text-current hover:text-blue-500"></BaseIcon>
-                                </a-button>
-                              </a-tooltip>
-                              <a-tooltip title="Delete">
-                                <a-popconfirm title="Are you sure delete this task?" ok-text="Yes" cancel-text="No">
-                                  <a-button v-if="auth.hasPermission('task.delete') &&
-                                    task.is_completed !== 1
-                                    " type="link" danger class="!px-0" @click="deleteTask(task.id, fetch)">
-                                    <BaseIcon :path="mdiDeleteOffOutline" class="text-current hover:text-orange-500">
-                                    </BaseIcon>
-                                  </a-button>
-                                </a-popconfirm>
-                              </a-tooltip>
-                            </div>
-                          </td>
-                        </template>
-                      </tr>
-                    </tbody>
-                  </table>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- History -->
-          <div class="w-full px-4 pb-3 mt-5 bg-gray-100">
+          <div v-if="formState.tasks.length > 0" class="w-full px-4 pb-3 bg-gray-100">
             <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0" plain>Recent
               history
             </a-Divider>
-            <div
-              class="relative flex flex-col items-start p-4 mt-3 bg-white rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100"
-              draggable="true">
-              <button
-                class="absolute top-0 right-0 flex items-center justify-center hidden w-5 h-5 mt-3 mr-2 text-gray-500 rounded hover:bg-gray-200 hover:text-gray-700 group-hover:flex">
-                <svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                  fill="currentColor">
-                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z">
-                  </path>
-                </svg>
-              </button>
-              <span
-                class="flex items-center h-6 px-3 text-xs font-semibold text-green-500 bg-green-100 rounded-full">Dev</span>
-              <h4 class="mt-3 text-sm font-medium">
-                This is the title of the card for the thing that needs to be
-                done.
-              </h4>
-              <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-400">
-                <div class="flex items-center">
-                  <svg class="w-4 h-4 text-gray-300 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                    fill="currentColor">
-                    <path fill-rule="evenodd"
-                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span class="ml-1 leading-none">Dec 12</span>
+            <div v-for="task in formState.tasks" :key="task.id" class="">
+              <template v-if="task.deleted != 1 && task.task_process == 3">
+                <div
+                  class="relative flex flex-col items-start p-4 mt-3 bg-white rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100"
+                  draggable="true">
+                  <div class="absolute top-0 right-0 flex items-center mt-3 mr-2 space-x-1 action">
+                    <a-tag v-if="task.task_process === 3 && task.deleted != 1" color="green" class="!flex items-center">
+                      <BaseIcon :path="mdiCheckboxMarkedCircle" class="!text-green-500 !mr-1"></BaseIcon> <span>Done</span>
+                    </a-tag>
+                    <a-tag v-if="task.deleted != 0" color="red" class="!flex items-center">
+                      <BaseIcon :path="mdiTrashCan" class="!text-red-500 !mr-1"></BaseIcon> <span>Trashed</span>
+                    </a-tag>
+                  </div>
+                  <h4 :style="checkOutDate(task) ? 'color: red;' : ''" class="mt-3 text-sm font-medium">
+                    <a @click="detailTask(task)">{{ task.name }}</a>
+                  </h4>
+                  <div class="text-xs text-gray-400" v-html="formatDescription(task.description)"></div>
+                  <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-400">
+                    <div class="flex items-center">
+                      <svg class="w-4 h-4 text-gray-300 fill-current" xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                          d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                          clip-rule="evenodd"></path>
+                      </svg>
+                      <span class="ml-1 leading-none" v-html="task.deadline_at
+                        ? dayjs(task.deadline_at).format(
+                          'HH:mm MM-DD-YYYY'
+                        )
+                        : ''"></span>
+                    </div>
+                    <div v-if="task.assignees !== undefined" class="flex ml-auto">
+                      <div v-for="id_assignee in assigneesArray(
+                        task.assignees
+                      )" :key="id_assignee" class="item-assignee">
+                        <a-avatar-group>
+                          <a-tooltip :title="nameAssignee(id_assignee, true)" placement="top">
+                            <a-avatar style="background-color: #87d068">{{ nameAssignee(id_assignee) }}</a-avatar>
+                          </a-tooltip>
+                        </a-avatar-group>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="relative flex items-center ml-4">
-                  <svg class="relative w-4 h-4 text-gray-300 fill-current" xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd"
-                      d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span class="ml-1 leading-none">4</span>
-                </div>
-                <div class="flex items-center ml-4">
-                  <svg class="w-4 h-4 text-gray-300 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                    fill="currentColor">
-                    <path fill-rule="evenodd"
-                      d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span class="ml-1 leading-none">1</span>
-                </div>
-                <img class="w-6 h-6 ml-auto rounded-full" src="https://randomuser.me/api/portraits/men/64.jpg" />
-              </div>
-            </div>
-            <div
-              class="relative flex flex-col items-start p-4 mt-3 bg-white rounded-lg cursor-pointer bg-opacity-90 group hover:bg-opacity-100"
-              draggable="true">
-              <button
-                class="absolute top-0 right-0 flex items-center justify-center hidden w-5 h-5 mt-3 mr-2 text-gray-500 rounded hover:bg-gray-200 hover:text-gray-700 group-hover:flex">
-                <svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                  fill="currentColor">
-                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z">
-                  </path>
-                </svg>
-              </button>
-              <span
-                class="flex items-center h-6 px-3 text-xs font-semibold text-green-500 bg-green-100 rounded-full">Dev</span>
-              <h4 class="mt-3 text-sm font-medium">
-                This is the title of the card for the thing that needs to be
-                done.
-              </h4>
-              <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-400">
-                <div class="flex items-center">
-                  <svg class="w-4 h-4 text-gray-300 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                    fill="currentColor">
-                    <path fill-rule="evenodd"
-                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span class="ml-1 leading-none">Dec 12</span>
-                </div>
-                <div class="relative flex items-center ml-4">
-                  <svg class="relative w-4 h-4 text-gray-300 fill-current" xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd"
-                      d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span class="ml-1 leading-none">4</span>
-                </div>
-                <div class="flex items-center ml-4">
-                  <svg class="w-4 h-4 text-gray-300 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                    fill="currentColor">
-                    <path fill-rule="evenodd"
-                      d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span class="ml-1 leading-none">1</span>
-                </div>
-                <img class="w-6 h-6 ml-auto rounded-full" src="https://randomuser.me/api/portraits/men/64.jpg" />
-              </div>
+              </template>
             </div>
           </div>
         </div>

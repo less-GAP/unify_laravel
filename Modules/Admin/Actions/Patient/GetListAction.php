@@ -20,13 +20,20 @@ class GetListAction
             $query_task->orderBy('created_at', 'ASC');
         }]);
         
-        if(!$user->hasPermissionTo('Admin')){
-            if($user->hasPermissionTo('Seller')){
-                $query->where('sale_user', $user->id);
-            }
+        if (!$user->hasPermissionTo('Admin')) {
 
-            if($user->hasPermissionTo('Seller') || $user->hasPermissionTo('Seller Manager')){
-                $query->where('unify_process', '=', '0');
+            if ($user->hasPermissionTo('Seller') || $user->hasPermissionTo('Seller Manager')) {
+                $query->where('unify_process', '=', 0);
+                
+                if ($user->hasPermissionTo('Seller')) {
+                    $query->where('sale_user', $user->id);
+                }
+                
+                // if User has uncomplete task assign for patient, show patients in list
+                $query->orWhereHas('tasks', function ($taskQuery) use ($user) {
+                    $taskQuery->where('is_completed', 0)
+                        ->whereJsonContains('assignees', $user->id);
+                });
             }
         }
 

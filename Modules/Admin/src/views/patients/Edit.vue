@@ -3,6 +3,7 @@ import { reactive, h, ref, toRaw, computed, watch } from "vue";
 import { mdiBackspace, mdiContentSave, mdiAccountArrowUp } from '@mdi/js';
 import { BaseIcon } from "@/components";
 import { ApiData } from "@/components";
+import { notification } from "ant-design-vue";
 import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
@@ -62,20 +63,20 @@ const fetch = async function () {
   listDoctors.value = await fetchListDoctorsApi();
   if (nameRoute == 'patient-edit') {
     loading.value = true
-    var value = await fetchDetailApi(id)
-    //prepare data
-    value.data.insurance_coverages = JSON.parse(value.data.insurance_coverages);
-
-    if (
-      !auth.hasPermission('Admin') &&  // is not admin
-      !(auth.hasPermission('Seller') && value.data.unify_process == 0 && value.data.sale_user == auth.user.id) && // not (is seller and profile is waiting)
-      !(auth.hasPermission('Seller Manager') && value.data.unify_process == 0) // not (is seller and profile is waiting)
-      ) {
+    var response = await fetchDetailApi(id)
+    if(response.data.status === 200){
+      //prepare data
+      const data = response.data.data
+      data.insurance_coverages = JSON.parse(data.insurance_coverages);
+      Object.assign(formState, data)
+      loading.value = false
+    }else{
+      notification.error({
+        message: "Error",
+        description: response.data.message,
+      });
       router.replace({ path: '/' + prefix })
     }
-    
-    Object.assign(formState, value.data)
-    loading.value = false
   } else {
     loading.value = false
   }
