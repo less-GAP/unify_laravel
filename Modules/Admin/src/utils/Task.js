@@ -56,8 +56,8 @@ const completeTask = function (id, actionAfterComplete = null) {
   });
 };
 const reviewTask = function (id, status, actionReviewComplete = null) {
-  if(!status) return false
   updateTaskApi(id, {
+    is_completed: status ? 1 : 0,
     task_process: status ? 3 : 0, // true => done, false => waiting for rework
   }).then((rs) => {
     if (actionReviewComplete) {
