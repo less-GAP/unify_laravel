@@ -60,7 +60,7 @@ class EloquentRouter
                 });
             }
             if (in_array('list', $apiList)) {
-                Route::middleware($middlewares['list']??[])->get('list', function (Requpermissionest $request) {
+                Route::middleware($middlewares['list']??[])->get('list', function (Request $request) {
                     return $this->getList($request);
                 });
             }
