@@ -41,6 +41,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         ->handle(
             \App\Models\Doctor::class,
             [
+
                 'allowedFilters' => [
                     AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name'),
                 ]
@@ -81,6 +82,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         ->handle(
             \App\Models\Patient::class,
             [
+                'autoPermission' => true,
                 'allowedIncludes' => ['tasks'],
                 'allowedSorts' => ['id', 'name', 'updated_at'],
                 'allowedFilters' => [
@@ -95,6 +97,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         ->handle(
             \App\Models\LogActivity::class,
             [
+                'autoPermission' => true,
                 'allowedIncludes' => ['user'],
                 'allowedSorts' => ['id'],
                 'allowedFilters' => [

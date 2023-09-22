@@ -37,50 +37,62 @@ class EloquentRouter
         $this->config = $config;
         $prefix = $this->prefix;
 
-        Route::prefix($prefix)->group(function () use ($config) {
+        Route::prefix($prefix)->group(function () use ($config, $prefix) {
             $apiList = ['list', 'all', 'detail', 'create', 'update', 'relations', 'delete'];
             if (!empty($config['apiList'])) {
                 $apiList = $config['apiList'];
             }
+            $middlewares = $config['middleware']??[];
+            if (!empty($config['autoPermission'])) {
+                $middlewares = array_merge([
+                    'list' => 'permission:' . $prefix . '.list'
+                    , 'all' => 'permission:' . $prefix . '.all'
+                    , 'detail' => 'permission:' . $prefix . '.detail'
+                    , 'create' => 'permission:' . $prefix . '.create'
+                    , 'update' => 'permission:' . $prefix . '.update'
+                    , 'relations' => 'permission:' . $prefix . '.relations'
+                    , 'delete' => 'permission:' . $prefix . '.delete'
+                ], $config['middleware'] ?? []);
+            }
             if (in_array('all', $apiList)) {
-                Route::get('all', function (Request $request) {
+                Route::middleware($middlewares['all']??[])->get('all', function (Request $request) {
                     return $this->getAll($request);
                 });
             }
             if (in_array('list', $apiList)) {
-                Route::get('list', function (Request $request) {
+                Route::middleware($middlewares['list']??[])->get('list', function (Requpermissionest $request) {
                     return $this->getList($request);
                 });
             }
             if (in_array('create', $apiList)) {
-                Route::post('', function (Request $request) {
+                Route::middleware($middlewares['create']??[])->post('', function (Request $request) {
                     return $this->updateOrCreate($request);
                 });
             }
             if (in_array('update', $apiList)) {
-                Route::put('{id}', function (Request $request) {
+                Route::middleware($middlewares['update']??[])->put('{id}', function (Request $request) {
                     return $this->update($request);
                 });
             }
             if (in_array('detail', $apiList)) {
-                Route::get('{id}', function (Request $request) {
+                Route::middleware($middlewares['detail']??[])->get('{id}', function (Request $request) {
                     return $this->getDetail($request);
                 });
             }
             if (in_array('relations', $apiList)) {
-                Route::get('/{id}/{relation}', function (Request $request) {
+                Route::middleware($middlewares['relations']??[])->get('/{id}/{relation}', function (Request $request) {
                     return $this->getRelation($request);
                 });
-                Route::post('/{id}/{relation}/{relationId}', function (Request $request) {
+                Route::middleware($middlewares['relations']??[])->post('/{id}/{relation}/{relationId}', function (Request $request) {
                     return $this->attachRelation($request);
                 });
-                Route::delete('/{id}/{relation}/{relationId}', function (Request $request) {
+                Route::middleware($middlewares['relations']??[])->delete('/{id}/{relation}/{relationId}', function (Request $request) {
                     return $this->detachRelation($request);
                 });
             }
 
             if (in_array('delete', $apiList)) {
-                Route::delete('{id}', function (Request $request) {
+                Route::middleware($middlewares['delete']??[])->delete('{id}', function (Request $request) {
                     return $this->delete($request);
                 });
             }
