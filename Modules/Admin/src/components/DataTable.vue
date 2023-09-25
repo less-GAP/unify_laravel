@@ -71,6 +71,7 @@ const tableConfig = {
   globalSearch: true,
   ...props.tableConfig,
 };
+console.log(props);
 const tableData = ref({});
 const data = ref(null);
 const filter = ref({
@@ -255,7 +256,6 @@ reload(true);
           <tbody class="text-sm divide-y divide-gray-100">
           <tr
             v-for="(item, index) in data"
-            :key="item[tableConfig.item_key]"
             :class="{ 'border-b': index % 2 === 0 }"
           >
             <td v-if="showSelection" class="p-2 whitespace-nowrap">

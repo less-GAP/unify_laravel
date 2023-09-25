@@ -17,6 +17,7 @@ const { fetchDetailApi, fetchListApi } = UseEloquentRouter(prefix, {
 });
 const tableConfig = UseDataTable(fetchListApi, {
   showSelection: false,
+  globalSearch: false,
   pagination: {
     perPage: 10,
   },
@@ -129,8 +130,8 @@ const closeDetail = function () {
                 selectionActions,
                 reload,
               }">
-                <a-timeline class="!m-5">
-                  <a-timeline-item v-for="item in data" :key="item.id" color="green">
+                <a-timeline v-if="data.length > 0" class="!m-5">
+                  <a-timeline-item v-for="item in data" color="green" class="!mb-5">
                     <div class="flex items-center">
                       <img class="w-6 h-6 rounded-full" :src="item.user?.profile_photo_url" />
                       <div class="mx-2 by">{{ item.user?.full_name }}</div>
