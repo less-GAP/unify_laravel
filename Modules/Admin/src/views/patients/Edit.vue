@@ -245,7 +245,7 @@ const closeDetail = function () {
           </a-button>
         </a-space>
       </div>
-      <div class="px-4 mt-5 overflow-y-auto" style="height:calc(100% - 60px);">
+      <div class="px-4 mt-5 overflow-y-auto" style="height:calc(100vh - 100px);">
         <div class="flex flex-wrap -mx-4">
 
           <h1 v-if="currentRoute.name == 'patient-edit'" class="flex flex-col w-full px-4">

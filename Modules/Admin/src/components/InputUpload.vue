@@ -1,5 +1,40 @@
 <template>
   <slot></slot>
+
+
+  <a-space class="mb-2 w-full">
+    <a-upload
+      :multiple="multiple"
+      v-bind="$attrs"
+      :customRequest="upload"
+      :openFileDialogOnClick="true"
+      :withCredentials="true"
+      :list-type="listType"
+      :action="action"
+      :accept="accept"
+      :showUploadList="false"
+    >
+      <div>
+        <a-button size="mini" :loading="loading">
+          <upload-outlined></upload-outlined>
+          Upload
+        </a-button>
+      </div>
+      <a-card v-if="!value && placeholder" shadow="none"
+              style="display:inline-block;margin-right:5px;text-align: center;position:relative">
+        <template #cover>
+          <img :width="width" :height="height" style="object-fit:contain"
+               :src="$url(placeholder)"
+               :alt="alt"/>
+        </template>
+      </a-card>
+
+    </a-upload>
+    <a-button v-if="showSelect" type="primary" success @click="open=true" v-bind="buttonConfig" :loading="loading">
+      <SelectOutlined></SelectOutlined>
+      Or Select
+    </a-button>
+  </a-space>
   <a-image-preview-group style="width:100%;overflow: auto;gap:8px" v-if="value">
     <template v-for="(file,index) in fileList" :key="file.id">
       <a-card shadow="none"
@@ -19,38 +54,6 @@
       </a-card>
     </template>
   </a-image-preview-group>
-
-  <a-space class="mt-2">
-    <a-upload
-      :multiple="multiple"
-      v-bind="$attrs"
-      :customRequest="upload"
-      :openFileDialogOnClick="true"
-      :withCredentials="true"
-      :list-type="listType"
-      :action="action"
-      :accept="accept"
-      :showUploadList="false"
-    >
-      <a-card v-if="!value && placeholder" shadow="none"
-              style="display:inline-block;margin-right:5px;text-align: center;position:relative">
-        <template #cover>
-          <img :width="width" :height="height" style="object-fit:contain"
-               :src="$url(placeholder)"
-               :alt="alt"/>
-        </template>
-      </a-card>
-      <br>
-      <a-button size="mini" :loading="loading">
-        <upload-outlined></upload-outlined>
-        Upload
-      </a-button>
-    </a-upload>
-    <a-button v-if="showSelect" type="primary" success @click="open=true" v-bind="buttonConfig" :loading="loading">
-      <SelectOutlined></SelectOutlined>
-      Or Select
-    </a-button>
-  </a-space>
   <a-modal append-to-body v-model:open="open" style="top: 2vh;height:98vh" height="96vh" width="90vw"
            title="Select file">
     <FilePicker :multiple="multiple" @close="open=false" @select="onSelect"></FilePicker>
@@ -135,13 +138,15 @@ export default defineComponent({
     if (!Array.isArray(props.value) && props.multiple) {
       emit('update:value', []);
     }
-    function updateFileList(){
+
+    function updateFileList() {
       if (props.multiple) {
         fileList.value = toRaw(props.value)
-      }else{
+      } else {
         fileList.value = [props.value]
       }
     }
+
     watch(() => props.value, async () => {
       updateFileList(props.value)
     })
