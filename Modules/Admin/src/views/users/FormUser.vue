@@ -8,6 +8,7 @@ import ApiData from "@/components/ApiData.vue";
 import {useAuthStore} from "@/stores/auth";
 import {notification} from "ant-design-vue";
 import {RemoteSelect} from "@/components";
+import Api from "@/utils/Api";
 
 const prefix = 'user'
 const {
@@ -82,6 +83,14 @@ const submit = () => {
       createApi({...formState}).then(rs => {
         Object.assign(formState, rs.data.result)
       });
+
+      if(formState.isDefaultSeller){
+        Api.post("config", {
+          default_seller: formState.id
+        }).then((result) => {
+          console.log(result)
+        })
+      }
     })
 };
 const closeDetail = function () {

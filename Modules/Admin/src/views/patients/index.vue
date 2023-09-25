@@ -349,7 +349,8 @@ function registerTable({reload}) {
           </a-avatar-group> -->
         </template>
         <template #cell[unify_status]="{ item, column }">
-          <a-tag v-if="item.unify_process === 0" color="yellow">Waiting</a-tag>
+          <a-tag v-if="item.unify_deleted === 1" color="gray">Trashed</a-tag>
+          <a-tag v-else-if="item.unify_process === 0" color="yellow">Waiting</a-tag>
           <a-tag v-else-if="item.unify_process === 1" color="orange"
           >Eligibility Check
           </a-tag

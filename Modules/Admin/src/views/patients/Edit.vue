@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { reactive, h, ref, toRaw, computed, watch } from "vue";
-import { mdiBackspace, mdiContentSave, mdiAccountArrowUp } from '@mdi/js';
+import { mdiBackspace, mdiContentSave, mdiAccountArrowUp ,mdiTrashCanOutline } from '@mdi/js';
 import { BaseIcon ,InputUpload} from "@/components";
 import { ApiData } from "@/components";
 import { notification } from "ant-design-vue";
@@ -22,7 +22,7 @@ const prefix = 'patient'
 const {
   fetchDetailApi,
   createApi,
-  updateApi
+  updateApi,
 } = UseEloquentRouter(prefix)
 
 const listInsurances = fetchListInsurancesApi();
@@ -65,18 +65,20 @@ const fetch = async function () {
   if (nameRoute == 'patient-edit') {
     loading.value = true
     var response = await fetchDetailApi(id)
-    if(response.data.status === 200){
+    if (response.data.status === 200) {
       //prepare data
       const data = response.data.data
       data.insurance_coverages = JSON.parse(data.insurance_coverages);
       Object.assign(formState, data)
       loading.value = false
-    }else{
+    } else {
       notification.error({
         message: "Error",
         description: response.data.message,
       });
-      router.replace({ path: '/' + prefix })
+      setTimeout(() => {
+        router.replace({ path: '/' + prefix })
+      }, 3000);
     }
   } else {
     loading.value = false
@@ -156,6 +158,17 @@ const submitSellerApprove = () => {
       });
     })
 };
+const confirmDeletePatient = () => {
+  updateApi(formState.id, {
+    unify_deleted: 1,
+    unify_deleted_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    unify_deleted_by: auth.user.id,
+    log_detail: 'Delete patient',
+  }).then(rs => {
+    Object.assign(formState, rs.data.result)
+    router.replace({ path: '/' + prefix })
+  });
+};
 const closeDetail = function () {
   router.replace({ path: '/' + prefix })
 }
@@ -205,6 +218,16 @@ const closeDetail = function () {
               <span class="ml-1 text-white">Save And Active</span>
             </div>
           </a-button>
+          <a-popconfirm title="Are you sure delete this patient?" ok-text="Yes" cancel-text="No"
+            @confirm="confirmDeletePatient">
+            <a-button v-if="currentRoute.name == 'patient-edit' && auth.hasPermission('patient.delete')" type="primary"
+              danger class="!flex items-center">
+              <template #icon>
+                <BaseIcon :path="mdiTrashCanOutline" class="w-4 text-white"></BaseIcon>
+              </template>
+              Trash
+            </a-button>
+          </a-popconfirm>
           <a-button
             v-if="(currentRoute.name == 'patient-edit' && (auth.hasPermission('Seller') || auth.hasPermission('Seller Manager')) && formState.unify_process == 0)"
             @click="submitSellerApprove" type="primary" class="uppercase !bg-green-500 hover:!bg-green-400">
@@ -452,4 +475,5 @@ const closeDetail = function () {
 
 .ant-drawer-body {
   padding: 0 !important
-}</style>
+}
+</style>

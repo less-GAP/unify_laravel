@@ -74,7 +74,7 @@ export default defineComponent({
 
     watch(ctrl_k, (v) => {
       if (v)
-        showModal.value = !showModal.value
+        changeModal(true)
     })
 
     function changeModal(show) {

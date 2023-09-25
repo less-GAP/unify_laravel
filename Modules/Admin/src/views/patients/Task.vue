@@ -33,18 +33,10 @@ import {
   reviewTask,
   getStatusTask
 } from "@/utils/Task";
+import { UseDataTable } from "@/utils/UseDataTable";
 
 const prefix = "patient";
 const { fetchDetailApi, updateApi } = UseEloquentRouter(prefix);
-
-const fetchTaskByPatientApi = function (patient_id) {
-  return Api.get("task/list", {
-    params: {
-      patient_id: patient_id,
-      deleted: 0,
-    },
-  });
-};
 
 defineProps({
   value: {
@@ -59,7 +51,7 @@ defineProps({
 const formState = reactive({
   tasks: [],
 });
-const taskHistory = ref([]);
+// const taskHistory = ref([]);
 const formRef = ref();
 const loading = ref(false);
 const auth = useAuthStore();
@@ -70,17 +62,6 @@ const fetch = async function () {
   needToDoList = [];
   var id = router.currentRoute.value.params.id;
   const response = await fetchDetailApi(id);
-  const responseTask = await fetchTaskByPatientApi(id);
-  taskHistory.value = responseTask.data;
-  if (taskHistory.value.length > 0) {
-    taskHistory.value.forEach((item, index) => {
-      if (item.task_process != 3 || item.deleted != 1) {
-        taskHistory.value.splice(index, 1);
-      }
-      item.assignees = JSON.parse(item.assignees);
-    });
-  }
-  console.log(taskHistory.value);
   if (response.data.status === 200) {
     const data = response.data.data;
     Object.assign(formState, data, true);
@@ -171,17 +152,29 @@ const addTask = function () {
     txt += "- " + item.value + "\n";
   });
   formTaskState.description = txt;
-  formTaskState.assignees = [{
-    value: formState.sale_user,
-  }];
+  formTaskState.assignees = [formState.sale_user];
   formTaskState.name = "Check & Update for " + formState.full_name;
   openModal.value = true;
 };
-
 const detailTask = function (task) {
   Object.assign(taskDetail, task);
-  // taskDetail.assignees = JSON.parse(taskDetail.assignees);
-  // console.log(taskDetail.assignees);
+
+  const { fetchListApi } = UseEloquentRouter('activity', {
+    include: "user",
+    order: "-id",
+  });
+  const tableConfig = ref({});
+  tableConfig.value = UseDataTable(fetchListApi, {
+    showSelection: false,
+    globalSearch: false,
+    pagination: {
+      perPage: 10,
+    },
+    filter: {
+      subject_id: taskDetail.id,
+      subject_type: "App\\Models\\Task",
+    },
+  });
   openModalDetail.value = true;
 }
 
@@ -395,8 +388,8 @@ const age = (dob) => {
                             </a-tooltip>
                           </div>
                           <h4 :style="checkOutDate(task) ? 'color: red;' : ''" class="text-sm font-medium">
-                            <a-tag v-if="getStatusTask(task.task_process)"
-                              :color="getStatusTask(task.task_process).color" class="!mr-2">
+                            <a-tag v-if="getStatusTask(task.task_process)" :color="getStatusTask(task.task_process).color"
+                              class="!mr-2">
                               <template #icon>
                                 <CheckCircleOutlined v-if="task.task_process === 3" />
                                 <SyncOutlined v-if="task.task_process === 1" :spin="true" />
@@ -411,13 +404,13 @@ const age = (dob) => {
                           <div class="text-xs text-gray-400" v-html="formatDescription(task.description)"></div>
                           <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-400">
                             <div class="flex items-center">
-                              <svg class="w-4 h-4 text-gray-300 fill-current" xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 20 20" fill="currentColor">
+                              <svg v-if="task.deadline_at" class="w-4 h-4 text-gray-300 fill-current"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd"
                                   d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
                                   clip-rule="evenodd"></path>
                               </svg>
-                              <span class="ml-1 leading-none" v-html="task.deadline_at
+                              <span v-if="task.deadline_at" class="ml-1 leading-none" v-html="task.deadline_at
                                 ? dayjs(task.deadline_at).format(
                                   'HH:mm MM-DD-YYYY'
                                 )
@@ -456,7 +449,8 @@ const age = (dob) => {
                   draggable="true">
                   <div class="absolute top-0 right-0 flex items-center mt-3 mr-2 space-x-1 action">
                     <a-tag v-if="task.task_process === 3 && task.deleted != 1" color="green" class="!flex items-center">
-                      <BaseIcon :path="mdiCheckboxMarkedCircle" class="!text-green-500 !mr-1"></BaseIcon> <span>Done</span>
+                      <BaseIcon :path="mdiCheckboxMarkedCircle" class="!text-green-500 !mr-1"></BaseIcon>
+                      <span>Done</span>
                     </a-tag>
                     <a-tag v-if="task.deleted != 0" color="red" class="!flex items-center">
                       <BaseIcon :path="mdiTrashCan" class="!text-red-500 !mr-1"></BaseIcon> <span>Trashed</span>
@@ -468,13 +462,13 @@ const age = (dob) => {
                   <div class="text-xs text-gray-400" v-html="formatDescription(task.description)"></div>
                   <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-400">
                     <div class="flex items-center">
-                      <svg class="w-4 h-4 text-gray-300 fill-current" xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20" fill="currentColor">
+                      <svg v-if="task.deadline_at" class="w-4 h-4 text-gray-300 fill-current"
+                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd"
                           d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
                           clip-rule="evenodd"></path>
                       </svg>
-                      <span class="ml-1 leading-none" v-html="task.deadline_at
+                      <span v-if="task.deadline_at" class="ml-1 leading-none" v-html="task.deadline_at
                         ? dayjs(task.deadline_at).format(
                           'HH:mm MM-DD-YYYY'
                         )
@@ -591,9 +585,35 @@ const age = (dob) => {
       </div>
       <!-- Comment & Log -->
       <div class="comment">
+        <a-divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0"
+          plain>Logs</a-divider>
+        <DataTable v-bind="tableConfig">
+          <template #table="{
+            tableConfig,
+            tableData,
+            data,
+            columns,
+            selectionActions,
+            reload,
+          }">
+            <a-timeline v-if="data.length > 0" class="!m-5">
+              <a-timeline-item v-for="item in data" color="green" class="!mb-5">
+                <div class="flex items-center">
+                  <img class="w-6 h-6 rounded-full" :src="item.user?.profile_photo_url" />
+                  <div class="mx-2 by">{{ item.user?.full_name }}</div>
+                  <a-tag>{{ item.event }}</a-tag>
+                  <div class="ml-auto text-xs text-gray-500">
+                    at {{ $format.formatDateTime(item.created_at) }}
+                  </div>
+                </div>
+                <div class="text-xs">{{ formatDescription(item.description) }}</div>
+              </a-timeline-item>
+            </a-timeline>
+          </template>
+        </DataTable>
         <a-form>
-          <a-divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0" plain>Comments &
-            Logs</a-divider>
+          <a-divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0"
+            plain>Comments</a-divider>
           <div class="mt-4"><!--Log created-->
             <div class="flex items-center gap-2">
               <a-avatar-group>
