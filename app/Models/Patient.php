@@ -59,8 +59,11 @@ class Patient extends Model
         'unify_deleted_at',
         'unify_deleted_by',
         'sale_user',
+        'images',
     ];
-
+    protected $casts = [
+        'images' => 'array',
+    ];
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -69,7 +72,7 @@ class Patient extends Model
             ->setDescriptionForEvent(fn(string $eventName) => request()->input('log_detail',$eventName))
             ->dontSubmitEmptyLogs();
     }
-    
+
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
