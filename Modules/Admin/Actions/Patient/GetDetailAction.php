@@ -26,6 +26,25 @@ class GetDetailAction
 
         if (!$patient) return $result_fail;
 
+        $result_trash_admin = [
+            'status' => 200,
+            'message' => 'Patient is trashed!',
+            'data' => $patient
+        ];
+        $result_trash_not_admin = [
+            'status' => 404,
+            'message' => 'Patient is trashed!',
+            'data' => [],
+        ];
+
+        if ($patient->unify_deleted == 1){
+            if($user->hasRole('Admin')){
+                return $result_trash_admin;
+            } else {
+                return $result_trash_not_admin;
+            }
+        }
+
         $tasks = $patient->tasks;
         $assignees = [];
         foreach ($tasks as $task) {

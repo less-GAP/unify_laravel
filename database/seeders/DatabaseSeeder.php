@@ -96,11 +96,13 @@ class DatabaseSeeder extends Seeder
         Permission::findOrCreate('patient.approve');
         Permission::findOrCreate('patient.create');
         Permission::findOrCreate('patient.edit');
+        Permission::findOrCreate('patient.delete');
 
         Permission::findOrCreate('doctor.*');
         Permission::findOrCreate('doctor.list');
         Permission::findOrCreate('doctor.create');
         Permission::findOrCreate('doctor.edit');
+        Permission::findOrCreate('doctor.delete');
 
         Permission::findOrCreate('user.*');
         Permission::findOrCreate('user.list');
@@ -124,7 +126,7 @@ class DatabaseSeeder extends Seeder
 
         // $role_seller->givePermissionTo('post.*');
         $role_seller->givePermissionTo(['Seller', 'patient.list','patient.view', 'patient.create', 'patient.edit', 'task.list', 'task.working', 'file.*']);
-        $role_seller_manager->givePermissionTo('Seller Manager', 'task.*', 'patient.list','patient.view', 'patient.filter.doctor', 'patient.filter.seller', 'patient.create', 'patient.edit', 'file.*', 'user.*');
+        $role_seller_manager->givePermissionTo('Seller Manager', 'task.*', 'patient.list','patient.view', 'patient.delete', 'patient.filter.doctor', 'patient.filter.seller', 'patient.create', 'patient.edit', 'file.*', 'user.*');
         $role_admin->givePermissionTo('*');
 
 

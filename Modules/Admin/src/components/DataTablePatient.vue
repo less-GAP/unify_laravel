@@ -113,6 +113,10 @@ const listStatusPatient = ref([
     value: 'decease',
     label: 'Decease',
   },
+  {
+    value: 'trashed',
+    label: 'Trashed',
+  },
 ]);
 
 const nameAssignee = (user, isFull) => {

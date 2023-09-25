@@ -80,7 +80,6 @@ const fetch = async function () {
       item.assignees = JSON.parse(item.assignees);
     });
   }
-  console.log(taskHistory.value);
   if (response.data.status === 200) {
     const data = response.data.data;
     Object.assign(formState, data, true);
@@ -171,9 +170,7 @@ const addTask = function () {
     txt += "- " + item.value + "\n";
   });
   formTaskState.description = txt;
-  formTaskState.assignees = [{
-    value: formState.sale_user,
-  }];
+  formTaskState.assignees = [formState.sale_user];
   formTaskState.name = "Check & Update for " + formState.full_name;
   openModal.value = true;
 };

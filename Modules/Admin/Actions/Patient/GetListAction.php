@@ -66,16 +66,20 @@ class GetListAction
                     case 'decease':
                         $query->where('unify_status', '=', 3);
                         break;
+                    case 'trashed':
+                        $query->where('unify_deleted', '=', 1);
+                        break;
                     default:
                         break;
                 }
+                if($filter['status'] === 'trashed'){
+                    $query->where('unify_deleted', '=', 1);
+                }else{
+                    $query->where('unify_deleted', '=', 0);
+                }
+            }else{
+                $query->where('unify_deleted', '=', 0);
             }
-        }
-
-        if ($request->input('deleted') !== null) {
-            $query->where('unify_deleted', $request->input('deleted'));
-        }else{
-            $query->where('unify_deleted', 0);
         }
 
         if ($request->input('sort') !== null) {
