@@ -71,7 +71,7 @@ const tableConfig = {
   globalSearch: true,
   ...props.tableConfig,
 };
-console.log(props);
+
 const tableData = ref({});
 const data = ref(null);
 const filter = ref({

@@ -72,7 +72,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         ->handle(
             \App\Models\LogActivity::class,
             [
-                'allowedIncludes' => ['users', 'subject'],
+                'allowedIncludes' => ['users'],
                 'allowedFilters' => [
                     AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'description'),
                 ]

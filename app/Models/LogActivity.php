@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Patient;
 use App\Models\Task;
 use App\Models\Doctor;
+use App\Models\User;
 
 class LogActivity extends \Spatie\Activitylog\Models\Activity
 {
@@ -26,4 +27,14 @@ class LogActivity extends \Spatie\Activitylog\Models\Activity
 
         return $nameLog;
     }
+    public function getCauserAttribute()
+    {
+        $user = User::find($this->attributes['causer_id']);
+        return $user;
+    }
+
+    protected $appends = [
+        'name_log',
+        'causer'
+    ];
 }
