@@ -411,7 +411,7 @@ const closeDetail = function () {
             <a-form-item label="Doctor" name="doctor">
               <a-select v-model:value="formState.doctor_id" allowClear="" class="w-full" showSearch
                 placeholder="Select a doctor">
-                <a-select-option v-for="(doctor, index) in listDoctors" :key="doctor.value" :value="doctor.value">{{
+                <a-select-option v-for="(doctor, index) in listDoctors" :key="doctor.value" :value="parseInt(doctor.value)">{{
                   doctor.label
                 }}</a-select-option>
               </a-select>
