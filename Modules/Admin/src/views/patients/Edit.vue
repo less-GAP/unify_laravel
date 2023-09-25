@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { reactive, h, ref, toRaw, computed, watch } from "vue";
 import { mdiBackspace, mdiContentSave, mdiAccountArrowUp } from '@mdi/js';
-import { BaseIcon } from "@/components";
+import { BaseIcon ,InputUpload} from "@/components";
 import { ApiData } from "@/components";
 import { notification } from "ant-design-vue";
 import router from "@/router";
@@ -10,6 +10,7 @@ import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import { getProcess } from "@/utils/Patient";
 import InsuranceListEdit from "@/components/InsuranceListEdit.vue";
 import dayjs from 'dayjs';
+
 import {
   fetchListInsurancesApi,
   fetchListDoctorsApi,
@@ -420,6 +421,11 @@ const closeDetail = function () {
             <a-form-item label="Data" name="unify_data">
               <a-textarea class="!rounded-none w-full" v-model:value="formState.unify_data"
                 :auto-size="{ minRows: 2, maxRows: 10 }" />
+            </a-form-item>
+          </div>
+          <div class="w-full px-4 mb-4 md:w-1/2">
+            <a-form-item label="Data" name="unify_data">
+             <InputUpload :multiple="true" v-model:value="formState.images"></InputUpload>
             </a-form-item>
           </div>
         </div>

@@ -70,7 +70,9 @@ import InputTags from "./InputTags.vue"
 import DataListEdit from "./DataListEdit.vue"
 import InsuranceListEdit from "./InsuranceListEdit.vue"
 import ApiData from "./ApiData.vue"
+import AsyncData from "./AsyncData.vue"
 export {
+  AsyncData,
   ApiData,
   InsuranceListEdit,
   DataListEdit,

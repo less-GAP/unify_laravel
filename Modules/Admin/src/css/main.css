@@ -187,3 +187,9 @@
 .uni-main-container textarea.ant-input{
   border: 2px solid #d1d5db !important;
 }
+.box {
+  box-shadow: 0 3px 5px #0000000b;
+  border-radius: 0.5rem;
+  border-width: 1px;
+  padding: 5px;
+}

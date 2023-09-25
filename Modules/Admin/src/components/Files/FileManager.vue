@@ -142,7 +142,7 @@ reload()
     <div :loading="loading" class="flex items-center justify-between">
       <a-space>
 
-        <a-input
+        <a-input-search
           v-if="tableConfig.globalSearch"
           allow-clear
           @keyup.enter="reload"
@@ -163,12 +163,12 @@ reload()
             Click to Upload
           </a-button>
         </a-upload>
-        <a-upload :showUploadList="false" :customRequest="onFilesSelect" directory>
-          <a-button>
-            <FolderOpenOutlined></FolderOpenOutlined>
-            Upload Directory
-          </a-button>
-        </a-upload>
+<!--        <a-upload :showUploadList="false" :customRequest="onFilesSelect" directory>-->
+<!--          <a-button>-->
+<!--            <FolderOpenOutlined></FolderOpenOutlined>-->
+<!--            Upload Directory-->
+<!--          </a-button>-->
+<!--        </a-upload>-->
       </a-space>
       <span>
 
@@ -191,16 +191,16 @@ reload()
             </a-menu>
           </template>
           <a-button>
-            Actions
+            Hành động
             <DownOutlined/>
           </a-button>
         </a-dropdown>
 
-        <a-button type="primary" v-if="addAction" @click="()=>{addAction(reload)}">Add new</a-button>
+        <a-button type="primary" v-if="addAction" @click="()=>{addAction(reload)}">Thêm mới</a-button>
 
       </a-space>
     </div>
-    <div class="mt-12 mb-12 grid grid-cols-2 md:grid-cols-6 gap-4">
+    <div class="mt-12 mb-12 grid grid-cols-2 md:grid-cols-6  gap-4">
       <div v-for="file in inProgressFiles"
            class="cursor-pointer border-2 border-gray-100  hover:border-blue-700  h-[150px] mb-5  rounded-lg overflow:hidden">
         <a-progress type="circle" :percent="file.percent"/>
@@ -221,7 +221,7 @@ reload()
         >
           <file-outlined style="margin:0 auto;font-size: 30px" />
         </div>
-        <div class="absolute whitespace-nowrap text-center overflow-hidden text-ellipsis -bottom-[40px] w-full pl-2 pr-2 ">
+        <div class="absolute whitespace-nowrap text-center overflow-hidden text-ellipsis -bottom-[40px] bg-white w-full pl-2 pr-2 ">
           {{ image.file_name }}
         </div>
       </div>
