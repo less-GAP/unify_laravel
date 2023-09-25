@@ -1,7 +1,5 @@
 <template>
   <slot></slot>
-
-
   <a-space class="mb-2 w-full">
     <a-upload
       :multiple="multiple"
@@ -137,6 +135,7 @@ export default defineComponent({
     });
     if (!Array.isArray(props.value) && props.multiple) {
       emit('update:value', []);
+      emit('change', []);
     }
 
     function updateFileList() {
@@ -188,11 +187,15 @@ export default defineComponent({
           },
           url: options.action,
         })
-        let tmp = null
+        let tmp = []
         if (!props.multiple) {
           tmp = res.data
         } else {
-          tmp = [...props.value]
+          if (Array.isArray(props.value)) {
+
+            tmp = [...props.value]
+          }
+
           tmp.push(res.data)
         }
         emit('change', tmp);

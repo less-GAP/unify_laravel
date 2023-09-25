@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('master_data', function (Blueprint $table) {
-            $table->string('list_key')->unique();
-            $table->longText('data')->nullable();
-            $table->string('created_by')->nullable();
-            $table->string('updated_by')->nullable();
-            $table->timestamps();
+        Schema::table('patients', function (Blueprint $table) {
+            $table->text('images')->nullable();
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('master_data');
+        Schema::table('patients', function (Blueprint $table) {
+            $table->dropColumn('images');
+        });
     }
 };
