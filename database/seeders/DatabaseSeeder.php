@@ -117,6 +117,8 @@ class DatabaseSeeder extends Seeder
         Permission::findOrCreate('task.working');
         Permission::findOrCreate('task.review');
         Permission::findOrCreate('task.delete');
+        
+        Permission::findOrCreate('log.list');
 
         Permission::findOrCreate('file.*');
 
