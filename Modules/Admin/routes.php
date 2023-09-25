@@ -16,7 +16,25 @@ Route::get('/', function () {
 Route::post('auth/login', \Modules\Admin\Actions\Auth\PostLoginAction::class . '@handle');
 Route::post('submit-patient', \Modules\Admin\Actions\SubmitPatientAction::class . '@handle');
 
+EloquentRouter::prefix('master-data')
+    ->handle(
+        \App\Models\MasterData::class,
+        []
+    )->routes(function () {
+        Route::get('{listKey}/options', \Modules\Admin\Actions\MasterData\GetOptionsAction::class . '@handle');
+    });
+
+
+Route::prefix('/config')->group(function () {
+    Route::get('/', \Modules\Admin\Actions\Config\GetListAction::class . '@handle');
+});
+
 Route::middleware([AdminIsAuthenticated::class])->group(function () {
+    Route::prefix('/config')->group(function () {
+        Route::post('/', \Modules\Admin\Actions\Config\PostAction::class . '@handle');
+        Route::post('/testSmtp', \Modules\Admin\Actions\Config\PostTestSmtpAction::class . '@handle');
+    });
+
     Route::prefix('/auth')->group(function () {
         Route::get('userInfo', GetUserInfoAction::class . '@handle');
     });
@@ -101,10 +119,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                 'allowedIncludes' => ['user'],
                 'allowedSorts' => ['id'],
                 'allowedFilters' => [
-                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'description')
-                    , AllowedFilter::exact('causer_id')
-                    , AllowedFilter::exact('subject_id')
-                    , AllowedFilter::exact('subject_type')
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'description'), AllowedFilter::exact('causer_id'), AllowedFilter::exact('subject_id'), AllowedFilter::exact('subject_type')
                 ]
             ]
         )->routes(function () {
@@ -130,12 +145,6 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             ]
         );
 
-
-    Route::prefix('/config')->group(function () {
-        Route::get('/', \Modules\Admin\Actions\Config\GetListAction::class . '@handle');
-        Route::post('/', \Modules\Admin\Actions\Config\PostAction::class . '@handle');
-        Route::post('/testSmtp', \Modules\Admin\Actions\Config\PostTestSmtpAction::class . '@handle');
-    });
     Route::prefix('/customer')->group(function () {
         Route::get('list', \Modules\Admin\Actions\Customer\GetListAction::class . '@handle');
         Route::post('activeList', \Modules\Admin\Actions\Customer\PostActiveListAction::class . '@handle');
@@ -166,13 +175,6 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         Route::delete('{id}', \Modules\Admin\Actions\Countries\DeleteAction::class . '@handle');
     });
 
-    EloquentRouter::prefix('master-data')
-        ->handle(
-            \App\Models\MasterData::class,
-            []
-        )->routes(function () {
-            Route::get('{listKey}/options', \Modules\Admin\Actions\MasterData\GetOptionsAction::class . '@handle');
-        });
     EloquentRouter::prefix('permissions')
         ->handle(
             \App\Models\Permission::class,
