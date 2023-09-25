@@ -140,7 +140,6 @@ export default [{
     permission: 'logs.list',
     label: "Logs",
     icon: mdiClockTimeTwo,
-    disable: true,
   },
   {
     to: "/forms",

@@ -59,7 +59,6 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         ->handle(
             \App\Models\Doctor::class,
             [
-
                 'allowedFilters' => [
                     AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name'),
                 ]
@@ -67,6 +66,20 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         )->routes(
             function () {
                 Route::get('list', \Modules\Admin\Actions\Doctor\GetListAction::class . '@handle');
+            }
+        );
+    EloquentRouter::prefix('logs')
+        ->handle(
+            \App\Models\LogActivity::class,
+            [
+                'allowedIncludes' => ['users'],
+                'allowedFilters' => [
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'description'),
+                ]
+            ]
+        )->routes(
+            function () {
+                // Route::get('list', \Modules\Admin\Actions\Doctor\GetListAction::class . '@handle');
             }
         );
     EloquentRouter::prefix('task')
