@@ -43,12 +43,12 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             Route::get('/options', \Modules\Admin\Actions\User\GetUserOptionsAction::class . '@handle');
             Route::get('list', \Modules\Admin\Actions\User\GetUserListAction::class . '@handle');
             Route::post('{id?}', \Modules\Admin\Actions\User\PostUserAction::class . '@handle');
-            Route::delete('{id}', \Modules\Admin\Actions\User\DeleteUserAction::class . '@handle');
+            // Route::delete('{id}', \Modules\Admin\Actions\User\DeleteUserAction::class . '@handle');
         })
         ->handle(
             \App\Models\User::class,
             [
-                'allowedIncludes' => ['roles', 'roles.permissions', 'permissions'],
+                'allowedIncludes' => ['roles', 'roles.permissions', 'permissions', 'logs'],
                 'allowedFilters' => [
                     AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,username'), AllowedFilter::custom('roles.name', new \App\Builder\Filters\SearchRelationShip, 'roles.name')
                 ]
@@ -72,7 +72,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         ->handle(
             \App\Models\LogActivity::class,
             [
-                'allowedIncludes' => ['users'],
+                'allowedIncludes' => ['users', 'subject'],
                 'allowedFilters' => [
                     AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'description'),
                 ]
