@@ -138,7 +138,7 @@ const age = (item) => {
 
 const tableConfig = UseDataTable(fetchListApi, {
   columns,
-  showSelection: true,
+  showSelection: false,
   showSort: [
     {
       label: "Latest",
