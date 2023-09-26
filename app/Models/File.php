@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class File extends BaseModel
 {
-    use CreatedUpdatedByAdmin;
+
     protected $table = 'files';
     public $timestamps = true;
 

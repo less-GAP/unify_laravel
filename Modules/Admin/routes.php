@@ -97,6 +97,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         )->routes(
             function () {
                 Route::get('list', \Modules\Admin\Actions\Task\GetListAction::class . '@handle');
+                // Route::get('{id}', \Modules\Admin\Actions\Task\GetDetailAction::class . '@handle');
             }
         );
     EloquentRouter::prefix('post')

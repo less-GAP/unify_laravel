@@ -613,44 +613,7 @@ const age = (dob) => {
         <a-form>
           <a-divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0"
             plain>Comments</a-divider>
-          <div class="mt-4"><!--Log created-->
-            <div class="flex items-center gap-2">
-              <a-avatar-group>
-                <a-avatar style="background-color: orange">{{ nameAssignee(taskDetail.created_by) }}</a-avatar>
-              </a-avatar-group>
-              <div class="w-full">
-                <h5 class="font-semibold">{{ nameAssignee(taskDetail.created_by, true) }}
-                  <small class="font-normal">created this task.</small>
-                  <small class="float-right font-normal">{{ dayjs(taskDetail.created_at).fromNow() }}</small>
-                </h5>
-              </div>
-            </div>
-            <div class="mt-4" v-if="taskDetail.is_completed != 0"><!--Log completed-->
-              <div class="flex items-center gap-2">
-                <a-avatar-group>
-                  <a-avatar style="background-color: orange">{{ nameAssignee(taskDetail.created_by) }}</a-avatar>
-                </a-avatar-group>
-                <div class="w-full">
-                  <h5 class="font-semibold">{{ nameAssignee(taskDetail.created_by, true) }}
-                    <small class="font-normal">have completed this task.</small>
-                    <small class="float-right font-normal">{{ dayjs(taskDetail.completed_at).fromNow() }}</small>
-                  </h5>
-                </div>
-              </div>
-            </div>
-            <div class="mt-4" v-if="taskDetail.deleted != 0"><!--Log deleted-->
-              <div class="flex items-center gap-2">
-                <a-avatar-group>
-                  <a-avatar style="background-color: orange">{{ nameAssignee(taskDetail.deleted_by) }}</a-avatar>
-                </a-avatar-group>
-                <div class="w-full">
-                  <h5 class="font-semibold">{{ nameAssignee(taskDetail.deleted_by, true) }}
-                    <small class="font-normal">have deleted this task.</small>
-                    <small class="float-right font-normal">{{ dayjs(taskDetail.deleted_at).fromNow() }}</small>
-                  </h5>
-                </div>
-              </div>
-            </div>
+          <div class="">
             <div class="mt-4">
               <div class="flex gap-2">
                 <a-avatar-group>
@@ -741,5 +704,13 @@ const age = (dob) => {
   display: block !important;
 }
 
-.table-task {}
+.comment .shadow{
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+.comment .shadow .ant-timeline{
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-bottom: 0 !important;
+}
 </style>
