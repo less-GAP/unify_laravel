@@ -447,7 +447,7 @@ const closeDetail = function () {
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2">
-            <a-form-item label="Data" name="unify_data">
+            <a-form-item label="Gallery" name="unify_data">
              <InputUpload :multiple="true" v-model:value="formState.images"></InputUpload>
             </a-form-item>
           </div>

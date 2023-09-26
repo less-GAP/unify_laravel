@@ -170,12 +170,12 @@ The issue list is reserved exclusively for bug reports and feature requests. Tha
 
 ## Licensing
 
-- Copyright &copy; 2019-2022 less[GAP] Solutions (https://justboil.me)
+- Copyright &copy; 2019-2022 Unifymed (https://justboil.me)
 - Licensed under MIT
 
 ## Useful Links
 
-- [less[GAP] Solutions](https://justboil.me/)
+- [Unifymed](https://justboil.me/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Vue.js 3](https://v3.vuejs.org/)
 - [Vite](https://vitejs.dev)
