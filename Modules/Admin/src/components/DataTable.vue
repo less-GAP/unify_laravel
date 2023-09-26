@@ -178,7 +178,7 @@ reload(true);
         selectionActions,
         reload,
       }">
-        <table v-if="data?.data?.length > 0" class="w-full table-auto">
+        <table v-if="data?.data?.length !== 0" class="w-full table-auto">
           <thead class="text-xs font-semibold text-white uppercase bg-gray-700">
             <tr>
               <th v-if="showSelection" width="30" scope="col" class="p-2 whitespace-nowrap">
