@@ -16,7 +16,7 @@ import {
   mdiCheckboxMarkedCircle,
   mdiReply
 } from "@mdi/js";
-import { BaseIcon } from "@/components";
+import { BaseIcon, DataTable } from "@/components";
 import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
@@ -156,14 +156,13 @@ const addTask = function () {
   formTaskState.name = "Check & Update for " + formState.full_name;
   openModal.value = true;
 };
+const tableConfig = ref(null);
 const detailTask = function (task) {
   Object.assign(taskDetail, task);
 
   const { fetchListApi } = UseEloquentRouter('activity', {
-    include: "user",
     order: "-id",
   });
-  const tableConfig = ref({});
   tableConfig.value = UseDataTable(fetchListApi, {
     showSelection: false,
     globalSearch: false,
@@ -587,7 +586,7 @@ const age = (dob) => {
       <div class="comment">
         <a-divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0"
           plain>Logs</a-divider>
-        <DataTable v-bind="tableConfig">
+        <DataTable v-if="tableConfig" v-bind="tableConfig">
           <template #table="{
             tableConfig,
             tableData,
@@ -599,8 +598,8 @@ const age = (dob) => {
             <a-timeline v-if="data.length > 0" class="!m-5">
               <a-timeline-item v-for="item in data" color="green" class="!mb-5">
                 <div class="flex items-center">
-                  <img class="w-6 h-6 rounded-full" :src="item.user?.profile_photo_url" />
-                  <div class="mx-2 by">{{ item.user?.full_name }}</div>
+                  <img class="w-6 h-6 rounded-full" :src="item.causer?.profile_photo_url" />
+                  <div class="mx-2 by">{{ item.causer?.full_name }}</div>
                   <a-tag>{{ item.event }}</a-tag>
                   <div class="ml-auto text-xs text-gray-500">
                     at {{ $format.formatDateTime(item.created_at) }}
