@@ -1,6 +1,6 @@
 <template>
   <slot></slot>
-  <a-space class="mb-2 w-full">
+  <a-space class="w-full mb-2">
     <a-upload
       :multiple="multiple"
       v-bind="$attrs"
@@ -43,12 +43,12 @@
                    :alt="alt"/>
           <file-outlined v-else style="margin:auto;margin-top:80px;font-size: 30px"/>
         </template>
-        <a-button @click="deleteItem(index)" type="link" danger
+        <!-- <a-button @click="deleteItem(index)" type="link" danger
                   style="position: absolute;right:2px;bottom:2px" size="compact">
           <template #icon>
             <DeleteOutlined></DeleteOutlined>
           </template>
-        </a-button>
+        </a-button> -->
       </a-card>
     </template>
   </a-image-preview-group>
