@@ -12,7 +12,7 @@ import Api from "@/utils/Api";
 const prefix = "activity";
 const patientId = router.currentRoute.value.params.id;
 const { fetchDetailApi, fetchListApi } = UseEloquentRouter(prefix, {
-  include: "user",
+  // include: "user",
   order: "-id",
 });
 const tableConfig = UseDataTable(fetchListApi, {
@@ -133,8 +133,8 @@ const closeDetail = function () {
                 <a-timeline v-if="data.length > 0" class="!m-5">
                   <a-timeline-item v-for="item in data" color="green" class="!mb-5">
                     <div class="flex items-center">
-                      <img class="w-6 h-6 rounded-full" :src="item.user?.profile_photo_url" />
-                      <div class="mx-2 by">{{ item.user?.full_name }}</div>
+                      <img class="w-6 h-6 rounded-full" :src="item.causer?.profile_photo_url" />
+                      <div class="mx-2 by">{{ item.causer?.full_name }}</div>
                       <a-tag>{{ item.event }}</a-tag>
                       <div class="ml-auto text-xs text-gray-500">
                         at {{ $format.formatDateTime(item.created_at) }}
