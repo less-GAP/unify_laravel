@@ -17,7 +17,7 @@
     </div>
     <div :key="term" class="p-5">
       <template v-for="SearchItem in SearchItems">
-        <AsyncData :async="SearchItem.search(term)">
+        <AsyncData v-if="$auth.hasPermission(SearchItem.permission)" :async="SearchItem.search(term)">
           <template #default="{data}">
             <div v-if="data.length" class="font-medium mb-3">{{ SearchItem.label }}</div>
             <div v-if="data.length" class="mb-3">
