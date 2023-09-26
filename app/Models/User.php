@@ -101,8 +101,8 @@ class User extends Authenticatable
     }
 
 
-    public function logs(): HasMany
+    public function logs()
     {
-        return $this->hasMany(LogActivity::class);
+        return $this->actions();
     }
 }

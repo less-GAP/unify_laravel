@@ -1,0 +1,159 @@
+2023-09-26 04:23:05,268 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2023-09-26 04:23:05,268 WARN For [program:http], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:23:05,268 WARN For [program:scheduler], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:23:05,268 WARN For [program:worker], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:23:05,268 WARN For [program:worker], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:23:05,268 WARN For [program:worker], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:23:05,268 WARN For [program:worker], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:23:05,268 WARN For [program:worker], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:23:05,268 WARN For [program:worker], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:23:05,268 WARN For [program:worker], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:23:05,268 WARN For [program:worker], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:23:05,268 INFO Included extra file "/etc/supervisor/conf.d/app.conf" during parsing
+2023-09-26 04:23:05,271 INFO RPC interface 'supervisor' initialized
+2023-09-26 04:23:05,271 INFO RPC interface 'supervisor' initialized
+2023-09-26 04:23:05,271 CRIT Server 'unix_http_server' running without any HTTP authentication checking
+2023-09-26 04:23:05,271 INFO supervisord started with pid 13
+2023-09-26 04:23:06,274 INFO spawned: 'http' with pid 14
+2023-09-26 04:23:06,275 INFO spawned: 'scheduler' with pid 15
+2023-09-26 04:23:06,276 INFO spawned: 'worker_00' with pid 16
+2023-09-26 04:23:06,276 INFO spawned: 'worker_01' with pid 17
+2023-09-26 04:23:06,277 INFO spawned: 'worker_02' with pid 18
+2023-09-26 04:23:06,278 INFO spawned: 'worker_03' with pid 20
+2023-09-26 04:23:06,279 INFO spawned: 'worker_04' with pid 21
+2023-09-26 04:23:06,279 INFO spawned: 'worker_05' with pid 22
+2023-09-26 04:23:06,280 INFO spawned: 'worker_06' with pid 23
+2023-09-26 04:23:06,281 INFO spawned: 'worker_07' with pid 24
+2023-09-26 04:23:06,405 DEBG 'http' stdout output:
+
+   INFO  Server running…
+
+2023-09-26 04:23:06,405 INFO success: http entered RUNNING state, process has stayed up for > than 0 seconds (startsecs)
+2023-09-26 04:23:06,405 DEBG 'http' stdout output:
+
+  Local: http://0.0.0.0:9100 
+
+  Press Ctrl+C to stop the server
+
+
+2023-09-26 04:23:07,406 INFO success: scheduler entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:23:07,406 INFO success: worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:23:07,406 INFO success: worker_01 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:23:07,406 INFO success: worker_02 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:23:07,406 INFO success: worker_03 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:23:07,406 INFO success: worker_04 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:23:07,406 INFO success: worker_05 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:23:07,406 INFO success: worker_06 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:23:07,406 INFO success: worker_07 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:24:06,354 DEBG 'scheduler' stdout output:
+
+
+2023-09-26 04:24:06,357 DEBG 'scheduler' stdout output:
+   INFO  No scheduled commands are ready to run.  
+
+
+2023-09-26 04:24:06,360 DEBG fd 11 closed, stopped monitoring <POutputDispatcher at 139751825482080 for <Subprocess at 139751825370752 with name scheduler in state RUNNING> (stdout)>
+2023-09-26 04:24:06,360 DEBG fd 15 closed, stopped monitoring <POutputDispatcher at 139751825204512 for <Subprocess at 139751825370752 with name scheduler in state RUNNING> (stderr)>
+2023-09-26 04:24:06,360 INFO exited: scheduler (exit status 0; expected)
+2023-09-26 04:24:06,360 DEBG received SIGCHLD indicating a child quit
+2023-09-26 04:24:07,363 INFO spawned: 'scheduler' with pid 87
+2023-09-26 04:24:08,364 INFO success: scheduler entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:25:07,455 DEBG 'scheduler' stdout output:
+
+
+2023-09-26 04:25:07,457 DEBG 'scheduler' stdout output:
+   INFO  No scheduled commands are ready to run.  
+
+
+2023-09-26 04:25:07,462 DEBG fd 11 closed, stopped monitoring <POutputDispatcher at 139751825204848 for <Subprocess at 139751825370752 with name scheduler in state RUNNING> (stdout)>
+2023-09-26 04:25:07,462 DEBG fd 17 closed, stopped monitoring <POutputDispatcher at 139751825204704 for <Subprocess at 139751825370752 with name scheduler in state RUNNING> (stderr)>
+2023-09-26 04:25:07,462 INFO exited: scheduler (exit status 0; expected)
+2023-09-26 04:25:07,462 DEBG received SIGCHLD indicating a child quit
+2023-09-26 04:25:08,464 INFO spawned: 'scheduler' with pid 91
+2023-09-26 04:25:09,466 INFO success: scheduler entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:26:08,562 DEBG 'scheduler' stdout output:
+
+
+2023-09-26 04:26:08,564 DEBG 'scheduler' stdout output:
+   INFO  No scheduled commands are ready to run.  
+
+
+2023-09-26 04:26:08,569 DEBG fd 11 closed, stopped monitoring <POutputDispatcher at 139751825204560 for <Subprocess at 139751825370752 with name scheduler in state RUNNING> (stdout)>
+2023-09-26 04:26:08,569 DEBG fd 17 closed, stopped monitoring <POutputDispatcher at 139751825204896 for <Subprocess at 139751825370752 with name scheduler in state RUNNING> (stderr)>
+2023-09-26 04:26:08,569 INFO exited: scheduler (exit status 0; expected)
+2023-09-26 04:26:08,569 DEBG received SIGCHLD indicating a child quit
+2023-09-26 04:26:09,572 INFO spawned: 'scheduler' with pid 113
+2023-09-26 04:26:10,573 INFO success: scheduler entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:26:32,707 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2023-09-26 04:26:32,707 WARN For [program:http], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:26:32,707 WARN For [program:scheduler], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:26:32,707 WARN For [program:worker], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:26:32,707 WARN For [program:worker], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:26:32,707 WARN For [program:worker], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:26:32,707 WARN For [program:worker], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:26:32,707 WARN For [program:worker], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:26:32,707 WARN For [program:worker], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:26:32,707 WARN For [program:worker], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:26:32,707 WARN For [program:worker], AUTO logging used for stderr_logfile without rollover, set maxbytes > 0 to avoid filling up filesystem unintentionally
+2023-09-26 04:26:32,707 INFO Included extra file "/etc/supervisor/conf.d/app.conf" during parsing
+2023-09-26 04:26:32,710 INFO RPC interface 'supervisor' initialized
+2023-09-26 04:26:32,710 INFO RPC interface 'supervisor' initialized
+2023-09-26 04:26:32,710 CRIT Server 'unix_http_server' running without any HTTP authentication checking
+2023-09-26 04:26:32,711 INFO supervisord started with pid 13
+2023-09-26 04:26:33,713 INFO spawned: 'http' with pid 14
+2023-09-26 04:26:33,714 INFO spawned: 'scheduler' with pid 15
+2023-09-26 04:26:33,715 INFO spawned: 'worker_00' with pid 16
+2023-09-26 04:26:33,715 INFO spawned: 'worker_01' with pid 17
+2023-09-26 04:26:33,717 INFO spawned: 'worker_02' with pid 18
+2023-09-26 04:26:33,719 INFO spawned: 'worker_03' with pid 20
+2023-09-26 04:26:33,721 INFO spawned: 'worker_04' with pid 21
+2023-09-26 04:26:33,723 INFO spawned: 'worker_05' with pid 22
+2023-09-26 04:26:33,724 INFO spawned: 'worker_06' with pid 23
+2023-09-26 04:26:33,725 INFO spawned: 'worker_07' with pid 24
+2023-09-26 04:26:33,887 DEBG 'http' stdout output:
+
+
+2023-09-26 04:26:33,887 INFO success: http entered RUNNING state, process has stayed up for > than 0 seconds (startsecs)
+2023-09-26 04:26:33,887 DEBG 'http' stdout output:
+   INFO  Server running…
+
+  Local: http://0.0.0.0:9100 
+
+  Press Ctrl+C to stop the server
+
+
+2023-09-26 04:26:34,888 INFO success: scheduler entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:26:34,888 INFO success: worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:26:34,888 INFO success: worker_01 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:26:34,888 INFO success: worker_02 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:26:34,888 INFO success: worker_03 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:26:34,888 INFO success: worker_04 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:26:34,888 INFO success: worker_05 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:26:34,888 INFO success: worker_06 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:26:34,888 INFO success: worker_07 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:27:33,800 DEBG 'scheduler' stdout output:
+
+
+2023-09-26 04:27:33,803 DEBG 'scheduler' stdout output:
+   INFO  No scheduled commands are ready to run.  
+
+
+2023-09-26 04:27:33,807 DEBG fd 11 closed, stopped monitoring <POutputDispatcher at 140273729904944 for <Subprocess at 140273729801808 with name scheduler in state RUNNING> (stdout)>
+2023-09-26 04:27:33,807 DEBG fd 15 closed, stopped monitoring <POutputDispatcher at 140273729627376 for <Subprocess at 140273729801808 with name scheduler in state RUNNING> (stderr)>
+2023-09-26 04:27:33,808 INFO exited: scheduler (exit status 0; expected)
+2023-09-26 04:27:33,808 DEBG received SIGCHLD indicating a child quit
+2023-09-26 04:27:34,810 INFO spawned: 'scheduler' with pid 673
+2023-09-26 04:27:35,812 INFO success: scheduler entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2023-09-26 04:28:34,891 DEBG 'scheduler' stdout output:
+
+
+2023-09-26 04:28:34,893 DEBG 'scheduler' stdout output:
+   INFO  No scheduled commands are ready to run.  
+
+
+2023-09-26 04:28:34,897 DEBG fd 11 closed, stopped monitoring <POutputDispatcher at 140273729627712 for <Subprocess at 140273729801808 with name scheduler in state RUNNING> (stdout)>
+2023-09-26 04:28:34,897 DEBG fd 17 closed, stopped monitoring <POutputDispatcher at 140273729627568 for <Subprocess at 140273729801808 with name scheduler in state RUNNING> (stderr)>
+2023-09-26 04:28:34,897 INFO exited: scheduler (exit status 0; expected)
+2023-09-26 04:28:34,897 DEBG received SIGCHLD indicating a child quit
+2023-09-26 04:28:35,900 INFO spawned: 'scheduler' with pid 677
+2023-09-26 04:28:36,902 INFO success: scheduler entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
