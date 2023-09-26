@@ -54,7 +54,7 @@ const submit = async () => {
               <button type="submit" class="block w-full px-4 py-3 mt-6 font-semibold text-white bg-indigo-500 rounded-lg hover:bg-indigo-400 focus:bg-indigo-400">Log In</button>
             </a-form>
 
-            <hr class="w-full my-6 border-gray-300">
+            <!-- <hr class="w-full my-6 border-gray-300">
 
             <button type="button" class="block w-full px-4 py-3 font-semibold text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:bg-gray-100">
               <div class="flex items-center justify-center">
@@ -64,7 +64,7 @@ const submit = async () => {
             with
             Google</span>
               </div>
-            </button>
+            </button> -->
 
 
 
