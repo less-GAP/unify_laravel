@@ -1,66 +1,41 @@
-import { defineStore } from "pinia";
+import {acceptHMRUpdate, defineStore} from "pinia";
 import Api from "@/utils/Api";
-import { ref, watch } from "vue";
-// export const useAppStateStore = defineStore("appState", {
-//   state: () => ({
-//     /* User */
-//     showMenu: false,
-//     menuCollapsed: false,
-//     title: '',
-//     currentRoute: {},
-//     configs: {},
-//   }),
-//   actions: {
-//     setTitle(title) {
-//       this.title = title
-//     },
-//     setRoute(curentRoute) {
-//       this.currentRoute = curentRoute
-//     },
-//     fetch: function () {
-//       Api.get("config", { params: { names: configNames } })
-//         .then((r) => {
-//           // this.setConfigs(r.data)
-//           return r.data;
-//         })
-//         .catch((error) => {
-//           return false;
-//         });
-//     },
-//   },
-//   persist: {
-//     enabled: true
-//   },
-// });
-
-export const useAppStateStore = defineStore("appState", () => {
-  const showMenu = ref(false);
-  const menuCollapsed = ref(false);
-  const title = ref('');
-  const currentRoute = ref({});
-  const configs = ref({});
-  const configNames = ["per_page", "default_seller"];
-  const setTitle = (newTitle) => {
-    title.value = newTitle
-  };
-  const setRoute = (newCurrentRoute) => {
-    currentRoute.value = newCurrentRoute
-  };
-
-  async function fetchConfigs() {
-    const rs = await Api.get("config", { params: { names: configNames } })
-    configs.value = rs.data;
-  };
-
-  fetchConfigs();
-
-  return {
-    showMenu,
-    menuCollapsed,
-    title,
-    currentRoute,
-    configs,
-    setTitle,
-    setRoute,
-  }
+import {ref, watch} from "vue";
+// import { useCachedRequest } from './useCachedRequest'
+const defaultConfig = {
+  "site_title": "",
+  "site_description": "",
+  "copy_right": "",
+  "default_seller": "5",
+  "per_page": "50"
+}
+export const useAppStateStore = defineStore("appState", {
+  state: () => ({
+    /* User */
+    showMenu: false,
+    menuCollapsed: false,
+    title: '',
+    currentRoute: {},
+    configs: {...defaultConfig},
+  }),
+  actions: {
+    setTitle(title) {
+      this.title = title
+    },
+    setRoute(curentRoute) {
+      this.currentRoute = curentRoute
+    },
+    async fetchConfig() {
+      Api.get("config", {params: {names: Object.keys(defaultConfig)}})
+        .then((rs) => {
+          this.configs = rs.data
+        })
+        .catch((error) => {
+          return false;
+        });
+    },
+  },
+  persist: {
+    enabled: true
+  },
 });

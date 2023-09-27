@@ -20,7 +20,7 @@
       </div>
       <div
         class="h-6 text-xs bg-slate-200 text-slate-500 px-2 flex items-center rounded-md  my-auto">
-        ESC
+      ESC
       </div>
     </a-space>
     <div class="relative border-b border-slate-200/60">

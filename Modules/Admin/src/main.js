@@ -1,11 +1,11 @@
-import { createApp } from "vue";
-import { createPinia } from "pinia";
+import {createApp} from "vue";
+import {createPinia} from "pinia";
 
 import App from "./App.vue";
 import router from "./router";
-import { useMainStore } from "@/stores/main.js";
-import { useStyleStore } from "@/stores/style.js";
-import { darkModeKey, styleKey } from "@/config.js";
+import {useMainStore} from "@/stores/main.js";
+import {useStyleStore} from "@/stores/style.js";
+import {darkModeKey, styleKey} from "@/config.js";
 
 import "./css/main.css";
 
@@ -29,6 +29,7 @@ const mainStore = useMainStore(pinia);
 const styleStore = useStyleStore(pinia);
 const authStore = useAuthStore();
 const appState = useAppStateStore();
+appState.fetchConfig()
 const translation = useTranslation();
 myApp.config.globalProperties.$config = config;
 myApp.config.globalProperties.$auth = authStore;

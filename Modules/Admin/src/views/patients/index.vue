@@ -181,6 +181,7 @@ function registerTable({reload}) {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
+      {{$appState.configs}}
       <DataTablePatient v-bind="tableConfig" @register="registerTable">
         <template #header>
           <h2>Patient List</h2>
