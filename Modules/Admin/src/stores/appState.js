@@ -22,8 +22,8 @@ export const useAppStateStore = defineStore("appState", {
     setTitle(title) {
       this.title = title
     },
-    setRoute(curentRoute) {
-      this.currentRoute = curentRoute
+    setRoute(currentRoute) {
+      this.currentRoute = currentRoute
     },
     async fetchConfig() {
       Api.get("config", {params: {names: Object.keys(defaultConfig)}})
