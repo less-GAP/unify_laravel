@@ -22,14 +22,14 @@ function SearchApplication(term) {
           }
         }
       })
-    resolve(result.slice(0, 3));
+    resolve(result.slice(0, 10));
   })
 
 }
 
 function SearchPatients(term) {
   return new Promise(resolve => {
-      Api.get('/patient/all?limit=3&filter[search]=' + (term ? term : '')).then(rs => {
+      Api.get('/patient/all?limit=10&filter[search]=' + (term ? term : '')).then(rs => {
         resolve(rs.data.map(item => {
           return {
             label: item.full_name,
@@ -45,7 +45,7 @@ function SearchPatients(term) {
 
 function SearchDoctors(term) {
   return new Promise(resolve => {
-      Api.get('/doctor/all?limit=3&filter[search]=' + (term ? term : '')).then(rs => {
+      Api.get('/doctor/all?limit=10&filter[search]=' + (term ? term : '')).then(rs => {
         resolve(rs.data.map(item => {
           return {
             label: item.full_name,

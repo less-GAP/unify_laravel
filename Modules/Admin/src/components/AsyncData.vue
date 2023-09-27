@@ -13,14 +13,19 @@ export default defineComponent({
     default: {
       default: []
     },
+    value: {
+      type:[Object,Array],
+      default: []
+    },
   },
-  emits: ['change', 'update:value'],
+  emits: ['load'],
 
   setup(props, {emit}) {
     const data = ref([]);
     if (props.async) {
       props.async.then(rs => {
         data.value = rs
+        emit('load',data.value)
       })
     }
     return {

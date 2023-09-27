@@ -1,27 +1,55 @@
 <template>
   <a-modal :closable="false" v-model:open="showModal">
-    <div class="relative border-b border-slate-200/60">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-           class="lucide w-5 h-5 absolute inset-y-0 my-auto ml-4 text-slate-500">
-        <circle cx="11" cy="11" r="8"></circle>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-      </svg>
-      <input v-model="term" ref="searchInput" type="text"
-             class="form-control border-0 shadow-none focus:ring-0 py-5 px-12"
-             placeholder="Quick Search...">
+    <a-space>
       <div
-        class="h-6 text-xs bg-slate-200 text-slate-500 px-2 flex items-center rounded-md absolute inset-y-0 right-0 my-auto mr-4">
+        class="h-6 text-xs bg-slate-200 text-slate-500 px-2 flex items-center rounded-md  my-auto ">
+        Up
+      </div>
+      <div
+        class="h-6 text-xs bg-slate-200 text-slate-500 px-2 flex items-center rounded-md  my-auto ">
+        Down
+      </div>
+
+      <div
+        class="h-6 text-xs bg-slate-200 text-slate-500 px-2 flex items-center rounded-md  my-auto ">
+        Tab
+      </div>
+      <div
+        class="h-6 text-xs bg-slate-200 text-slate-500 px-2 flex items-center rounded-md  my-auto">
+        Enter
+      </div>
+      <div
+        class="h-6 text-xs bg-slate-200 text-slate-500 px-2 flex items-center rounded-md  my-auto">
         ESC
       </div>
+    </a-space>
+    <div class="relative border-b border-slate-200/60">
+      <a-input autofocus v-model:value="term" allow-clear ref="searchInput" type="search"
+             class="form-control border-0 shadow-none focus:ring-0 !mt-5 px-12"
+             placeholder="Quick Search...">
+        <template #prefix>
+          <SearchOutlined></SearchOutlined>
+        </template>
+      </a-input>
+
     </div>
-    <div :key="term" class="p-5">
-      <template v-for="SearchItem in SearchItems">
-        <AsyncData v-if="$auth.hasPermission(SearchItem.permission)" :async="SearchItem.search(term)">
+    <div :key="term" class="py-5">
+      <a-space :size="[0, 8]" wrap>
+        <a-checkable-tag
+          v-for="(tag, index) in SearchList"
+          :key="index"
+          :checked="selectedSearch == index"
+          @click="selectedSearch = index"
+        >
+          <span  class="font-xl ">{{ tag.label }}</span>
+        </a-checkable-tag>
+      </a-space>
+      <div :key="selectedSearch+term" >
+        <AsyncData @load="data=>items=data" v-if="$auth.hasPermission(SearchItem.permission) && SearchItem" :async="SearchItem.search(term)">
           <template #default="{data}">
-            <div v-if="data.length" class="font-medium mb-3">{{ SearchItem.label }}</div>
-            <div v-if="data.length" class="mb-3">
-              <a @click="doAction(item.action)" v-for="item in data"
+            <div v-if="data.length" class="mt-5 mb-3">
+              <a @click="doAction(item.action)" v-for="(item,itemIndex) in data"
+                 :class="selectedItem==itemIndex?'!bg-gray-200':''"
                  class="flex bg-gray-200 hover:bg-gray-200 pl-2 pr-2 rounded items-center mt-3 first:mt-0">
                 <div
                   v-if="item.icon"
@@ -43,33 +71,61 @@
             </div>
           </template>
         </AsyncData>
-      </template>
+      </div>
 
     </div>
+    <template #footer></template>
   </a-modal>
 </template>
 
 <script>
-import {defineComponent, ref, watch} from "vue";
+import {computed, defineComponent, ref, watch} from "vue";
 import {useMagicKeys, useFocus} from "@vueuse/core";
 import {SearchOutlined} from "@ant-design/icons-vue";
 import SearchItems from "./SearchItems";
 import {AsyncData, BaseIcon} from "@/components";
-
+import {useAuthStore} from "@/stores/auth";
 export default defineComponent({
   name: 'AppSearch',
   components: {SearchOutlined, BaseIcon, AsyncData},
   setup() {
+    const auth = useAuthStore();
     const showModal = ref(false);
-    const searchInput = ref();
+    const selectedSearch = ref(0);
+    const selectedItem = ref(0);
+    const searchInput = ref(null);
+    const items = ref([]);
     const term = ref();
-    const {focused} = useFocus(searchInput)
-    const {ctrl_k} = useMagicKeys({
+    const SearchList = SearchItems.filter(SearchItem=>{
+       return auth.hasPermission(SearchItem.permission)
+    })
+    const SearchItem = computed(()=>{
+      return SearchList[selectedSearch.value]
+    });
+    const {ctrl_k,ArrowUp,ArrowDown,Tab,Enter} = useMagicKeys({
       passive: false,
       onEventFired(e) {
         if (e.ctrlKey && e.key === 'k' && e.type === 'keydown')
           e.preventDefault()
       },
+    })
+
+    watch(Enter, (v) => {
+      if(v)
+       items.value[selectedItem.value]?.action()
+    })
+    watch(ArrowUp, (v) => {
+      if(v)
+        selectedItem.value =  selectedItem.value>0?selectedItem.value-1:items.value.length-1
+    })
+
+    watch(Tab, (v) => {
+      if(v)
+        selectedSearch.value =  (selectedSearch.value==SearchList.length-1)? 0:selectedSearch.value+1
+    })
+    watch(ArrowDown, (v) => {
+      if(v)
+        selectedItem.value = (selectedItem.value==items.value.length-1)? 0:selectedItem.value+1
     })
 
     watch(ctrl_k, (v) => {
@@ -79,9 +135,11 @@ export default defineComponent({
 
     function changeModal(show) {
       showModal.value = show;
-      setTimeout(() => {
-        focused.value = true
-      }, 500)
+      if(show){
+        setTimeout(()=>{
+          searchInput.value.focus()
+        },200)
+      }
     }
 
     return {
@@ -89,9 +147,12 @@ export default defineComponent({
         showModal.value = false
         action()
       },
-      focused,
+      items,
+      selectedSearch,
+      SearchItem,
+      selectedItem,
       term,
-      SearchItems,
+      SearchList,
       showModal,
       searchInput,
       changeModal
