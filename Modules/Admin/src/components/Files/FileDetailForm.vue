@@ -38,7 +38,7 @@ const handleDelete = async function () {
         <a-descriptions-item label="Uploaded on"><b>{{ $format.formatDateTime(value.created_at) }}</b>
         </a-descriptions-item>
         <a-descriptions-item label="Uploaded by">
-          <b>{{ value.created_by }}</b>
+          <b>{{ value.created_user?.full_name }}</b>
         </a-descriptions-item>
         <a-descriptions-item label="File name"><b>{{ value.file_name }}</b></a-descriptions-item>
         <a-descriptions-item label="File type"><b>{{ value.file_ext }}</b></a-descriptions-item>
@@ -46,7 +46,7 @@ const handleDelete = async function () {
           <b>{{ $format.humanFileSize(value.file_size) }}</b>
         </a-descriptions-item>
         <a-descriptions-item label="">
-          <a-button type="link"  target="_blank" :download="value.file_name" :href="value.file_url">Download</a-button>
+          <a-button type="primary" target="_blank" :download="value.file_name" :href="value.file_url">Download</a-button>
         </a-descriptions-item>
 
       </a-descriptions>
@@ -60,7 +60,7 @@ const handleDelete = async function () {
     </a-form-item>
     <a-form-item   :labelCol="{ span:6 }" label="Alternative Text">
       <a-textarea v-model:value="formState.alternative_text"></a-textarea>
-      <p class="p-2 pl-0 pb-0" id="alt-text-description">
+      <p class="p-2 pb-0 pl-0" id="alt-text-description">
         <a class="text-main" href="https://www.w3.org/WAI/tutorials/images/decision-tree"
            target="_blank" rel="noopener">
           Learn how to describe the

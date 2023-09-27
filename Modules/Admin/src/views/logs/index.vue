@@ -48,9 +48,9 @@ const columns = [
         width: 100,
     },
     {
-        title: "ID",
-        key: "subject_id",
-        width: 100,
+        title: "Name",
+        key: "name_log",
+        width: 300,
     },
     //   {
     //     title: "Name",

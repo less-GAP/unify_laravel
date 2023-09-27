@@ -97,6 +97,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         )->routes(
             function () {
                 Route::get('list', \Modules\Admin\Actions\Task\GetListAction::class . '@handle');
+                // Route::get('{id}', \Modules\Admin\Actions\Task\GetDetailAction::class . '@handle');
             }
         );
     EloquentRouter::prefix('post')
@@ -146,6 +147,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'file_name')]
             ]
         )->routes(function () {
+            Route::get('list', \Modules\Admin\Actions\File\GetListAction::class . '@handle');
             Route::post('/Upload', \Modules\Admin\Actions\File\PostUploadAction::class . '@handle');
             Route::post('/Info', \Modules\Admin\Actions\File\PostInfoAction::class . '@handle');
         });

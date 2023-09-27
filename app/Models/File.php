@@ -5,18 +5,20 @@ namespace App\Models;
 
 use App\Traits\CreatedUpdatedByAdmin;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 /**
  * Class Role
  * @package CustomerApp\Models
  */
 class File extends BaseModel
 {
-    use CreatedUpdatedByAdmin;
+
     protected $table = 'files';
     public $timestamps = true;
 
     protected $appends = [
-        'file_url'
+        'file_url',
+        'created_user'
         ,'site_path'
     ];
 
@@ -40,6 +42,10 @@ class File extends BaseModel
     }
     public function getSitePathAttribute(){
         return 'upload/'.($this->file_dir?$this->file_dir.'/':'').$this->file_path;
+    }
+
+    public function getCreatedUserAttribute(){
+        return User::findOrFail($this->created_by);
     }
 
 }

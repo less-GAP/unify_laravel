@@ -79,9 +79,13 @@ const fetch = async function () {
         }
         if (formState.signature) {
             listUploadFiles.value.push({
-                name: 'Signature',
-                url: formState.signature
+                alt: 'Signature',
+                site_path: formState.signature
             });
+        }
+        
+        if (formState.images) {
+            listUploadFiles.value.push(...formState.images);
         }
 
         loading.value = false
@@ -324,7 +328,6 @@ fetch();
                             </div>
                         </div>
 
-
                         <div class="my-4"></div>
 
                         <!-- Experience and education -->
@@ -343,9 +346,18 @@ fetch();
                                 </div>
                             </div>
                             <div v-else class="flex flex-wrap -mx-4">
-                                <div v-for="(image, index) in listUploadFiles" :key="index" class="item-upload">
-                                    <a-image :width="200" class="p-4"
-                                        :src="image.url" :alt="image.name" />
+                                <div class="px-4">
+                                    <a-image-preview-group style="width:100%;overflow: auto;gap:8px">
+                                        <template v-for="(file, index) in listUploadFiles" :key="index">
+                                            <a-card shadow="none"
+                                                style="display:inline-block;margin-right:5px;text-align: center;width:200px;height:200px;position:relative">
+                                                <template #cover>
+                                                    <a-image style="width:200px;height:200px;object-fit:contain" :src="$url(file.site_path)"
+                                                        :alt="alt" />
+                                                </template>
+                                            </a-card>
+                                        </template>
+                                    </a-image-preview-group>
                                 </div>
                             </div>
                         </div>
@@ -355,5 +367,6 @@ fetch();
                 </div>
             </div>
 
-    </SectionMain>
-</LayoutAuthenticated></template>
+        </SectionMain>
+    </LayoutAuthenticated>
+</template>

@@ -29,7 +29,9 @@ class PostUploadAction
             'file_size' => $file->getSize(),
             'file_dimension' => $file->dimensions()?($file->dimensions()[0]??'').'x'.($file->dimensions()[1]??''):'',
             'file_name' => $file->getClientOriginalName(),
-            'title' => $file->getClientOriginalName()
+            'title' => $file->getClientOriginalName(),
+            'created_by' => $request->user()->id,
+            'updated_by' => $request->user()->id,
         ]);
         if(isset($oldFile)){
             \Storage::disk('upload')->delete(!empty($oldFile['file_dir'])?$oldFile['file_dir'].'/'.$oldFile['file_path']:$oldFile['file_path']);

@@ -29,6 +29,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  globalSearch: {
+    type: Boolean,
+    default: true,
+  },
   showSort: {
     type: [Boolean, Array],
     default: false,
@@ -139,9 +143,9 @@ reload(true);
   <div id="table-list" class="flex flex-col sm:rounded-lg">
     <slot name="header" v-bind="{ tableConfig, filter, reload }"></slot>
 
-    <div :loading="loading" class="flex items-center justify-between p-2 bg-white rounded-xl">
+    <div :loading="loading" class="flex items-center p-2 bg-white rounded-xl empty:hidden">
       <a-space>
-        <a-input-search v-if="tableConfig.globalSearch" v-model:value="filter.search" allow-clear style="max-width: 300px"
+        <a-input-search v-if="globalSearch" v-model:value="filter.search" allow-clear style="max-width: 300px"
           placeholder="Enter to search..." :loading="loading" @search="reload" @keyup.enter="reload" />
         <a-button v-if="showReload">
           <template #icon>
@@ -157,9 +161,7 @@ reload(true);
           </a-select>
         </slot>
       </a-space>
-      <span></span>
-
-      <a-space>
+      <a-space class="!ml-auto">
         <a-button v-for="listAction in listActions" type="primary" @click="() => {
             listAction.action(reload);
           }
@@ -168,7 +170,7 @@ reload(true);
         <slot name="action" v-bind="{ selectedItems, data, reload }"></slot>
       </a-space>
     </div>
-    <div class="flex-1 w-full my-5 overflow-auto bg-white rounded-lg shadow scroll-smooth">
+    <div class="flex-1 w-full my-2 overflow-auto bg-white rounded-lg shadow scroll-smooth">
       <a-skeleton v-if="loading" active class="p-10" />
       <slot v-else name="table" v-bind="{
         tableConfig,
@@ -178,7 +180,7 @@ reload(true);
         selectionActions,
         reload,
       }">
-        <table v-if="data?.data?.length > 0" class="w-full table-auto">
+        <table v-if="data?.data?.length !== 0" class="w-full table-auto">
           <thead class="text-xs font-semibold text-white uppercase bg-gray-700">
             <tr>
               <th v-if="showSelection" width="30" scope="col" class="p-2 whitespace-nowrap">
