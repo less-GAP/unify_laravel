@@ -15,6 +15,7 @@ import {
   mdiStorefront,
   mdiCloudDownload,
   mdiChartAreasplineVariant,
+  mdiCheckboxMarkedCircleAutoOutline,
   mdiFileExport,
   mdiDoctor,
   mdiClockTimeTwo,
@@ -36,6 +37,12 @@ export default [{
     permission: 'patient.list',
     icon: mdiCardAccountDetails,
     label: "Patient",
+  },
+  {
+    to: "/task",
+    permission: 'task.list',
+    icon: mdiCheckboxMarkedCircleAutoOutline,
+    label: "Task",
   },
   {
     to: null,

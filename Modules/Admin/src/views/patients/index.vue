@@ -27,8 +27,6 @@ const configNames = ["per_page", "default_seller"];
 const prefix = "patient";
 const {fetchListApi} = UseEloquentRouter(prefix);
 const auth = useAuthStore();
-const appState = useAppStateStore();
-console.log(appState);
 
 var item = {};
 const itemActions = [

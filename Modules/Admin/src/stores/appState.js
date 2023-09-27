@@ -46,17 +46,13 @@ export const useAppStateStore = defineStore("appState", () => {
   const setRoute = (newCurrentRoute) => {
     currentRoute.value = newCurrentRoute
   };
-  watch(configs, fetchConfigs);
-  function fetchConfigs() {
-    Api.get("config", { params: { names: configNames } })
-      .then((r) => {
-        // this.setConfigs(r.data)
-        return r.data;
-      })
-      .catch((error) => {
-        return false;
-      });
+
+  async function fetchConfigs() {
+    const rs = await Api.get("config", { params: { names: configNames } })
+    configs.value = rs.data;
   };
+
+  fetchConfigs();
 
   return {
     showMenu,

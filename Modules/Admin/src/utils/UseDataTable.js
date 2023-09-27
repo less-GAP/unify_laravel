@@ -1,11 +1,15 @@
+import {useAppStateStore} from "@/stores/appState";
+
 export function UseDataTable(fetchListApi, _tableConfig = {}) {
+  const appState = useAppStateStore();
+
   const tableConfig = {
     api: fetchListApi,
     filter: {..._tableConfig.filter},
     pagination: {
       page: 1,
       total: 0,
-      perPage: 20
+      perPage: appState?.configs?.per_page
       , ..._tableConfig.pagination
     },
     showReload: _tableConfig.showReload!==null?_tableConfig.showReload:false,
@@ -24,5 +28,6 @@ export function UseDataTable(fetchListApi, _tableConfig = {}) {
     itemActions: _tableConfig.itemActions?_tableConfig.itemActions:[],
     ..._tableConfig
   }
+
   return tableConfig
 }
