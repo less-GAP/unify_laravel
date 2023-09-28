@@ -63,7 +63,17 @@ const dragOptions = {
   disabled: false,
   ghostClass: "ghost",
   group: "tasks",
+  sort: false,
 };
+
+const getFilteredData = (data, taskProcess) => {
+  return data.filter(item => item.task_process === taskProcess);
+};
+
+const updateProcessTask = function (evt, originalEvent, mutations) {
+  console.log(evt);
+  // console.log(mutations);
+}
 
 const tableConfig = UseDataTable(fetchListApi, {
   columns,
@@ -107,7 +117,7 @@ function registerTable({ reload }) {
                 <div class="flex flex-col p-4 border border-gray-200 rounded-lg inner">
                   <h2 class="mb-2 text-lg font-semibold uppercase">{{ column.key }} ({{ data.filter(item => item.task_process ==  column.task_process).length }})</h2>
                   <div class="flex flex-col h-full gap-4 px-1 overflow-x-hidden overflow-y-auto kanban-board">
-                    <draggable v-bind="dragOptions" :list="data.filter(item => item.task_process == column.task_process)" >
+                    <draggable v-bind="dragOptions" :list="getFilteredData(data, column.task_process)" :move="updateProcessTask" >
                       <template #item="{ element, index }">
                         <TaskItem :key="index" :value="element" class="p-4 mb-2 bg-white rounded-md shadow-md" />
                       </template>
