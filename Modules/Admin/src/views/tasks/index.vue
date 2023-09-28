@@ -60,9 +60,9 @@ const taskColumns = ref([
 
 const dragOptions = {
   animation: 200,
-  group: "description",
   disabled: false,
-  ghostClass: "ghost"
+  ghostClass: "ghost",
+  group: "tasks",
 };
 
 const tableConfig = UseDataTable(fetchListApi, {
@@ -105,12 +105,11 @@ function registerTable({ reload }) {
             <div v-if="data?.length" class="flex pb-4 h-[calc(100vh-235px)] -mx-2">
               <div v-for="column in taskColumns" :key="column.key" class="w-full px-2 md:w-1/2 lg:w-1/4">
                 <div class="flex flex-col p-4 border border-gray-200 rounded-lg inner">
-                  <h2 class="mb-2 text-lg font-semibold uppercase">{{ column.key }} ({{ data.filter(item => item.task_process == 0).length }})</h2>
+                  <h2 class="mb-2 text-lg font-semibold uppercase">{{ column.key }} ({{ data.filter(item => item.task_process ==  column.task_process).length }})</h2>
                   <div class="flex flex-col h-full gap-4 px-1 overflow-x-hidden overflow-y-auto kanban-board">
-                    <draggable v-bind="dragOptions" :list="data.filter(item => column.task_process == 0)"
-                      :group="{ name: column.key }">
-                      <template #item="{ element }">
-                        <TaskItem :value="element" class="p-4 mb-2 bg-white rounded-md shadow-md" />
+                    <draggable v-bind="dragOptions" :list="data.filter(item => item.task_process == column.task_process)" >
+                      <template #item="{ element, index }">
+                        <TaskItem :key="index" :value="element" class="p-4 mb-2 bg-white rounded-md shadow-md" />
                       </template>
                     </draggable>
                   </div>
