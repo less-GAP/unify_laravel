@@ -6,8 +6,8 @@ const defaultConfig = {
   "site_title": "",
   "site_description": "",
   "copy_right": "",
-  "default_seller": "5",
-  "per_page": "50"
+  "default_seller": 1,
+  "per_page": 50
 }
 export const useAppStateStore = defineStore("appState", {
   state: () => ({

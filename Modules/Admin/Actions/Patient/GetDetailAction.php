@@ -49,7 +49,7 @@ class GetDetailAction
         $assignees = [];
         foreach ($tasks as $task) {
             if ($task->deleted == 0 && $task->is_completed == 0) {
-                $assignees = array_merge($assignees, json_decode($task->assignees));
+                $assignees = array_merge($assignees, $task->assignees);
             }
         }
         $result_success = [

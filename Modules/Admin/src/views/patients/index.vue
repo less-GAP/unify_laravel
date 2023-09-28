@@ -19,11 +19,7 @@ import {
   mdiAlertCircle,
 } from "@mdi/js";
 import {BaseIcon} from "@/components";
-import { useAppStateStore } from "@/stores/appState";
 
-import Api from "@/utils/Api";
-
-const configNames = ["per_page", "default_seller"];
 const prefix = "patient";
 const {fetchListApi} = UseEloquentRouter(prefix);
 const auth = useAuthStore();
@@ -124,7 +120,7 @@ const columns = [
   {
     title: "Assigned",
     key: "assigned",
-    width: 40,
+    width: 120,
   },
 ];
 
@@ -321,36 +317,9 @@ function registerTable({reload}) {
             {{ item.street }}, {{ item.city }}, {{ item.state }}, {{ item.zip }}
           </div>
         </template>
-        <!-- Update 3/9 23:34 : Merge showing process into status -->
-        <!-- <template #cell[unify_process]="{ item, column }">
-          <a-tag v-if="item.unify_process === 0 && item.unify_status < 2 || item.unify_process=== null && item.unify_status < 2" color="gray">Waiting</a-tag>
-          <a-tag v-else-if="item.unify_process === 1 && item.unify_status < 2" color="orange">Eligibility Check</a-tag>
-          <a-tag v-else-if="item.unify_process === 2 && item.unify_status < 2" color="blue">Running</a-tag>
-          <a-tag v-else-if="item.unify_status > 1" color="gray">Old patient</a-tag>
-        </template> -->
         <template #cell[dob]="{ item, column }">
           <small>{{ dob_value(item) }}</small>
           <br/><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
-        </template>
-        <template #cell[assigned]="{ item, column }">
-          <!-- <a-avatar-group>
-            <a-avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel&key=1"/>
-            <a href="#">
-              <a-avatar style="background-color: #f56a00">K</a-avatar>
-            </a>
-            <a-tooltip title="Ant User" placement="top">
-              <a-avatar style="background-color: #87d068">
-                <template #icon>
-                  <UserOutlined/>
-                </template>
-              </a-avatar>
-            </a-tooltip>
-            <a-avatar style="background-color: #1890ff">
-              <template #icon>
-                <AntDesignOutlined/>
-              </template>
-            </a-avatar>
-          </a-avatar-group> -->
         </template>
         <template #cell[unify_status]="{ item, column }">
           <a-tag v-if="item.unify_deleted === 1" color="gray">Trashed</a-tag>
