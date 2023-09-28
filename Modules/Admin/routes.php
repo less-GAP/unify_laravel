@@ -152,6 +152,13 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             Route::post('/Info', \Modules\Admin\Actions\File\PostInfoAction::class . '@handle');
         });
 
+    EloquentRouter::prefix('email')
+        ->handle(
+            \App\Models\Email::class,
+            [
+                'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'email_title,email_to')]
+            ]
+        );
     EloquentRouter::prefix('email-template')
         ->handle(
             \App\Models\EmailTemplate::class,

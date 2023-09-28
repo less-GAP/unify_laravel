@@ -9,7 +9,7 @@
   >
     <template :key="option[valueKey]" v-for="option in filteredOptions">
       <slot name="option" v-bind="{option,valueKey,labelKey}">
-        <a-select-option :value="option[valueKey]">
+        <a-select-option :value="String(option[valueKey])">
           {{ option[labelKey] }}
         </a-select-option>
       </slot>
@@ -40,11 +40,11 @@ export default defineComponent({
   emits: ['change', 'update:value'],
 
   setup(props, {emit}) {
-    const inputValue = ref(props.value);
+    const inputValue = ref(String(props.value));
     const options = ref([]);
     const filteredOptions = ref([]);
     watch(() => props.value, function () {
-      inputValue.value = props.value
+      inputValue.value = String(props.value)
     })
 
     function onFilter() {

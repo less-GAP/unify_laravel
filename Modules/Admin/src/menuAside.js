@@ -80,7 +80,6 @@ export default [{
     permission: 'email.list',
     label: "Email",
     icon: mdiMessageText,
-    disable: true,
   },
   {
     to: "/sms",
