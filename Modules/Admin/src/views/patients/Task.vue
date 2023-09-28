@@ -196,13 +196,6 @@ const formatDescription = function (description) {
   }
 };
 
-const assigneesArray = function (assignees) {
-  if (assignees !== null && typeof assignees === "string") {
-    return JSON.parse(assignees);
-  }
-  return [];
-};
-
 const submitComment = function (id) {
   // const comment = document.getElementById("comment-" + id).value;
   // if (comment !== "") {

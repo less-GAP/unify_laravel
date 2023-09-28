@@ -2,7 +2,6 @@
 import { defineComponent, ref, watch } from "vue";
 import { BaseIcon } from ".";
 import dayjs from "dayjs";
-import { mdiHuman } from "@mdi/js";
 import router from "@/router";
 
 export default defineComponent({
@@ -23,6 +22,12 @@ export default defineComponent({
     edit() {
       router.push("/task/" + this.value.id + "/edit");
     },
+    checkOutDate(task) {
+      if (!task) return false;
+      if (task.deadline_at) {
+        return dayjs(task.deadline_at).isBefore(dayjs());
+      }
+    }
   },
   emits: ["change", "update:value"],
   setup(props, { emit, attrs }) {
@@ -32,7 +37,6 @@ export default defineComponent({
       class: props.class,
     };
   },
-  components: { BaseIcon }
 });
 </script>
 
@@ -50,7 +54,7 @@ export default defineComponent({
       <p class="space-x-3">
         <span v-if="value.patient" class="mb-2 text-nowrap">
           <a @click="viewPatient" class="cursor-pointer">
-            <BaseIcon :path="mdiHuman" /> {{ value.patient.full_name }}
+            {{ value.patient.full_name }}
           </a>
         </span>
       </p>
