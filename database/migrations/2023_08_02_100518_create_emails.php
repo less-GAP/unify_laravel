@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,10 +13,11 @@ return new class extends Migration
         Schema::create('email_templates', function (Blueprint $table) {
             $table->id();
             $table->string('email_title')->nullable();
+            $table->string('content_type')->default('html');
             $table->string('email_from')->nullable();
             $table->string('status')->default('active');
-            $table->string('email_cc')->nullable();
-            $table->string('email_bcc')->nullable();
+            $table->text('email_cc')->nullable();
+            $table->text('email_bcc')->nullable();
             $table->string('email_reply_to')->nullable();
             $table->longText('email_content')->nullable();
             $table->string('created_by')->nullable();
@@ -29,10 +29,14 @@ return new class extends Migration
             $table->integer('template_id')->nullable();
             $table->string('status')->default('waiting');
             $table->string('email_title')->nullable();
+            $table->string('email_to')->nullable();
             $table->string('email_reply_to')->nullable();
-            $table->string('email_cc')->nullable();
-            $table->string('email_bcc')->nullable();
+            $table->text('email_cc')->nullable();
+            $table->text('email_bcc')->nullable();
             $table->longText('email_content')->nullable();
+            $table->longText('email_data')->nullable();
+            $table->text('email_response')->nullable();
+            $table->dateTime('sent_at')->nullable();
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();
             $table->timestamps();
