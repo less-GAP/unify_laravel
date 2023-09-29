@@ -202,12 +202,12 @@ function registerTable({ reload }) {
             reload,
           }">
             <div class="overflow-hidden">
-              <div v-if="data?.length" class="flex pb-4 h-[calc(100vh-235px)] -mx-2">
+              <div v-if="data?.length" class="flex pb-4 -mx-2">
                 <div v-for="column in taskColumns" :key="column.key" class="w-full px-2 md:w-1/2 lg:w-1/4">
                   <div class="flex flex-col p-4 border border-gray-200 rounded-lg inner">
                     <h2 class="mb-2 text-lg font-semibold uppercase">{{ column.key }} ({{ data.filter(item =>
                       item.task_process == column.task_process).length }})</h2>
-                    <div class="flex flex-col h-full gap-4 px-1 overflow-x-hidden overflow-y-auto kanban-board">
+                    <div class="flex flex-col h-[calc(100vh-285px)] gap-4 pl-1 pr-4 overflow-x-hidden overflow-y-auto kanban-board">
                       <draggable v-bind="dragOptions" :list="getFilteredData(data, column.task_process)"
                         :item-key="column.key" :move="updateProcessTask">
                         <template #item="{ element }">
