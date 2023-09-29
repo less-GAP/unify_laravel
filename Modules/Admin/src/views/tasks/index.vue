@@ -12,6 +12,13 @@ import TaskItem from "@/components/TaskItem.vue";
 import draggable from "vuedraggable";
 import Api from "@/utils/Api";
 import { mdiCalendarClockOutline, mdiReply, mdiUploadOutline, mdiLink } from "@mdi/js";
+import {
+  deleteTask,
+  completeTask,
+  workingTask,
+  reviewTask,
+  getStatusTask
+} from "@/utils/Task";
 
 const auth = useAuthStore();
 const prefix = "task";
@@ -81,12 +88,6 @@ const createTaskApi = function (data) {
 };
 // on click Add task
 const addTask = function () {
-  var listChecked = document.querySelectorAll(".listNeedToDo input:checked");
-  var txt = "";
-  listChecked.forEach((item) => {
-    txt += "- " + item.value + "\n";
-  });
-  formTaskState.description = txt;
   openModal.value = true;
 };
 
@@ -110,7 +111,6 @@ const detailTask = function (task) {
   openModalDetail.value = true;
 }
 
-// on click OK
 const handleAddTask = () => {
   confirmLoading.value = true;
   formTaskRef.value.validate().then(() => {
@@ -125,7 +125,7 @@ const handleAddTask = () => {
       console.log(e);
     }
   });
-        confirmLoading.value = false;
+  confirmLoading.value = false;
 };
 
 const editTask = async function (id) {
@@ -160,16 +160,10 @@ const getFilteredData = (data, taskProcess) => {
   return data.filter(item => item.task_process === taskProcess);
 };
 
-const updateProcessTask = function (evt, originalEvent, mutations) {
-  console.log(evt);
+const updateProcessTask = function (newIndex, oldIndex, element) {
+  console.log(newIndex, oldIndex, element);
   // console.log(mutations);
 }
-
-const patientParamsAPI = {
-  filter: {
-    is_turn_off: false,
-  },
-};
 
 const tableConfig = UseDataTable(fetchListApi, {
   columns,
@@ -216,8 +210,8 @@ function registerTable({ reload }) {
                     <div class="flex flex-col h-full gap-4 px-1 overflow-x-hidden overflow-y-auto kanban-board">
                       <draggable v-bind="dragOptions" :list="getFilteredData(data, column.task_process)"
                         :item-key="column.key" :move="updateProcessTask">
-                        <template #item="{ element, index }">
-                          <TaskItem :key="index" :value="element" class="p-4 mb-2 bg-white rounded-md shadow-md" />
+                        <template #item="{ element }">
+                          <TaskItem :value="element" class="p-4 mb-2 bg-white rounded-md shadow-md" />
                         </template>
                       </draggable>
                     </div>
@@ -230,22 +224,20 @@ function registerTable({ reload }) {
       </div>
 
       <!-- Modal Add Task -->
-      <a-modal v-model:open="openModal" append-to-body title="Add Task" :confirm-loading="confirmLoading"
-        @ok="handleAddTask">
-        <a-form v-bind="$config.formConfig" ref="formTaskRef" layout="vertical" :model="formTaskState">
-          <a-form-item label="Task name" :rules="[{ required: true, message: 'Please enter task name!' }]">
+      <a-modal v-model:open="openModal" append-to-body title="Add Task" :confirm-loading="confirmLoading" :footer="null">
+        <a-form id="formAddTask" v-bind="$config.formConfig" ref="formTaskRef" layout="vertical" :model="formTaskState" @finish="handleAddTask">
+          <a-form-item label="Task name" name="name" :rules="[{ required: true, message: 'Please enter task name!' }]">
             <a-input v-model:value="formTaskState.name"></a-input>
           </a-form-item>
           <div class="flex flex-wrap -mx-2">
             <div class="w-full px-2">
-              <a-form-item label="Due date">
+              <a-form-item label="Due date" name="deadline_at">
                 <a-date-picker v-model:value="formTaskState.deadline_at" class="w-full" :show-time="{ format: 'HH:mm' }"
                   input-read-only value-format="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"></a-date-picker>
               </a-form-item>
             </div>
           </div>
-          <a-form-item label="Patient"  :rules="[{ required: true, message: 'Please select patient!' }]">
-
+          <a-form-item label="Patient" name="patient_id" :rules="[{ required: true, message: 'Please select patient!' }]">
             <ApiData url="patient/all" method="GET">
               <template #default="{ data }">
                 <a-select v-model:value="formTaskState.patient_id" :options="data"
@@ -254,7 +246,7 @@ function registerTable({ reload }) {
               </template>
             </ApiData>
           </a-form-item>
-          <a-form-item label="Assignees"  :rules="[{ required: true, message: 'Please select assignees!' }]">
+          <a-form-item label="Assignees" name="assignees" :rules="[{ required: true, message: 'Please select assignees!' }]">
             <ApiData url="user/all" method="GET">
               <template #default="{ data }">
                 <a-select v-model:value="formTaskState.assignees" :options="data"
@@ -263,8 +255,11 @@ function registerTable({ reload }) {
               </template>
             </ApiData>
           </a-form-item>
-          <a-form-item label="Description">
+          <a-form-item label="Description" name="description">
             <a-textarea v-model:value="formTaskState.description" :rows="4"></a-textarea>
+          </a-form-item>
+          <a-form-item>
+            <a-button class="!ml-auto" type="primary" @click="handleAddTask">Add Task</a-button>
           </a-form-item>
         </a-form>
       </a-modal>
@@ -336,7 +331,7 @@ function registerTable({ reload }) {
         <div class="comment">
           <a-divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0"
             plain>Logs</a-divider>
-          <DataTable v-if="tableConfig" v-bind="tableConfig">
+          <!-- <DataTable v-if="tableConfig" v-bind="tableConfig">
             <template #table="{
               tableConfig,
               tableData,
@@ -359,7 +354,7 @@ function registerTable({ reload }) {
                 </a-timeline-item>
               </a-timeline>
             </template>
-          </DataTable>
+          </DataTable> -->
           <a-form>
             <a-divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0"
               plain>Comments</a-divider>

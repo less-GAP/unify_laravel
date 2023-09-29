@@ -3,6 +3,14 @@ import { defineComponent, ref, watch } from "vue";
 import { BaseIcon } from ".";
 import dayjs from "dayjs";
 import router from "@/router";
+import {
+  deleteTask,
+  completeTask,
+  workingTask,
+  reviewTask,
+  getStatusTask
+} from "@/utils/Task";
+import { CheckCircleOutlined, ClockCircleOutlined, SyncOutlined } from "@ant-design/icons-vue";
 
 export default defineComponent({
   name: "TaskItem",
@@ -27,7 +35,8 @@ export default defineComponent({
       if (task.deadline_at) {
         return dayjs(task.deadline_at).isBefore(dayjs());
       }
-    }
+    },
+    getStatusTask,
   },
   emits: ["change", "update:value"],
   setup(props, { emit, attrs }) {
@@ -37,6 +46,12 @@ export default defineComponent({
       class: props.class,
     };
   },
+  components: {
+    CheckCircleOutlined,
+    ClockCircleOutlined,
+    SyncOutlined,
+  },
+
 });
 </script>
 
@@ -45,6 +60,14 @@ export default defineComponent({
     <div :class="class">
       <div class="flex items-center justify-between">
         <small>{{ value.created_at }}</small>
+        <a-tag v-if="getStatusTask(value.task_process)" :color="getStatusTask(value.task_process).color">
+          <template #icon>
+            <CheckCircleOutlined v-if="value.task_process === 3" />
+            <SyncOutlined v-if="value.task_process === 1" :spin="true" />
+            <ClockCircleOutlined v-if="[null, 0].includes(value.task_process)" />
+          </template>
+          {{ getStatusTask(value.task_process).label }}
+        </a-tag>
       </div>
       <h5 class="my-2">
         <span class="text-base font-medium text-gray-700 dark:text-slate-400">{{

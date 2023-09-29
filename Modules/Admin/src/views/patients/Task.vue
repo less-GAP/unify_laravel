@@ -461,22 +461,22 @@ const age = (dob) => {
     <a-modal v-model:open="openModal" append-to-body title="Add Task" :confirm-loading="confirmLoading"
       @ok="handleAddTask">
       <a-form v-bind="$config.formConfig" ref="formTaskRef" layout="vertical" :model="formTaskState">
-        <a-form-item label="Task name" required>
+        <a-form-item label="Task name" required name="name">
           <a-input v-model:value="formTaskState.name"></a-input>
         </a-form-item>
         <div class="flex flex-wrap -mx-2">
           <div class="w-full px-2">
-            <a-form-item label="Due date">
+            <a-form-item label="Due date" name="deadline_at" >
               <a-date-picker v-model:value="formTaskState.deadline_at" class="w-full" :show-time="{ format: 'HH:mm' }"
                 input-read-only value-format="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"></a-date-picker>
             </a-form-item>
           </div>
         </div>
-        <a-form-item label="Assignees" required>
+        <a-form-item label="Assignees" name="assignees" required>
           <a-select v-model:value="formTaskState.assignees" :options="listUserAssignees" mode="multiple">
           </a-select>
         </a-form-item>
-        <a-form-item label="Description">
+        <a-form-item label="Description" name="description" >
           <a-textarea v-model:value="formTaskState.description" :rows="4"></a-textarea>
         </a-form-item>
       </a-form>
