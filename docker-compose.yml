@@ -46,6 +46,8 @@ services:
             - $DB_PASSWORD
             - file:/surrealdb/surrealdb.db
         image: surrealdb/surrealdb:latest
+        ports:
+            - 8000:8000
         volumes:
             - ./surrealdb/surrealdb.db:/surrealdb/surrealdb.db
 volumes:
