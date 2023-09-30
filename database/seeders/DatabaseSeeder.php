@@ -117,7 +117,7 @@ class DatabaseSeeder extends Seeder
         Permission::findOrCreate('task.working');
         Permission::findOrCreate('task.review');
         Permission::findOrCreate('task.delete');
-        
+
         Permission::findOrCreate('log.list');
 
         Permission::findOrCreate('file.*');
@@ -189,6 +189,8 @@ class DatabaseSeeder extends Seeder
         \App\Models\Doctor::factory()->count(5)->create();
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
         activity()->enableLogging();
+
+
         // Re-enable foreign key checks
     }
 }

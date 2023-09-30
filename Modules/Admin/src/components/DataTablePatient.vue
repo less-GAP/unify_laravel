@@ -210,19 +210,23 @@ reload(true);
 
     <div :loading="loading" class="flex items-center justify-between p-2 bg-white border border-gray-200 rounded-xl">
       <a-space>
-        <a-input-search v-if="tableConfig.globalSearch" v-model:value="filter.search" allow-clear style="max-width: 380px"
-          placeholder="Search by name, number, phone" :loading="loading" @search="reload" @keyup.enter="reload" />
+        <a-input-search v-if="tableConfig.globalSearch" v-model:value="filter.search" allow-clear
+                        style="max-width: 380px"
+                        placeholder="Search by name, number, phone" :loading="loading" @search="reload"
+                        @keyup.enter="reload"/>
         <a-select v-if="auth.hasPermission('patient.filter.doctor')" :allowClear="true" v-model:value="filter.doctor_id"
-          show-search style="width: 200px" placeholder="Filter by doctor" :options="listDoctors" @change="reload">
+                  show-search style="width: 200px" placeholder="Filter by doctor" :options="listDoctors"
+                  @change="reload">
         </a-select>
         <a-select v-if="auth.hasPermission('patient.filter.seller')" :allowClear="true" v-model:value="filter.sale_user"
-          show-search style="width: 200px" placeholder="Filter by creator" :options="listUserAll" @change="reload">
+                  show-search style="width: 200px" placeholder="Filter by creator" :options="listUserAll"
+                  @change="reload">
         </a-select>
         <a-select v-if="auth.hasPermission('patient.filter.status')" :allowClear="true" v-model:value="filter.status"
-          show-search style="width: 200px" placeholder="Filter by status" :options="listStatusPatient" @change="reload">
+                  show-search style="width: 200px" placeholder="Filter by status" :options="listStatusPatient"
+                  @change="reload">
         </a-select>
         <slot name="sort" v-bind="{ tableConfig, sort, filter, reload }">
-<<<<<<< HEAD
           <a-select
             v-if="showSort"
             :allowClear="true"
@@ -236,11 +240,6 @@ reload(true);
               :key="sort.value"
               :value="sort.value"
             >{{ sort.label }}
-=======
-          <a-select v-if="showSort" :allowClear="true" v-model:value="orderBy" style="width: 140px"
-            placeholder="Order by..." @change="reload">
-            <a-select-option v-for="sort in showSort" :key="sort.value" :value="sort.value">{{ sort.label }}
->>>>>>> f40744a7579f08f98b805111215fbc33846be158
             </a-select-option>
           </a-select>
         </slot>
@@ -253,7 +252,6 @@ reload(true);
             <reload-outlined @click="reload"/>
           </template>
         </a-button>
-<<<<<<< HEAD
         <a-button
           v-for="listAction in listActions"
           type="primary"
@@ -275,25 +273,10 @@ reload(true);
       class="flex-1 w-full my-5 overflow-auto bg-white border border-gray-200 rounded-lg shadow scroll-smooth"
     >
       <a-skeleton v-if="loading || !tableData.data" active class="p-10"/>
-=======
-        <a-button v-for="listAction in listActions" type="primary" @click="() => {
-          if (listAction.permission) {
-            listAction.action(reload);
-          } else {
-            return false;
-          }
-        }
-          ">{{ listAction.label }}</a-button>
-      </a-space>
-    </div>
-    <div class="flex-1 w-full my-5 overflow-auto bg-white border border-gray-200 rounded-lg shadow scroll-smooth">
-      <a-skeleton v-if="loading || !tableData.data" active class="p-10" />
->>>>>>> f40744a7579f08f98b805111215fbc33846be158
 
       <slot v-else name="table" v-bind="{ tableConfig, tableData, columns, selectionActions, reload }">
         <table class="w-full text-xs table-auto">
           <thead class="font-semibold text-gray-400 uppercase bg-gray-50">
-<<<<<<< HEAD
           <tr>
             <th
               v-if="showSelection"
@@ -447,94 +430,16 @@ reload(true);
               </div>
             </td>
           </tr>
-=======
-            <tr>
-              <th v-if="showSelection" scope="col" width="40" class="px-1 py-2 text-center whitespace-nowrap">
-                <label class="w-full font-medium text-gray-900">
-                  <input v-model="checkAll" :value="true" type="checkbox"
-                    class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500" @change="toggleCheckAll" />
-                </label>
-              </th>
-
-              <th v-for="column in columns" scope="col" :width="column.width ? column.width : 'auto'"
-                class="px-1 py-2 whitespace-nowrap">
-                <div class="font-semibold text-left">
-                  {{ __(column.title) }}
-                </div>
-              </th>
-
-              <th v-if="itemActions.length" width="120" scope="col" class="px-1 py-2">
-                {{ __("Action") }}
-              </th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-100">
-            <tr v-for="(item, index) in tableData.data" :key="item[tableConfig.item_key]"
-              :class="{ 'border-b': index % 2 === 0 }">
-              <td v-if="showSelection" width="40" class="p-1 text-center whitespace-nowrap">
-                <label :for="'checkbox-table-search-' + item[tableConfig.item_key]"
-                  class="w-full font-medium text-gray-900">
-                  <input :id="item[tableConfig.item_key]" v-model="selectedItems" :value="item" type="checkbox"
-                    class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500" />
-                </label>
-              </td>
-
-              <td v-for="column in columns" :data-label="column.title"
-                :class="'p-1 ' + (column.class ? column.class : '')">
-                <template v-if="item.render">
-                  {{ item.render() }}
-                </template>
-                <slot v-else-if="column.key == 'unify_task_status'" v-bind="{ item, column, index }">
-                  <a-tag v-if="item.unify_task_status !== null"
-                    :style="'background-color: ' + item.unify_task_status.background_color + '; color: ' + item.unify_task_status.color + '; border-color: currentColor'">{{
-                      item.unify_task_status.label
-                    }}</a-tag>
-                </slot>
-                <slot v-else-if="column.key == 'assigned'" v-bind="{ item, column, index }">
-                  <a-avatar-group :max-count="3" :max-style="{ color: '#f56a00', backgroundColor: '#fde3cf' }">
-                    <a-tooltip v-for="user in item.assignees" :key="user" :title="user.full_name" placement="top">
-                      <img class="relative w-8 h-8 border border-white rounded-full -me-1 hover:z-10" :src="user?.profile_photo_url" alt="user photo">
-                    </a-tooltip>
-                  </a-avatar-group>
-                </slot>
-                <slot v-else :name="'cell[' + column.key + ']'" v-bind="{ item, column, index }">
-                  {{
-                    $style["format"][column.key]
-                    ? $style["format"][column.key](item[column.key])
-                    : item[column.key]
-                  }}
-                </slot>
-              </td>
-              <td v-if="itemActions.length" width="120" class="p-1 whitespace-nowrap">
-                <div class="flex flex-nowrap whitespace-nowrap">
-                  <template v-for="itemAction in itemActions">
-                    <slot v-if="itemAction.show(item)" :name="'cellAction[' + itemAction.key + ']'" v-bind="{
-                      item,
-                      itemAction,
-                      actionMethod() {
-                        itemAction.action(item, reload);
-                      },
-                    }">
-                      <a-button :class="itemAction.class ||
-                        'font-medium text-blue-600 dark:text-blue-500 hover:underline'
-                        " type="link" @click="itemAction.action(item, reload)">
-                        {{ itemAction.label }}
-                      </a-button>
-                    </slot>
-                  </template>
-                </div>
-              </td>
-            </tr>
->>>>>>> f40744a7579f08f98b805111215fbc33846be158
           </tbody>
         </table>
       </slot>
-      <a-empty v-if="tableData.data?.length === 0 && pagination.total === 0" class="my-10" :description="false" />
+      <a-empty v-if="tableData.data?.length === 0 && pagination.total === 0" class="my-10" :description="false"/>
     </div>
 
     <a-pagination v-if="tableData.data && pagination?.total" v-model:current="pagination.page"
-      v-model:pageSize="pagination.perPage" style="height: 40px" class="pt-2" :show-size-changer="showSizeChanger"
-      :total="pagination.total" @change="reload">
+                  v-model:pageSize="pagination.perPage" style="height: 40px" class="pt-2"
+                  :show-size-changer="showSizeChanger"
+                  :total="pagination.total" @change="reload">
       <template #itemRender="{ type, originalElement }">
         <a v-if="type === 'prev'">Previous</a>
         <a v-else-if="type === 'next'">Next</a>
@@ -544,7 +449,7 @@ reload(true);
   </div>
 </template>
 <style scoped>
-.item-actions> :not(:first-child) {
+.item-actions > :not(:first-child) {
   margin-left: 10px;
 }
 </style>
