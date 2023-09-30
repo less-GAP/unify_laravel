@@ -13,22 +13,22 @@ class GetListAction
     public function handle(Request $request)
     {
         $query = Patient::query();
-        $user = Auth::user();
+        $user = auth('admin')->user();
         $filter = $request->filter;
 
         $query->with(['tasks' => function ($query_task) {
             $query_task->orderBy('created_at', 'ASC');
         }]);
-        
+
         if (!$user->hasPermissionTo('Admin')) {
 
             if ($user->hasPermissionTo('Seller') || $user->hasPermissionTo('Seller Manager')) {
                 $query->where('unify_process', '=', 0);
-                
+
                 if ($user->hasPermissionTo('Seller')) {
                     $query->where('sale_user', $user->id);
                 }
-                
+
                 // if User has uncomplete task assign for patient, show patients in list
                 $query->orWhereHas('tasks', function ($taskQuery) use ($user) {
                     $taskQuery->where('is_completed', 0)
@@ -37,11 +37,11 @@ class GetListAction
             }
         }
 
-        if($filter){
+        if ($filter) {
             if (isset($filter['search'])) {
                 $query->where('full_name', 'like', '%' . $filter['search'] . '%')
-                ->orWhere('unify_number', 'like', '%' . $filter['search'] . '%')
-                ->orWhere('phone', 'like', '%' . $filter['search'] . '%');
+                    ->orWhere('unify_number', 'like', '%' . $filter['search'] . '%')
+                    ->orWhere('phone', 'like', '%' . $filter['search'] . '%');
             }
             if (isset($filter['doctor_id'])) {
                 $query->where('doctor_id', $filter['doctor_id']);
@@ -50,7 +50,7 @@ class GetListAction
                 $query->where('sale_user', $filter['sale_user']);
             }
             if (isset($filter['status'])) {
-                switch ($filter['status']){
+                switch ($filter['status']) {
                     case 'waiting':
                         $query->where('unify_process', '=', 0);
                         break;
@@ -72,12 +72,12 @@ class GetListAction
                     default:
                         break;
                 }
-                if($filter['status'] === 'trashed'){
+                if ($filter['status'] === 'trashed') {
                     $query->where('unify_deleted', '=', 1);
-                }else{
+                } else {
                     $query->where('unify_deleted', '=', 0);
                 }
-            }else{
+            } else {
                 $query->where('unify_deleted', '=', 0);
             }
         }
@@ -100,7 +100,7 @@ class GetListAction
                     $query->orderBy('id', $request->input('order', 'DESC'));
                     break;
             }
-        }else{
+        } else {
             $query->orderBy('id', $request->input('order', 'DESC'));
         }
 
