@@ -99,8 +99,8 @@ return [
             'port' => env('DB_PORT_REALTIME', 8000),
             'namespace' => env('DB_NAMESPACE_REALTIME', 'unify'),
             'database' => env('DB_DATABASE_REALTIME', 'unify'),
-            'username' => env('DB_USERNAME_REALTIME', 'root'),
-            'password' => env('DB_PASSWORD_REALTIME', 'root'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', 'root'),
         ],
     ],
 
