@@ -113,27 +113,6 @@ const fetchListUser = async function () {
 };
 fetchListUser();
 
-const nameAssignee = (id_user, isFull) => {
-  const user = listUserAssignees.find((item) => {
-    return item.id == id_user;
-  });
-
-  if (user && user.full_name) {
-    if (isFull) {
-      return user.full_name;
-    } else {
-      const fullNameParts = user.full_name.split(" ");
-      // if (fullNameParts.length >= 2) {
-      const lastWord = fullNameParts[fullNameParts.length - 1];
-      if (lastWord.length > 0) {
-        return lastWord.charAt(0);
-      }
-      // }
-    }
-  }
-  return "N/A";
-};
-
 // Handle Modal Add Task
 const openModal = ref(false);
 const openModalDetail = ref(false);
@@ -198,7 +177,6 @@ const handleAddTask = () => {
 
 const editTask = async function (id) {
   const task = await Api.get("task/" + id);
-  task.data.assignees = JSON.parse(task.data.assignees);
   Object.assign(formTaskState, task.data);
   openModal.value = true;
 };
@@ -216,13 +194,6 @@ const formatDescription = function (description) {
   } else {
     return "";
   }
-};
-
-const assigneesArray = function (assignees) {
-  if (assignees !== null && typeof assignees === "string") {
-    return JSON.parse(assignees);
-  }
-  return [];
 };
 
 const submitComment = function (id) {
@@ -283,8 +254,7 @@ const age = (dob) => {
               <span>{{ formState.full_name }}</span>
             </div>
             <div class="text-sm text-gray-400">
-              #{{ formState.unify_number }} - <span class="mb-2 text-xs text-stone-400">Seller: {{
-                nameAssignee(formState.sale_user, true) }}</span>
+              #{{ formState.unify_number }} - <span v-if="formState.sale_user" class="mb-2 text-xs text-stone-400">Seller: {{ formState.seller?.full_name }}</span>
             </div>
           </h1>
           <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem" plain>List
@@ -337,7 +307,7 @@ const age = (dob) => {
                           <div class="absolute top-0 right-0 flex items-center mt-3 mr-2 space-x-1 action">
                             <a-tooltip title="Complete">
                               <a-button v-if="(auth.hasPermission('task.assign') ||
-                                task.assignees && assigneesArray(task.assignees).includes(auth.user.id) ||
+                                task.assignees && task.assignees.includes(auth.user.id) ||
                                 auth.hasPermission('task.review')) &&
                                 task.is_completed === 0
                                 " type="link" class="!px-0" @click="completeTask(task.id, fetch)">
@@ -347,7 +317,7 @@ const age = (dob) => {
                             </a-tooltip>
                             <a-tooltip :title="task.task_process === 0 ? 'Working' : 'Pending'">
                               <a-button v-if="(auth.hasPermission('task.working') ||
-                                task.assignees && assigneesArray(task.assignees).includes(auth.user.id) ||
+                                task.assignees && task.assignees.includes(auth.user.id) ||
                                 auth.hasPermission('task.review')) &&
                                 task.is_completed === 0
                                 " type="link" class="!px-0"
@@ -416,14 +386,10 @@ const age = (dob) => {
                                 : ''"></span>
                             </div>
                             <div v-if="task.assignees !== undefined" class="flex ml-auto">
-                              <div v-for="id_assignee in assigneesArray(
-                                task.assignees
-                              )" :key="id_assignee" class="item-assignee">
-                                <a-avatar-group>
-                                  <a-tooltip :title="nameAssignee(id_assignee, true)" placement="top">
-                                    <a-avatar style="background-color: #87d068">{{ nameAssignee(id_assignee) }}</a-avatar>
-                                  </a-tooltip>
-                                </a-avatar-group>
+                              <div v-for="user in task.assignees" :key="id_assignee" class="item-assignee">
+                                <a-tooltip :title="user.full_name" placement="top">
+                                  <img class="w-8 h-8 rounded-full" :src="user?.profile_photo_url" alt="user photo">
+                                </a-tooltip>
                               </div>
                             </div>
                           </div>
@@ -474,12 +440,10 @@ const age = (dob) => {
                         : ''"></span>
                     </div>
                     <div v-if="task.assignees !== undefined" class="flex ml-auto">
-                      <div v-for="id_assignee in assigneesArray(
-                        task.assignees
-                      )" :key="id_assignee" class="item-assignee">
+                      <div v-for="user in task.assignees" :key="user.id" class="item-assignee">
                         <a-avatar-group>
-                          <a-tooltip :title="nameAssignee(id_assignee, true)" placement="top">
-                            <a-avatar style="background-color: #87d068">{{ nameAssignee(id_assignee) }}</a-avatar>
+                          <a-tooltip :title="user.full_name" placement="top">
+                            <img class="w-8 h-8 rounded-full" :src="user?.profile_photo_url" alt="user photo">
                           </a-tooltip>
                         </a-avatar-group>
                       </div>
@@ -497,22 +461,22 @@ const age = (dob) => {
     <a-modal v-model:open="openModal" append-to-body title="Add Task" :confirm-loading="confirmLoading"
       @ok="handleAddTask">
       <a-form v-bind="$config.formConfig" ref="formTaskRef" layout="vertical" :model="formTaskState">
-        <a-form-item label="Task name" required>
+        <a-form-item label="Task name" required name="name">
           <a-input v-model:value="formTaskState.name"></a-input>
         </a-form-item>
         <div class="flex flex-wrap -mx-2">
           <div class="w-full px-2">
-            <a-form-item label="Due date">
+            <a-form-item label="Due date" name="deadline_at" >
               <a-date-picker v-model:value="formTaskState.deadline_at" class="w-full" :show-time="{ format: 'HH:mm' }"
                 input-read-only value-format="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"></a-date-picker>
             </a-form-item>
           </div>
         </div>
-        <a-form-item label="Assignees" required>
+        <a-form-item label="Assignees" name="assignees" required>
           <a-select v-model:value="formTaskState.assignees" :options="listUserAssignees" mode="multiple">
           </a-select>
         </a-form-item>
-        <a-form-item label="Description">
+        <a-form-item label="Description" name="description" >
           <a-textarea v-model:value="formTaskState.description" :rows="4"></a-textarea>
         </a-form-item>
       </a-form>
@@ -544,14 +508,12 @@ const age = (dob) => {
               <p class="text-gray-400">Assigned To</p>
               <div class="space-y-1">
 
-                <div v-for="id_assignee in assigneesArray(
-                  taskDetail.assignees
-                )" :key="id_assignee" class="flex items-center item-assignee">
+                <div v-for="user in taskDetail.assignees" :key="user.id" class="flex items-center item-assignee">
                   <a-avatar-group>
-                    <a-avatar style="background-color: #87d068">{{ nameAssignee(id_assignee) }}</a-avatar>
+                    <img class="w-8 h-8 rounded-full" :src="user?.profile_photo_url" alt="user photo">
                   </a-avatar-group>
                   <div class="ml-1">
-                    <h5 class="font-medium">{{ nameAssignee(id_assignee, true) }}</h5>
+                    <h5 class="font-medium">{{ user.full_name }}</h5>
                   </div>
                 </div>
               </div>
@@ -704,11 +666,12 @@ const age = (dob) => {
   display: block !important;
 }
 
-.comment .shadow{
+.comment .shadow {
   box-shadow: none !important;
   border-radius: 0 !important;
 }
-.comment .shadow .ant-timeline{
+
+.comment .shadow .ant-timeline {
   margin-left: 0 !important;
   margin-right: 0 !important;
   margin-bottom: 0 !important;

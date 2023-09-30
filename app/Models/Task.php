@@ -44,6 +44,27 @@ class Task extends Model
         'deleted_at',
         'deleted_by',
     ];
+    
+    protected function getAssigneesAttribute($value)
+    {
+        if(!$value) return null;
+        $value = json_decode($value) ?: '[]';
+        $array_assignees = [];
+        foreach ($value as $key => $assignee) {
+            $user = User::findOrFail($assignee);
+            $user->value = $user->id;
+            $user->label = $user->full_name;
+            $array_assignees[] = $user;
+        }
+        return $array_assignees;
+    }
+
+    protected function getPatientAttribute($value){
+        if(!$this->attributes['patient_id']) return null;
+        $patient = Patient::select('full_name', 'id', 'unify_number', 'sale_user')->findOrFail($this->attributes['patient_id']);
+        if($patient->is_turn_off == 1) return null;
+        return $patient;
+    }
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -80,7 +101,7 @@ class Task extends Model
     ];
 
     protected $appends = [
-        // 'image_url',
+        'patient',
         // 'tags'
     ];
 }

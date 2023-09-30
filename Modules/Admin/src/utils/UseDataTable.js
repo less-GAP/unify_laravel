@@ -9,8 +9,8 @@ export function UseDataTable(fetchListApi, _tableConfig = {}) {
     pagination: {
       page: 1,
       total: 0,
-      perPage: appState?.configs?.per_page
-      , ..._tableConfig.pagination
+      perPage: parseInt(appState?.configs?.per_page) || 20,
+      ..._tableConfig.pagination
     },
     showReload: _tableConfig.showReload !== null ? _tableConfig.showReload : false,
     showPagination: _tableConfig.showPagination !== null ? _tableConfig.showPagination : true,

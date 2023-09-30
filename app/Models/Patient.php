@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use App\Models\User;
 
 class Patient extends Model
 {
@@ -65,6 +66,8 @@ class Patient extends Model
     protected $casts = [
         'images' => 'array',
     ];
+    protected $appends = ['seller', 'is_turn_off'];
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -72,6 +75,16 @@ class Patient extends Model
             ->logOnlyDirty()
             ->setDescriptionForEvent(fn(string $eventName) => request()->input('log_detail',$eventName))
             ->dontSubmitEmptyLogs();
+    }
+
+    public function getSellerAttribute(){
+        if(!$this->attributes['sale_user']) return null;
+        $user = User::select('full_name', 'id')->findOrFail($this->attributes['sale_user']);
+        return $user;
+    }
+
+    public function getIsTurnOffAttribute(){
+        return in_array($this->unify_status, array(2,3)) || $this->unify_deleted == 1;
     }
 
     public function tasks(): HasMany

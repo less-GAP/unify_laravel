@@ -130,7 +130,7 @@ const closeDetail = function () {
                 selectionActions,
                 reload,
               }">
-                <a-timeline v-if="data.length > 0" class="!m-5">
+                <a-timeline v-if="data?.data?.length" class="!m-5">
                   <a-timeline-item v-for="item in data" color="green" class="!mb-5">
                     <div class="flex items-center">
                       <img class="w-6 h-6 rounded-full" :src="item.causer?.profile_photo_url" />
@@ -143,6 +143,7 @@ const closeDetail = function () {
                     <div class="text-xs">{{ item.description }}</div>
                   </a-timeline-item>
                 </a-timeline>
+                <a-empty v-else class="my-10" description="No history" />
               </template>
             </DataTable>
           </div>
