@@ -28,10 +28,15 @@
     "numeral": "^2.0.6",
     "pinia": "^2.0.13",
     "pinia-plugin-persist": "^1.0.0",
+    "rxjs": "^7.8.1",
+    "socker.io": "^0.0.0-alpha-beta",
+    "surrealdb.js": "^0.9.1",
+    "unws": "^0.2.4",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0",
     "vue3-signature": "^0.2.2",
-    "vuedraggable": "^4.1.0"
+    "vuedraggable": "^4.1.0",
+    "ws": "^8.14.2"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.4",

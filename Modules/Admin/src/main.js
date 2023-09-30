@@ -29,8 +29,9 @@ const mainStore = useMainStore(pinia);
 const styleStore = useStyleStore(pinia);
 const authStore = useAuthStore();
 const appState = useAppStateStore();
-appState.fetchConfig()
+appState.fetch()
 const translation = useTranslation();
+
 myApp.config.globalProperties.$config = config;
 myApp.config.globalProperties.$auth = authStore;
 myApp.config.globalProperties.$api = Api;

@@ -34,10 +34,10 @@ export default defineComponent({
       loading.value = false
     }
 
-    watch(() => props.params, function () {
+    watch( props.params, function () {
       fetch()
     })
-    watch(() => props.url, function () {
+    watch( props.url, function () {
       fetch()
     })
     fetch()

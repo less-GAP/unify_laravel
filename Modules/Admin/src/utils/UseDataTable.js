@@ -12,9 +12,9 @@ export function UseDataTable(fetchListApi, _tableConfig = {}) {
       perPage: parseInt(appState?.configs?.per_page) || 20,
       ..._tableConfig.pagination
     },
-    showReload: _tableConfig.showReload!==null?_tableConfig.showReload:false,
-    showPagination: _tableConfig.showPagination!==null?_tableConfig.showPagination:true,
-    columns:  _tableConfig.columns?_tableConfig.columns:[],
+    showReload: _tableConfig.showReload !== null ? _tableConfig.showReload : false,
+    showPagination: _tableConfig.showPagination !== null ? _tableConfig.showPagination : true,
+    columns: _tableConfig.columns ? _tableConfig.columns : [],
     config: {
       columns: [],
       sticky: true,
@@ -24,8 +24,8 @@ export function UseDataTable(fetchListApi, _tableConfig = {}) {
       showHeader: true,
       ..._tableConfig.config
     },
-    listActions: _tableConfig.listActions?_tableConfig.listActions:[],
-    itemActions: _tableConfig.itemActions?_tableConfig.itemActions:[],
+    listActions: _tableConfig.listActions ? _tableConfig.listActions : [],
+    itemActions: _tableConfig.itemActions ? _tableConfig.itemActions : [],
     ..._tableConfig
   }
 

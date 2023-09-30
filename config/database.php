@@ -93,7 +93,15 @@ return [
             // 'encrypt' => env('DB_ENCRYPT', 'yes'),
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
-
+        'realtime' => [
+            'driver' => 'surrealdb',
+            'host' => env('DB_HOST_REALTIME', 'surrealdb'),
+            'port' => env('DB_PORT_REALTIME', 8000),
+            'namespace' => env('DB_NAMESPACE_REALTIME', 'unify'),
+            'database' => env('DB_DATABASE_REALTIME', 'unify'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', 'root'),
+        ],
     ],
 
     /*
