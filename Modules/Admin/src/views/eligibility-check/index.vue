@@ -219,6 +219,7 @@ const submit = () => {
           <div class="relative z-0 w-full mb-6 group">
             <a-form-item
               label="Date of Birth"
+              name="dob"
               :rules="[
                 {
                   required: true,
