@@ -22,3 +22,4 @@ yarn-error.log
 /storage/logs/
 /storage/upload/
 /storage/upload/
+/surrealdb/surrealdb.db/*

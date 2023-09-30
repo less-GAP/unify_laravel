@@ -19,7 +19,8 @@
         "spatie/laravel-activitylog": "^4.7",
         "spatie/laravel-permission": "^5.11",
         "spatie/laravel-query-builder": "^5.2",
-        "symfony/dom-crawler": "^6.3"
+        "symfony/dom-crawler": "^6.3",
+        "nhphero/laravel-surrealdb": "dev-main"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
@@ -30,6 +31,12 @@
         "phpunit/phpunit": "^10.1",
         "spatie/laravel-ignition": "^2.0"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/nhphero/laravel-surrealdb"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "App\\": "app/",

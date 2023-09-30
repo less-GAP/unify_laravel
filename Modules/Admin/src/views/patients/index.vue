@@ -3,7 +3,7 @@ import router from "@/router";
 import SectionMain from "@/components/SectionMain.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import dayjs from "dayjs";
-import {h, watch} from "vue";
+import {h, watch, onDeactivated} from "vue";
 import {useAuthStore} from "@/stores/auth";
 import {DataTablePatient} from "@/components";
 import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
@@ -19,12 +19,16 @@ import {
   mdiAlertCircle,
 } from "@mdi/js";
 import {BaseIcon} from "@/components";
-import { useAppStateStore } from "@/stores/appState";
+import {useAppStateStore} from "@/stores/appState";
 
 import Api from "@/utils/Api";
 
+
 const configNames = ["per_page", "default_seller"];
 const prefix = "patient";
+const version_key ='patients';
+
+
 const {fetchListApi} = UseEloquentRouter(prefix);
 const auth = useAuthStore();
 
@@ -139,9 +143,9 @@ const age = (item) => {
     ? "(" + dayjs().diff(dayjs(item.dob, dbFormat), "year") + " years old)"
     : "-";
 };
-
 const tableConfig = UseDataTable(fetchListApi, {
   columns,
+  versionKey: version_key,
   showSelection: false,
   showSort: [
     {
@@ -165,23 +169,16 @@ const tableConfig = UseDataTable(fetchListApi, {
   itemActions,
 });
 
-watch(router.currentRoute, (currentRoute) => {
-  if (currentRoute.path === "/" + prefix) {
-    reloadTable();
-  }
-});
+
 let reloadTable = () => {
 };
 
-function registerTable({reload}) {
-  reloadTable = reload;
-}
 </script>
 
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <DataTablePatient v-bind="tableConfig" @register="registerTable">
+      <DataTablePatient v-bind="tableConfig" >
         <template #header>
           <h2>Patient List</h2>
         </template>

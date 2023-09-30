@@ -46,6 +46,22 @@ services:
     depends_on:
       - admin_dev
       - frontend_dev
+  surrealdb:
+    env_file:
+      - .env
+    entrypoint:
+      - /surreal
+      - start
+      - --user
+      - $DB_USERNAME
+      - --pass
+      - $DB_PASSWORD
+      - file:/surrealdb/surrealdb.db
+    image: surrealdb/surrealdb:latest
+    volumes:
+      - ./surrealdb/surrealdb.db:/surrealdb/surrealdb.db
+    ports:
+      - 8000:8000
 #    nginx:
 #        build: ./docker/nginx
 #        links:
