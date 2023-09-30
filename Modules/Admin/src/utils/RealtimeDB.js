@@ -3,7 +3,7 @@ import {Subject} from 'rxjs'
 
 const db = new Surreal();
 // Connect to the database
-await db.connect('ws://localhost:8000/rpc', {
+await db.connect( import.meta.env.VITE_RPC_HOST?import.meta.env.VITE_RPC_HOST:'http://localhost:8000/rpc', {
   // Set the namespace and database for the connection
   ns: 'unify',
   db: 'unify',
