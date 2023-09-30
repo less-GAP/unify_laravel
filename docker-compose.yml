@@ -34,22 +34,6 @@ services:
         restart: unless-stopped
         environment:
             - REDIS_PASSWORD=${REDIS_PASSWORD}
-    surrealdb:
-        env_file:
-            - .env
-        entrypoint:
-            - /surreal
-            - start
-            - --user
-            - $DB_USERNAME
-            - --pass
-            - $DB_PASSWORD
-            - file:/surrealdb/surrealdb.db
-        image: surrealdb/surrealdb:latest
-        ports:
-            - 8100:8000
-        volumes:
-            - ./surrealdb/surrealdb.db:/surrealdb/surrealdb.db
 volumes:
     app-volume:
         driver: local

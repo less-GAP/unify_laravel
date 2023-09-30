@@ -49,7 +49,7 @@ const transactionBarItems = computed(() => mainStore.history);
           color="!text-blue-500"
           :icon="mdiAccountMultiple"
           :number="$appState.statistics.patients_count"
-          label="Patients"
+          label="Patients 2"
         />
         <CardBoxWidget
           class="text-red-500"
