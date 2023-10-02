@@ -1,11 +1,11 @@
 <script setup>
-import {computed, ref, toRaw, watch, h} from "vue";
-import {Input} from "@/components/index";
-import {ReloadOutlined} from "@ant-design/icons-vue";
-import {fetchListStatusPatientApi, fetchListDoctorsApi} from "@/utils/Patient";
+import { computed, ref, toRaw, watch, h } from "vue";
+import { Input } from "@/components/index";
+import { ReloadOutlined } from "@ant-design/icons-vue";
+import { fetchListStatusPatientApi, fetchListDoctorsApi } from "@/utils/Patient";
 import Api from "@/utils/Api";
-import {useAuthStore} from "@/stores/auth";
-import {useAppStateStore} from "@/stores/appState";
+import { useAuthStore } from "@/stores/auth";
+import { useAppStateStore } from "@/stores/appState";
 
 const appState = useAppStateStore();
 const auth = useAuthStore();
@@ -152,21 +152,18 @@ async function reload(showLoading = false) {
       tableData.value = rs.data;
       props.pagination.total = rs.data?.total ? rs.data.total : 0;
       const prepareData = tableData.value.data.map(async (item) => {
-        item.assignees = [];
         if (item.unify_task_status !== null) {
           const status = listStatusPatient.find((status) => {
             return status.value == item.unify_task_status;
           })
           item.unify_task_status = status;
         }
+        item.assignees = [];
         if (item.tasks !== null) {
           item.tasks.forEach((task) => {
             if (task.assignees !== null) {
-              JSON.parse(task.assignees).forEach((assignee) => {
-                const user = listUserAll.value.find((user) => {
-                  return user.id == assignee;
-                })
-                if (item.assignees.findIndex((assignee) => assignee.id == user.id) === -1) {
+              task.assignees.forEach((user) => {
+                if(item.assignees.findIndex((item) => item.id == user.id) == -1) {
                   item.assignees.push(user);
                 }
               })
@@ -185,7 +182,7 @@ async function reload(showLoading = false) {
   }
 }
 
-emit("register", {reload, filter});
+emit("register", { reload, filter });
 const loading = ref(false);
 const checkAll = ref(false);
 const selectedItems = ref([]);
@@ -210,36 +207,21 @@ reload(true);
 
     <div :loading="loading" class="flex items-center justify-between p-2 bg-white border border-gray-200 rounded-xl">
       <a-space>
-        <a-input-search v-if="tableConfig.globalSearch" v-model:value="filter.search" allow-clear
-                        style="max-width: 380px"
-                        placeholder="Search by name, number, phone" :loading="loading" @search="reload"
-                        @keyup.enter="reload"/>
+        <a-input-search v-if="tableConfig.globalSearch" v-model:value="filter.search" allow-clear style="max-width: 380px"
+          placeholder="Search by name, number, phone" :loading="loading" @search="reload" @keyup.enter="reload" />
         <a-select v-if="auth.hasPermission('patient.filter.doctor')" :allowClear="true" v-model:value="filter.doctor_id"
-                  show-search style="width: 200px" placeholder="Filter by doctor" :options="listDoctors"
-                  @change="reload">
+          show-search style="width: 200px" placeholder="Filter by doctor" :options="listDoctors" @change="reload">
         </a-select>
         <a-select v-if="auth.hasPermission('patient.filter.seller')" :allowClear="true" v-model:value="filter.sale_user"
-                  show-search style="width: 200px" placeholder="Filter by creator" :options="listUserAll"
-                  @change="reload">
+          show-search style="width: 200px" placeholder="Filter by creator" :options="listUserAll" @change="reload">
         </a-select>
         <a-select v-if="auth.hasPermission('patient.filter.status')" :allowClear="true" v-model:value="filter.status"
-                  show-search style="width: 200px" placeholder="Filter by status" :options="listStatusPatient"
-                  @change="reload">
+          show-search style="width: 200px" placeholder="Filter by status" :options="listStatusPatient" @change="reload">
         </a-select>
         <slot name="sort" v-bind="{ tableConfig, sort, filter, reload }">
-          <a-select
-            v-if="showSort"
-            :allowClear="true"
-            v-model:value="orderBy"
-            style="width: 140px"
-            placeholder="Order by..."
-            @change="reload"
-          >
-            <a-select-option
-              v-for="sort in showSort"
-              :key="sort.value"
-              :value="sort.value"
-            >{{ sort.label }}
+          <a-select v-if="showSort" :allowClear="true" v-model:value="orderBy" style="width: 140px"
+            placeholder="Order by..." @change="reload">
+            <a-select-option v-for="sort in showSort" :key="sort.value" :value="sort.value">{{ sort.label }}
             </a-select-option>
           </a-select>
         </slot>
@@ -249,197 +231,119 @@ reload(true);
       <a-space>
         <a-button v-if="showReload">
           <template #icon>
-            <reload-outlined @click="reload"/>
+            <reload-outlined @click="reload" />
           </template>
         </a-button>
-        <a-button
-          v-for="listAction in listActions"
-          type="primary"
-          @click="
-            () => {
-              if(listAction.permission){
-                listAction.action(reload);
-              }else{
-                return false;
-              }
+        <a-button v-for="listAction in listActions" type="primary" @click="() => {
+            if (listAction.permission) {
+              listAction.action(reload);
+            } else {
+              return false;
             }
-          "
-        >{{ listAction.label }}
-        </a-button
-        >
+          }
+          ">{{ listAction.label }}
+        </a-button>
       </a-space>
     </div>
-    <div
-      class="flex-1 w-full my-5 overflow-auto bg-white border border-gray-200 rounded-lg shadow scroll-smooth"
-    >
-      <a-skeleton v-if="loading || !tableData.data" active class="p-10"/>
+    <div class="flex-1 w-full my-5 overflow-auto bg-white border border-gray-200 rounded-lg shadow scroll-smooth">
+      <a-skeleton v-if="loading || !tableData.data" active class="p-10" />
 
       <slot v-else name="table" v-bind="{ tableConfig, tableData, columns, selectionActions, reload }">
         <table class="w-full text-xs table-auto">
           <thead class="font-semibold text-gray-400 uppercase bg-gray-50">
-          <tr>
-            <th
-              v-if="showSelection"
-              scope="col"
-              width="40"
-              class="px-1 py-2 text-center whitespace-nowrap"
-            >
-              <label class="w-full font-medium text-gray-900">
-                <input
-                  v-model="checkAll"
-                  :value="true"
-                  type="checkbox"
-                  class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-                  @change="toggleCheckAll"
-                />
-              </label>
-            </th>
+            <tr>
+              <th v-if="showSelection" scope="col" width="40" class="px-1 py-2 text-center whitespace-nowrap">
+                <label class="w-full font-medium text-gray-900">
+                  <input v-model="checkAll" :value="true" type="checkbox"
+                    class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500" @change="toggleCheckAll" />
+                </label>
+              </th>
 
-            <th
-              v-for="column in columns"
-              scope="col"
-              :width="column.width ? column.width : 'auto'"
-              class="px-1 py-2 whitespace-nowrap"
-            >
-              <div class="font-semibold text-left">
-                {{ __(column.title) }}
-              </div>
-            </th>
+              <th v-for="column in columns" scope="col" :width="column.width ? column.width : 'auto'"
+                class="px-1 py-2 whitespace-nowrap">
+                <div class="font-semibold text-left">
+                  {{ __(column.title) }}
+                </div>
+              </th>
 
-            <th
-              v-if="itemActions.length"
-              width="120"
-              scope="col"
-              class="px-1 py-2"
-            >
-              {{ __("Action") }}
-            </th>
-          </tr>
+              <th v-if="itemActions.length" width="120" scope="col" class="px-1 py-2">
+                {{ __("Action") }}
+              </th>
+            </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
-          <tr
-            v-for="(item, index) in tableData.data"
-            :key="item[tableConfig.item_key]"
-            :class="{ 'border-b': index % 2 === 0 }"
-          >
-            <td
-              v-if="showSelection"
-              width="40"
-              class="p-1 text-center whitespace-nowrap"
-            >
-              <label
-                :for="'checkbox-table-search-' + item[tableConfig.item_key]"
-                class="w-full font-medium text-gray-900"
-              >
-                <input
-                  :id="item[tableConfig.item_key]"
-                  v-model="selectedItems"
-                  :value="item"
-                  type="checkbox"
-                  class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-                />
-              </label>
-            </td>
+            <tr v-for="(item, index) in tableData.data" :key="item[tableConfig.item_key]"
+              :class="{ 'border-b': index % 2 === 0 }">
+              <td v-if="showSelection" width="40" class="p-1 text-center whitespace-nowrap">
+                <label :for="'checkbox-table-search-' + item[tableConfig.item_key]"
+                  class="w-full font-medium text-gray-900">
+                  <input :id="item[tableConfig.item_key]" v-model="selectedItems" :value="item" type="checkbox"
+                    class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500" />
+                </label>
+              </td>
 
-            <td
-              v-for="column in columns"
-              :data-label="column.title"
-              :class="'p-1 ' + (column.class ? column.class : '')"
-            >
-              <template v-if="item.render">
-                {{ item.render() }}
-              </template>
-              <slot
-                v-else-if="column.key == 'unify_task_status'"
-                v-bind="{ item, column, index }"
-              >
-                <a-tag v-if="item.unify_task_status !== null"
-                       :style="'background-color: '+item.unify_task_status.background_color+'; color: '+item.unify_task_status.color+'; border-color: currentColor' ">
-                  {{
-                    item.unify_task_status.label
-                  }}
-                </a-tag>
-              </slot>
-              <slot
-                v-else-if="column.key == 'assigned'"
-                v-bind="{ item, column, index }"
-              >
-                <div class="flex">
-                  <div
-                    v-for="user_assignee in item.assignees"
-                    :key="user_assignee"
-                    class="item-assignee"
-                  >
-                    <a-avatar-group>
-                      <a-tooltip
-                        :title="nameAssignee(user_assignee, true)"
-                        placement="top"
-                      >
-                        <a-avatar
-                          style="background-color: #87d068"
-                        >{{ nameAssignee(user_assignee) }}
-                        </a-avatar
-                        >
-                      </a-tooltip>
-                    </a-avatar-group>
+              <td v-for="column in columns" :data-label="column.title"
+                :class="'p-1 ' + (column.class ? column.class : '')">
+                <template v-if="item.render">
+                  {{ item.render() }}
+                </template>
+                <slot v-else-if="column.key == 'unify_task_status'" v-bind="{ item, column, index }">
+                  <a-tag v-if="item.unify_task_status !== null"
+                    :style="'background-color: ' + item.unify_task_status.background_color + '; color: ' + item.unify_task_status.color + '; border-color: currentColor'">
+                    {{
+                      item.unify_task_status.label
+                    }}
+                  </a-tag>
+                </slot>
+                <slot v-else-if="column.key == 'assigned'" v-bind="{ item, column, index }">
+                  <div v-if="item.assignees" class="flex">
+                    <div v-for="(user, index) in item.assignees" :key="index" class="item-assignee">
+                      <a-avatar-group>
+                        <a-tooltip :title="user.full_name" placement="top">
+                            <img class="relative w-8 h-8 border border-white rounded-full -me-1 hover:z-10" :src="user?.profile_photo_url"
+                              alt="user photo">
+                        </a-tooltip>
+                      </a-avatar-group>
+                    </div>
                   </div>
-                </div>
-              </slot>
-              <slot
-                v-else
-                :name="'cell[' + column.key + ']'"
-                v-bind="{ item, column, index }"
-              >
-                {{
-                  $style["format"][column.key]
+                </slot>
+                <slot v-else :name="'cell[' + column.key + ']'" v-bind="{ item, column, index }">
+                  {{
+                    $style["format"][column.key]
                     ? $style["format"][column.key](item[column.key])
                     : item[column.key]
-                }}
-              </slot>
-            </td>
-            <td
-              v-if="itemActions.length"
-              width="120"
-              class="p-1 whitespace-nowrap"
-            >
-              <div class="flex flex-nowrap whitespace-nowrap">
-                <template v-for="itemAction in itemActions">
-                  <slot
-                    v-if="itemAction.show(item)"
-                    :name="'cellAction[' + itemAction.key + ']'"
-                    v-bind="{
-                        item,
-                        itemAction,
-                        actionMethod() {
-                          itemAction.action(item, reload);
-                        },
-                      }"
-                  >
-                    <a-button
-                      :class="
-                          itemAction.class ||
-                          'font-medium text-blue-600 dark:text-blue-500 hover:underline'
-                        "
-                      type="link"
-                      @click="itemAction.action(item, reload)"
-                    >
-                      {{ itemAction.label }}
-                    </a-button>
-                  </slot>
-                </template>
-              </div>
-            </td>
-          </tr>
+                  }}
+                </slot>
+              </td>
+              <td v-if="itemActions.length" width="120" class="p-1 whitespace-nowrap">
+                <div class="flex flex-nowrap whitespace-nowrap">
+                  <template v-for="itemAction in itemActions">
+                    <slot v-if="itemAction.show(item)" :name="'cellAction[' + itemAction.key + ']'" v-bind="{
+                      item,
+                      itemAction,
+                      actionMethod() {
+                        itemAction.action(item, reload);
+                      },
+                    }">
+                      <a-button :class="itemAction.class ||
+                        'font-medium text-blue-600 dark:text-blue-500 hover:underline'
+                        " type="link" @click="itemAction.action(item, reload)">
+                        {{ itemAction.label }}
+                      </a-button>
+                    </slot>
+                  </template>
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </slot>
-      <a-empty v-if="tableData.data?.length === 0 && pagination.total === 0" class="my-10" :description="false"/>
+      <a-empty v-if="tableData.data?.length === 0 && pagination.total === 0" class="my-10" :description="false" />
     </div>
 
     <a-pagination v-if="tableData.data && pagination?.total" v-model:current="pagination.page"
-                  v-model:pageSize="pagination.perPage" style="height: 40px" class="pt-2"
-                  :show-size-changer="showSizeChanger"
-                  :total="pagination.total" @change="reload">
+      v-model:pageSize="pagination.perPage" style="height: 40px" class="pt-2" :show-size-changer="showSizeChanger"
+      :total="pagination.total" @change="reload">
       <template #itemRender="{ type, originalElement }">
         <a v-if="type === 'prev'">Previous</a>
         <a v-else-if="type === 'next'">Next</a>
@@ -449,7 +353,7 @@ reload(true);
   </div>
 </template>
 <style scoped>
-.item-actions > :not(:first-child) {
+.item-actions> :not(:first-child) {
   margin-left: 10px;
 }
 </style>
