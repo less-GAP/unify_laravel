@@ -102,6 +102,5 @@ class Task extends Model
 
     protected $appends = [
         'patient',
-        // 'tags'
     ];
 }
