@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\User;
+use App\Notifications\NotificationPatientData;
 use App\Traits\HasRealtimeData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Lessgap\Traits\HasLessgapEvent;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
-use App\Models\User;
 
 class Patient extends Model
 {
@@ -17,7 +19,7 @@ class Patient extends Model
      *
      * @var array<int, string>
      */
-    use HasFactory, LogsActivity,HasRealtimeData;
+    use HasFactory, LogsActivity, HasRealtimeData, HasLessgapEvent;
 
     protected $table = 'patients';
 
@@ -73,18 +75,20 @@ class Patient extends Model
         return LogOptions::defaults()
             ->logAll()
             ->logOnlyDirty()
-            ->setDescriptionForEvent(fn(string $eventName) => request()->input('log_detail',$eventName))
+            ->setDescriptionForEvent(fn(string $eventName) => request()->input('log_detail', $eventName))
             ->dontSubmitEmptyLogs();
     }
 
-    public function getSellerAttribute(){
-        if(!$this->attributes['sale_user']) return null;
+    public function getSellerAttribute()
+    {
+        if (!$this->attributes['sale_user']) return null;
         $user = User::select('full_name', 'id')->findOrFail($this->attributes['sale_user']);
         return $user;
     }
 
-    public function getIsTurnOffAttribute(){
-        return in_array($this->unify_status, array(2,3)) || $this->unify_deleted == 1;
+    public function getIsTurnOffAttribute()
+    {
+        return in_array($this->unify_status, array(2, 3)) || $this->unify_deleted == 1;
     }
 
     public function tasks(): HasMany
@@ -121,11 +125,13 @@ class Patient extends Model
         return $nextUnifyNumber;
     }
 
-    // public function getImageUrlAttribute()
-    // {
-    //     if ($this->image != '') {
-    //         return url($this->image, '', env('APP_ENV') == 'local' ? false : true);
-    //     }
-    //     return '';
-    // }
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'sale_user', 'id');
+    }
+
+    public function notificationData()
+    {
+        return new NotificationPatientData($this);
+    }
 }

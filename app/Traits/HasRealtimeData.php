@@ -4,7 +4,8 @@
 namespace App\Traits;
 
 
-use App\Services\RealtimeService;
+
+use Lessgap\Services\RealtimeService;
 
 trait HasRealtimeData
 {

@@ -4,6 +4,8 @@
 namespace App\Traits;
 
 
+use App\Models\User;
+
 trait CreatedUpdatedByAdmin
 {
     public static function bootCreatedUpdatedByAdmin()
@@ -22,5 +24,8 @@ trait CreatedUpdatedByAdmin
                 $model->updated_by = auth('admin')->user()->username;
             }
         });
+    }
+    public function owner(){
+        return $this->belongsTo(User::class,'created_by','user_name');
     }
 }

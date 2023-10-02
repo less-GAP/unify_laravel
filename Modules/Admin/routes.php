@@ -4,6 +4,7 @@ use App\Builder\EloquentRouter;
 use App\Models\EmailTemplate;
 use App\Models\Product;
 use Illuminate\Support\Facades\Route;
+use Lessgap\Models\EventSetting;
 use Modules\Admin\Actions\GetUserInfoAction;
 use Modules\Admin\Actions\User\DeleteUserAction;
 use Modules\Admin\Actions\Customer\DeleteCustomerAction;
@@ -157,6 +158,13 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             \App\Models\Email::class,
             [
                 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'email_title,email_to')]
+            ]
+        );
+    EloquentRouter::prefix('event-setting')
+        ->handle(
+            EventSetting::class,
+            [
+                'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'event_name')]
             ]
         );
     EloquentRouter::prefix('email-template')

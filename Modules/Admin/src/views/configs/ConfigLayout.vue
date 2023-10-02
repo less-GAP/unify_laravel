@@ -62,6 +62,13 @@ const items = ref([
     label: 'SMTP',
     title: 'SMTP',
   },
+  {
+    key: 'system-events',
+    // icon: () => h(AppstoreOutlined),
+    href:'/configs/event-setting',
+    label: 'System Events',
+    title: 'System Events',
+  },
 
 
 ]);
@@ -76,7 +83,7 @@ function menuClick({item}){
   <LayoutAuthenticated>
     <a-layout class="rounded-xl overflow-hidden shadow">
       <a-layout-sider  style="width:300px;background: #fff;max-width:40vw;">
-        <a-menu class="h-full" @click="menuClick"  mode="vertical" :items="items">
+        <a-menu :selectedKeys="[$appState.currentRoute?.name]" class="h-full" @click="menuClick"  mode="vertical" :items="items">
         </a-menu>
       </a-layout-sider>
       <a-layout-content

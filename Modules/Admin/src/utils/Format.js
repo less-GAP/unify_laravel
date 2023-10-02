@@ -43,6 +43,14 @@ export default {
     }
     return moment(value).format("HH:mm MM-DD-YYYY")
   },
+  diffHuman: function (value, defaultValue = '') {
+    if (!value) {
+      return defaultValue
+    }
+    var now = moment();
+    var publishedDate = moment(value);
+    return moment.duration(publishedDate.diff(now)).humanize(true)
+  },
 
   formatDate: function (value, defaultValue = '') {
     if (!value) {

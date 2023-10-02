@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
+use Lessgap\LessgapServiceProvider;
 
 return [
 
@@ -70,7 +71,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Ho_Chi_Minh',
 
     /*
     |--------------------------------------------------------------------------
@@ -169,6 +170,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
+        LessgapServiceProvider::class,
         Modules\Admin\ServiceProvider::class,
         Modules\Frontend\ServiceProvider::class,
         Modules\PostApi\ServiceProvider::class,
