@@ -44,7 +44,7 @@ export const useAppStateStore = defineStore("appState", {
           // result contains either the entire record, or a set of JSON patches when diff mode is enabled
           try {
 
-            this.versions[result.key] = result.value
+            // this.versions[result.key] = result.value
           } catch (e) {
             console.log(e)
           }
@@ -57,7 +57,7 @@ export const useAppStateStore = defineStore("appState", {
           if (action === "CLOSE") return;
           // result contains either the entire record, or a set of JSON patches when diff mode is enabled
           try {
-            this.statistics[result.key] = result.value
+            // this.statistics[result.key] = result.value
           } catch (e) {
             console.log(e)
           }
