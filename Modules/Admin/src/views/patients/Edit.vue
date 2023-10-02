@@ -81,16 +81,13 @@ const fetch = async function () {
       }, 3000);
     }
   } else {
+    formState.sale_user = auth.user.id;
+    formState.unify_process = 0;
     loading.value = false
   }
 }
 fetch();
 
-
-
-const saler_id = computed(() => {
-  return formState.sale_user ? formState.sale_user : auth.user.id;
-});
 const patient_process = computed(() => {
   return formState.unify_process ? formState.unify_process : 0;
 });
@@ -99,6 +96,7 @@ const submit = (status) => {
   formRef.value
     .validate()
     .then(() => {
+      
       if (formState.unify_status > 1) { // die or inactive => to archive
         formState.unify_inactive_at = dayjs().format('YYYY-MM-DD HH:mm:ss');
       }
@@ -453,8 +451,8 @@ const closeDetail = function () {
           </div>
         </div>
       </div>
-      <a-input v-model:value="patient_process" name="unify_process" type="hidden"></a-input>
-      <a-input v-model:value="saler_id" name="sale_user" type="hidden"></a-input>
+      <a-input v-model:value="formState.unify_process" name="unify_process" type="hidden"></a-input>
+      <a-input v-model:value="formState.sale_user" name="sale_user" type="hidden"></a-input>
     </a-form>
   </a-drawer>
 </template>

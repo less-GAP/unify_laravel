@@ -43,33 +43,45 @@ const transactionBarItems = computed(() => mainStore.history);
       >
       </SectionTitleLineWithButton>
 
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-6">
+      <div class="grid grid-cols-1 gap-6 mb-6 lg:grid-cols-5">
         <CardBoxWidget
           class="text-blue-500"
           color="!text-blue-500"
           :icon="mdiAccountMultiple"
           :number="$appState.statistics.patients_count"
-          label="Patients"
-        />
-        <CardBoxWidget
-          class="text-red-500"
-          color="!text-red-500"
-          :icon="mdiCartOutline"
-          :number="7770"
-          prefix="$"
-          label="Deliveries"
+          label="Total"
         />
         <CardBoxWidget
           class="text-yellow-500"
           color="!text-yellow-500"
-          :icon="mdiChartTimelineVariant"
-          :number="256"
-          suffix="%"
-          label="Pending"
+          :icon="mdiAccountMultiple"
+          :number="$appState.statistics.patients_waiting_count"
+          label="Waiting"
+        />
+        <CardBoxWidget
+          class="text-orange-500"
+          color="!text-orange-500"
+          :icon="mdiAccountMultiple"
+          :number="$appState.statistics.patients_check_count"
+          label="Eligibility Check"
+        />
+        <CardBoxWidget
+          class="text-green-500"
+          color="!text-green-500"
+          :icon="mdiAccountMultiple"
+          :number="$appState.statistics.patients_active_count"
+          label="Active"
+        />
+        <CardBoxWidget
+          class="text-gray-500"
+          color="!text-gray-500"
+          :icon="mdiAccountMultiple"
+          :number="$appState.statistics.patients_inactive_count"
+          label="InActive"
         />
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <!-- <div class="grid grid-cols-1 gap-6 mb-6 lg:grid-cols-2">
         <div class="flex flex-col justify-between">
           <CardBoxTransaction
             v-for="(transaction, index) in transactionBarItems"
@@ -92,9 +104,9 @@ const transactionBarItems = computed(() => mainStore.history);
             :progress="client.progress"
           />
         </div>
-      </div>
+      </div> -->
 
-      <Calendar />
+      <!-- <Calendar /> -->
 
     </SectionMain>
   </LayoutAuthenticated>
