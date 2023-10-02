@@ -19,16 +19,9 @@ import {
   mdiAlertCircle,
 } from "@mdi/js";
 import {BaseIcon} from "@/components";
-import {useAppStateStore} from "@/stores/appState";
-
-import Api from "@/utils/Api";
-
-
-const configNames = ["per_page", "default_seller"];
 
 const prefix = "patient";
 const version_key ='patients';
-
 
 const {fetchListApi} = UseEloquentRouter(prefix);
 const auth = useAuthStore();
@@ -169,7 +162,6 @@ const tableConfig = UseDataTable(fetchListApi, {
   listActions,
   itemActions,
 });
-
 
 let reloadTable = () => {
 };
