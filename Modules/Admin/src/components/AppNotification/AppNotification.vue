@@ -3,6 +3,7 @@ import {defineComponent, watch, ref, unref} from 'vue';
 import {SearchOutlined} from '@ant-design/icons-vue';
 import {db} from "@/utils/RealtimeDB";
 import {useAuthStore} from "@/stores/auth";
+import Api from "@/utils/Api";
 
 export default defineComponent({
   name: 'AppSearch',
@@ -10,18 +11,21 @@ export default defineComponent({
   setup() {
     const modal = ref()
     const items = ref([])
+    const unreadCount = ref(0)
     const auth = useAuthStore()
     const changeModal = function () {
       modal.value.changeModal(true)
     }
 
     const fetch = async function () {
-      const [rs] = await db.query("SELECT * FROM notifications WHERE username = '" + auth.user.username + "' ORDER BY id DESC limit 10 ");
+      const [rs] = await db.query("SELECT * FROM notifications WHERE username = '" + auth.user.username + "' ORDER BY created_at DESC limit 10 ");
       items.value = rs.result
+      const [rsUnread] = await db.query("SELECT count() as total FROM notifications WHERE username = '" + auth.user.username + "' and status = 'unread' GROUP ALL  ");
+      unreadCount.value = rsUnread.result[0].total
     }
     const watch = async function () {
       await db.live(
-        "person",
+        "notifications",
         // The callback function takes an object with the "action" and "result" properties
         ({action, result}) => {
           // action can be: "CREATE", "UPDATE", "DELETE" or "CLOSE"
@@ -34,8 +38,13 @@ export default defineComponent({
     }
 
     fetch()
+    watch()
     return {
+      async read(item) {
+        await Api.post('notification/read/', item)
+      },
       items,
+      unreadCount,
       modal,
       changeModal
     }
@@ -44,7 +53,7 @@ export default defineComponent({
 </script>
 <template>
   <button type="button" data-dropdown-toggle="notification-dropdown"
-          class="p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700">
+          class="p-2 text-gray-500 relative rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700">
     <span class="sr-only">View notifications</span>
 
     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -52,6 +61,12 @@ export default defineComponent({
         d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z">
       </path>
     </svg>
+    <div
+      v-if="unreadCount"
+      class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -right-2 dark:border-gray-900">
+      {{ unreadCount }}
+    </div>
+
   </button>
   <div
     class="z-20 z-50 hidden max-w-sm my-4 overflow-hidden text-base list-none bg-white divide-y divide-gray-100 rounded shadow-lg dark:divide-gray-600 dark:bg-gray-700"
@@ -62,8 +77,10 @@ export default defineComponent({
       Notifications
     </div>
     <div>
-      <a v-for="item in items" :key="item.id" href="#"
-         class="flex px-4 py-3 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600">
+      <router-link @click="read(item)" :to="'/patient/'+JSON.parse(item.data)?.id+'/detail'" v-for="item in items"
+                   :key="item.id"
+                   :class="item.status=='unread'?'bg-gray-200':''"
+                   class="flex px-4 py-3 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600">
         <div class="flex-shrink-0">
           <img class="rounded-full w-11 h-11"
                src="https://flowbite-admin-dashboard.vercel.app/images/users/bonnie-green.png" alt="Jese image">
@@ -83,26 +100,27 @@ export default defineComponent({
         <div class="w-full pl-3">
           <div class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">{{ item.title }} <span
             class="font-semibold text-gray-900 dark:text-white">
-
           </span>
           </div>
-
-          <div class="text-xs font-medium text-primary-700 dark:text-primary-400">{{$format.diffHuman(item.created_at)}}</div>
+          {{ JSON.parse(item.data)?.patient_name }}
+          <div class="text-xs font-medium text-primary-700 dark:text-primary-400">
+            {{ $format.diffHuman(item.created_at) }}
+          </div>
         </div>
-      </a>
+      </router-link>
 
     </div>
-    <a href="#"
-       class="block py-2 text-base font-normal text-center text-gray-900 bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:hover:underline">
-      <div class="inline-flex items-center ">
-        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
-          <path fill-rule="evenodd"
-                d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                clip-rule="evenodd"></path>
-        </svg>
-        View all
-      </div>
-    </a>
+    <!--    <a href="#"-->
+    <!--       class="block py-2 text-base font-normal text-center text-gray-900 bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:hover:underline">-->
+    <!--      <div class="inline-flex items-center ">-->
+    <!--        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">-->
+    <!--          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>-->
+    <!--          <path fill-rule="evenodd"-->
+    <!--                d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"-->
+    <!--                clip-rule="evenodd"></path>-->
+    <!--        </svg>-->
+    <!--        View all-->
+    <!--      </div>-->
+    <!--    </a>-->
   </div>
 </template>

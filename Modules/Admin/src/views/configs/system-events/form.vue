@@ -92,6 +92,7 @@ const closeDetail = function () {
             <a-select v-model:value="formState.event_name">
               <a-select-option value="patients.created">Create Patient</a-select-option>
               <a-select-option value="patients.updated">Update Patient</a-select-option>
+              <a-select-option value="patients.deleted">Delete Patient</a-select-option>
             </a-select>
           </a-form-item>
           <a-form-item label="Notifications"
@@ -116,7 +117,7 @@ const closeDetail = function () {
             </a-select>
           </a-form-item>
           <a-form-item v-if="formState.data.notifications.includes('notification_message')" label="Notification Title"
-                       :name="['data','notification_title']"
+                       :name="['data','notification_tittle']"
                        :min="0"
                        :rules="[{ required: true }]"
           >
