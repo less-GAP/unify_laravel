@@ -3,7 +3,13 @@ import Api from "@/utils/Api";
 import {db} from "@/utils/RealtimeDB";
 import {ref, watch} from "vue";
 // import { useCachedRequest } from './useCachedRequest'
-
+const defaultConfig = {
+  "site_title": "",
+  "site_description": "",
+  "copy_right": "",
+  "default_seller": 1,
+  "per_page": 50
+}
 export const useAppStateStore = defineStore("appState", {
   state: () => ({
     /* User */
