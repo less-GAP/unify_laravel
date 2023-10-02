@@ -81,9 +81,7 @@ class Patient extends Model
 
     public function getSellerAttribute()
     {
-        if (!$this->attributes['sale_user']) return null;
-        $user = User::select('full_name', 'id')->findOrFail($this->attributes['sale_user']);
-        return $user;
+        return User::select('full_name', 'id')->find($this->attributes['sale_user']);
     }
 
     public function getIsTurnOffAttribute()
