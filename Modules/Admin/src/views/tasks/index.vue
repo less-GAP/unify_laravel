@@ -1,24 +1,24 @@
 <script setup>
 import router from "@/router";
-import { DataTable, BaseIcon } from "@/components";
+import {DataTable, BaseIcon, ApiData} from "@/components";
 import SectionMain from "@/components/SectionMain.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
-import { watch, ref, reactive } from "vue";
-import { CheckCircleOutlined, ClockCircleOutlined, SyncOutlined } from "@ant-design/icons-vue";
-import { useAuthStore } from "@/stores/auth";
-import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
-import { UseDataTable } from "@/utils/UseDataTable";
+import {watch, ref, reactive} from "vue";
+import {CheckCircleOutlined, ClockCircleOutlined, SyncOutlined} from "@ant-design/icons-vue";
+import {useAuthStore} from "@/stores/auth";
+import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
+import {UseDataTable} from "@/utils/UseDataTable";
 import TaskItem from "@/components/TaskItem.vue";
 import draggable from "vuedraggable";
 import Api from "@/utils/Api";
-import { mdiCalendarClockOutline, mdiReply, mdiUploadOutline, mdiLink } from "@mdi/js";
+import {mdiCalendarClockOutline, mdiReply, mdiUploadOutline, mdiLink} from "@mdi/js";
 import {
   getStatusTask
 } from "@/utils/Task";
 
 const auth = useAuthStore();
 const prefix = "task";
-const { fetchListApi } = UseEloquentRouter(prefix);
+const {fetchListApi} = UseEloquentRouter(prefix);
 const itemActions = [
   {
     label: "Edit",
@@ -47,21 +47,28 @@ const taskColumns = ref([
     name: "ToDo",
     key: "todo",
     task_process: 0,
+    tasks: []
   },
   {
     name: "Working",
     key: "working",
     task_process: 1,
+    tasks: []
+
   },
   {
     name: "Review",
     key: "review",
     task_process: 2,
+    tasks: []
+
   },
   {
     name: "Done",
     key: "done",
     task_process: 3,
+    tasks: []
+
   }
 ]);
 
@@ -113,8 +120,11 @@ const getFilteredData = (data, taskProcess) => {
   return data.filter(item => item.task_process === taskProcess);
 };
 
-const updateProcessTask = function (newIndex, oldIndex, element) {
-  console.log(newIndex, oldIndex, element);
+const updateProcessTask = function (data) {
+  const task = data.draggedContext.element;
+  Api.put('/task/' + task.id, {task_process: data.to.dataset.status})
+  task.task_process = parseInt(data.to.dataset.status)
+  return true;
   // console.log(mutations);
 }
 
@@ -125,15 +135,11 @@ const tableConfig = UseDataTable(fetchListApi, {
   listActions,
   itemActions,
 });
-let reloadTable = () => { };
+let reloadTable = () => {
+};
 
-watch(router.currentRoute, (currentRoute) => {
-  if (currentRoute.path === "/" + prefix) {
-    reloadTable();
-  }
-});
 
-function registerTable({ reload }) {
+function registerTable({reload}) {
   reloadTable = reload;
 }
 </script>
@@ -142,50 +148,48 @@ function registerTable({ reload }) {
   <LayoutAuthenticated>
     <SectionMain>
       <div class="taskList">
-        <DataTable v-bind="tableConfig" @register="registerTable">
-          <template #header>
-            <h2>Task List</h2>
-          </template>
-          <template #table="{
-            tableConfig,
-            tableData,
-            data,
-            columns,
-            selectionActions,
-            reload,
-          }">
-            <div class="overflow-hidden">
-              <div v-if="data?.length" class="flex pb-4 -mx-2">
-                <div v-for="column in taskColumns" :key="column.key" class="w-full px-2 md:w-1/2 lg:w-1/4">
-                  <div class="flex flex-col p-4 border border-gray-200 rounded-lg inner">
-                    <h2 class="mb-2 text-lg font-semibold uppercase">{{ column.key }} ({{ data.filter(item =>
-                      item.task_process == column.task_process).length }})</h2>
-                    <div class="flex flex-col h-[calc(100vh-285px)] gap-4 pl-1 pr-4 overflow-x-hidden overflow-y-auto kanban-board">
-                      <draggable v-bind="dragOptions" :list="getFilteredData(data, column.task_process)"
-                        :item-key="column.key" :move="updateProcessTask">
-                        <template #item="{ element }">
-                          <TaskItem :value="element" class="p-4 mb-2 bg-white rounded-md shadow-md" />
-                        </template>
-                      </draggable>
-                    </div>
+        <h2>Task List</h2>
+        <div class="overflow-hidden">
+          <div class="flex pb-4 -mx-2">
+            <div v-for="column in taskColumns" :key="column.key" class="w-full px-2 md:w-1/2 lg:w-1/4">
+              <ApiData @change="(items)=>{column.tasks = items}"
+                       :url="'/task/all?filter[task_process]='+column.task_process"
+                       class="flex flex-col p-4 border border-gray-200 rounded-lg inner">
+                <template #default="{data}">
+                  <h2 class="mb-2 text-lg font-semibold uppercase">{{ column.key }} ({{
+                      data.length
+                    }})</h2>
+                  <div
+                    class="flex  flex-col h-[calc(100vh-285px)] gap-4 pl-1 pr-4 overflow-x-hidden overflow-y-auto kanban-board">
+                    <draggable v-bind="dragOptions"
+                               v-model="column.tasks"
+                               :group="{ name: 'task-list' }"
+                               class="dragArea"
+                               :data-status="column.task_process"
+                               :item-key="column.key" :move="evt=>{return updateProcessTask(evt,column)}">
+                      <template #item="{ element }">
+                        <TaskItem :value="element" class="p-4  mb-2 bg-white rounded-md shadow-md"/>
+                      </template>
+                    </draggable>
                   </div>
-                </div>
-              </div>
+                </template>
+
+              </ApiData>
             </div>
-          </template>
-        </DataTable>
+          </div>
+        </div>
       </div>
 
       <!-- Modal Detail Task -->
       <a-modal v-model:open="openModalDetail" append-to-body :title="taskDetail.name" width="1000px"
-        :confirm-loading="confirmLoading">
+               :confirm-loading="confirmLoading">
         <div class="detail">
           <div class="mb-4">
             <a-tag v-if="getStatusTask(taskDetail.task_process)" :color="getStatusTask(taskDetail.task_process).color">
               <template #icon>
-                <CheckCircleOutlined v-if="taskDetail.task_process === 3" />
-                <SyncOutlined v-if="taskDetail.task_process === 1" :spin="true" />
-                <ClockCircleOutlined v-if="[null, 0].includes(taskDetail.task_process)" />
+                <CheckCircleOutlined v-if="taskDetail.task_process === 3"/>
+                <SyncOutlined v-if="taskDetail.task_process === 1" :spin="true"/>
+                <ClockCircleOutlined v-if="[null, 0].includes(taskDetail.task_process)"/>
               </template>
               {{ getStatusTask(taskDetail.task_process).label }}
             </a-tag>
@@ -219,8 +223,10 @@ function registerTable({ reload }) {
                   <div class="">
                     <h5 class="font-medium">
                       <a @click="router.replace('/patient/' + taskDetail.patient.id + '/edit')">[#{{
-                        taskDetail.patient.unify_number }}] {{
-    taskDetail.patient.full_name }}</a>
+                          taskDetail.patient.unify_number
+                        }}] {{
+                          taskDetail.patient.full_name
+                        }}</a>
                     </h5>
                     <p class="text-xs text-stone-400">{{ age(taskDetail.patient.dob) }}</p>
                   </div>
@@ -242,7 +248,8 @@ function registerTable({ reload }) {
         <!-- Comment & Log -->
         <div class="comment">
           <a-divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0"
-            plain>Logs</a-divider>
+                     plain>Logs
+          </a-divider>
           <!-- <DataTable v-if="tableConfig" v-bind="tableConfig">
             <template #table="{
               tableConfig,
@@ -269,7 +276,8 @@ function registerTable({ reload }) {
           </DataTable> -->
           <a-form>
             <a-divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0"
-              plain>Comments</a-divider>
+                       plain>Comments
+            </a-divider>
             <div class="">
               <div class="mt-4">
                 <div class="flex gap-2">
@@ -282,7 +290,8 @@ function registerTable({ reload }) {
                     </h5>
                     <p>Nice work, makes me think of The Money Pit.</p>
                     <a href="javascript: void(0);" class="flex items-center mt-2 text-xs font-light !text-stone-500">
-                      <BaseIcon :path="mdiReply" class="inline-block !text-current" /> Reply
+                      <BaseIcon :path="mdiReply" class="inline-block !text-current"/>
+                      Reply
                     </a>
                     <!-- chat-end -->
 
@@ -298,8 +307,9 @@ function registerTable({ reload }) {
                           <p>i'm in the middle of a timelapse animation myself! (Very different though.) Awesome stuff.
                           </p>
                           <a href="javascript: void(0);"
-                            class="flex items-center mt-2 text-xs font-light !text-stone-500">
-                            <BaseIcon :path="mdiReply" class="inline-block !text-current" /> Reply
+                             class="flex items-center mt-2 text-xs font-light !text-stone-500">
+                            <BaseIcon :path="mdiReply" class="inline-block !text-current"/>
+                            Reply
                           </a>
                         </div>
                       </div>
@@ -319,7 +329,8 @@ function registerTable({ reload }) {
                     </h5>
                     <p>It would be very nice to have.</p>
                     <a href="javascript: void(0);" class="flex items-center mt-2 text-xs font-light !text-stone-500">
-                      <BaseIcon :path="mdiReply" class="inline-block !text-current" /> Reply
+                      <BaseIcon :path="mdiReply" class="inline-block !text-current"/>
+                      Reply
                     </a>
                   </div>
                 </div>
@@ -328,14 +339,14 @@ function registerTable({ reload }) {
 
             <div class="border mt-7">
               <textarea rows="3" class="w-full border-0 focus:outline-0 focus:border-0 focus:ring-0"
-                placeholder="Your comment..."></textarea>
+                        placeholder="Your comment..."></textarea>
               <div class="flex items-center justify-between px-3 py-2 bg-gray-50">
                 <div>
                   <a href="#" class="inline-block px-1 hover:bg-light hover:text-slate-900">
-                    <BaseIcon :path="mdiUploadOutline" />
+                    <BaseIcon :path="mdiUploadOutline"/>
                   </a>
                   <a href="#" class="inline-block px-1 hover:bg-light hover:text-slate-900">
-                    <BaseIcon :path="mdiLink" />
+                    <BaseIcon :path="mdiLink"/>
                   </a>
                 </div>
                 <a-button @click="submitComment(taskDetail.id)" type="primary" class="uppercase">Send</a-button>
@@ -347,7 +358,8 @@ function registerTable({ reload }) {
         <template #footer>
           <a-button key="submit" type="primary" @click="() => {
             openModalDetail = false;
-          }">Ok</a-button>
+          }">Ok
+          </a-button>
         </template>
       </a-modal>
       <router-view></router-view>
@@ -366,5 +378,12 @@ function registerTable({ reload }) {
   margin-left: 0 !important;
   margin-right: 0 !important;
   margin-bottom: 0 !important;
+}
+</style>
+<style scoped>
+.dragArea {
+  min-height: 100px;
+  width: 100%;
+  outline: 1px dashed;
 }
 </style>
