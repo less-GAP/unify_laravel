@@ -17,7 +17,13 @@ export const useAppStateStore = defineStore("appState", {
     menuCollapsed: false,
     title: '',
     currentRoute: {},
-    configs: {...defaultConfig},
+    configs: {
+      "site_title": "",
+      "site_description": "",
+      "copy_right": "",
+      "default_seller": 1,
+      "per_page": 50
+    },
     versions: {},
     statistics: {},
   }),
@@ -36,7 +42,12 @@ export const useAppStateStore = defineStore("appState", {
           // action can be: "CREATE", "UPDATE", "DELETE" or "CLOSE"
           if (action === "CLOSE") return;
           // result contains either the entire record, or a set of JSON patches when diff mode is enabled
-          this.versions[result.key] = result.value
+          try {
+
+            // this.versions[result.key] = result.value
+          } catch (e) {
+            console.log(e)
+          }
         })
       await db.live(
         "statistics",
@@ -45,8 +56,11 @@ export const useAppStateStore = defineStore("appState", {
           // action can be: "CREATE", "UPDATE", "DELETE" or "CLOSE"
           if (action === "CLOSE") return;
           // result contains either the entire record, or a set of JSON patches when diff mode is enabled
-
-          this.statistics[result.key] = result.value
+          try {
+            // this.statistics[result.key] = result.value
+          } catch (e) {
+            console.log(e)
+          }
         })
       Api.get("config", {params: {names: Object.keys(defaultConfig)}})
         .then((rs) => {

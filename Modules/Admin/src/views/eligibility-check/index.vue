@@ -82,7 +82,7 @@ const submit = () => {
   } else {
     formState.insurance_coverages = null;
   }
-  
+
 
   formState.unify_process = 0;
   formState.sale_user = saler_id.value;
@@ -142,7 +142,7 @@ const submit = () => {
           </div>
         </div>
 
-        <div class="relative z-0 w-full mb-6 group" @v-if="listInsurances">
+        <div class="relative z-0 w-full mb-6 group" v-if="listInsurances">
           <label
             class="relative inline-flex items-center mb-4 cursor-pointer"
             for="insurance"
