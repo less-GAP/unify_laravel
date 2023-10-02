@@ -17,13 +17,7 @@ export const useAppStateStore = defineStore("appState", {
     menuCollapsed: false,
     title: '',
     currentRoute: {},
-    configs: {
-      "site_title": "",
-      "site_description": "",
-      "copy_right": "",
-      "default_seller": 1,
-      "per_page": 50
-    },
+    configs: {},
     versions: {},
     statistics: {},
   }),
@@ -43,8 +37,8 @@ export const useAppStateStore = defineStore("appState", {
           if (action === "CLOSE") return;
           // result contains either the entire record, or a set of JSON patches when diff mode is enabled
           try {
-
-            // this.versions[result.key] = result.value
+            console.log('versions', result)
+            this.versions[result.key] = result.value
           } catch (e) {
             console.log(e)
           }
@@ -57,7 +51,9 @@ export const useAppStateStore = defineStore("appState", {
           if (action === "CLOSE") return;
           // result contains either the entire record, or a set of JSON patches when diff mode is enabled
           try {
-            // this.statistics[result.key] = result.value
+            console.log('statistics', result)
+
+            this.statistics[result.key] = result.value
           } catch (e) {
             console.log(e)
           }
