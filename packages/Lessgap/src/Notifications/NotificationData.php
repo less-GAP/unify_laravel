@@ -28,9 +28,9 @@ class NotificationData
     public function byUser()
     {
         return [
-            'full_name' => auth('admin')->user()->full_name??'',
-            'id' => auth('admin')->user()->id??'',
-            'profile_photo_url' => auth('admin')->user()->profile_photo_url??'',
+            'full_name' => auth('admin')->user()->full_name ?? '',
+            'id' => auth('admin')->user()->id ?? '',
+            'profile_photo_url' => auth('admin')->user()->profile_photo_url ?? '',
         ];
     }
 
@@ -41,7 +41,7 @@ class NotificationData
             $result = array_merge($result, (array)$this->admins());
         }
         if (in_array('owner', $types)) {
-            $result = array_merge($result,  (array)$this->owners());
+            $result = array_merge($result, (array)$this->owners());
         }
         return $result;
     }
@@ -50,11 +50,14 @@ class NotificationData
     {
         return User::whereHas('roles.permissions', function ($subquery) {
             return $subquery->where('permissions.name', 'Admin')->orWhere('permissions.name', '*');
-        })->select(['full_name','username','id'])->get()->toArray();
+        })->select(['full_name', 'username', 'id'])->get()->toArray();
     }
 
     public function owners()
     {
-        return [$this->model->owner->only(['full_name','username','id'])];
+        if ($this->model->owner) {
+            return [$this->model->owner->only(['full_name', 'username', 'id'])];
+        }
+        return [];
     }
 }
