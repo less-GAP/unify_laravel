@@ -15,7 +15,7 @@ class NotificationEventHandler
         foreach ($eventSettings as $eventSetting) {
             foreach ($eventSetting->data['notifications'] as $notificationType) {
                 if ($handler = (config('lessgap.notification_handler.' . $notificationType))) {
-                    app($handler)->handle($eventSetting, $model->notificationData());
+                    app($handler)->handle($eventSetting, $model);
                 }
             }
         }
