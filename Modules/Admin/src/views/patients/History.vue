@@ -130,7 +130,7 @@ const closeDetail = function () {
                 selectionActions,
                 reload,
               }">
-                <a-timeline v-if="data?.data?.length" class="!m-5">
+                <a-timeline v-if="data?.length" class="!m-5">
                   <a-timeline-item v-for="item in data" color="green" class="!mb-5">
                     <div class="flex items-center">
                       <img class="w-6 h-6 rounded-full" :src="item.causer?.profile_photo_url" />
