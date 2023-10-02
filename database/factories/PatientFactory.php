@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -56,7 +57,7 @@ class PatientFactory extends Factory
             'unify_deleted' => 0,
             'unify_deleted_at' => null,
             'unify_deleted_by' => null,
-            'sale_user' => null,
+            'sale_user' => array_rand(User::all()->pluck('id')->toArray()),
         ];
     }
 
