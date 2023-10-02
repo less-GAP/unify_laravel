@@ -52,7 +52,6 @@ export const useAppStateStore = defineStore("appState", {
           // result contains either the entire record, or a set of JSON patches when diff mode is enabled
           try {
             console.log('statistics', result)
-
             this.statistics[result.key] = result.value
           } catch (e) {
             console.log(e)

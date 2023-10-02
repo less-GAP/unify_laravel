@@ -83,6 +83,7 @@ const dragOptions = {
 // Handle Modal Add Task
 const openModalDetail = ref(false);
 const taskDetail = reactive({});
+const filter = reactive({});
 const confirmLoading = ref(false);
 
 // const detailTask = function (task) {
@@ -152,7 +153,7 @@ function registerTable({reload}) {
         <div class="overflow-hidden">
           <div class="flex pb-4 -mx-2">
             <div v-for="column in taskColumns" :key="column.key" class="w-full px-2 md:w-1/2 lg:w-1/4">
-              <ApiData @change="(items)=>{column.tasks = items}"
+              <ApiData :params="filter" @change="(items)=>{column.tasks = items}"
                        :url="'/task/all?filter[task_process]='+column.task_process"
                        class="flex flex-col p-4 border border-gray-200 rounded-lg inner">
                 <template #default="{data}">

@@ -42,7 +42,6 @@ const transactionBarItems = computed(() => mainStore.history);
         main
       >
       </SectionTitleLineWithButton>
-
       <div class="grid grid-cols-1 gap-6 mb-6 lg:grid-cols-5">
         <CardBoxWidget
           class="text-blue-500"
