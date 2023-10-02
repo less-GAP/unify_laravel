@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -38,8 +39,8 @@ class DoctorFactory extends Factory
             'deleted' => 0,
             'deleted_at' => null,
             'deleted_by' => null,
-            'updated_by' => rand(1,5),
-            'created_by' => rand(1,5),
+            'updated_by' => array_rand(User::all()->pluck('id')->toArray()),
+            'created_by' =>array_rand(User::all()->pluck('id')->toArray()),
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Doctor;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -48,7 +49,7 @@ class PatientFactory extends Factory
             'products' => null,
             'note' => null,
             'unify_data' => null,
-            'doctor_id' => rand(1,5),
+            'doctor_id' => array_rand(Doctor::all()->pluck('id')->toArray()),
             'doctor_status' => 0,
             'doctor_comment' => null,
             'service_dates' => null,
