@@ -8,5 +8,16 @@ export default [
     name: "task",
 
     component: () => import("./index.vue"),
+    children: [
+      {
+        meta: {
+          title: "Add Task",
+          permission:'task.assign',
+        },
+        path: "/task/new",
+        name: "task-add",
+        component: () => import("./Edit.vue"),
+      },
+    ],
   },
 ];

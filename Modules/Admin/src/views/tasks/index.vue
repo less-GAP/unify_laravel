@@ -1,6 +1,6 @@
 <script setup>
 import router from "@/router";
-import { ApiData, DataTable, BaseIcon } from "@/components";
+import { DataTable, BaseIcon } from "@/components";
 import SectionMain from "@/components/SectionMain.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import { watch, ref, reactive } from "vue";
@@ -13,10 +13,6 @@ import draggable from "vuedraggable";
 import Api from "@/utils/Api";
 import { mdiCalendarClockOutline, mdiReply, mdiUploadOutline, mdiLink } from "@mdi/js";
 import {
-  deleteTask,
-  completeTask,
-  workingTask,
-  reviewTask,
   getStatusTask
 } from "@/utils/Task";
 
@@ -35,12 +31,13 @@ const itemActions = [
     },
   },
 ];
+
 const listActions = [
   {
     label: "Add",
     permission: auth.hasPermission("task.assign"),
     action: () => {
-      addTask();
+      router.replace(prefix + "/new");
     },
   },
 ];
@@ -77,84 +74,40 @@ const dragOptions = {
 };
 
 // Handle Modal Add Task
-const openModal = ref(false);
 const openModalDetail = ref(false);
 const taskDetail = reactive({});
 const confirmLoading = ref(false);
-const formTaskState = reactive({});
-const formTaskRef = ref();
-const createTaskApi = function (data) {
-  return Api.post("task", data);
-};
-// on click Add task
-const addTask = function () {
-  openModal.value = true;
-};
 
-const detailTask = function (task) {
-  Object.assign(taskDetail, task);
+// const detailTask = function (task) {
+//   Object.assign(taskDetail, task);
 
-  const { fetchListApi } = UseEloquentRouter('activity', {
-    order: "-id",
-  });
-  tableConfig.value = UseDataTable(fetchListApi, {
-    showSelection: false,
-    globalSearch: false,
-    pagination: {
-      perPage: 10,
-    },
-    filter: {
-      subject_id: taskDetail.id,
-      subject_type: "App\\Models\\Task",
-    },
-  });
-  openModalDetail.value = true;
-}
+//   const { fetchListApi } = UseEloquentRouter('activity', {
+//     order: "-id",
+//   });
+//   tableConfig.value = UseDataTable(fetchListApi, {
+//     showSelection: false,
+//     globalSearch: false,
+//     pagination: {
+//       perPage: 10,
+//     },
+//     filter: {
+//       subject_id: taskDetail.id,
+//       subject_type: "App\\Models\\Task",
+//     },
+//   });
+//   openModalDetail.value = true;
+// }
 
-const handleAddTask = () => {
-  confirmLoading.value = true;
-  formTaskRef.value.validate().then(() => {
-    formTaskState.created_by = auth.user.id;
-    formTaskState.assignees = JSON.stringify(formTaskState.assignees);
-    try {
-      createTaskApi({ ...formTaskState }).then((rs) => {
-        openModal.value = false;
-        fetch();
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  });
-  confirmLoading.value = false;
-};
+// const formatDescription = function (description) {
+//   if (description !== null && typeof description === "string") {
+//     return description.replace(/\n/g, "<br>");
+//   } else {
+//     return "";
+//   }
+// };
 
-const editTask = async function (id) {
-  const task = await Api.get("task/" + id);
-  Object.assign(formTaskState, task.data);
-  openModal.value = true;
-};
-
-const formatDescription = function (description) {
-  if (description !== null && typeof description === "string") {
-    return description.replace(/\n/g, "<br>");
-  } else {
-    return "";
-  }
-};
-
-const submitComment = function (id) {
-  // const comment = document.getElementById("comment-" + id).value;
-  // if (comment !== "") {
-  //   const data = {
-  //     task_id: id,
-  //     comment: comment,
-  //     created_by: auth.user.id,
-  //   };
-  //   Api.post("task/comment", data).then((rs) => {
-  //     fetch();
-  //   });
-  // }
-};
+// const submitComment = function (id) {
+// };
 
 const getFilteredData = (data, taskProcess) => {
   return data.filter(item => item.task_process === taskProcess);
@@ -222,47 +175,6 @@ function registerTable({ reload }) {
           </template>
         </DataTable>
       </div>
-
-      <!-- Modal Add Task -->
-      <a-modal v-model:open="openModal" append-to-body title="Add Task" :confirm-loading="confirmLoading" :footer="null">
-        <a-form id="formAddTask" v-bind="$config.formConfig" ref="formTaskRef" layout="vertical" :model="formTaskState" @finish="handleAddTask">
-          <a-form-item label="Task name" name="name" :rules="[{ required: true, message: 'Please enter task name!' }]">
-            <a-input v-model:value="formTaskState.name"></a-input>
-          </a-form-item>
-          <div class="flex flex-wrap -mx-2">
-            <div class="w-full px-2">
-              <a-form-item label="Due date" name="deadline_at">
-                <a-date-picker v-model:value="formTaskState.deadline_at" class="w-full" :show-time="{ format: 'HH:mm' }"
-                  input-read-only value-format="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"></a-date-picker>
-              </a-form-item>
-            </div>
-          </div>
-          <a-form-item label="Patient" name="patient_id" :rules="[{ required: true, message: 'Please select patient!' }]">
-            <ApiData url="patient/all" method="GET">
-              <template #default="{ data }">
-                <a-select v-model:value="formTaskState.patient_id" :options="data"
-                  :fieldNames="{ label: 'full_name', value: 'id' }" showSearch optionFilterProp="full_name">
-                </a-select>
-              </template>
-            </ApiData>
-          </a-form-item>
-          <a-form-item label="Assignees" name="assignees" :rules="[{ required: true, message: 'Please select assignees!' }]">
-            <ApiData url="user/all" method="GET">
-              <template #default="{ data }">
-                <a-select v-model:value="formTaskState.assignees" :options="data"
-                  :fieldNames="{ label: 'full_name', value: 'id' }" mode="multiple">
-                </a-select>
-              </template>
-            </ApiData>
-          </a-form-item>
-          <a-form-item label="Description" name="description">
-            <a-textarea v-model:value="formTaskState.description" :rows="4"></a-textarea>
-          </a-form-item>
-          <a-form-item>
-            <a-button class="!ml-auto" type="primary" @click="handleAddTask">Add Task</a-button>
-          </a-form-item>
-        </a-form>
-      </a-modal>
 
       <!-- Modal Detail Task -->
       <a-modal v-model:open="openModalDetail" append-to-body :title="taskDetail.name" width="1000px"
