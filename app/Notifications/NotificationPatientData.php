@@ -10,7 +10,7 @@ class NotificationPatientData extends NotificationData
     public function getData()
     {
         return [
-            'patient_name' => $this->model->full_name,
+            'patient_name' => htmlentities($this->model->full_name),
             'id' => $this->model->id
         ];
     }
