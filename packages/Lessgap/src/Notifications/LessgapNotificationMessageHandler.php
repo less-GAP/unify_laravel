@@ -20,7 +20,6 @@ class LessgapNotificationMessageHandler
                     'title' => $title,
                     'message' => $message,
                     'username' => $user['username'],
-                    'by_user' => json_encode($notificationData->byUser()),
                     'status' => 'unread',
                     'data' => json_encode($notificationData->getData()),
                 ]
