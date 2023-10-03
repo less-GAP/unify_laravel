@@ -41,7 +41,7 @@ export default defineComponent({
     watch()
     return {
       async read(item) {
-        await Api.post('notification/read/', item)
+        await Api.post('notification/read/', item, {hideLoading: false})
       },
       items,
       unreadCount,
@@ -81,9 +81,9 @@ export default defineComponent({
                    :key="item.id"
                    :class="item.status=='unread'?'bg-gray-200':''"
                    class="flex px-4 py-3 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600">
-        <div class="flex-shrink-0">
+        <div v-if="JSON.parse(item.by_user)?.profile_photo_url" class="flex-shrink-0">
           <img class="rounded-full w-11 h-11"
-               src="https://flowbite-admin-dashboard.vercel.app/images/users/bonnie-green.png" alt="Jese image">
+               :src="JSON.parse(item.by_user)?.profile_photo_url" :title="JSON.parse(item.by_user)?.full_name">
           <div
             class="absolute flex items-center justify-center w-5 h-5 ml-6 -mt-5 border border-white rounded-full bg-primary-700 dark:border-gray-700">
             <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"

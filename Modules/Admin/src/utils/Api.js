@@ -1,8 +1,9 @@
 import axios from 'axios'
 import {useAuthStore} from "@/stores/auth";
 import {message} from 'ant-design-vue';
+
 const Api = axios.create({
-  baseURL: import.meta.env.VITE_API_HOST?import.meta.env.VITE_API_HOST:'' + '/api/',
+  baseURL: import.meta.env.VITE_API_HOST ? import.meta.env.VITE_API_HOST : '' + '/api/',
   withCredentials: true
 })
 let key = 'request_updatable';
@@ -13,7 +14,7 @@ Api.interceptors.request.use(function (config) {
   // Do something before request is sent
   requestConfig = config
   if (requestConfig.method.toLowerCase() == 'post' || requestConfig.method.toLowerCase() == 'put') {
-    message.loading({content: 'Submit...', key, duration: 1});
+    hideMessage = message.loading({content: 'Submit...', key, duration: 1});
   }
   // if (requestConfig.method.toLowerCase() == 'get') {
   //   hideMessage = message.loading({content: 'Loading...', key, duration: 10});
@@ -26,13 +27,10 @@ Api.interceptors.request.use(function (config) {
 
 Api.interceptors.response.use((response) => {
   if (response?.data?.message && (requestConfig.method.toLowerCase() == 'post' || requestConfig.method.toLowerCase() == 'put')) {
-    message.success({content: response?.data?.message,key, duration: 1});
-  }
-  if (requestConfig.method.toLowerCase() == 'delete')
-  {
-    message.info({content: response?.data?.message,key, duration: 1});
-  }
-  if (requestConfig.method.toLowerCase() == 'get' && hideMessage) {
+    message.success({content: response?.data?.message, key, duration: 1});
+  } else if (requestConfig.method.toLowerCase() == 'delete') {
+    message.info({content: response?.data?.message, key, duration: 1});
+  } else if (hideMessage) {
     hideMessage()
   }
   return response;
