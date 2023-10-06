@@ -26,9 +26,9 @@ const emit = defineEmits(["close"]);
 const formState = reactive({
   event_name: '',
   status: 'active',
+  handlers: [],
   data: {
-    email_template: '',
-    notifications: []
+    email_template: ''
   },
 });
 
@@ -96,14 +96,14 @@ const closeDetail = function () {
             </a-select>
           </a-form-item>
           <a-form-item label="Notifications"
-                       :name="['data','notifications']"
+                       name="handlers"
                        :min="0"
                        :rules="[{ required: true }]"
           >
-            <a-select mode="multiple" rows="5" v-model:value="formState.data.notifications">
+            <a-select mode="multiple" rows="5" v-model:value="formState.handlers">
               <a-select-option value="notification_message">Notification message</a-select-option>
-              <a-select-option value="notification_email">Email</a-select-option>
-              <a-select-option value="notification_desktop">Desktop Notification</a-select-option>
+              <a-select-option value="notification_email">Notification Email</a-select-option>
+              <a-select-option value="notification_desktop">Notification Desktop</a-select-option>
             </a-select>
           </a-form-item>
           <a-form-item label="Notification to"
@@ -111,26 +111,26 @@ const closeDetail = function () {
                        :min="0"
                        :rules="[{ required: true }]"
           >
-            <a-select mode="multiple"  v-model:value="formState.data.notification_to">
+            <a-select mode="multiple" v-model:value="formState.data.notification_to">
               <a-select-option value="admin">Admin</a-select-option>
               <a-select-option value="owner">Owner</a-select-option>
             </a-select>
           </a-form-item>
-          <a-form-item v-if="formState.data.notifications.includes('notification_message')" label="Notification Title"
+          <a-form-item v-if="formState.handlers.includes('notification_message')" label="Notification Title"
                        :name="['data','notification_tittle']"
                        :min="0"
                        :rules="[{ required: true }]"
           >
             <a-input v-model:value="formState.data.notification_tittle"/>
           </a-form-item>
-          <a-form-item v-if="formState.data.notifications.includes('notification_message')" label="Notification Message"
+          <a-form-item v-if="formState.handlers.includes('notification_message')" label="Notification Message"
                        :name="['data','notification_message']"
                        :min="0"
                        :rules="[{ required: true }]"
           >
             <a-textarea rows="5" v-model:value="formState.data.notification_message"/>
           </a-form-item>
-          <a-form-item v-if="formState.data.notifications.includes('notification_email')"
+          <a-form-item v-if="formState.handlers.includes('notification_email')"
                        label="Notification Email Template"
                        :name="['data','notification_message']"
                        :min="0"

@@ -226,5 +226,6 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                 ]
             ]
         );
+    Route::get('notifications', \Modules\Admin\Actions\Notification\GetNotifications::class . '@handle');
     Route::post('notification/read', \Modules\Admin\Actions\Notification\ReadAction::class . '@handle');
 });

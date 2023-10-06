@@ -22,9 +22,11 @@ class EventSetting extends Model
     protected $fillable = [
         'event_name',
         'data',
+        'handlers',
         'status'
     ];
     protected $casts = [
-        'data' => 'array'
+        'data' => 'array',
+        'handlers' => 'array'
     ];
 }

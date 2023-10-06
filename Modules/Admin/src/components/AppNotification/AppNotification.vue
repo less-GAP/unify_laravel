@@ -4,44 +4,44 @@ import {SearchOutlined} from '@ant-design/icons-vue';
 import {db} from "@/utils/RealtimeDB";
 import {useAuthStore} from "@/stores/auth";
 import Api from "@/utils/Api";
+import {ApiData} from "@/components";
+import {useAppStateStore} from "@/stores/appState";
 
 export default defineComponent({
   name: 'AppSearch',
-  components: {SearchOutlined},
+  components: {SearchOutlined, ApiData},
   setup() {
     const modal = ref()
     const items = ref([])
     const unreadCount = ref(0)
-    const auth = useAuthStore()
+    const appState = useAppStateStore()
     const changeModal = function () {
       modal.value.changeModal(true)
     }
 
     const fetch = async function () {
-      const [rs] = await db.query("SELECT * FROM notifications WHERE username = '" + auth.user.username + "' ORDER BY created_at DESC limit 10 ");
-      items.value = rs.result
-      const [rsUnread] = await db.query("SELECT count() as total FROM notifications WHERE username = '" + auth.user.username + "' and status = 'unread' GROUP ALL  ");
-      unreadCount.value = rsUnread.result[0].total
+      const res = await Api.get('/notifications');
+      items.value = res.data.items
+      unreadCount.value = res.data.unread_count
     }
-    const watch = async function () {
-      await db.live(
-        "notifications",
-        // The callback function takes an object with the "action" and "result" properties
-        ({action, result}) => {
-          // action can be: "CREATE", "UPDATE", "DELETE" or "CLOSE"
-          if (action === 'CLOSE') return;
-
-          // result contains either the entire record, or a set of JSON patches when diff mode is enabled
-          fetch()
-        }
-      )
+    const getUrl = function (item) {
+      if (item.data?.model_class == "App\\Models\\Patient") {
+        return '/patient/' + item.data.model?.id + '/detail'
+      }
+      return '';
     }
-
+    watch(() => appState.versions['notification'], () => {
+      fetch()
+    })
     fetch()
-    watch()
     return {
+      getUrl,
       async read(item) {
+        if (item.read_at) {
+          return true;
+        }
         await Api.post('notification/read/', item)
+        fetch()
       },
       items,
       unreadCount,
@@ -76,40 +76,37 @@ export default defineComponent({
       class="block px-4 py-2 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
       Notifications
     </div>
-    <div>
-      <router-link @click="read(item)" :to="'/patient/'+JSON.parse(item.data)?.id+'/detail'" v-for="item in items"
-                   :key="item.id"
-                   :class="item.status=='unread'?'bg-gray-200':''"
-                   class="flex px-4 py-3 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600">
-        <div class="flex-shrink-0">
-          <img class="rounded-full w-11 h-11"
-               src="https://flowbite-admin-dashboard.vercel.app/images/users/bonnie-green.png" alt="Jese image">
-          <div
-            class="absolute flex items-center justify-center w-5 h-5 ml-6 -mt-5 border border-white rounded-full bg-primary-700 dark:border-gray-700">
-            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"
-                 xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z">
-              </path>
-              <path
-                d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z">
-              </path>
-            </svg>
-          </div>
+    <router-link @click="read(item)" :to="getUrl(item)" :key="item?.id" v-for="item in items"
+                 :class="!item?.read_at?'bg-gray-200':''"
+                 class="flex px-4 py-3 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600">
+      <div class="flex-shrink-0">
+        <img class="rounded-full w-11 h-11"
+             src="https://flowbite-admin-dashboard.vercel.app/images/users/bonnie-green.png" alt="Jese image">
+        <div
+          class="absolute flex items-center justify-center w-5 h-5 ml-6 -mt-5 border border-white rounded-full bg-primary-700 dark:border-gray-700">
+          <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"
+               xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z">
+            </path>
+            <path
+              d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z">
+            </path>
+          </svg>
         </div>
-        <div class="w-full pl-3">
-          <div class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">{{ item.title }} <span
-            class="font-semibold text-gray-900 dark:text-white">
+      </div>
+      <div class="w-full pl-3">
+        <div class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">{{ item.data.title }} <span
+          class="font-semibold text-gray-900 dark:text-white">
           </span>
-          </div>
-          {{ JSON.parse(item.data)?.patient_name }}
-          <div class="text-xs font-medium text-primary-700 dark:text-primary-400">
-            {{ $format.diffHuman(item.created_at) }}
-          </div>
         </div>
-      </router-link>
+        <div class="text-xs font-medium text-primary-700 dark:text-primary-400">
+          {{ $format.diffHuman(item.created_at) }}
+        </div>
+      </div>
+    </router-link>
 
-    </div>
+
     <!--    <a href="#"-->
     <!--       class="block py-2 text-base font-normal text-center text-gray-900 bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:hover:underline">-->
     <!--      <div class="inline-flex items-center ">-->

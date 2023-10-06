@@ -130,6 +130,35 @@ class Patient extends Model
 
     public function notificationData()
     {
-        return new NotificationPatientData($this);
+        return [
+            'by_user'=>\App\Models\User::find($this->update_ted)
+        ];
+    }
+
+    public function notifiables($types)
+    {
+        $result = collect([]);
+        if (in_array('admin', $types)) {
+            $result = $result->merge($this->admins());
+        }
+        if (in_array('owner', $types)) {
+            $result = $result->merge($this->owners());
+        }
+        return $result;
+    }
+
+    public function admins()
+    {
+        return User::whereHas('roles.permissions', function ($subquery) {
+            return $subquery->where('permissions.name', 'Admin')->orWhere('permissions.name', '*');
+        })->select(['full_name', 'username', 'id'])->get();
+    }
+
+    public function owners()
+    {
+        if ($this->owner) {
+            return [$this->owner->only(['full_name', 'username', 'id'])];
+        }
+        return [];
     }
 }

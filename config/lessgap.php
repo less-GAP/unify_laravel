@@ -1,11 +1,15 @@
 <?php
+
+use Lessgap\Plugins\Events\LessgapNotificationHandler;
+
 return [
-    'notification_handler' => [
-        'notification_message'=>\Lessgap\Notifications\LessgapNotificationMessageHandler::class,
-        'notification_email'=>\Lessgap\Notifications\LessgapNotificationEmailHandler::class,
-        'notification_desktop'=>\Lessgap\Notifications\LessgapNotificationDesktopHandler::class
+    'event_handler' => [
+        'notification_message' => [
+            'handler' => LessgapNotificationHandler::class,
+            'channels' => ['database',\Lessgap\Plugins\Events\Channels\RealtimeChannel::class]
+        ],
     ],
     'notification' => [
-        'model' => 'notifications'
-    ]
+    'model' => 'notifications'
+]
 ];

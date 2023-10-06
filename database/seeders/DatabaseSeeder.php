@@ -185,8 +185,8 @@ class DatabaseSeeder extends Seeder
             ]),
             'created_by' => 'admin',
         ]);
-        \App\Models\Patient::factory()->count(50)->create();
         \App\Models\Doctor::factory()->count(5)->create();
+        \App\Models\Patient::factory()->count(50)->create();
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
         activity()->enableLogging();
 

@@ -2,6 +2,7 @@ import {acceptHMRUpdate, defineStore} from "pinia";
 import Api from "@/utils/Api";
 import {db} from "@/utils/RealtimeDB";
 import {ref, watch} from "vue";
+import {useAuthStore} from "@/stores/auth";
 // import { useCachedRequest } from './useCachedRequest'
 const defaultConfig = {
   "site_title": "",
@@ -37,8 +38,9 @@ export const useAppStateStore = defineStore("appState", {
           if (action === "CLOSE") return;
           // result contains either the entire record, or a set of JSON patches when diff mode is enabled
           try {
-            console.log('versions', result)
-            this.versions[result.key] = result.value
+            if (result.user == '' || result.user == useAuthStore().user?.username) {
+              this.versions[result.key] = result.value
+            }
           } catch (e) {
             console.log(e)
           }

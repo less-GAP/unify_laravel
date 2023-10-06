@@ -15,20 +15,12 @@ return new class extends Migration {
             $table->string('event_name')->index();
             $table->string('status')->default('active')->index();
             $table->longText('data')->nullable();
+            $table->longText('handlers')->nullable();
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();
             $table->timestamps();
         });
-        Schema::create('event_notification', function (Blueprint $table) {
-            $table->id();
-            $table->bigInteger('event_index')->index();
-            $table->string('event_name')->index();
-            $table->string('notification_channel');
-            $table->string('notification_model');
-            $table->string('notification_model_id');
-            $table->string('status')->default('waiting')->index();
-            $table->timestamps();
-        });
+
     }
 
     /**
@@ -37,6 +29,5 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('event_settings');
-        Schema::dropIfExists('event_notification');
     }
 };

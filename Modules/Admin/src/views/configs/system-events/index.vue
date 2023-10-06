@@ -128,7 +128,7 @@ function registerTable({reload}) {
       </a-button>
     </template>
     <template #cell[notifications]="{item,column}">
-      {{item.data.notifications.join(', ')}}
+      {{item.handlers.join(', ')}}
     </template>
 
     <template #cell[status]="{item,column}">

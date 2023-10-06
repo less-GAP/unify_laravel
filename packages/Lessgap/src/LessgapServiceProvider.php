@@ -22,12 +22,6 @@ class LessgapServiceProvider extends ServiceProvider
         $this->app->singleton(RealtimeService::class, function (Application $app) {
             return new RealtimeService();
         });
-        $this->app->singleton(LessgapNotification::class, function (Application $app) {
-            return new LessgapNotification(\DB::connection('realtime'));
-        });
-        $this->app->singleton(NotificationEventHandler::class, function (Application $app) {
-            return new NotificationEventHandler();
-        });
     }
 
     /**

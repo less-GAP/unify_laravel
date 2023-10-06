@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Lessgap\Handlers\NotificationEventHandler;
+use Lessgap\Plugins\Events\LessgapEventHandler;
 
 class ExecuteModelEvent implements ShouldQueue
 {
@@ -27,6 +28,11 @@ class ExecuteModelEvent implements ShouldQueue
      */
     public function handle(): void
     {
-        app(NotificationEventHandler::class)->handle($this->event, $this->model->notificationData());
+        try {
+            LessgapEventHandler::handle($this->event, $this->model);
+        } catch (\Throwable $e) {
+            \Log::error($e);
+        }
+
     }
 }

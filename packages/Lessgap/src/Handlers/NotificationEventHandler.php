@@ -14,8 +14,15 @@ class NotificationEventHandler
         $eventSettings = EventSetting::where('event_name', $eventName)->get();
         foreach ($eventSettings as $eventSetting) {
             foreach ($eventSetting->data['notifications'] as $notificationType) {
-                if ($handler = (config('lessgap.notification_handler.' . $notificationType))) {
-                    app($handler)->handle($eventSetting, $model);
+                try {
+                    \Log::info(config('lessgap.notification_handler.' . $notificationType));
+                    if ($handler = (config('lessgap.notification_handler.' . $notificationType))) {
+                        if (class_exists($handler)) {
+                            app($handler)->handle($eventSetting, $model);
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    \Log::error($e);
                 }
             }
         }

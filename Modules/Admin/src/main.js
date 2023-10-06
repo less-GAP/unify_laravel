@@ -19,6 +19,7 @@ import {useAppStateStore} from "@/stores/appState";
 import Format from "@/utils/Format";
 import Vue3Signature from "vue3-signature"
 import * as config from "@/config";
+import {useProfileState} from "@/lessgap/stores/ProfileStore";
 /* Init Pinia */
 const pinia = createPinia();
 pinia.use(piniaPersist)
@@ -29,7 +30,9 @@ const mainStore = useMainStore(pinia);
 const styleStore = useStyleStore(pinia);
 const authStore = useAuthStore();
 const appState = useAppStateStore();
+const profileState = useProfileState();
 appState.fetch()
+profileState.fetch()
 const translation = useTranslation();
 
 myApp.config.globalProperties.$config = config;
@@ -38,6 +41,7 @@ myApp.config.globalProperties.$api = Api;
 myApp.config.globalProperties.$format = Format;
 myApp.config.globalProperties.$style = styleStore;
 myApp.config.globalProperties.$appState = appState;
+myApp.config.globalProperties.$profileState = profileState;
 myApp.config.globalProperties.__ = translation.__;
 myApp.config.globalProperties.$url = url;
 myApp.use(Antd).mount("#app");
