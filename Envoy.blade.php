@@ -2,7 +2,7 @@
 
 @task('deploy')
     cd /home/unify_laravel
-    git pull origin main
+    git pull origin main -X theirs
     sh build.sh
     docker-compose down -v && docker-compose up -d
     docker-compose exec app php artisan migrate
