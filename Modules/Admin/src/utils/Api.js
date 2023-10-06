@@ -1,8 +1,9 @@
 import axios from 'axios'
 import {useAuthStore} from "@/stores/auth";
 import {message} from 'ant-design-vue';
+
 const Api = axios.create({
-  baseURL: import.meta.env.VITE_API_HOST?import.meta.env.VITE_API_HOST:'' + '/api/',
+  baseURL: import.meta.env.VITE_API_HOST ? import.meta.env.VITE_API_HOST : '' + '/api/',
   withCredentials: true
 })
 let key = 'request_updatable';

@@ -54,12 +54,14 @@ const formConfig = reactive({
 });
 const fetch = async function (id) {
   loading.value = true
-  const result = await Api.get('email-template/' + id)
-  loading.value = false
-  Object.assign(formState, result.data)
+  Api.get('email-template/' + id).then(result => {
+    loading.value = false
+    Object.assign(formState, result.data)
+  })
+
 }
 if (id) {
-  fetch(id)
+   fetch(id)
 }
 const submit = async function () {
   loading.value = true
@@ -110,7 +112,7 @@ const buttons = reactive([
             style="position:relative;display:flex;flex-direction:column;height:100vh;"
             @close="closeDetail" :open="true" width="90vw">
 
-    <div >
+    <div>
       <div class=" overflow-y-auto">
         <a-form
           autocomplete="off"
@@ -176,7 +178,7 @@ const buttons = reactive([
             <a-col :span="16">
               <a-form-item class="w-full" name="email_title" label="Mail Content" :rules="[{ required: true }]">
                 <jodit-editor v-if="!loading" style="height: 80vh"
-                              v-model:value="formState.email_content" :config="{
+                              v-model="formState.email_content" :config="{
                 buttons,
                  height: '70vh',
                  iframeStyle: 'html{margin:0;padding:0;min-height: 100%;}body{box-sizing:border-box;font-family:roboto;font-size:16px;line-height:1.6;padding:10px;margin:0;background:transparent;color:#000;position:relative;z-index:2;user-select:auto;margin:0px;overflow:auto;outline:none;}table{width:100%;border:none;border-collapse:collapse;empty-cells: show;max-width: 100%;}th,td{padding: 2px 5px;border:1px solid #ccc;-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text}p{margin-top:0;}.jodit_editor .jodit_iframe_wrapper{display: block;clear: both;user-select: none;position: relative;}.jodit_editor .jodit_iframe_wrapper:after {position:absolute;content:\'\';z-index:1;top:0;left:0;right: 0;bottom: 0;cursor: pointer;display: block;background: rgba(0, 0, 0, 0);} .jodit_disabled{user-select: none;-o-user-select: none;-moz-user-select: none;-khtml-user-select: none;-webkit-user-select: none;-ms-user-select: none}',

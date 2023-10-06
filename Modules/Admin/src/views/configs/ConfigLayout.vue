@@ -66,8 +66,8 @@ const items = ref([
     key: 'system-events',
     // icon: () => h(AppstoreOutlined),
     href:'/configs/event-setting',
-    label: 'System Events',
-    title: 'System Events',
+    label: 'Notifications',
+    title: 'Notifications',
   },
 
 
