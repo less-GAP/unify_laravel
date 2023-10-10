@@ -18,6 +18,7 @@ import {
   mdiPencil,
   mdiAlertCircle,
 } from "@mdi/js";
+
 import {BaseIcon} from "@/components";
 
 const prefix = "patient";
