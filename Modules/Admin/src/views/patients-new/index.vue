@@ -1,24 +1,24 @@
 <script setup>
-import router from "@/router";
-import SectionMain from "@/components/SectionMain.vue";
-import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
-import dayjs from "dayjs";
-import {h, watch, onDeactivated} from "vue";
-import {useAuthStore} from "@/stores/auth";
-import {DataTablePatient} from "@/components";
-import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
-import {UseDataTable} from "@/utils/UseDataTable";
-import {DeleteOutlined} from "@ant-design/icons-vue";
-import {
-  mdiGenderMale,
-  mdiGenderFemale,
-  mdiCalendarCheckOutline,
-  mdiHistory,
-  mdiCheckOutline,
-  mdiPencil,
-  mdiAlertCircle,
-} from "@mdi/js";
-import {BaseIcon} from "@/components";
+  import router from "@/router";
+  import SectionMain from "@/components/SectionMain.vue";
+  import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
+  import dayjs from "dayjs";
+  import {h, watch, onDeactivated} from "vue";
+  import {useAuthStore} from "@/stores/auth";
+  import {DataTablePatient} from "@/components";
+  import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
+  import {UseDataTable} from "@/utils/UseDataTable";
+  import {DeleteOutlined} from "@ant-design/icons-vue";
+  import {
+    mdiGenderMale,
+    mdiGenderFemale,
+    mdiCalendarCheckOutline,
+    mdiHistory,
+    mdiCheckOutline,
+    mdiPencil,
+    mdiAlertCircle,
+  } from "@mdi/js";
+  import {BaseIcon} from "@/components";
 
   const prefix = "patient";
   const version_key = 'patients';
@@ -163,8 +163,8 @@ import {BaseIcon} from "@/components";
     itemActions,
   });
 
-let reloadTable = () => {
-};
+  let reloadTable = () => {
+  };
 
 </script>
 
@@ -201,7 +201,6 @@ let reloadTable = () => {
           <a-tooltip title="View Task" class="mr-1" v-if="auth.hasPermission('task.list')">
             <a-button
               class="justify-center !flex !p-1 !h-auto"
-              :disabled="auth.hasPermission('task.list') ? false : true"
               :class=" auth.hasPermission('task.list') ? '' : '!bg-gray-300 opacity-50'"
               @click="actionMethod"
             >
@@ -251,22 +250,14 @@ let reloadTable = () => {
         <template #cell[full_name]="{ item, column }">
           <div class="flex flex-row items-center">
             <BaseIcon
-              v-if="item.gender === 0"
-              :path="mdiGenderMale"
+              :path="item.gender == 0 ? mdiGenderMale : mdiGenderFemale"
               class="flex-none !text-blue-600"
             />
-            <BaseIcon
-              v-if="item.gender === 1"
-              :path="mdiGenderFemale"
-              class="flex-none text-pink-600"
-            />
-
             <span class="pl-1">
-              <a
-                @click="auth.hasPermission('patient.view') ? router.push('patient/' + item.id + '/detail') : 'javascript:void(0)'"
-                class="text-blue-700 underline cursor-pointer"
-              >{{ item.full_name }}</a
-              >
+              <a @click="auth.hasPermission('patient.view') ? router.push('patient/' + item.id + '/detail') : 'javascript:void(0)'"
+                 class="text-blue-700 underline cursor-pointer">
+                {{ item.full_name }}
+              </a>
             </span>
           </div>
         </template>
@@ -293,24 +284,27 @@ let reloadTable = () => {
         <template #cell[unify_status]="{ item, column }">
           <a-tag v-if="item.unify_deleted === 1" color="gray">Trashed</a-tag>
           <a-tag v-else-if="item.unify_process === 0" color="yellow">Waiting</a-tag>
-          <a-tag v-else-if="item.unify_process === 1" color="orange"
-          >Eligibility Check
-          </a-tag
-          >
+          <a-tag v-else-if="item.unify_process === 1" color="orange">
+            Eligibility Check
+          </a-tag>
           <a-tag v-else-if="item.unify_status === 1" color="green">
             <div class="pt-1 leading-none">Active</div>
             <div class="pb-1 leading-none">
-              <small>({{dayjs(item.unify_active, "YYYY-MM-DD HH:mm:ss").format("HH:mm MM-DD-YYYY" )}})</small>
+              <small
+              >({{
+                dayjs(item.unify_active, "YYYY-MM-DD HH:mm:ss").format(
+                "HH:mm MM-DD-YYYY"
+                )
+                }})</small
+              >
             </div>
           </a-tag>
-          <a-tag v-else-if="item.unify_status === 2" color="gray"
-          >Inactive
-          </a-tag
-          >
-          <a-tag v-else-if="item.unify_status === 3" color="gray"
-          >Decease
-          </a-tag
-          >
+          <a-tag v-else-if="item.unify_status === 2" color="gray">
+            Inactive
+          </a-tag>
+          <a-tag v-else-if="item.unify_status === 3" color="gray">
+            Decease
+          </a-tag>
         </template>
       </DataTablePatient>
       <router-view></router-view>

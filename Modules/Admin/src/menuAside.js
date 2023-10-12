@@ -24,10 +24,10 @@ import {
 } from "@mdi/js";
 
 export default [{
-    to: "/dashboard",
-    icon: mdiMonitor,
-    label: "Dashboard",
-  },
+  to: "/dashboard",
+  icon: mdiMonitor,
+  label: "Dashboard",
+},
   {
     to: null,
     label: "Patient",
@@ -102,9 +102,9 @@ export default [{
     label: "Customers",
     icon: mdiTooltipAccount,
     menu: [{
-        to: "/customers",
-        label: "Customers list"
-      },
+      to: "/customers",
+      label: "Customers list"
+    },
       {
         to: "/customer-group",
         label: "Customer group",
