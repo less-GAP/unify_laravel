@@ -33,7 +33,7 @@ export default [{
     label: "Patient",
   },
   {
-    to: "/patient-new",
+    to: "/patient",
     permission: 'patient.list',
     icon: mdiCardAccountDetails,
     label: "Patient",

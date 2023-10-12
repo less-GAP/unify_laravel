@@ -250,22 +250,14 @@
         <template #cell[full_name]="{ item, column }">
           <div class="flex flex-row items-center">
             <BaseIcon
-              v-if="item.gender === 0"
-              :path="mdiGenderMale"
+              :path="item.gender == 0 ? mdiGenderMale : mdiGenderFemale"
               class="flex-none !text-blue-600"
             />
-            <BaseIcon
-              v-if="item.gender === 1"
-              :path="mdiGenderFemale"
-              class="flex-none text-pink-600"
-            />
-
             <span class="pl-1">
-              <a
-                @click="auth.hasPermission('patient.view') ? router.push('patient/' + item.id + '/detail') : 'javascript:void(0)'"
-                class="text-blue-700 underline cursor-pointer"
-              >{{ item.full_name }}</a
-              >
+              <a @click="auth.hasPermission('patient.view') ? router.push('patient/' + item.id + '/detail') : 'javascript:void(0)'"
+                 class="text-blue-700 underline cursor-pointer">
+                {{ item.full_name }}
+              </a>
             </span>
           </div>
         </template>
@@ -292,10 +284,9 @@
         <template #cell[unify_status]="{ item, column }">
           <a-tag v-if="item.unify_deleted === 1" color="gray">Trashed</a-tag>
           <a-tag v-else-if="item.unify_process === 0" color="yellow">Waiting</a-tag>
-          <a-tag v-else-if="item.unify_process === 1" color="orange"
-          >Eligibility Check
-          </a-tag
-          >
+          <a-tag v-else-if="item.unify_process === 1" color="orange">
+            Eligibility Check
+          </a-tag>
           <a-tag v-else-if="item.unify_status === 1" color="green">
             <div class="pt-1 leading-none">Active</div>
             <div class="pb-1 leading-none">
@@ -308,14 +299,12 @@
               >
             </div>
           </a-tag>
-          <a-tag v-else-if="item.unify_status === 2" color="gray"
-          >Inactive
-          </a-tag
-          >
-          <a-tag v-else-if="item.unify_status === 3" color="gray"
-          >Decease
-          </a-tag
-          >
+          <a-tag v-else-if="item.unify_status === 2" color="gray">
+            Inactive
+          </a-tag>
+          <a-tag v-else-if="item.unify_status === 3" color="gray">
+            Decease
+          </a-tag>
         </template>
       </DataTablePatient>
       <router-view></router-view>

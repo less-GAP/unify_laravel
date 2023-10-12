@@ -250,16 +250,9 @@
         <template #cell[full_name]="{ item, column }">
           <div class="flex flex-row items-center">
             <BaseIcon
-              v-if="item.gender === 0"
-              :path="mdiGenderMale"
+              :path="item.gender == 0 ? mdiGenderMale : mdiGenderFemale"
               class="flex-none !text-blue-600"
             />
-            <BaseIcon
-              v-if="item.gender === 1"
-              :path="mdiGenderFemale"
-              class="flex-none text-pink-600"
-            />
-
             <span class="pl-1">
               <a
                 @click="auth.hasPermission('patient.view') ? router.push('patient/' + item.id + '/detail') : 'javascript:void(0)'"
@@ -299,13 +292,7 @@
           <a-tag v-else-if="item.unify_status === 1" color="green">
             <div class="pt-1 leading-none">Active</div>
             <div class="pb-1 leading-none">
-              <small
-              >({{
-                dayjs(item.unify_active, "YYYY-MM-DD HH:mm:ss").format(
-                "HH:mm MM-DD-YYYY"
-                )
-                }})</small
-              >
+              <small>({{dayjs(item.unify_active, "YYYY-MM-DD HH:mm:ss").format("HH:mm MM-DD-YYYY" )}})</small>
             </div>
           </a-tag>
           <a-tag v-else-if="item.unify_status === 2" color="gray"
