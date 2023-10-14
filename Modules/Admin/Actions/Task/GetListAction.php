@@ -15,7 +15,7 @@ class GetListAction
         $query = Task::query();
         $user = Auth::user();
 
-        if(!$user->hasPermissionTo('task.assign')){
+        if (!$user->hasPermissionTo('task.assign')) {
             $query->whereRaw("FIND_IN_SET(?, assignees) > 0", [$user->id]);
         }
 
@@ -25,13 +25,23 @@ class GetListAction
         if ($request->input('patient_id') !== null) {
             $query->where('patient_id', $request->input('patient_id'));
         }
+
         if ($request->input('is_completed') !== null) {
             $query->where('is_completed', $request->input('is_completed'));
         }
 
+        if ($request->input('from_date')) {
+            $query->where('deadline_at', '=>', $request->input('from_date'));
+        }
+
+        if ($request->input('to_date')) {
+            $query->where('deadline_at', '<=', $request->input('to_date'));
+        }
+
+
         if ($request->input('deleted') !== null) {
             $query->where('deleted', $request->input('deleted'));
-        }else{
+        } else {
             $query->where('deleted', 0);
         }
 
@@ -53,7 +63,7 @@ class GetListAction
                     $query->orderBy('id', $request->input('order', 'DESC'));
                     break;
             }
-        }else{
+        } else {
             $query->orderBy('id', $request->input('order', 'DESC'));
         }
 

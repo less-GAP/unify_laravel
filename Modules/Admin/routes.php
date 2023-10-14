@@ -94,12 +94,14 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                     AllowedFilter::exact('task_process'),
                     AllowedFilter::exact('deleted'),
                     AllowedFilter::exact('is_completed'),
+                    AllowedFilter::exact('from_date'),
+                    AllowedFilter::exact('to_date'),
                 ]
             ]
         )->routes(
             function () {
                 Route::get('list', \Modules\Admin\Actions\Task\GetListAction::class . '@handle');
-                // Route::get('{id}', \Modules\Admin\Actions\Task\GetDetailAction::class . '@handle');
+                Route::get('all', \Modules\Admin\Actions\Task\GetAllAction::class . '@handle');
             }
         );
     EloquentRouter::prefix('post')
