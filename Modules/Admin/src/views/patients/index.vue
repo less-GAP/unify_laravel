@@ -110,6 +110,11 @@ import {BaseIcon} from "@/components";
       width: 100,
     },
     {
+      title: "Doctor",
+      key: "doctor_id",
+      width: 200,
+    },
+    {
       title: "INFO",
       key: "info",
       width: 400,
@@ -289,6 +294,9 @@ let reloadTable = () => {
         <template #cell[dob]="{ item, column }">
           <small>{{ dob_value(item) }}</small>
           <br/><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
+        </template>
+        <template #cell[doctor_id]="{ item, column }">
+          <small>{{ item.doctor ? item.doctor.full_name : '' }}</small>
         </template>
         <template #cell[unify_status]="{ item, column }">
           <a-tag v-if="item.unify_deleted === 1" color="gray">Trashed</a-tag>
