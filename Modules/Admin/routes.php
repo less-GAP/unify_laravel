@@ -119,7 +119,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             \App\Models\Patient::class,
             [
                 'autoPermission' => true,
-                'allowedIncludes' => ['tasks'],
+                'allowedIncludes' => ['tasks', 'doctor'],
                 'allowedSorts' => ['id', 'name', 'updated_at'],
                 'allowedFilters' => [
                     AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,phone,email'), AllowedFilter::custom('phone', new \App\Builder\Filters\SearchLikeMultipleField, 'phone')
