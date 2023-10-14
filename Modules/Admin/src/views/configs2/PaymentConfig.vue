@@ -6,16 +6,19 @@
   import validateMessages from "@/utils/validateMessages";
   import {InputUpload, InputUploadGetPath} from "@/components";
 
-  const configNames = [
-    'square_app_id',
-    'square_access_token',
-    'square_location_id',
-    'square_environment',
+  // export default {
+  //   components: {}
+  // }
 
+
+  const configNames = [
     'paypal_client_id',
     'paypal_client_secret',
     'stripe_publishable_key',
     'stripe_secret_key',
+    'square_application_id',
+    'square_location_id',
+    'square_access_token',
   ]
 
   const emit = defineEmits(["success", "cancel"]);
@@ -59,27 +62,7 @@
     v-bind="formConfig"
     @finish="submit"
   >
-
-  <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0" plain>Square</a-Divider>
-
-    <a-form-item name="square_app_id" label="Square App Id" :rules="[{ required: true }]">
-      <a-input :showCount="true" maxlength="55"  autocomplete="off" v-model:value="formState.square_app_id"/>
-    </a-form-item>
-    <a-form-item name="square_location_id" label="Square Location Id" :rules="[{ required: true }]">
-      <a-input :showCount="true" maxlength="55"  autocomplete="off" v-model:value="formState.square_location_id"/>
-    </a-form-item>
-    <a-form-item name="square_access_token" label="Square Access Token" :rules="[{ required: true }]">
-      <a-textarea  maxlength="160"  autocomplete="off" v-model:value="formState.square_access_token"/>
-    </a-form-item>
-    <a-form-item name="square_environment" label="Square Environment" :rules="[{ required: true }]">
-      <a-select  v-model:value="formState.square_environment" id="">
-        <a-select-option value="sandbox">Sandbox</a-select-option>
-        <a-select-option value="production">Production</a-select-option>
-        <a-select-option value="custom">Custom</a-select-option>
-      </a-select>
-    </a-form-item>
-
-
+    
     <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0" plain>Paypal</a-Divider>
     <a-form-item name="paypal_client_id" label="Paypal Client ID">
         <a-input autocomplete="off" v-model:value="formState.paypal_client_id" class="rounded border-gray-300"/>
@@ -98,7 +81,19 @@
         <a-input autocomplete="off" v-model:value="formState.stripe_secret_key" class="rounded border-gray-300"/>
     </a-form-item>
 
+    <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0" plain>Square</a-Divider>
 
+    <a-form-item name="square_application_id" label="Square Application ID">
+        <a-input autocomplete="off" v-model:value="formState.square_application_id" class="rounded border-gray-300"/>
+    </a-form-item>
+
+    <a-form-item name="square_location_id" label="Square Location ID">
+        <a-input autocomplete="off" v-model:value="formState.square_location_id" class="rounded border-gray-300"/>
+    </a-form-item>
+
+    <a-form-item name="square_access_token" label="Square Access Token">
+        <a-input autocomplete="off" v-model:value="formState.square_access_token" class="rounded border-gray-300"/>
+    </a-form-item>
 
     <a-form-item>
       <a-space>
