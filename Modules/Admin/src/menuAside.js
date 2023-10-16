@@ -68,7 +68,7 @@ export default [{
     permission: 'product.list',
     label: "Product",
     icon: mdiGift,
-    disable: true,
+    disable: false,
   },
 
   {
