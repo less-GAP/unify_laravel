@@ -230,4 +230,15 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         );
     Route::get('notifications', \Modules\Admin\Actions\Notification\GetNotifications::class . '@handle');
     Route::post('notification/read', \Modules\Admin\Actions\Notification\ReadAction::class . '@handle');
+
+    EloquentRouter::prefix('product')
+        ->handle(
+            \App\Models\Product::class,
+            [
+                'allowedFilters' => [
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name'),
+                    AllowedFilter::exact('status'),
+                ]
+            ]
+        );
 });

@@ -12,10 +12,12 @@ import { DeleteOutlined } from "@ant-design/icons-vue";
 import { mdiGenderMale, mdiGenderFemale, mdiPencil } from "@mdi/js";
 import { BaseIcon } from "@/components";
 
-const prefix = "doctor";
+const prefix = "product";
 const { fetchListApi } = UseEloquentRouter(prefix);
 const auth = useAuthStore();
 var item = {};
+
+const visible = ref(false);
 const itemActions = [
   {
     label: "Edit",
@@ -83,6 +85,7 @@ const tableConfig = UseDataTable(fetchListApi, {
   listActions,
   itemActions,
 });
+
 let reloadTable = () => {};
 
 watch(router.currentRoute, (currentRoute) => {
@@ -94,6 +97,12 @@ watch(router.currentRoute, (currentRoute) => {
 function registerTable({ reload }) {
   reloadTable = reload;
 }
+
+const close = () => {
+  visible.value = false;
+  reloadTable();
+}
+
 </script>
 
 <template>
@@ -187,7 +196,9 @@ function registerTable({ reload }) {
           <a-tag v-if="item.status == 2" color="green">Trashed</a-tag>
         </template>
       </DataTable>
-      <router-view></router-view>
     </SectionMain>
   </LayoutAuthenticated>
+  <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;" @close="close" :open="visible" width="50vw">
+
+  </a-drawer>
 </template>

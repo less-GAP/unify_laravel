@@ -7,7 +7,7 @@ import { useAuthStore } from "@/stores/auth";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import listStates from "@/utils/States";
 
-const prefix = 'doctor'
+const prefix = 'product'
 const {
   fetchDetailApi,
   createApi,
@@ -43,7 +43,7 @@ const emit = defineEmits(["close"]);
 const formState = reactive({});
 
 const fetch = async function () {
-  
+
   loading.value = true;
   var nameRoute = currentRoute.name;
   var id = currentRoute.params.id;
