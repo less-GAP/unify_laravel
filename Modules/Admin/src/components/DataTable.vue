@@ -73,7 +73,7 @@ const props = defineProps({
     default: [],
   },
   api: Function,
-  addAction: Function,
+  addAction: Object,
 });
 const tableConfig = {
   item_key: "id",
@@ -151,7 +151,6 @@ reload(true);
 <template>
   <div id="table-list" class="flex flex-col sm:rounded-lg">
     <slot name="header" v-bind="{ tableConfig, filter, reload }"></slot>
-
     <div :loading="loading" class="flex items-center p-2 bg-white rounded-xl empty:hidden">
       <a-space>
         <a-input-search v-if="globalSearch" v-model:value="filter.search" allow-clear style="max-width: 300px"
@@ -171,12 +170,34 @@ reload(true);
         </slot>
       </a-space>
       <a-space class="!ml-auto">
-        <a-button v-for="listAction in listActions" type="primary" @click="() => {
+        <template v-for="listAction in listActions" v-if="listActions.length > 0">
+          <a-button type="primary" v-if="listAction.ifShow" @click="() => {
             listAction.action(reload);
           }
           ">{{ listAction.label }}
-        </a-button>
-        <slot name="action" v-bind="{ selectedItems, data, reload }"></slot>
+          </a-button>
+        </template>
+<!--        <slot name="action" v-bind="{ selectedItems, data, reload }"></slot>-->
+        <a-dropdown v-if="selectionActions.length > 0" :disabled="!selectedItems.length">
+          <template #overlay>
+            <a-menu>
+              <template :key="index" v-for="(action,index) in selectionActions">
+                <a-menu-item @click="doSelectionAction(action)"
+                             v-if="action.ifShow"
+                >
+                  {{ action.title }}
+                </a-menu-item>
+              </template>
+
+
+            </a-menu>
+          </template>
+          <a-button>
+            Actions
+            <DownOutlined/>
+          </a-button>
+        </a-dropdown>
+        <a-button type="primary" v-if="addAction && addAction.ifShow" @click="()=>{addAction.action(reload)}">Add new</a-button>
       </a-space>
     </div>
     <div class="flex-1 w-full my-2 overflow-auto bg-white rounded-lg shadow scroll-smooth">
@@ -238,14 +259,15 @@ reload(true);
             </td>
             <td v-if="itemActions.length" class="flex flex-wrap justify-center p-2 whitespace-nowrap">
               <!-- Modal toggle -->
-              <template v-for="itemAction in itemActions">
+              <template v-for="itemAction in itemActions" >
                 <slot :name="'cellAction[' + itemAction.key + ']'" v-bind="{
                     item,
                     itemAction,
                     actionMethod() {
                       itemAction.action(item, reload);
                     },
-                  }">
+                  }"
+                      v-if="itemAction.ifShow">
                   <a-popconfirm v-if="itemAction.confirm" title="Are you sure？"
                                 @confirm="itemAction.action(item, reload)">
                     <a-button :class="itemAction.class
@@ -255,11 +277,11 @@ reload(true);
                       {{ itemAction.label }}
                     </a-button>
                   </a-popconfirm>
-                  <a-button v-else :class="itemAction.class
+                  <a-button  :class="itemAction.class
                         ? itemAction.class
                         : 'font-medium text-blue-600 dark:text-blue-500 hover:underline'
                       " type="link" @click="itemAction.action(item, reload)">
-                    {{ itemAction.label }}
+                    {{ itemAction.label }} aaa
                   </a-button>
                 </slot>
               </template>

@@ -241,5 +241,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                     AllowedFilter::exact('status'),
                 ]
             ]
-        );
+        )->routes(function () {
+            Route::post('/', \Modules\Admin\Actions\Product\PostAction::class . '@handle');
+        });
 });

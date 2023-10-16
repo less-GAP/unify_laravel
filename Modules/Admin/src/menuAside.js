@@ -70,7 +70,6 @@ export default [{
     icon: mdiGift,
     disable: false,
   },
-
   {
     to: null,
     label: "Marketing",

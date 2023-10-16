@@ -4,9 +4,7 @@
 namespace Modules\Admin\Actions\Product;
 
 use App\Models\Product;
-use App\Models\ProductPackage;
 use Illuminate\Http\Request;
-use Modules\Admin\Middleware\AdminIsAuthenticated;
 
 class PostAction
 {
@@ -26,28 +24,6 @@ class PostAction
 
             $product->fill($data);
             $product->save();
-            if($request->input('images')){
-                $syncImages = [];
-                foreach($request->input('images') as $imageData){
-                    $syncImages[$imageData['id']]=['type'=>$imageData['type']??'image'];
-                }
-                $product->images()->sync($syncImages);
-            }
-            if($data['type'] == 'package'){
-                if(isset($data['id']) && $data['id'] > 0){
-                    ProductPackage::where('package_id',$data['id'])->delete();
-                }
-                if(!empty($data['packages'])){
-                    foreach($data['packages'] as $v){
-                        $pa = [
-                            'package_id' => $product->id,
-                            'product_id' => $v['id'],
-                            'product_descr' => $v
-                        ];
-                        ProductPackage::create($pa);
-                    }
-                }
-            }
 
             $output = [
                 'code' => 1,

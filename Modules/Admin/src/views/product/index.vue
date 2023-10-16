@@ -8,31 +8,21 @@ import { useAuthStore } from "@/stores/auth";
 import { DataTable } from "@/components";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
 import { UseDataTable } from "@/utils/UseDataTable";
-import { DeleteOutlined } from "@ant-design/icons-vue";
-import { mdiGenderMale, mdiGenderFemale, mdiPencil } from "@mdi/js";
+import { mdiBallotOutline, mdiDelete, mdiEye } from "@mdi/js";
 import { BaseIcon } from "@/components";
 import Detail from "./Detail.vue";
+
+import { PlusOutlined, LoadingOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons-vue';
 
 const prefix = "product";
 const { fetchListApi } = UseEloquentRouter(prefix);
 const auth = useAuthStore();
-var item = {};
 
 const visible = ref(false);
 
 const productDetail = ref({});
-const itemActions = [
-  {
-    label: "Edit",
-    key: "edit",
-    show: () => {
-      return true;
-    },
-    action: (item) => {
-      router.replace(prefix + "/" + item.id + "/edit");
-    },
-  },
-];
+
+const itemActions =[];
 const listActions = [
   {
     label: "Add",
@@ -43,50 +33,106 @@ const listActions = [
 ];
 const columns = [
   {
-    title: "Doctor",
-    key: "full_name",
-    width: "",
+    title: "Image",
+    key: "image",
+    width: 80
   },
   {
-    title: "STATUS",
+    title: "Name",
+    key: "name",
+  },
+  {
+    title: "Slug",
+    key: "slug",
+  },
+  {
+    title: "Inventory",
+    key: "inventory",
+  },
+  {
+    title: "Status",
     key: "status",
     width: 100,
   },
   {
-    title: "DOB",
-    key: "dob",
-    width: 100,
-  },
-  {
-    title: "INFO",
-    key: "info",
-    width: 400,
-  },
-  {
-    title: "CREATED AT",
+    title: "Created at",
     key: "created_at",
     width: 130,
   },
 ];
 
-const customFormat = "MM-DD-YYYY";
-const dbFormat = "YYYY-MM-DD"; // format of datepicker
-const dob_value = (item) => {
-  return item.dob ? dayjs(item.dob, dbFormat).format(customFormat) : "-";
-};
-
-const age = (item) => {
-  return item.dob
-    ? "(" + dayjs().diff(dayjs(item.dob, dbFormat), "year") + " years old)"
-    : "-";
-};
-
 const tableConfig = UseDataTable(fetchListApi, {
   columns,
   showSelection: true,
   showSort: false,
-  listActions,
-  itemActions,
+  addAction: {
+    action: (reload) => {
+      //showEditUser({}, reload)
+      visible.value = true;
+    },
+    ifShow: auth.hasPermission('Product.create')
+  },
+  listActions:[],
+  itemActions:  [
+    {
+      ifShow: auth.hasPermission('Product.update'),
+      label: "Edit",
+      key: "edit",
+      action: (item) => {
+        productDetail.value = item;
+        visible.value = true;
+      },
+    },
+    {
+      ifShow: auth.hasPermission('Product.delete'),
+      label: '',
+      class: 'font-medium text-red-600 dark:text-red-500 hover:underline',
+      icon: mdiDelete,
+      key: 'delete',
+      action(item, reload) {
+        Api.delete(prefix+'/' + item.id).then(rs => {
+          notification[rs.data.code == 0 ? 'error' : 'success']({
+            message: 'Notification',
+            description: rs.data.message,
+          });
+        }).finally(() => {
+          reload();
+        });
+      }
+    }
+  ],
+  selectionActions: [
+    {
+      ifShow: auth.hasPermission('Product.update'),
+      title: 'Active',
+      action(selectedKeys) {
+        return Api.post(prefix+'/activeList', {
+          'items': selectedKeys,
+          'status': 'A'
+        }).then(rs => {
+          notification[rs.data.code == 0 ? 'error' : 'success']({
+            message: 'Notification',
+            description: rs.data.message,
+          });
+        })
+      },
+    },
+    {
+      ifShow: auth.hasPermission('Product.update'),
+      title: 'Deactive',
+      action(selectedKeys) {
+        return Api.post(prefix+'/activeList', {
+          'items': selectedKeys,
+          'status': 'D'
+        }).then(rs => {
+          notification[rs.data.code == 0 ? 'error' : 'success']({
+            message: 'Notification',
+            description: rs.data.message,
+          });
+        })
+      },
+    },
+  ]
 });
 
 let reloadTable = () => {};
@@ -115,69 +161,29 @@ const close = () => {
         <template #header>
           <h2>Products</h2>
         </template>
-        <template #cellAction[edit]="{ item, actionMethod }">
-          <a-tooltip title="Edit" class="mr-1">
-            <a-button class="justify-center !flex !p-1 !h-auto" @click="actionMethod" >
-              <BaseIcon :path="mdiPencil" class="w-4 !fill-blue-200" />
-            </a-button>
-          </a-tooltip>
-        </template>
         <template #cellAction[delete]="{ item, actionMethod }">
-          <a-popconfirm
-            title="Do you want to delete?"
-            ok-text="Yes"
-            cancel-text="No"
-            @confirm="actionMethod"
-          >
-            <a-button
-              type="text"
-              danger
-              :icon="h(DeleteOutlined)"
-              label=""
-              :outline="true"
-            ></a-button>
+          <a-popconfirm title="Do you want delete this?" ok-text="Yes" cancel-text="No" @confirm="actionMethod">
+            <a-button type="text" danger :icon="h(DeleteOutlined)" label="" :outline="true">
+            </a-button>
           </a-popconfirm>
+        </template>
+        <template #cellAction[edit]="{ item, actionMethod }">
+          <a-button type="text" :icon="h(FormOutlined)" label="" :outline="true" @click="actionMethod">
+          </a-button>
         </template>
         <template #cell[id]="{ item, column }">
           <div>{{ item.id }}</div>
         </template>
-        <template #cell[full_name]="{ item, column }">
-          <div class="flex flex-row items-center">
-            <BaseIcon
-              v-if="item.gender === 0"
-              :path="mdiGenderMale"
-              class="flex-none !text-blue-600"
-            />
-            <BaseIcon
-              v-if="item.gender === 1"
-              :path="mdiGenderFemale"
-              class="flex-none text-pink-600"
-            />
-
-            <span class="pl-1">
-              {{ item.full_name }}
-            </span>
-          </div>
+        <template #cell[image]="{ item, column }">
+          <img class="w-20 h-auto float-left" :src="item.image_url" :alt="item.name" v-if="item.image_url" />
+          <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else />
         </template>
-        <template #cell[info]="{ item, column }">
-          <div class="flex">
-            <div><strong>Tel:</strong> {{ item.phone }}</div>
-          </div>
-          <div class="block max-w-[380px] truncate">
-            {{ item.address }}, {{ item.city }}, {{ item.state }},
-            {{ item.zip }}
-          </div>
-        </template>
-        <template #cell[dob]="{ item, column }">
-          <small>{{ dob_value(item) }}</small>
-          <br /><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
+        <template #cell[slug]="{ item, column }">
+          /{{ item.slug }}
         </template>
         <template #cell[status]="{ item, column }">
-          <a-tag v-if="item.status === null || item.status == 0" color="green"
-            >Active</a-tag
-          >
-          <a-tag v-if="item.status == 1" color="green">Inactive</a-tag>
-          <a-tag v-if="item.status == 2" color="green">Trashed</a-tag>
+          <a-tag v-if="item.status == 'A'" color="green">Active</a-tag>
+          <a-tag v-if="item.status == 'D'" color="green">Inactive</a-tag>
         </template>
       </DataTable>
     </SectionMain>

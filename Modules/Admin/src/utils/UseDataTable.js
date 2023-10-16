@@ -26,6 +26,8 @@ export function UseDataTable(fetchListApi, _tableConfig = {}) {
     },
     listActions: _tableConfig.listActions ? _tableConfig.listActions : [],
     itemActions: _tableConfig.itemActions ? _tableConfig.itemActions : [],
+    selectionActions: _tableConfig.selectionActions ? _tableConfig.selectionActions : [],
+    addAction: _tableConfig.addAction ? _tableConfig.addAction : [],
     ..._tableConfig
   }
 
