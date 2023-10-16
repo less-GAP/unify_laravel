@@ -3,7 +3,7 @@ import router from "@/router";
 import SectionMain from "@/components/SectionMain.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import dayjs from "dayjs";
-import { h, watch } from "vue";
+import { h, watch, ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { DataTable } from "@/components";
 import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
@@ -11,6 +11,7 @@ import { UseDataTable } from "@/utils/UseDataTable";
 import { DeleteOutlined } from "@ant-design/icons-vue";
 import { mdiGenderMale, mdiGenderFemale, mdiPencil } from "@mdi/js";
 import { BaseIcon } from "@/components";
+import Detail from "./Detail.vue";
 
 const prefix = "product";
 const { fetchListApi } = UseEloquentRouter(prefix);
@@ -18,6 +19,8 @@ const auth = useAuthStore();
 var item = {};
 
 const visible = ref(false);
+
+const productDetail = ref({});
 const itemActions = [
   {
     label: "Edit",
@@ -34,7 +37,7 @@ const listActions = [
   {
     label: "Add",
     action: () => {
-      router.replace(prefix + "/new");
+      visible.value = true;
     },
   },
 ];
@@ -110,30 +113,11 @@ const close = () => {
     <SectionMain>
       <DataTable v-bind="tableConfig" @register="registerTable">
         <template #header>
-          <h2>Doctor List</h2>
+          <h2>Products</h2>
         </template>
         <template #cellAction[edit]="{ item, actionMethod }">
           <a-tooltip title="Edit" class="mr-1">
-            <a-button
-              class="justify-center !flex !p-1 !h-auto"
-              :disabled="
-                auth.user.roles.find((x) => x.name === 'Admin') !== undefined ||
-                (auth.user.roles.find((x) => x.name === 'Seller') !==
-                  undefined &&
-                  item.unify_process == 0)
-                  ? false
-                  : true
-              "
-              :class="
-                auth.user.roles.find((x) => x.name === 'Admin') !== undefined ||
-                (auth.user.roles.find((x) => x.name === 'Seller') !==
-                  undefined &&
-                  item.unify_process == 0)
-                  ? ''
-                  : '!bg-gray-300 opacity-50'
-              "
-              @click="actionMethod"
-            >
+            <a-button class="justify-center !flex !p-1 !h-auto" @click="actionMethod" >
               <BaseIcon :path="mdiPencil" class="w-4 !fill-blue-200" />
             </a-button>
           </a-tooltip>
@@ -198,7 +182,7 @@ const close = () => {
       </DataTable>
     </SectionMain>
   </LayoutAuthenticated>
-  <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;" @close="close" :open="visible" width="50vw">
-
+  <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;" @close="close" :open="visible" width="80vw">
+    <Detail :value="productDetail" @close="close"></Detail>
   </a-drawer>
 </template>
