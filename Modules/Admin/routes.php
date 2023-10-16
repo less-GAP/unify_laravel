@@ -161,18 +161,19 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'email_title,email_to')]
             ]
         );
-    EloquentRouter::prefix('event-setting')
-        ->handle(
-            EventSetting::class,
-            [
-                'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'event_name')]
-            ]
-        );
     EloquentRouter::prefix('email-template')
         ->handle(
             \App\Models\EmailTemplate::class,
             [
                 'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'email_title,email_content')]
+            ]
+        );
+
+    EloquentRouter::prefix('event-setting')
+        ->handle(
+            EventSetting::class,
+            [
+                'allowedFilters' => [AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'event_name')]
             ]
         );
 
