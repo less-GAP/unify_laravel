@@ -1,196 +1,195 @@
 <script lang="ts" setup>
-import { reactive, h, ref, toRaw, computed, watch } from "vue";
-import { mdiBackspace, mdiContentSave, mdiAccountArrowUp ,mdiTrashCanOutline } from '@mdi/js';
-import { BaseIcon ,InputUpload} from "@/components";
-import { ApiData } from "@/components";
-import { notification } from "ant-design-vue";
-import router from "@/router";
-import { useAuthStore } from "@/stores/auth";
-import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
-import { getProcess } from "@/utils/Patient";
-import InsuranceListEdit from "@/components/InsuranceListEdit.vue";
-import dayjs from 'dayjs';
+  import {reactive, h, ref, toRaw, computed, watch} from "vue";
+  import {mdiBackspace, mdiContentSave, mdiAccountArrowUp, mdiTrashCanOutline} from '@mdi/js';
+  import {BaseIcon, InputUpload} from "@/components";
+  import {ApiData} from "@/components";
+  import {notification} from "ant-design-vue";
+  import router from "@/router";
+  import {useAuthStore} from "@/stores/auth";
+  import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
+  import {getProcess} from "@/utils/Patient";
+  import InsuranceListEdit from "@/components/InsuranceListEdit.vue";
+  import dayjs from 'dayjs';
 
-import {
-  fetchListInsurancesApi,
-  fetchListDoctorsApi,
-  fetchListDoctorStatusApi,
-} from "@/utils/Patient";
-import listStates from "@/utils/States";
+  import {
+    fetchListInsurancesApi,
+    fetchListDoctorsApi,
+    fetchListDoctorStatusApi,
+  } from "@/utils/Patient";
+  import listStates from "@/utils/States";
 
-const prefix = 'patient'
-const {
-  fetchDetailApi,
-  createApi,
-  updateApi,
-} = UseEloquentRouter(prefix)
+  const prefix = 'patient'
+  const {
+    fetchDetailApi,
+    createApi,
+    updateApi,
+  } = UseEloquentRouter(prefix)
 
-const listInsurances = fetchListInsurancesApi();
-const listDoctors = ref([]);
-const listDoctorStatus = fetchListDoctorStatusApi();
-const loading = ref(false);
-const auth = useAuthStore();
-const currentRoute = router.currentRoute.value;
+  const listInsurances = fetchListInsurancesApi();
+  const listDoctors = ref([]);
+  const listDoctorStatus = fetchListDoctorStatusApi();
+  const loading = ref(false);
+  const auth = useAuthStore();
+  const currentRoute = router.currentRoute.value;
 
-const genderList = [
-  {
-    value: 0,
-    label: 'Male'
-  },
-  {
-    value: 1,
-    label: 'Female'
-  }
-];
-
-const formRef = ref();
-
-const props = defineProps({
-  value: {
-    type: Object,
-    default: {}
-  }, visible: {
-    type: Boolean,
-    default: true
-  },
-})
-const emit = defineEmits(["close"]);
-const formState = reactive({});
-
-const fetch = async function () {
-  loading.value = true;
-  var nameRoute = currentRoute.name;
-  var id = currentRoute.params.id;
-  listDoctors.value = await fetchListDoctorsApi();
-  if (nameRoute == 'patient-edit') {
-    loading.value = true
-    var response = await fetchDetailApi(id)
-    if (response.data.status === 200) {
-      //prepare data
-      const data = response.data.data
-      data.insurance_coverages = JSON.parse(data.insurance_coverages);
-      Object.assign(formState, data)
-      loading.value = false
-    } else {
-      notification.error({
-        message: "Error",
-        description: response.data.message,
-      });
-      setTimeout(() => {
-        router.replace({ path: '/' + prefix })
-      }, 3000);
+  const genderList = [
+    {
+      value: 0,
+      label: 'Male'
+    },
+    {
+      value: 1,
+      label: 'Female'
     }
-  } else {
-    formState.sale_user = auth.user.id;
-    formState.unify_process = 0;
-    loading.value = false
+  ];
+
+  const formRef = ref();
+
+  const props = defineProps({
+    value: {
+      type: Object,
+      default: {}
+    }, visible: {
+      type: Boolean,
+      default: true
+    },
+  })
+  const emit = defineEmits(["close"]);
+  const formState = reactive({});
+
+  const fetch = async function () {
+    loading.value = true;
+    var nameRoute = currentRoute.name;
+    var id = currentRoute.params.id;
+    listDoctors.value = await fetchListDoctorsApi();
+    if (nameRoute == 'patient-edit') {
+      loading.value = true
+      var response = await fetchDetailApi(id)
+      if (response.data.status === 200) {
+        //prepare data
+        const data = response.data.data
+        data.insurance_coverages = JSON.parse(data.insurance_coverages);
+        Object.assign(formState, data)
+        loading.value = false
+      } else {
+        notification.error({
+          message: "Error",
+          description: response.data.message,
+        });
+        setTimeout(() => {
+          router.replace({path: '/' + prefix})
+        }, 3000);
+      }
+    } else {
+      formState.sale_user = auth.user.id;
+      formState.unify_process = 0;
+      loading.value = false
+    }
   }
-}
-fetch();
+  fetch();
 
-const patient_process = computed(() => {
-  return formState.unify_process ? formState.unify_process : 0;
-});
-
-const submit = (status) => {
-  formRef.value
-    .validate()
-    .then(() => {
-      
-      if (formState.unify_status > 1) { // die or inactive => to archive
-        formState.unify_inactive_at = dayjs().format('YYYY-MM-DD HH:mm:ss');
-      }
-      const new_insurance_coverages = formState.insurance_coverages;
-      var insurance_coverages = ref([]);
-      if (formState.insurance_coverages) {
-        formState.insurance_coverages.forEach((element, index) => {
-          insurance_coverages.value.push({
-            coverage: element.coverage,
-            insurance_id: element.insurance_id,
-            active_date: element.active_date,
-            expired_date: element.expired_date,
-          });
-        });
-      }
-      if (insurance_coverages.value.length) {
-        formState.insurance_coverages = JSON.stringify(toRaw(insurance_coverages.value))
-      } else {
-        formState.insurance_coverages = null
-      }
-
-      createApi({ ...formState, status: status }).then(rs => {
-        Object.assign(formState, rs.data.result)
-        formState.insurance_coverages = new_insurance_coverages;
-      });
-    })
-};
-// Submit when seller approve profile from Waiting to Eligibility Check
-const submitSellerApprove = () => {
-  formRef.value
-    .validate()
-    .then(() => {
-      const new_insurance_coverages = formState.insurance_coverages;
-      var insurance_coverages = ref([]);
-      if (formState.insurance_coverages) {
-        formState.insurance_coverages.forEach((element, index) => {
-          insurance_coverages.value.push({
-            coverage: element.coverage,
-            insurance_id: element.insurance_id,
-            active_date: element.active_date,
-            expired_date: element.expired_date,
-          });
-        });
-      }
-      if (insurance_coverages.value.length) {
-        formState.insurance_coverages = JSON.stringify(toRaw(insurance_coverages.value))
-      } else {
-        formState.insurance_coverages = null
-      }
-
-      formState.unify_process = 1;
-
-      updateApi(formState.id, { ...formState }).then(rs => {
-        Object.assign(formState, rs.data.result)
-        formState.insurance_coverages = new_insurance_coverages;
-        router.replace({ path: '/' + prefix })
-      });
-    })
-};
-const confirmDeletePatient = () => {
-  updateApi(formState.id, {
-    unify_deleted: 1,
-    unify_deleted_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    unify_deleted_by: auth.user.id,
-    log_detail: 'Delete patient',
-  }).then(rs => {
-    Object.assign(formState, rs.data.result)
-    router.replace({ path: '/' + prefix })
+  const patient_process = computed(() => {
+    return formState.unify_process ? formState.unify_process : 0;
   });
-};
-const closeDetail = function () {
-  router.replace({ path: '/' + prefix })
-}
+
+  const submit = (status) => {
+    formRef.value
+      .validate()
+      .then(() => {
+        if (formState.unify_status > 1) { // die or inactive => to archive
+          formState.unify_inactive_at = dayjs().format('YYYY-MM-DD HH:mm:ss');
+        }
+        const new_insurance_coverages = formState.insurance_coverages;
+        var insurance_coverages = ref([]);
+        if (formState.insurance_coverages) {
+          formState.insurance_coverages.forEach((element, index) => {
+            insurance_coverages.value.push({
+              coverage: element.coverage,
+              insurance_id: element.insurance_id,
+              active_date: element.active_date,
+              expired_date: element.expired_date,
+            });
+          });
+        }
+        if (insurance_coverages.value.length) {
+          formState.insurance_coverages = JSON.stringify(toRaw(insurance_coverages.value))
+        } else {
+          formState.insurance_coverages = null
+        }
+
+        createApi({...formState, status: status}).then(rs => {
+          Object.assign(formState, rs.data.result)
+          formState.insurance_coverages = new_insurance_coverages;
+        });
+      })
+  };
+  // Submit when seller approve profile from Waiting to Eligibility Check
+  const submitSellerApprove = () => {
+    formRef.value
+      .validate()
+      .then(() => {
+        const new_insurance_coverages = formState.insurance_coverages;
+        var insurance_coverages = ref([]);
+        if (formState.insurance_coverages) {
+          formState.insurance_coverages.forEach((element, index) => {
+            insurance_coverages.value.push({
+              coverage: element.coverage,
+              insurance_id: element.insurance_id,
+              active_date: element.active_date,
+              expired_date: element.expired_date,
+            });
+          });
+        }
+        if (insurance_coverages.value.length) {
+          formState.insurance_coverages = JSON.stringify(toRaw(insurance_coverages.value))
+        } else {
+          formState.insurance_coverages = null
+        }
+
+        formState.unify_process = 1;
+
+        updateApi(formState.id, {...formState}).then(rs => {
+          Object.assign(formState, rs.data.result)
+          formState.insurance_coverages = new_insurance_coverages;
+          router.replace({path: '/' + prefix})
+        });
+      })
+  };
+  const confirmDeletePatient = () => {
+    updateApi(formState.id, {
+      unify_deleted: 1,
+      unify_deleted_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+      unify_deleted_by: auth.user.id,
+      log_detail: 'Delete patient',
+    }).then(rs => {
+      Object.assign(formState, rs.data.result)
+      router.replace({path: '/' + prefix})
+    });
+  };
+  const closeDetail = function () {
+    router.replace({path: '/' + prefix})
+  }
 
 </script>
 
 <template>
   <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;"
-    @close="closeDetail" :open="visible" width="90vw">
+            @close="closeDetail" :open="visible" width="90vw">
     <a-form layout="vertical" v-bind="$config.formConfig" ref="formRef" :model="formState" @finish="submit">
       <div class="p-3 bg-gray-200">
         <a-button class="!hidden md:!inline-block" type="link" @click="closeDetail">
           <template #icon>
             <div class="flex">
-              <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500" />
+              <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500"/>
               <span class="ml-1 text-stone-500">Back</span>
             </div>
           </template>
         </a-button>
         <a-button class="!inline-flex items-center justify-center md:!hidden !w-8 !h-8 !p-0" type="link"
-          @click="closeDetail">
+                  @click="closeDetail">
           <template #icon>
             <div class="flex">
-              <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500" />
+              <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500"/>
               <span class="ml-1 text-stone-500">Back</span>
             </div>
           </template>
@@ -198,28 +197,33 @@ const closeDetail = function () {
         <a-space class="float-right">
           <a-tag v-if="formState.unify_status == 2" color="gray">Inactive</a-tag>
           <a-tag v-if="formState.unify_status == 3" color="gray">Decease</a-tag>
-          <a-tag v-if="formState.unify_process == 0" color="gray">{{
-            getProcess(formState.unify_process) ? getProcess(formState.unify_process).label : '' }}</a-tag>
-          <a-tag v-if="formState.unify_process == 1" color="orange">{{
-            getProcess(formState.unify_process) ? getProcess(formState.unify_process).label : '' }}</a-tag>
+          <a-tag v-if="formState.unify_process == 0" color="gray">
+            {{getProcess(formState.unify_process) ? getProcess(formState.unify_process).label : '' }}
+          </a-tag>
+          <a-tag v-if="formState.unify_process == 1" color="orange">
+            {{getProcess(formState.unify_process) ? getProcess(formState.unify_process).label : '' }}
+          </a-tag>
           <a-tag v-if="formState.unify_process == 2 && formState.unify_status < 2" color="blue">Running</a-tag>
           <ApiData url="master-data/task-status" method="GET" :params="{}">
             <template #default="{ data }">
-              <a-select class="w-[200px]" v-model:value="formState.unify_task_status" :options="JSON.parse(data.data)"
-                placeholder="Select status for profile">
+              <a-select class="w-[200px]" v-model:value="formState.unify_task_status"
+                        placeholder="Select status for profile">
+                <template v-for="(value, key) in JSON.parse(data.data)" :key="key">
+                  <a-select-option :value="value.value" :style="'color:'+value.color+';background-color:'+value.background_color">{{value.label}}</a-select-option>
+                </template>
               </a-select>
             </template>
           </ApiData>
           <a-button v-if="currentRoute.name == 'patient-add'" @click="submit('publish')" type="primary" class="uppercase">
             <div class="flex">
-              <BaseIcon :path="mdiContentSave" class="w-4 text-white" />
+              <BaseIcon :path="mdiContentSave" class="w-4 text-white"/>
               <span class="ml-1 text-white">Save And Active</span>
             </div>
           </a-button>
           <a-popconfirm title="Are you sure delete this patient?" ok-text="Yes" cancel-text="No"
-            @confirm="confirmDeletePatient">
+                        @confirm="confirmDeletePatient">
             <a-button v-if="currentRoute.name == 'patient-edit' && auth.hasPermission('patient.delete')" type="primary"
-              danger class="!flex items-center">
+                      danger class="!flex items-center">
               <template #icon>
                 <BaseIcon :path="mdiTrashCanOutline" class="w-4 text-white"></BaseIcon>
               </template>
@@ -230,14 +234,14 @@ const closeDetail = function () {
             v-if="(currentRoute.name == 'patient-edit' && (auth.hasPermission('Seller') || auth.hasPermission('Seller Manager')) && formState.unify_process == 0)"
             @click="submitSellerApprove" type="primary" class="uppercase !bg-green-500 hover:!bg-green-400">
             <div class="flex">
-              <BaseIcon :path="mdiAccountArrowUp" class="w-4 text-white" />
+              <BaseIcon :path="mdiAccountArrowUp" class="w-4 text-white"/>
               <span class="ml-1 text-white">Approve</span>
             </div>
           </a-button>
           <a-button v-if="currentRoute.name == 'patient-edit'" @click="submit('publish')" type="primary"
-            class="uppercase">
+                    class="uppercase">
             <div class="flex">
-              <BaseIcon :path="mdiContentSave" class="w-4 text-white" />
+              <BaseIcon :path="mdiContentSave" class="w-4 text-white"/>
               <span class="ml-1 text-white">Update</span>
             </div>
           </a-button>
@@ -253,18 +257,19 @@ const closeDetail = function () {
             <div class="text-sm text-gray-400">#{{ formState.unify_number }}</div>
           </h1>
           <a-Divider v-if="currentRoute.name == 'patient-edit'" class="!font-bold !text-blue-700" dashed
-            orientation="left" orientation-margin="1rem" plain>Log</a-Divider>
+                     orientation="left" orientation-margin="1rem" plain>Log
+          </a-Divider>
           <div class="w-full px-4">
             <a-form-item v-if="currentRoute.name == 'patient-edit'" label="Note for this change" name="log_detail"
-              :rules="[{ required: true }]">
+                         :rules="[{ required: true }]">
               <a-textarea class="!rounded-none w-full" v-model:value="formState.log_detail"
-                placeholder="Make a note of any changes you make to the patient record"
-                :auto-size="{ minRows: 2, maxRows: 10 }" />
+                          placeholder="Make a note of any changes you make to the patient record"
+                          :auto-size="{ minRows: 2, maxRows: 10 }"/>
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4 empty:hidden">
             <a-form-item v-if="currentRoute.name == 'patient-edit' && formState.unify_process == 2" label="Status"
-              :rules="[{ required: true }]">
+                         :rules="[{ required: true }]">
               <a-select v-model:value="formState.unify_status" allowClear="" class="w-full" :options="[
                 //   {
                 //   value:0,
@@ -288,36 +293,43 @@ const closeDetail = function () {
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4 empty:hidden">
             <a-form-item v-if="currentRoute.name == 'patient-edit' && formState.unify_process == 2" label="Publish date"
-              :rules="[{ required: true }]">
+                         :rules="[{ required: true }]">
               <a-date-picker class="w-full" :showTime="{ format: 'HH:mm' }" inputReadOnly
-                v-model:value="formState.unify_active" valueFormat="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"
-                :disabled="formState.unify_process != 2"></a-date-picker>
+                             v-model:value="formState.unify_active" valueFormat="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"
+                             :disabled="formState.unify_process != 2"></a-date-picker>
             </a-form-item>
           </div>
           <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem"
-            plain>Sumary</a-Divider>
+                     plain>Sumary
+          </a-Divider>
+          <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
+            <a-form-item label="Unify Number" name="unify_number"
+                         :rules="[{ required: true, message: 'Please enter unify number!' }]">
+              <a-input v-model:value="formState.unify_number"/>
+            </a-form-item>
+          </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Full Name" name="full_name"
-              :rules="[{ required: true, message: 'Please enter full name!' }]">
-              <a-input v-model:value="formState.full_name" />
+                         :rules="[{ required: true, message: 'Please enter full name!' }]">
+              <a-input v-model:value="formState.full_name"/>
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="First Name" name="first_name"
-              :rules="[{ required: true, message: 'Please enter first name!' }]">
-              <a-input v-model:value="formState.first_name" />
+                         :rules="[{ required: true, message: 'Please enter first name!' }]">
+              <a-input v-model:value="formState.first_name"/>
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Last Name" name="last_name"
-              :rules="[{ required: true, message: 'Please enter last name!' }]">
-              <a-input v-model:value="formState.last_name" />
+                         :rules="[{ required: true, message: 'Please enter last name!' }]">
+              <a-input v-model:value="formState.last_name"/>
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Date of Birth" name="dob" required>
               <a-date-picker v-model:value="formState.dob" valueFormat="YYYY-MM-DD" format="MM-DD-YYYY" inputReadOnly
-                class="w-full"></a-date-picker>
+                             class="w-full"></a-date-picker>
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
@@ -342,7 +354,8 @@ const closeDetail = function () {
             </a-form-item>
           </div>
           <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem"
-            plain>Address</a-Divider>
+                     plain>Address
+          </a-Divider>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Street" name="street" :rules="[{ required: true, message: 'Please enter street!' }]">
               <a-input v-model:value="formState.street" class="w-full"></a-input>
@@ -361,9 +374,10 @@ const closeDetail = function () {
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="State" name="state" :rules="[{ required: true, message: 'Please enter state!' }]">
               <a-select v-model:value="formState.state" allowClear="" class="w-full" showSearch
-                placeholder="Select a state">
+                        placeholder="Select a state">
                 <a-select-option v-for="state in listStates" :key="state.value" :value="state.label">{{ state.label
-                }} ({{ state.value }})</a-select-option>
+                  }} ({{ state.value }})
+                </a-select-option>
               </a-select>
             </a-form-item>
           </div>
@@ -383,7 +397,8 @@ const closeDetail = function () {
             </a-form-item>
           </div>
           <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem"
-            plain>Insurance</a-Divider>
+                     plain>Insurance
+          </a-Divider>
           <div class="w-full px-4 mb-4">
             <InsuranceListEdit :columns="[{
               title: 'Insurance Coverage',
@@ -404,24 +419,27 @@ const closeDetail = function () {
             </InsuranceListEdit>
           </div>
           <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem"
-            plain>Doctor</a-Divider>
+                     plain>Doctor
+          </a-Divider>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Doctor" name="doctor">
               <a-select v-model:value="formState.doctor_id" allowClear="" class="w-full" showSearch
-                placeholder="Select a doctor">
+                        placeholder="Select a doctor">
                 <a-select-option v-for="(doctor, index) in listDoctors" :key="doctor.value" :value="parseInt(doctor.value)">{{
                   doctor.label
-                }}</a-select-option>
+                  }}
+                </a-select-option>
               </a-select>
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2 lg:w-1/4">
             <a-form-item label="Doctor status" name="doctor_status">
               <a-select v-model:value="formState.doctor_status" allowClear="" class="w-full"
-                placeholder="Select a status">
+                        placeholder="Select a status">
                 <a-select-option v-for="(status, index) in listDoctorStatus" :key="status.value" :value="status.value">{{
                   status.label
-                }}</a-select-option>
+                  }}
+                </a-select-option>
               </a-select>
             </a-form-item>
           </div>
@@ -431,22 +449,23 @@ const closeDetail = function () {
             </a-form-item>
           </div>
           <a-Divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="1rem"
-            plain>Note</a-Divider>
+                     plain>Note
+          </a-Divider>
           <div class="w-full px-4 mb-4 md:w-1/2">
             <a-form-item label="Note" name="note">
               <a-textarea class="!rounded-none w-full" v-model:value="formState.note"
-                :auto-size="{ minRows: 2, maxRows: 10 }" />
+                          :auto-size="{ minRows: 2, maxRows: 10 }"/>
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2">
             <a-form-item label="Data" name="unify_data">
               <a-textarea class="!rounded-none w-full" v-model:value="formState.unify_data"
-                :auto-size="{ minRows: 2, maxRows: 10 }" />
+                          :auto-size="{ minRows: 2, maxRows: 10 }"/>
             </a-form-item>
           </div>
           <div class="w-full px-4 mb-4 md:w-1/2">
             <a-form-item label="Gallery" name="unify_data">
-             <InputUpload :multiple="true" v-model:value="formState.images"></InputUpload>
+              <InputUpload :multiple="true" v-model:value="formState.images"></InputUpload>
             </a-form-item>
           </div>
         </div>
@@ -458,20 +477,20 @@ const closeDetail = function () {
 </template>
 
 <style>
-.ant-input {
-  border-color: #d9d9d9 !important;
-  border-radius: 5px !important;
-}
+  .ant-input {
+    border-color: #d9d9d9 !important;
+    border-radius: 5px !important;
+  }
 
-.ant-modal-wrap {
-  z-index: 100001 !important;
-}
+  .ant-modal-wrap {
+    z-index: 100001 !important;
+  }
 
-.ant-form-item {
-  margin-bottom: 0;
-}
+  .ant-form-item {
+    margin-bottom: 0;
+  }
 
-.ant-drawer-body {
-  padding: 0 !important
-}
+  .ant-drawer-body {
+    padding: 0 !important
+  }
 </style>

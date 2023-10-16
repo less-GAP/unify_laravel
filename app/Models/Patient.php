@@ -8,6 +8,7 @@ use App\Traits\HasRealtimeData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Lessgap\Traits\HasLessgapEvent;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -68,7 +69,15 @@ class Patient extends Model
     protected $casts = [
         'images' => 'array',
     ];
-    protected $appends = ['seller', 'is_turn_off'];
+
+
+    protected $appends = [
+        'seller',
+        'is_turn_off',
+        'doctor'
+    ];
+
+
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -160,5 +169,18 @@ class Patient extends Model
             return [$this->owner->only(['full_name', 'username', 'id'])];
         }
         return [];
+    }
+
+    public function doctor(): HasOne
+    {
+        return $this->hasOne(Doctor::class);
+    }
+
+    public function getDoctorAttribute()
+    {
+        if($this->doctor_id != ''){
+            return Doctor::where('id',$this->doctor_id)->first();
+        }
+        return '';
     }
 }

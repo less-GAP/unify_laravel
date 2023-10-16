@@ -13,13 +13,17 @@ const configNames = [
   'smtp_user',
   'smtp_password',
   'smtp_email_from',
+  'smtp_email_from_name',
 ]
 
 const emit = defineEmits(["success", "cancel"]);
 const loading = ref(false)
 const error = ref(null)
+
 const openTest = ref(false)
-const formState = reactive({});
+const formState = reactive({
+  smtp_security: 'tls'
+});
 const formTest = reactive({
   'email_to': ''
 });
@@ -69,30 +73,45 @@ const cancel = function () {
     @finish="submit"
   >
     <a-row class="w-full">
-      <a-form-item class="md:w-[200px] w-full mr-5" name="smtp_server" label="SMTP Server"
+      <a-form-item class="md:w-[200px] w-full !mr-5" name="smtp_server" label="SMTP Server"
                    :rules="[{ required: true }]">
-        <a-input placeholder="domain.com" autocomplete="off" v-model:value="formState.smtp_server"/>
+        <a-input placeholder="domain.com" autocomplete="off" class="rounded-lg" v-model:value="formState.smtp_server"/>
       </a-form-item>
-      <a-form-item class="md:w-[200px] w-full mr-5" name="smtp_port" label="SMTP Port" :rules="[{ required: true }]">
-        <a-input placeholder="25" autocomplete="off" v-model:value="formState.smtp_port"/>
+      <a-form-item class="md:w-[200px] w-full !mr-5" name="smtp_port" label="SMTP Port" :rules="[{ required: true }]">
+        <a-input placeholder="25" autocomplete="off" class="rounded-lg" v-model:value="formState.smtp_port"/>
       </a-form-item>
-      <a-form-item class="md:w-[200px] w-full mr-5" name="smtp_security" label="Security" :rules="[{ required: true }]">
-        <a-input placeholder="tls" autocomplete="off" v-model:value="formState.smtp_security"/>
+      <a-form-item class="md:w-[200px] w-full !mr-5" name="smtp_security" label="Security" :rules="[{ required: true }]">
+
+        <a-select
+        ref="select"
+        v-model:value="formState.smtp_security"
+        style="width: 120px"
+      >
+        <a-select-option value="tls">TLS</a-select-option>
+        <a-select-option value="ssl">SSL</a-select-option>
+
+      </a-select>
       </a-form-item>
     </a-row>
 
     <a-row class="w-full">
-      <a-form-item class="md:w-[200px] w-full mr-5" name="smtp_user" label="User" :rules="[{ required: true }]">
-        <a-input placeholder="User" autocomplete="off" v-model:value="formState.smtp_user"/>
+      <a-form-item class="md:w-[200px] w-full !mr-5" name="smtp_user" label="User" :rules="[{ required: true }]">
+        <a-input placeholder="User" autocomplete="off" class="rounded-lg" v-model:value="formState.smtp_user"/>
       </a-form-item>
-      <a-form-item class="md:w-[200px] w-full mr-5" name="smtp_password" label="Password" :rules="[{ required: true }]">
-        <a-input placeholder="Password" type="password" autocomplete="off" v-model:value="formState.smtp_password"/>
+      <a-form-item class="md:w-[200px] w-full !mr-5" name="smtp_password" label="Password" :rules="[{ required: true }]">
+        <a-input placeholder="Password" type="password" autocomplete="off" class="rounded-lg" v-model:value="formState.smtp_password"/>
       </a-form-item>
     </a-row>
     <a-row class="w-full">
-      <a-form-item class="md:w-[200px] w-full mr-5" name="smtp_email_from" label="From email"
+      <a-form-item class="md:w-[200px] w-full !mr-5" name="smtp_email_from" label="From email"
                    :rules="[{ required: true }]">
-        <a-input placeholder="test@example.com" autocomplete="off" v-model:value="formState.smtp_email_from"/>
+        <a-input placeholder="test@madelab.io" autocomplete="off" class="rounded-lg" v-model:value="formState.smtp_email_from"/>
+      </a-form-item>
+    </a-row>
+    <a-row class="w-full">
+      <a-form-item class="md:w-[200px] w-full !mr-5" name="smtp_email_from_name" label="From name"
+                   :rules="[{ required: true }]">
+        <a-input placeholder="MADE" autocomplete="off" class="rounded-lg" v-model:value="formState.smtp_email_from_name"/>
       </a-form-item>
     </a-row>
 

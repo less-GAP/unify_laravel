@@ -6,12 +6,16 @@
   import validateMessages from "@/utils/validateMessages";
   import {InputUpload, InputUploadGetPath} from "@/components";
 
+  // export default {
+  //   components: {}
+  // }
+
+
   const configNames = [
     'site_title',
     'site_logo',
-    'site_icon',
+    'favicon',
     'site_description',
-
     'copy_right',
     'site_login_bg',
     'site_login_bg_dynamic',
@@ -58,13 +62,13 @@
     v-bind="formConfig"
     @finish="submit"
   >
-    <a-form-item name="site_title" label="Site title" :rules="[{ required: true }]">
-      <a-input :showCount="true" maxlength="55"  autocomplete="off" v-model:value="formState.site_title"/>
-    </a-form-item>
-    <a-form-item name="site_description" label="Site description" :rules="[{ required: true }]">
-      <a-textarea :showCount="true" maxlength="160"  autocomplete="off" v-model:value="formState.site_description"/>
-    </a-form-item>
-    <a-form-item name="copy_right" label="Copyright" :rules="[{ required: true }]">
+      <a-form-item name="site_title" label="Site title" :rules="[{ required: true }]">
+        <a-input autocomplete="off" class="rounded-lg" v-model:value="formState.site_title"/>
+      </a-form-item>
+      <a-form-item name="site_description" label="Site description" :rules="[{ required: true }]">
+        <a-textarea autocomplete="off" v-model:value="formState.site_description"/>
+      </a-form-item>
+      <a-form-item name="copy_right" label="Copyright" :rules="[{ required: true }]">
         <a-textarea autocomplete="off" v-model:value="formState.copy_right"/>
       </a-form-item>
       <a-form-item name="site_login_bg" label="Login background">
@@ -75,14 +79,15 @@
         <a-input autocomplete="off" addon-before="https://source.unsplash.com/random/?" addon-after="/" class="rounded-lg" v-model:value="formState.site_login_bg_dynamic"/>
         <div class="small">https://source.unsplash.com/random/?screenprinting</div>
       </a-form-item>
-    <a-form-item name="site_logo" label="Site Logo" :rules="[{ required: true }]">
-      <InputUploadGetPath width="200px" alt="Site logo" autocomplete="off" v-model:value="formState.site_logo">
-      </InputUploadGetPath>
-    </a-form-item>
-    <a-form-item name="site_icon" label="Favicon" :rules="[{ required: true }]">
-      <InputUploadGetPath width="200px" alt="Favicon" autocomplete="off" v-model:value="formState.site_icon">
-      </InputUploadGetPath>
-    </a-form-item>
+      <a-form-item name="site_logo" label="Site Logo">
+        <InputUploadGetPath width="200px" alt="Site logo" autocomplete="off" v-model:value="formState.site_logo">
+        </InputUploadGetPath>
+      </a-form-item>
+      <a-form-item name="favicon" label="Favicon">
+        <InputUploadGetPath width="200px" alt="Favicon" autocomplete="off" v-model:value="formState.favicon">
+        </InputUploadGetPath>
+      </a-form-item>
+      
 
     <a-form-item>
       <a-space>

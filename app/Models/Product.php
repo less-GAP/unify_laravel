@@ -27,14 +27,10 @@ class Product extends Model
         'slug',
         'short_description',
         'description',
-        'price',
-        'sale_price',
-        'point',
         'status',
         'title',
         'meta_description',
         'meta_keyword',
-        'stock'
     ];
 
     /**

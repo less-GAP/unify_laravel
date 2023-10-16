@@ -1,156 +1,187 @@
 <script setup>
-import router from "@/router";
-import {DataTable, BaseIcon, ApiData} from "@/components";
-import SectionMain from "@/components/SectionMain.vue";
-import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
-import {watch, ref, reactive} from "vue";
-import {CheckCircleOutlined, ClockCircleOutlined, SyncOutlined} from "@ant-design/icons-vue";
-import {useAuthStore} from "@/stores/auth";
-import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
-import {UseDataTable} from "@/utils/UseDataTable";
-import TaskItem from "@/components/TaskItem.vue";
-import draggable from "vuedraggable";
-import Api from "@/utils/Api";
-import {mdiCalendarClockOutline, mdiReply, mdiUploadOutline, mdiLink} from "@mdi/js";
-import {
-  getStatusTask
-} from "@/utils/Task";
+  import router from "@/router";
+  import {DataTable, BaseIcon, ApiData} from "@/components";
+  import SectionMain from "@/components/SectionMain.vue";
+  import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
+  import {watch, ref, reactive} from "vue";
+  import {CheckCircleOutlined, ClockCircleOutlined, SyncOutlined} from "@ant-design/icons-vue";
+  import {useAuthStore} from "@/stores/auth";
+  import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
+  import {UseDataTable} from "@/utils/UseDataTable";
+  import TaskItem from "@/components/TaskItem.vue";
+  import draggable from "vuedraggable";
+  import Api from "@/utils/Api";
+  import {mdiCalendarClockOutline, mdiReply, mdiUploadOutline, mdiLink} from "@mdi/js";
+  import {
+    getStatusTask
+  } from "@/utils/Task";
+  import dayjs from "dayjs";
 
-const auth = useAuthStore();
-const prefix = "task";
-const {fetchListApi} = UseEloquentRouter(prefix);
-const itemActions = [
-  {
-    label: "Edit",
-    key: "edit",
-    show: () => {
-      return true;
+  const auth = useAuthStore();
+  const prefix = "task";
+  const {fetchListApi} = UseEloquentRouter(prefix);
+  const itemActions = [
+    {
+      label: "Edit",
+      key: "edit",
+      show: () => {
+        return true;
+      },
+      action: (item) => {
+        router.replace(prefix + "/" + item.id + "/edit");
+      },
     },
-    action: (item) => {
-      router.replace(prefix + "/" + item.id + "/edit");
+  ];
+
+  const listActions = [
+    {
+      label: "Add",
+      permission: auth.hasPermission("task.assign"),
+      action: () => {
+        router.replace(prefix + "/new");
+      },
     },
-  },
-];
-
-const listActions = [
-  {
-    label: "Add",
-    permission: auth.hasPermission("task.assign"),
-    action: () => {
-      router.replace(prefix + "/new");
+  ];
+  const columns = [];
+  const taskColumns = ref([
+    {
+      name: "ToDo",
+      key: "todo",
+      task_process: 0,
+      tasks: []
     },
-  },
-];
-const columns = [];
-const taskColumns = ref([
-  {
-    name: "ToDo",
-    key: "todo",
-    task_process: 0,
-    tasks: []
-  },
-  {
-    name: "Working",
-    key: "working",
-    task_process: 1,
-    tasks: []
+    {
+      name: "Working",
+      key: "working",
+      task_process: 1,
+      tasks: []
 
-  },
-  {
-    name: "Review",
-    key: "review",
-    task_process: 2,
-    tasks: []
+    },
+    {
+      name: "Review",
+      key: "review",
+      task_process: 2,
+      tasks: []
 
-  },
-  {
-    name: "Done",
-    key: "done",
-    task_process: 3,
-    tasks: []
+    },
+    {
+      name: "Done",
+      key: "done",
+      task_process: 3,
+      tasks: []
 
+    }
+  ]);
+
+  const dragOptions = {
+    animation: 200,
+    disabled: false,
+    ghostClass: "ghost",
+    group: "tasks",
+    sort: false,
+  };
+
+  const from_date = dayjs().format('YYYY-MM-DD');
+  const to_date = dayjs().add(7,'day').format('YYYY-MM-DD');
+
+  // Handle Modal Add Task
+  const openModalDetail = ref(false);
+  const taskDetail = reactive({});
+  const filter = reactive({
+    from_date: from_date,
+    to_date: to_date
+  });
+  const formState = ref({
+    from_date: from_date,
+    to_date: to_date
+  });
+  const confirmLoading = ref(false);
+
+  // const detailTask = function (task) {
+  //   Object.assign(taskDetail, task);
+
+  //   const { fetchListApi } = UseEloquentRouter('activity', {
+  //     order: "-id",
+  //   });
+  //   tableConfig.value = UseDataTable(fetchListApi, {
+  //     showSelection: false,
+  //     globalSearch: false,
+  //     pagination: {
+  //       perPage: 10,
+  //     },
+  //     filter: {
+  //       subject_id: taskDetail.id,
+  //       subject_type: "App\\Models\\Task",
+  //     },
+  //   });
+  //   openModalDetail.value = true;
+  // }
+
+  // const formatDescription = function (description) {
+  //   if (description !== null && typeof description === "string") {
+  //     return description.replace(/\n/g, "<br>");
+  //   } else {
+  //     return "";
+  //   }
+  // };
+
+  // const submitComment = function (id) {
+  // };
+
+  const getFilteredData = (data, taskProcess) => {
+    return data.filter(item => item.task_process === taskProcess);
+  };
+
+  const updateProcessTask = function (data) {
+    const task = data.draggedContext.element;
+    Api.put('/task/' + task.id, {task_process: data.to.dataset.status})
+    task.task_process = parseInt(data.to.dataset.status)
+    return true;
+    // console.log(mutations);
   }
-]);
 
-const dragOptions = {
-  animation: 200,
-  disabled: false,
-  ghostClass: "ghost",
-  group: "tasks",
-  sort: false,
-};
-
-// Handle Modal Add Task
-const openModalDetail = ref(false);
-const taskDetail = reactive({});
-const filter = reactive({});
-const confirmLoading = ref(false);
-
-// const detailTask = function (task) {
-//   Object.assign(taskDetail, task);
-
-//   const { fetchListApi } = UseEloquentRouter('activity', {
-//     order: "-id",
-//   });
-//   tableConfig.value = UseDataTable(fetchListApi, {
-//     showSelection: false,
-//     globalSearch: false,
-//     pagination: {
-//       perPage: 10,
-//     },
-//     filter: {
-//       subject_id: taskDetail.id,
-//       subject_type: "App\\Models\\Task",
-//     },
-//   });
-//   openModalDetail.value = true;
-// }
-
-// const formatDescription = function (description) {
-//   if (description !== null && typeof description === "string") {
-//     return description.replace(/\n/g, "<br>");
-//   } else {
-//     return "";
-//   }
-// };
-
-// const submitComment = function (id) {
-// };
-
-const getFilteredData = (data, taskProcess) => {
-  return data.filter(item => item.task_process === taskProcess);
-};
-
-const updateProcessTask = function (data) {
-  const task = data.draggedContext.element;
-  Api.put('/task/' + task.id, {task_process: data.to.dataset.status})
-  task.task_process = parseInt(data.to.dataset.status)
-  return true;
-  // console.log(mutations);
-}
-
-const tableConfig = UseDataTable(fetchListApi, {
-  columns,
-  showSelection: true,
-  showSort: false,
-  listActions,
-  itemActions,
-});
-let reloadTable = () => {
-};
+  const tableConfig = UseDataTable(fetchListApi, {
+    columns,
+    showSelection: true,
+    showSort: false,
+    listActions,
+    itemActions,
+  });
+  let reloadTable = () => {
+  };
 
 
-function registerTable({reload}) {
-  reloadTable = reload;
-}
+  function registerTable({reload}) {
+    reloadTable = reload;
+  }
+
+  function onSubmit() {
+    Object.assign(filter, formState.value);
+  }
+
 </script>
 
 <template>
   <LayoutAuthenticated>
     <SectionMain>
       <div class="taskList">
-        <h2>Task List</h2>
-        <div class="overflow-hidden">
+        <a-row>
+          <a-form :model="filter" layout="inline">
+            <a-form-item label="From Date">
+              <a-date-picker v-model:value="formState.from_date" class="w-full"
+                             value-format="YYYY-MM-DD" format="MM-DD-YYYY"></a-date-picker>
+            </a-form-item>
+            <a-form-item label="To Date">
+              <a-date-picker v-model:value="formState.to_date" class="w-full"
+                             value-format="YYYY-MM-DD" format="MM-DD-YYYY"></a-date-picker>
+            </a-form-item>
+            <a-form-item>
+              <a-button type="primary" @click="onSubmit">Search</a-button>
+              <a-button style="margin-left: 10px">Clear</a-button>
+            </a-form-item>
+          </a-form>
+        </a-row>
+        <div class="overflow-hidden mt-5">
           <div class="flex pb-4 -mx-2">
             <div v-for="column in taskColumns" :key="column.key" class="w-full px-2 md:w-1/2 lg:w-1/4">
               <ApiData :params="filter" @change="(items)=>{column.tasks = items}"
@@ -158,7 +189,7 @@ function registerTable({reload}) {
                        class="flex flex-col p-4 border border-gray-200 rounded-lg inner">
                 <template #default="{data}">
                   <h2 class="mb-2 text-lg font-semibold uppercase">{{ column.key }} ({{
-                      data.length
+                    data.length
                     }})</h2>
                   <div
                     class="flex  flex-col h-[calc(100vh-285px)] gap-4 pl-1 pr-4 overflow-x-hidden overflow-y-auto kanban-board">
@@ -174,7 +205,6 @@ function registerTable({reload}) {
                     </draggable>
                   </div>
                 </template>
-
               </ApiData>
             </div>
           </div>
@@ -224,9 +254,9 @@ function registerTable({reload}) {
                   <div class="">
                     <h5 class="font-medium">
                       <a @click="router.replace('/patient/' + taskDetail.patient.id + '/edit')">[#{{
-                          taskDetail.patient.unify_number
+                        taskDetail.patient.unify_number
                         }}] {{
-                          taskDetail.patient.full_name
+                        taskDetail.patient.full_name
                         }}</a>
                     </h5>
                     <p class="text-xs text-stone-400">{{ age(taskDetail.patient.dob) }}</p>
@@ -369,22 +399,22 @@ function registerTable({reload}) {
 </template>
 
 <style>
-/* .taskList  */
-.taskList .shadow.bg-white {
-  background-color: transparent !important;
-  box-shadow: none !important;
-}
+  /* .taskList  */
+  .taskList .shadow.bg-white {
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
 
-.taskList .shadow .ant-timeline {
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  margin-bottom: 0 !important;
-}
+  .taskList .shadow .ant-timeline {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-bottom: 0 !important;
+  }
 </style>
 <style scoped>
-.dragArea {
-  min-height: 100px;
-  width: 100%;
-  outline: 1px dashed;
-}
+  .dragArea {
+    min-height: 100px;
+    width: 100%;
+    outline: 1px dashed;
+  }
 </style>

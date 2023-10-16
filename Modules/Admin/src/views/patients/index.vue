@@ -20,148 +20,153 @@ import {
 } from "@mdi/js";
 import {BaseIcon} from "@/components";
 
-const prefix = "patient";
-const version_key ='patients';
+  const prefix = "patient";
+  const version_key = 'patients';
 
-const {fetchListApi} = UseEloquentRouter(prefix);
-const auth = useAuthStore();
+  const {fetchListApi} = UseEloquentRouter(prefix);
+  const auth = useAuthStore();
 
-var item = {};
-const itemActions = [
-  {
-    label: "Edit",
-    key: "edit",
-    show: (item) => {
-      return true;
-    },
-    action: (item) => {
-      router.replace(prefix + "/" + item.id + "/edit");
-    },
-  },
-  {
-    label: "Approve Patient",
-    key: "editProcess",
-    show: (item) => {
-      return true;
-    },
-    action: (item) => {
-      router.replace(prefix + "/" + item.id + "/process");
-    },
-  },
-  {
-    label: "Task",
-    key: "addTask",
-    show: (item) => {
-      return true;
-    },
-    action: (item) => {
-      router.replace(prefix + "/" + item.id + "/task");
-    },
-  },
-  {
-    label: "History",
-    key: "history",
-    show: (item) => {
-      return true;
-    },
-    action: (item) => {
-      router.replace(prefix + "/" + item.id + "/history");
-    },
-  },
-];
-const listActions = [
-  {
-    label: "Add",
-    permission: auth.hasPermission("patient.create"),
-    action: (item) => {
-      router.replace(prefix + "/new");
-    },
-  },
-];
-const columns = [
-  {
-    title: "",
-    key: "status",
-    width: 30,
-  },
-  {
-    title: "Number",
-    key: "unify_number",
-    width: 70,
-  },
-  {
-    title: "Patient",
-    key: "full_name",
-    width: "",
-  },
-  {
-    title: "STATUS",
-    key: "unify_status",
-    width: 100,
-  },
-  {
-    title: "Task Status",
-    key: "unify_task_status",
-    width: 125,
-  },
-  {
-    title: "DOB",
-    key: "dob",
-    width: 100,
-  },
-  {
-    title: "INFO",
-    key: "info",
-    width: 400,
-  },
-  {
-    title: "CREATED AT",
-    key: "created_at",
-    width: 130,
-  },
-  {
-    title: "Assigned",
-    key: "assigned",
-    width: 120,
-  },
-];
-
-const customFormat = "MM-DD-YYYY";
-const dbFormat = "YYYY-MM-DD"; // format of datepicker
-const dob_value = (item) => {
-  return item.dob ? dayjs(item.dob, dbFormat).format(customFormat) : "-";
-};
-
-const age = (item) => {
-  return item.dob
-    ? "(" + dayjs().diff(dayjs(item.dob, dbFormat), "year") + " years old)"
-    : "-";
-};
-const tableConfig = UseDataTable(fetchListApi, {
-  columns,
-  versionKey: version_key,
-  showSelection: false,
-  showSort: [
+  var item = {};
+  const itemActions = [
     {
-      label: "Latest",
-      value: "-id",
+      label: "Edit",
+      key: "edit",
+      show: (item) => {
+        return true;
+      },
+      action: (item) => {
+        router.replace(prefix + "/" + item.id + "/edit");
+      },
     },
     {
-      label: "Oldest",
-      value: "id",
+      label: "Approve Patient",
+      key: "editProcess",
+      show: (item) => {
+        return true;
+      },
+      action: (item) => {
+        router.replace(prefix + "/" + item.id + "/process");
+      },
     },
     {
-      label: "Name Alphabet",
-      value: "name",
+      label: "Task",
+      key: "addTask",
+      show: (item) => {
+        return true;
+      },
+      action: (item) => {
+        router.replace(prefix + "/" + item.id + "/task");
+      },
     },
     {
-      label: "Last Updated",
-      value: "-updated_at",
+      label: "History",
+      key: "history",
+      show: (item) => {
+        return true;
+      },
+      action: (item) => {
+        router.replace(prefix + "/" + item.id + "/history");
+      },
     },
-  ],
-  listActions,
-  itemActions,
-});
+  ];
+  const listActions = [
+    {
+      label: "Add",
+      permission: auth.hasPermission("patient.create"),
+      action: (item) => {
+        router.replace(prefix + "/new");
+      },
+    },
+  ];
+  const columns = [
+    {
+      title: "",
+      key: "status",
+      width: 30,
+    },
+    {
+      title: "Number",
+      key: "unify_number",
+      width: 70,
+    },
+    {
+      title: "Patient",
+      key: "full_name",
+      width: "",
+    },
+    {
+      title: "STATUS",
+      key: "unify_status",
+      width: 100,
+    },
+    {
+      title: "Task Status",
+      key: "unify_task_status",
+      width: 125,
+    },
+    {
+      title: "DOB",
+      key: "dob",
+      width: 100,
+    },
+    {
+      title: "Doctor",
+      key: "doctor_id",
+      width: 200,
+    },
+    {
+      title: "INFO",
+      key: "info",
+      width: 400,
+    },
+    {
+      title: "CREATED AT",
+      key: "created_at",
+      width: 130,
+    },
+    {
+      title: "Assigned",
+      key: "assigned",
+      width: 120,
+    },
+  ];
+
+  const customFormat = "MM-DD-YYYY";
+  const dbFormat = "YYYY-MM-DD"; // format of datepicker
+  const dob_value = (item) => {
+    return item.dob ? dayjs(item.dob, dbFormat).format(customFormat) : "-";
+  };
+
+  const age = (item) => {
+    return item.dob
+      ? "(" + dayjs().diff(dayjs(item.dob, dbFormat), "year") + " years old)"
+      : "-";
+  };
+  const tableConfig = UseDataTable(fetchListApi, {
+    columns,
+    versionKey: version_key,
+    showSelection: false,
+    showSort: [
+      {
+        label: "Latest",
+        value: "-id",
+      },
+      {
+        label: "Oldest",
+        value: "id",
+      },
+      {
+        label: "Name Alphabet",
+        value: "name",
+      },
+      {
+        label: "Last Updated",
+        value: "-updated_at",
+      },
+    ],
+    listActions,
+    itemActions,
+  });
 
 let reloadTable = () => {
 };
@@ -171,20 +176,15 @@ let reloadTable = () => {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <DataTablePatient v-bind="tableConfig" >
+      <DataTablePatient v-bind="tableConfig">
         <template #header>
           <h2>Patient List</h2>
         </template>
         <template #cellAction[edit]="{ item, actionMethod }">
-          <a-tooltip title="Edit" class="mr-1">
+          <a-tooltip title="Edit" class="mr-1" v-if=" auth.hasPermission('patient.edit')">
             <a-button
               class="justify-center !flex !p-1 !h-auto"
-              :disabled="
-                auth.hasPermission('patient.edit') ? false : true
-              "
-              :class="
-                auth.hasPermission('patient.edit')  ? '' : '!bg-gray-300 opacity-50'
-              "
+              :class="auth.hasPermission('patient.edit')  ? '' : '!bg-gray-300 opacity-50'"
               @click="actionMethod"
             >
               <BaseIcon :path="mdiPencil" class="w-4 !fill-blue-200"/>
@@ -192,21 +192,10 @@ let reloadTable = () => {
           </a-tooltip>
         </template>
         <template #cellAction[editProcess]="{ item, actionMethod }">
-          <a-tooltip title="Approve Patient" class="mr-1">
+          <a-tooltip title="Approve Patient" class="mr-1" v-if="auth.hasPermission('patient.approve')  && item.unify_process < 2">
             <a-button
               class="justify-center !flex !p-1 !h-auto"
-              :disabled="
-                auth.hasPermission('patient.approve')  &&
-                item.unify_process < 2
-                  ? false
-                  : true
-              "
-              :class="
-                auth.hasPermission('patient.approve')  &&
-                item.unify_process < 2
-                  ? ''
-                  : '!bg-gray-300 opacity-50'
-              "
+              :class="auth.hasPermission('patient.approve')  && item.unify_process < 2 ? '' : '!bg-gray-300 opacity-50'"
               @click="actionMethod"
             >
               <BaseIcon :path="mdiCheckOutline" class="w-4"/>
@@ -214,7 +203,7 @@ let reloadTable = () => {
           </a-tooltip>
         </template>
         <template #cellAction[addTask]="{ item, actionMethod }">
-          <a-tooltip title="View Task" class="mr-1">
+          <a-tooltip title="View Task" class="mr-1" v-if="auth.hasPermission('task.list')">
             <a-button
               class="justify-center !flex !p-1 !h-auto"
               :disabled="auth.hasPermission('task.list') ? false : true"
@@ -226,19 +215,10 @@ let reloadTable = () => {
           </a-tooltip>
         </template>
         <template #cellAction[history]="{ item, actionMethod }">
-          <a-tooltip title="View History">
+          <a-tooltip title="View History" v-if="auth.hasPermission('patient.history')">
             <a-button
               class="justify-center !flex !p-1 !h-auto"
-              :disabled="
-                auth.hasPermission('patient.history')
-                  ? false
-                  : true
-              "
-              :class="
-                auth.hasPermission('patient.history')
-                  ? ''
-                  : '!bg-gray-300 opacity-50'
-              "
+              :class="auth.hasPermission('patient.history') ? '': '!bg-gray-300 opacity-50'"
               @click="actionMethod"
             >
               <BaseIcon :path="mdiHistory" class="w-4"/>
@@ -315,6 +295,9 @@ let reloadTable = () => {
           <small>{{ dob_value(item) }}</small>
           <br/><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
         </template>
+        <template #cell[doctor_id]="{ item, column }">
+          <small>{{ item.doctor ? item.doctor.full_name : '' }}</small>
+        </template>
         <template #cell[unify_status]="{ item, column }">
           <a-tag v-if="item.unify_deleted === 1" color="gray">Trashed</a-tag>
           <a-tag v-else-if="item.unify_process === 0" color="yellow">Waiting</a-tag>
@@ -325,13 +308,7 @@ let reloadTable = () => {
           <a-tag v-else-if="item.unify_status === 1" color="green">
             <div class="pt-1 leading-none">Active</div>
             <div class="pb-1 leading-none">
-              <small
-              >({{
-                  dayjs(item.unify_active, "YYYY-MM-DD HH:mm:ss").format(
-                    "HH:mm MM-DD-YYYY"
-                  )
-                }})</small
-              >
+              <small>({{dayjs(item.unify_active, "YYYY-MM-DD HH:mm:ss").format("HH:mm MM-DD-YYYY" )}})</small>
             </div>
           </a-tag>
           <a-tag v-else-if="item.unify_status === 2" color="gray"

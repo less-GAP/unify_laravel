@@ -1,101 +1,97 @@
-export default [
-  {
-    meta: {
-      title: "Configs",
-    },
-    path: "/configs",
-    name: "configs",
-    component: () => import("@/views/configs/ConfigLayout.vue"),
-    children: [{
+export default [{
+  meta: {
+    title: "Configs",
+  },
+  path: "/configs",
+  name: "configs",
+  component: () => import("./ConfigLayout.vue"),
+  children: [
+    {
       meta: {
         title: "General Configuration",
       },
       path: "/configs/general",
       name: "config-general",
-      component: () => import("@/views/configs/GeneralConfig.vue"),
+      component: () => import("./GeneralConfig.vue"),
     },
-      {
-        meta: {
-          title: "Posts Configuration",
-        },
-        path: "/configs/postspages",
-        name: "config-postspages",
-        component: () => import("@/views/configs/PostsConfig.vue"),
+    {
+      meta: {
+        title: "SMTP Configuration",
       },
-      {
-        meta: {
-          title: "QuickBooks Configuration",
-        },
-        path: "/configs/quickbooks",
-        name: "config-quickbooks",
-        component: () => import("@/views/configs/QuickBooksConfig.vue"),
+      path: "/configs/smtp",
+      name: "config-smtp",
+      component: () => import("./SMTPConfig.vue"),
+    } ,
+    {
+      meta: {
+        title: "Authenticate Configuration",
       },
-      {
-        meta: {
-          title: "CloudFlare Configuration",
-        },
-        path: "/configs/cloudflare",
-        name: "config-cloudflare",
-        component: () => import("@/views/configs/CloudFlareConfig.vue"),
+      path: "/configs/auth",
+      name: "config-auth",
+      component: () => import("./AuthConfig.vue"),
+    },{
+      meta: {
+        title: "Payment Configuration",
       },
-      {
-        meta: {
-          title: "Google API Configuration",
-        },
-        path: "/configs/google",
-        name: "config-google",
-        component: () => import("@/views/configs/GoogleConfig.vue"),
+      path: "/configs/payment",
+      name: "config-payment",
+      component: () => import("./PaymentConfig.vue"),
+    },
+    {
+      meta: {
+        title: "Posts Configuration",
       },
-      {
-        meta: {
-          title: "Marketing Configuration",
-        },
-        path: "/configs/marketing",
-        name: "config-marketing",
-        component: () => import("@/views/configs/MarketingConfig.vue"),
+      path: "/configs/postspages",
+      name: "config-postspages",
+      component: () => import("./PostsConfig.vue"),
+    },
+    {
+      meta: {
+        title: "QuickBooks Configuration",
       },
-      {
-        meta: {
-          title: "Payment API Configuration",
-        },
-        path: "/configs/paymentapi",
-        name: "config-paymentapi",
-        component: () => import("@/views/configs/PaymentConfig.vue"),
+      path: "/configs/quickbooks",
+      name: "config-quickbooks",
+      component: () => import("./QuickBooksConfig.vue"),
+    },
+    {
+      meta: {
+        title: "CloudFlare Configuration",
       },
-      {
-        meta: {
-          title: "Social Configuration",
-        },
-        path: "/configs/social",
-        name: "config-social",
-        component: () => import("@/views/configs/SocialConfig.vue"),
+      path: "/configs/cloudflare",
+      name: "config-cloudflare",
+      component: () => import("./CloudFlareConfig.vue"),
+    },
+    {
+      meta: {
+        title: "Google API Configuration",
       },
-      {
-        meta: {
-          title: "SMTP Configuration",
-        },
-        path: "/configs/smtp",
-        name: "config-smtp",
-        component: () => import("@/views/configs/SMTPConfig.vue"),
+      path: "/configs/google",
+      name: "config-google",
+      component: () => import("./GoogleConfig.vue"),
+    },
+    {
+      meta: {
+        title: "Facebook API Configuration",
       },
-      {
-        meta: {
-          title: "System Events",
-        },
-        path: "/configs/event-setting",
-        name: "system-events",
-        component: () => import("./system-events/index.vue"),
-        children:[
-          {
-            meta: {
-              title: "System Events",
-            },
-            path: "/configs/event-setting/:id",
-            name: "system-events",
-            component: () => import("./system-events/form.vue"),
-          },
-        ]
+      path: "/configs/facebook",
+      name: "config-facebook",
+      component: () => import("./FacebookConfig.vue"),
+    },
+    {
+      meta: {
+        title: "Marketing Configuration",
       },
-    ]
-  }
-]
+      path: "/configs/marketing",
+      name: "config-marketing",
+      component: () => import("./MarketingConfig.vue"),
+    },
+    {
+      meta: {
+        title: "Social Configuration",
+      },
+      path: "/configs/social",
+      name: "config-social",
+      component: () => import("./SocialConfig.vue"),
+    },
+  ]
+}]

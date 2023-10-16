@@ -94,12 +94,14 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                     AllowedFilter::exact('task_process'),
                     AllowedFilter::exact('deleted'),
                     AllowedFilter::exact('is_completed'),
+                    AllowedFilter::exact('from_date'),
+                    AllowedFilter::exact('to_date'),
                 ]
             ]
         )->routes(
             function () {
                 Route::get('list', \Modules\Admin\Actions\Task\GetListAction::class . '@handle');
-                // Route::get('{id}', \Modules\Admin\Actions\Task\GetDetailAction::class . '@handle');
+                Route::get('all', \Modules\Admin\Actions\Task\GetAllAction::class . '@handle');
             }
         );
     EloquentRouter::prefix('post')
@@ -117,7 +119,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             \App\Models\Patient::class,
             [
                 'autoPermission' => true,
-                'allowedIncludes' => ['tasks'],
+                'allowedIncludes' => ['tasks', 'doctor'],
                 'allowedSorts' => ['id', 'name', 'updated_at'],
                 'allowedFilters' => [
                     AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,phone,email'), AllowedFilter::custom('phone', new \App\Builder\Filters\SearchLikeMultipleField, 'phone')
@@ -229,4 +231,15 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         );
     Route::get('notifications', \Modules\Admin\Actions\Notification\GetNotifications::class . '@handle');
     Route::post('notification/read', \Modules\Admin\Actions\Notification\ReadAction::class . '@handle');
+
+    EloquentRouter::prefix('product')
+        ->handle(
+            \App\Models\Product::class,
+            [
+                'allowedFilters' => [
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name'),
+                    AllowedFilter::exact('status'),
+                ]
+            ]
+        );
 });
