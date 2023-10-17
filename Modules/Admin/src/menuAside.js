@@ -20,7 +20,8 @@ import {
   mdiDoctor,
   mdiClockTimeTwo,
   mdiStarCircle,
-  mdiTooltipQuestion
+  mdiTooltipQuestion,
+  mdiStoreSettingsOutline
 } from "@mdi/js";
 
 export default [{
@@ -34,40 +35,47 @@ export default [{
   },
   {
     to: "/patient",
-    permission: 'patient.list',
+    permission: 'Patient.list',
     icon: mdiCardAccountDetails,
     label: "Patient",
   },
   {
     to: "/task",
-    permission: 'task.list',
+    permission: 'Task.list',
     icon: mdiCheckboxMarkedCircleAutoOutline,
     label: "Task",
   },
   {
     to: null,
-    permission: 'inventory.list',
+    permission: 'Inventory.list',
     label: "Inventory",
   },
   {
     to: "/delivery",
-    permission: 'delivery.list',
+    permission: 'Delivery.list',
     label: "Delivery",
     icon: mdiTruckDelivery,
     disable: true,
   },
   {
     to: "/warehouse",
-    permission: 'warehouse.list',
+    permission: 'Warehouse.list',
     label: "Warehouse",
     icon: mdiStorefront,
     disable: true,
   },
   {
     to: "/product",
-    permission: 'product.list',
+    permission: 'Product.list',
     label: "Product",
     icon: mdiGift,
+    disable: false,
+  },
+  {
+    to: "/supplier",
+    permission: 'Supplier.list',
+    label: "Supplier",
+    icon: mdiStoreSettingsOutline,
     disable: false,
   },
   {
@@ -76,13 +84,13 @@ export default [{
   },
   {
     to: "/email",
-    permission: 'email.list',
+    permission: 'Email.list',
     label: "Email",
     icon: mdiMessageText,
   },
   {
     to: "/sms",
-    permission: 'sms.list',
+    permission: 'Sms.list',
     label: "SMS",
     icon: mdiEmail,
     disable: true,
@@ -93,13 +101,14 @@ export default [{
   },
   {
     to: "/user",
-    permission: 'user.list',
+    permission: 'User.list',
     label: "Users",
     icon: mdiAccountMultiple,
   },
   {
     label: "Customers",
     icon: mdiTooltipAccount,
+    permission: 'Customers.list',
     menu: [{
       to: "/customers",
       label: "Customers list"
@@ -112,19 +121,19 @@ export default [{
   },
   {
     to: "/doctor",
-    permission: "doctor.list",
+    permission: "Doctor.list",
     label: "Doctors",
     icon: mdiDoctor,
   },
   {
     to: "/points",
-    permission: 'points.list',
+    permission: 'Points.list',
     label: "Point",
     icon: mdiStarCircle,
     disable: true,
   },
   {
-    permission: 'file.list',
+    permission: 'File.list',
     label: "File Manager",
     icon: mdiImageMultiple,
     to: "/files",
@@ -136,26 +145,26 @@ export default [{
   {
     to: "/report",
     label: "Report",
-    permission: 'report.list',
+    permission: 'Report.list',
     icon: mdiChartAreasplineVariant,
     disable: true,
   },
   {
     to: "/logs",
-    permission: 'logs.list',
+    permission: 'Logs.list',
     label: "Logs",
     icon: mdiClockTimeTwo,
   },
   {
     to: "/forms",
-    permission: 'forms.list',
+    permission: 'Forms.list',
     label: "Forms",
     icon: mdiFileExport,
     disable: true,
   },
   {
     label: "Backup",
-    permission: 'backup.list',
+    permission: 'Backup.list',
     icon: mdiCloudDownload,
     to: "/backup",
     disable: true,
@@ -167,23 +176,23 @@ export default [{
   },
   {
     to: null,
-    permission: 'setting',
+    permission: 'Setting',
     label: "Platform",
   },
   {
-    permission: 'masterData.list',
+    permission: 'MasterData.list',
     label: "Master Data",
     icon: mdiDatabase,
     to: "/master-data",
   },
   {
-    permission: 'config.list',
+    permission: 'Config.list',
     label: "System Config",
     icon: mdiCog,
     to: "/configs/general",
   },
   {
-    permission: 'template.list',
+    permission: 'Template.list',
     label: "Template",
     icon: mdiPaletteSwatch,
     to: "/email/templates",

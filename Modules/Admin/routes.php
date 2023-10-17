@@ -243,5 +243,20 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             ]
         )->routes(function () {
             Route::post('/', \Modules\Admin\Actions\Product\PostAction::class . '@handle');
+            Route::post('/activeList', \Modules\Admin\Actions\Product\PostActiveListAction::class . '@handle');
+        });
+
+    EloquentRouter::prefix('supplier')
+        ->handle(
+            \App\Models\Supplier::class,
+            [
+                'allowedFilters' => [
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name'),
+                    AllowedFilter::exact('status'),
+                ]
+            ]
+        )->routes(function () {
+            Route::post('/', \Modules\Admin\Actions\Supplier\PostAction::class . '@handle');
+            Route::post('/activeList', \Modules\Admin\Actions\Supplier\PostActiveListAction::class . '@handle');
         });
 });

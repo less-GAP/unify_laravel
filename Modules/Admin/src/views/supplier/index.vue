@@ -11,10 +11,13 @@
   import {mdiBallotOutline, mdiDelete, mdiEye} from "@mdi/js";
   import {BaseIcon} from "@/components";
   import Detail from "./Detail.vue";
+  import {notification} from 'ant-design-vue';
+
+  import Api from "@/utils/Api";
 
   import {PlusOutlined, LoadingOutlined, DeleteOutlined, FormOutlined} from '@ant-design/icons-vue';
 
-  const prefix = "product";
+  const prefix = "supplier";
   const {fetchListApi} = UseEloquentRouter(prefix);
   const auth = useAuthStore();
 
@@ -22,19 +25,10 @@
 
   const productDetail = ref({});
 
-  const itemActions = [];
-  const listActions = [
-    {
-      label: "Add",
-      action: () => {
-        visible.value = true;
-      },
-    },
-  ];
   const columns = [
     {
-      title: "Image",
-      key: "image",
+      title: "Logo",
+      key: "logo",
       width: 80
     },
     {
@@ -42,12 +36,16 @@
       key: "name",
     },
     {
-      title: "Slug",
-      key: "slug",
+      title: "Phone",
+      key: "phone",
     },
     {
-      title: "Inventory",
-      key: "inventory",
+      title: "Email",
+      key: "email",
+    },
+    {
+      title: "Address",
+      key: "address",
     },
     {
       title: "Status",
@@ -71,12 +69,12 @@
         productDetail.value.id = 0;
         visible.value = true;
       },
-      ifShow: auth.hasPermission('Product.create')
+      ifShow: auth.hasPermission('Supplier.create')
     },
     listActions: [],
     itemActions: [
       {
-        ifShow: auth.hasPermission('Product.update'),
+        ifShow: auth.hasPermission('Supplier.update'),
         label: "Edit",
         key: "edit",
         action: (item) => {
@@ -85,7 +83,7 @@
         },
       },
       {
-        ifShow: auth.hasPermission('Product.delete'),
+        ifShow: auth.hasPermission('Supplier.delete'),
         label: '',
         class: 'font-medium text-red-600 dark:text-red-500 hover:underline',
         icon: mdiDelete,
@@ -104,7 +102,7 @@
     ],
     selectionActions: [
       {
-        ifShow: auth.hasPermission('Product.update'),
+        ifShow: auth.hasPermission('Supplier.update'),
         title: 'Active',
         action(selectedKeys) {
           return Api.post(prefix + '/activeList', {
@@ -119,7 +117,7 @@
         },
       },
       {
-        ifShow: auth.hasPermission('Product.update'),
+        ifShow: auth.hasPermission('Supplier.update'),
         title: 'Deactive',
         action(selectedKeys) {
           return Api.post(prefix + '/activeList', {
@@ -173,16 +171,13 @@
         <template #cell[id]="{ item, column }">
           <div>{{ item.id }}</div>
         </template>
-        <template #cell[image]="{ item, column }">
+        <template #cell[logo]="{ item, column }">
           <img class="w-20 h-auto float-left" :src="item.image_url" :alt="item.name" v-if="item.image_url"/>
           <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>
         </template>
-        <template #cell[slug]="{ item, column }">
-          /{{ item.slug }}
-        </template>
         <template #cell[status]="{ item, column }">
           <a-tag v-if="item.status == 'A'" color="green">Active</a-tag>
-          <a-tag v-if="item.status == 'D'" color="green">Inactive</a-tag>
+          <a-tag v-if="item.status == 'D'" color="green">Deactive</a-tag>
         </template>
       </DataTable>
     </SectionMain>

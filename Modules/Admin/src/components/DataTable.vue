@@ -142,6 +142,16 @@ function toggleCheckAll() {
   }
 }
 
+async function doSelectionAction(action) {
+  const selectedKeys = selectedItems.value.map(item => item[tableConfig.item_key])
+  await (action.action(selectedKeys, selectedItems.value))
+  if (action.complete) {
+    action.complete()
+  }
+  selectedItems.value = []
+  reload()
+}
+
 watch(() => appState.versions[props.versionKey], () => {
   reload()
 })

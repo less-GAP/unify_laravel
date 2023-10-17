@@ -47,9 +47,6 @@
       type: Object,
       default: {}
     },
-    id: {
-      type: String
-    }
   });
 
   const formState = ref({
@@ -57,9 +54,17 @@
   });
 
 
-  watch(() => props.value, (data) => {
-    console.log(data);
-  });
+  if (props.value.id > 0) {
+    formState.value = props.value;
+  } else {
+    formState.value = {
+      status: 'A'
+    };
+  }
+
+  //console.log(props.value);
+
+  //formState.value = props.value;
 
   // watch(() => props.id, async () => {
   //   alert('okie');
@@ -71,7 +76,7 @@
     formRef.value
       .validate()
       .then(() => {
-        Api.post('product', toRaw(formState.value)).then(rs => {
+        Api.post(prefix, toRaw(formState.value)).then(rs => {
           notification[rs.data.code == 0 ? 'error' : 'success']({
             message: 'Notification',
             description: rs.data.message,
@@ -93,11 +98,8 @@
     emit('close');
   }
 
-
 </script>
-
 <template>
-
   <a-form layout="vertical" ref="formRef" :model="formState" @finish="submit" class="w-full">
     <div class="p-3 bg-gray-200">
       <a-button class="!hidden md:!inline-block" type="link" @click="closeDetail">
@@ -137,9 +139,13 @@
                   <a-radio-button value="D">Deactive</a-radio-button>
                 </a-radio-group>
               </a-form-item>
-
               <a-form-item label="Name" name="name" :rules="[{ required: true, message: 'Please input !' }]">
                 <a-input v-model:value="formState.name" placeholder="Content..."/>
+              </a-form-item>
+            </a-col>
+            <a-col :span="8">
+              <a-form-item label="Weight" name="weight">
+                <a-input v-model:value="formState.weight" placeholder="Weight..."/>
               </a-form-item>
             </a-col>
             <a-col :span="24">
@@ -150,8 +156,8 @@
                 <jodit-editor v-if="!loading" style="height: 40vh" v-model="formState.description" :config="{
                             iframe: true,
                             height: '40vh',
-                            iframeStyle: 'html{margin:0;padding:0;min-height: 100%;}body{box-sizing:border-box;font-family:roboto;font-size:16px;line-height:1.6;padding:10px;margin:0;background:transparent;color:#000;position:relative;z-index:2;user-select:auto;margin:0px;overflow:auto;outline:none;}table{width:100%;border:none;border-collapse:collapse;empty-cells: show;max-width: 100%;}th,td{padding: 2px 5px;border:1px solid #ccc;-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text}p{margin-top:0;}.jodit_editor .jodit_iframe_wrapper{display: block;clear: both;user-select: none;position: relative;}.jodit_editor .jodit_iframe_wrapper:after {position:absolute;content:\'\';z-index:1;top:0;left:0;right: 0;bottom: 0;cursor: pointer;display: block;background: rgba(0, 0, 0, 0);} .jodit_disabled{user-select: none;-o-user-select: none;-moz-user-select: none;-khtml-user-select: none;-webkit-user-select: none;-ms-user-select: none}',
-                            toolbarButtonSize: 'middle',
+                            iframeStyle: 'html{margin:0;padding:0;min-height: 100%;}body{box-sizing:border-box;font-family:roboto;font-size:16px;line-height:1.6;padding:10px;margin:0;background:transparent;color:#000;position:relative;z-index:2;user-select:auto;margin:0px;overflow:auto;outline:none;}table{width:100%;border:none;border-collapse:collapse;empty-cells: show;max-width: 80%;}th,td{padding: 2px 5px;border:1px solid #ccc;-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text}p{margin-top:0;}.jodit_editor .jodit_iframe_wrapper{display: block;clear: both;user-select: none;position: relative;}.jodit_editor .jodit_iframe_wrapper:after {position:absolute;content:\'\';z-index:1;top:0;left:0;right: 0;bottom: 0;cursor: pointer;display: block;background: rgba(0, 0, 0, 0);} .jodit_disabled{user-select: none;-o-user-select: none;-moz-user-select: none;-khtml-user-select: none;-webkit-user-select: none;-ms-user-select: none}',
+                            toolbarButtonSize: 'large',
                             buttons: [
                               ...Jodit.defaultOptions.buttons,
                               {
@@ -197,6 +203,7 @@
           </a-row>
         </a-tab-pane>
         <a-tab-pane key="3" tab="Inventories">
+
         </a-tab-pane>
       </a-tabs>
     </div>
