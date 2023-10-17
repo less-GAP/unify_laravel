@@ -1,10 +1,14 @@
 <script lang="ts" setup>
   import {reactive, h, ref, toRaw, computed, watch} from "vue";
+
   import {mdiBackspace, mdiContentSave, mdiAccountArrowUp} from '@mdi/js';
-  import {BaseIcon} from "@/components";
+
   import router from "@/router";
+
   import Api from "@/utils/Api";
+
   import {useAuthStore} from "@/stores/auth";
+
   import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
 
   import listStates from "@/utils/States";
@@ -15,7 +19,7 @@
 
   import {notification, SelectProps} from 'ant-design-vue';
 
-  import {InputUpload, InputUploadGetPath, FilePicker, InputTags, RemoteSelect} from "@/components";
+  import {InputUpload, InputUploadGetPath, FilePicker, InputTags, RemoteSelect, BaseIcon} from "@/components";
 
   const auth = useAuthStore();
 
@@ -33,19 +37,35 @@
   const isShowModal = ref(false);
 
   const showPicker = ref(false);
+
   const formRef = ref();
+
+  const emit = defineEmits(["close"]);
 
   const props = defineProps({
     value: {
       type: Object,
       default: {}
     },
-  })
-  const emit = defineEmits(["close"]);
+    id: {
+      type: String
+    }
+  });
 
   const formState = ref({
     status: 'A'
   });
+
+
+  watch(() => props.value, (data) => {
+    console.log(data);
+  });
+
+  // watch(() => props.id, async () => {
+  //   alert('okie');
+  //   //console.log(props.value);
+  //   //formState.value = props.value
+  // })
 
   const submit = () => {
     formRef.value
@@ -72,6 +92,7 @@
   const closeDetail = function () {
     emit('close');
   }
+
 
 </script>
 
@@ -125,7 +146,7 @@
               <a-form-item label="Short description">
                 <a-textarea v-model:value="formState.short_description" placeholder="Content..." :rows="4"/>
               </a-form-item>
-              <a-form-item label="Description" name="description" >
+              <a-form-item label="Description" name="description">
                 <jodit-editor v-if="!loading" style="height: 40vh" v-model="formState.description" :config="{
                             iframe: true,
                             height: '40vh',
@@ -156,23 +177,23 @@
         </a-tab-pane>
         <a-tab-pane key="2" tab="Additional Infomation">
           <a-row :gutter="20">
-          <a-col :span="24">
-            <a-form-item style="width:100%" label="Image">
-              <InputUploadGetPath autocomplete="off" v-model:value="formState.image"></InputUploadGetPath>
-            </a-form-item>
-            <a-form-item label="Link SEO">
-              <a-input v-model:value="formState.slug" placeholder="Content..."/>
-            </a-form-item>
-            <a-form-item label="Title">
-              <a-input v-model:value="formState.title" placeholder="Content..."/>
-            </a-form-item>
-            <a-form-item label="Meta description">
-              <a-textarea v-model:value="formState.meta_description" placeholder="Content..." :rows="4"/>
-            </a-form-item>
-            <a-form-item label="Meta keyword">
-              <a-textarea v-model:value="formState.meta_keyword" placeholder="Content..." :rows="4"/>
-            </a-form-item>
-          </a-col>
+            <a-col :span="24">
+              <a-form-item style="width:100%" label="Image">
+                <InputUploadGetPath autocomplete="off" v-model:value="formState.image"></InputUploadGetPath>
+              </a-form-item>
+              <a-form-item label="Link SEO">
+                <a-input v-model:value="formState.slug" placeholder="Content..."/>
+              </a-form-item>
+              <a-form-item label="Title">
+                <a-input v-model:value="formState.title" placeholder="Content..."/>
+              </a-form-item>
+              <a-form-item label="Meta description">
+                <a-textarea v-model:value="formState.meta_description" placeholder="Content..." :rows="4"/>
+              </a-form-item>
+              <a-form-item label="Meta keyword">
+                <a-textarea v-model:value="formState.meta_keyword" placeholder="Content..." :rows="4"/>
+              </a-form-item>
+            </a-col>
           </a-row>
         </a-tab-pane>
         <a-tab-pane key="3" tab="Inventories">

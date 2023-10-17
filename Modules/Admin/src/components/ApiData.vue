@@ -3,48 +3,49 @@
   <slot v-else v-bind="{data}"></slot>
 </template>
 <script lang="ts">
-import {defineComponent, ref, watch, unref, computed} from 'vue';
-import Api from "@/utils/Api";
 
-export default defineComponent({
-  components: {},
-  props: {
-    value: [String, Number, Array],
-    url: String,
-    method: {type: String, default: 'GET'},
-    valueKey: Array,
-    params: Object,
-  },
-  emits: ['change', 'update:value'],
+  import {defineComponent, ref, watch, unref, computed} from 'vue';
+  import Api from "@/utils/Api";
 
-  setup(props, {emit}) {
-    const loading = ref(true);
-    const data = ref(null);
+  export default defineComponent({
+    components: {},
+    props: {
+      value: [String, Number, Array],
+      url: String,
+      method: {type: String, default: 'GET'},
+      valueKey: Array,
+      params: Object,
+    },
+    emits: ['change', 'update:value'],
 
-    function getData(result) {
-      return result.data
-    }
+    setup(props, {emit}) {
+      const loading = ref(true);
+      const data = ref(null);
 
-    async function fetch() {
-      loading.value = true
-      const result = await Api.request({method:props.method,url:props.url,params: props.params});
-      data.value = getData(result)
-      emit('change', data.value)
-      emit('update:value', data.value)
-      loading.value = false
-    }
+      function getData(result) {
+        return result.data
+      }
 
-    watch( props.params, function () {
+      async function fetch() {
+        loading.value = true
+        const result = await Api.request({method: props.method, url: props.url, params: props.params});
+        data.value = getData(result)
+        emit('change', data.value)
+        emit('update:value', data.value)
+        loading.value = false
+      }
+
+      watch(props.params, function () {
+        fetch()
+      })
+      watch(props.url, function () {
+        fetch()
+      })
       fetch()
-    })
-    watch( props.url, function () {
-      fetch()
-    })
-    fetch()
-    return {
-      loading,
-      data
-    };
-  },
-});
+      return {
+        loading,
+        data
+      };
+    },
+  });
 </script>

@@ -158,9 +158,6 @@ const close = () => {
   <LayoutAuthenticated>
     <SectionMain>
       <DataTable v-bind="tableConfig" @register="registerTable">
-        <template #header>
-          <h2>Products</h2>
-        </template>
         <template #cellAction[delete]="{ item, actionMethod }">
           <a-popconfirm title="Do you want delete this?" ok-text="Yes" cancel-text="No" @confirm="actionMethod">
             <a-button type="text" danger :icon="h(DeleteOutlined)" label="" :outline="true">
@@ -189,6 +186,6 @@ const close = () => {
     </SectionMain>
   </LayoutAuthenticated>
   <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;" @close="close" :open="visible" width="80vw">
-    <Detail :value="productDetail" @close="close"></Detail>
+    <Detail :value="productDetail" @close="close" :id="productDetail.id ?? 0"></Detail>
   </a-drawer>
 </template>

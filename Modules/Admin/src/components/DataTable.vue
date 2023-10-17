@@ -188,8 +188,6 @@ reload(true);
                   {{ action.title }}
                 </a-menu-item>
               </template>
-
-
             </a-menu>
           </template>
           <a-button>
@@ -257,7 +255,7 @@ reload(true);
                 }}
               </slot>
             </td>
-            <td v-if="itemActions.length" class="flex flex-wrap justify-center p-2 whitespace-nowrap">
+            <td v-if="itemActions.length" class="p-2 whitespace-nowrap text-center">
               <!-- Modal toggle -->
               <template v-for="itemAction in itemActions" >
                 <slot :name="'cellAction[' + itemAction.key + ']'" v-bind="{
