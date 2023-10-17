@@ -59,11 +59,11 @@ export default [{
     disable: true,
   },
   {
-    to: "/warehouse",
-    permission: 'Warehouse.list',
-    label: "Warehouse",
+    to: "/inventory",
+    permission: 'Inventory.list',
+    label: "Inventory",
     icon: mdiStorefront,
-    disable: true,
+    disable: false,
   },
   {
     to: "/product",

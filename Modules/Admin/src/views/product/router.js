@@ -2,7 +2,7 @@ export default [
   {
     meta: {
       title: "Product",
-      permission: "product.list",
+      permission: "Product.list",
     },
     path: "/product",
     name: "product",
