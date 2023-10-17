@@ -23,6 +23,8 @@ return new class extends Migration {
             $table->integer('used')->default(0);
             $table->integer('remaining')->default(0);
             $table->string('status', 10)->nullable();
+            $table->text('description')->nullable();
+            $table->integer('order_id')->nullable();
             $table->timestamps();
         });
     }

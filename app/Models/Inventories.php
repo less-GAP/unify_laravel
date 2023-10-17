@@ -32,6 +32,8 @@ class Inventories extends Model
         'used',
         'remaining',
         'status',
+        'description',
+        'order_id'
     ];
 
     /**
@@ -54,15 +56,34 @@ class Inventories extends Model
 //        'password' => 'hashed',
     ];
 
-//    protected $appends = [
-//        'image_url'
-//    ];
+    protected $appends = [
+        'product',
+        'supplier',
+        'trademark'
+    ];
+
 //
-//    public function getImageUrlAttribute()
-//    {
-//        if ($this->logo != '') {
-//            return url($this->logo, '', env('APP_ENV') == 'local' ? false : true);
-//        }
-//        return '';
-//    }
+    public function getProductAttribute()
+    {
+        if ($this->product_id != '') {
+            return Product::where('id', $this->product_id)->first();
+        }
+        return '';
+    }
+
+    public function getSupplierAttribute()
+    {
+        if ($this->supplier_id != '') {
+            return Supplier::where('id', $this->supplier_id)->first();
+        }
+        return '';
+    }
+
+    public function getTrademarkAttribute()
+    {
+        if ($this->trademark_id != '') {
+            return Trademark::where('id', $this->trademark_id)->first();
+        }
+        return '';
+    }
 }

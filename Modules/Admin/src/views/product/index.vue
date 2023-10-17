@@ -35,7 +35,7 @@
     {
       title: "Image",
       key: "image",
-      width: 80
+      width: 100
     },
     {
       title: "Name",
@@ -48,6 +48,8 @@
     {
       title: "Inventory",
       key: "inventory",
+      class: 'text-center',
+      width: 100
     },
     {
       title: "Status",

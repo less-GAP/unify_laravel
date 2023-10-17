@@ -54,7 +54,8 @@ class Product extends Model
     ];
 
     protected $appends = [
-        'image_url'
+        'image_url',
+        'inventory'
     ];
 
     public function getImageUrlAttribute()
@@ -64,7 +65,14 @@ class Product extends Model
         }
         return '';
     }
-    public function images(){
-        return $this->belongsToMany(File::class,'product_images','product_id','file_id');
+
+    public function images()
+    {
+        return $this->belongsToMany(File::class, 'product_images', 'product_id', 'file_id');
+    }
+
+    public function getInventoryAttribute()
+    {
+        return Inventories::where('product_id', $this->id)->where('type', 'in')->sum('amount') - Inventories::where('product_id', $this->id)->where('type', 'out')->sum('amount');
     }
 }

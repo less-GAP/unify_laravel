@@ -273,4 +273,18 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             Route::post('/', \Modules\Admin\Actions\Trademark\PostAction::class . '@handle');
             Route::post('/activeList', \Modules\Admin\Actions\Trademark\PostActiveListAction::class . '@handle');
         });
+
+    EloquentRouter::prefix('inventory')
+        ->handle(
+            \App\Models\Inventories::class,
+            [
+                'allowedFilters' => [
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'name'),
+                    AllowedFilter::exact('status'),
+                ]
+            ]
+        )->routes(function () {
+            Route::post('/', \Modules\Admin\Actions\Inventory\PostAction::class . '@handle');
+            Route::post('/activeList', \Modules\Admin\Actions\Inventory\PostActiveListAction::class . '@handle');
+        });
 });

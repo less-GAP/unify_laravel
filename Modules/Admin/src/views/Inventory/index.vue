@@ -14,7 +14,7 @@
 
   import {PlusOutlined, LoadingOutlined, DeleteOutlined, FormOutlined} from '@ant-design/icons-vue';
 
-  const prefix = "product";
+  const prefix = "inventory";
   const {fetchListApi} = UseEloquentRouter(prefix);
   const auth = useAuthStore();
 
@@ -33,25 +33,41 @@
   ];
   const columns = [
     {
-      title: "Image",
-      key: "image",
+      title: "Type",
+      key: "type",
       width: 80
     },
     {
-      title: "Name",
-      key: "name",
+      title: "Product",
+      key: "product",
     },
     {
-      title: "Slug",
-      key: "slug",
+      title: "Supplier",
+      key: "supplier",
     },
     {
-      title: "Inventory",
-      key: "inventory",
+      title: "Trademark",
+      key: "trademark",
     },
     {
-      title: "Status",
-      key: "status",
+      title: "Amount",
+      key: "amount",
+      width: 100,
+      class: 'text-center'
+    },
+    {
+      title: "Date",
+      key: "date",
+      width: 100,
+    },
+    {
+      title: "Expiration Date",
+      key: "expiration_date",
+      width: 100,
+    },
+    {
+      title: "Created By",
+      key: "created_by",
       width: 100,
     },
     {
@@ -63,7 +79,7 @@
 
   const tableConfig = UseDataTable(fetchListApi, {
     columns,
-    showSelection: true,
+    showSelection: false,
     showSort: false,
     addAction: {
       action: (reload) => {
@@ -71,12 +87,12 @@
         productDetail.value.id = 0;
         visible.value = true;
       },
-      ifShow: auth.hasPermission('Product.create')
+      ifShow: auth.hasPermission('Inventory.create')
     },
     listActions: [],
     itemActions: [
       {
-        ifShow: auth.hasPermission('Product.update'),
+        ifShow: auth.hasPermission('Inventory.update'),
         label: "Edit",
         key: "edit",
         action: (item) => {
@@ -85,7 +101,7 @@
         },
       },
       {
-        ifShow: auth.hasPermission('Product.delete'),
+        ifShow: auth.hasPermission('Inventory.delete'),
         label: '',
         class: 'font-medium text-red-600 dark:text-red-500 hover:underline',
         icon: mdiDelete,
@@ -103,36 +119,7 @@
       }
     ],
     selectionActions: [
-      {
-        ifShow: auth.hasPermission('Product.update'),
-        title: 'Active',
-        action(selectedKeys) {
-          return Api.post(prefix + '/activeList', {
-            'items': selectedKeys,
-            'status': 'A'
-          }).then(rs => {
-            notification[rs.data.code == 0 ? 'error' : 'success']({
-              message: 'Notification',
-              description: rs.data.message,
-            });
-          })
-        },
-      },
-      {
-        ifShow: auth.hasPermission('Product.update'),
-        title: 'Deactive',
-        action(selectedKeys) {
-          return Api.post(prefix + '/activeList', {
-            'items': selectedKeys,
-            'status': 'D'
-          }).then(rs => {
-            notification[rs.data.code == 0 ? 'error' : 'success']({
-              message: 'Notification',
-              description: rs.data.message,
-            });
-          })
-        },
-      },
+
     ]
   });
 
@@ -170,12 +157,29 @@
           <a-button type="text" :icon="h(FormOutlined)" label="" :outline="true" @click="actionMethod">
           </a-button>
         </template>
-        <template #cell[id]="{ item, column }">
-          <div>{{ item.id }}</div>
+        <template #cell[type]="{ item, column }">
+          <a-tag class="capitalize" :color="item.type == 'in' ? 'green' : 'red'">{{item.type}}</a-tag>
         </template>
-        <template #cell[image]="{ item, column }">
-          <img class="w-20 h-auto float-left" :src="item.image_url" :alt="item.name" v-if="item.image_url"/>
-          <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>
+        <template #cell[product]="{ item, column }">
+          <div class="flex flex-row items-center">
+            <img class="w-20 h-auto float-left" :src="item.product.image_url" :alt="item.product.name" v-if="item.product.image_url"/>
+            <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>
+            <label class="ml-2 font-semibold">{{item.product.name}}</label>
+          </div>
+        </template>
+        <template #cell[supplier]="{ item, column }">
+          <div class="flex flex-row items-center">
+            <img class="w-20 h-auto float-left" :src="item.supplier.image_url" :alt="item.supplier.name" v-if="item.supplier.image_url"/>
+            <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>
+            <label class="ml-2 font-semibold">{{item.supplier.name}}</label>
+          </div>
+        </template>
+        <template #cell[trademark]="{ item, column }">
+          <div class="flex flex-row items-center">
+            <img class="w-20 h-auto float-left" :src="item.trademark.image_url" :alt="item.trademark.name" v-if="item.trademark.image_url"/>
+            <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>
+            <label class="ml-2 font-semibold">{{item.trademark.name}}</label>
+          </div>
         </template>
         <template #cell[slug]="{ item, column }">
           /{{ item.slug }}
