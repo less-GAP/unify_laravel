@@ -21,7 +21,8 @@ import {
   mdiClockTimeTwo,
   mdiStarCircle,
   mdiTooltipQuestion,
-  mdiStoreSettingsOutline
+  mdiStoreSettingsOutline,
+  mdiTrademark
 } from "@mdi/js";
 
 export default [{
@@ -76,6 +77,13 @@ export default [{
     permission: 'Supplier.list',
     label: "Supplier",
     icon: mdiStoreSettingsOutline,
+    disable: false,
+  },
+  {
+    to: "/trademark",
+    permission: 'Trademark.list',
+    label: "Trademark",
+    icon: mdiTrademark,
     disable: false,
   },
   {
