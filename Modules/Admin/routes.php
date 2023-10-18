@@ -285,6 +285,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             ]
         )->routes(function () {
             Route::post('/', \Modules\Admin\Actions\Inventory\PostAction::class . '@handle');
+            Route::get('/{id}', \Modules\Admin\Actions\Inventory\GetDetailAction::class . '@handle');
             Route::post('/activeList', \Modules\Admin\Actions\Inventory\PostActiveListAction::class . '@handle');
         });
 });

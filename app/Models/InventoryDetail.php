@@ -6,7 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Inventories extends Model
+class InventoryDetail extends Model
 {
 
     /**
@@ -16,19 +16,18 @@ class Inventories extends Model
      */
     use HasFactory;
 
-    protected $table = 'inventories';
+    protected $table = 'inventory_detail';
 
     public $timestamps = true;
 
     protected $fillable = [
-        'type',
-        'date',
-        'created_by',
-        'supplier_id',
+        'inventory_id',
+        'product_id',
+        'trademark_id',
         'amount',
-        'file',
-        'status',
-        'description',
+        'expiration_date',
+        'used',
+        'remaining',
         'order_id'
     ];
 
@@ -53,28 +52,24 @@ class Inventories extends Model
     ];
 
     protected $appends = [
-        'supplier',
-        'amount',
-        'products'
+        'product',
+        'trademark'
     ];
 
 
-    public function getSupplierAttribute()
+    public function getProductAttribute()
     {
-        if ($this->supplier_id != '') {
-            return Supplier::where('id', $this->supplier_id)->first();
+        if ($this->product_id != '') {
+            return Product::where('id', $this->product_id)->first();
         }
         return '';
     }
 
-    public function getAmountAttribute()
+    public function getTrademarkAttribute()
     {
-        return InventoryDetail::where('inventory_id', $this->id)->sum('amount');
+        if ($this->trademark_id != '') {
+            return Trademark::where('id', $this->trademark_id)->first();
+        }
+        return '';
     }
-
-    public function getProductsAttribute()
-    {
-        return InventoryDetail::where('inventory_id', $this->id)->get();
-    }
-
 }

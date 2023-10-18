@@ -27,12 +27,14 @@ return new class extends Migration {
 
         Schema::create('inventory_detail', function (Blueprint $table) {
             $table->id();
+            $table->integer('inventory_id')->nullable();
             $table->integer('product_id')->nullable();
             $table->integer('trademark_id')->nullable();
             $table->integer('amount')->default(0);
             $table->date('expiration_date')->nullable();
             $table->integer('used')->default(0);
             $table->integer('remaining')->default(0);
+            $table->integer('order_id')->nullable();
             $table->timestamps();
         });
     }

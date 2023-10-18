@@ -52,26 +52,10 @@
 
   const formRef = ref();
 
-  const props = defineProps({
-    value: {
-      type: Object,
-      default: {}
-    },
-  });
-
   const formState = ref({
     type: 'in',
     products: []
   });
-
-  if (props.value.id > 0) {
-    formState.value = props.value;
-  } else {
-    formState.value = {
-      type: 'in',
-      products: []
-    };
-  }
 
   const productColumns = ref([
     {
@@ -114,6 +98,21 @@
       width: 100
     },
   ]);
+
+  const fetch = function () {
+    loading.value = true;
+    var id = router.currentRoute.value.params.id;
+    if (id > 0) {
+      loading.value = true
+      Api.get(prefix + '/' + id).then(rs => {
+        formState.value = rs.data.data;
+        loading.value = false;
+      });
+    } else {
+      loading.value = false;
+    }
+  }
+  fetch();
 
   const submit = () => {
     formRef.value
@@ -160,6 +159,7 @@
     router.push('/' + prefix);
   };
 
+
 </script>
 <template>
   <LayoutAuthenticated>
@@ -193,6 +193,9 @@
               </a-row>
               <a-row :gutter="20">
                 <a-col :span="12">
+                  <a-form-item label="Code" name="code" :rules="[{ required: true, message: 'Please input !' }]">
+                    <a-input v-model:value="formState.code" placeholder="Code..."/>
+                  </a-form-item>
                   <a-form-item label="Supplier" name="supplier_id" :rules="[{ required: true, message: 'Please input !' }]">
                     <ApiData url="supplier/all" method="GET" :params="{}">
                       <template #default="{ data }">
@@ -212,7 +215,7 @@
               <a-row :gutter="20">
                 <a-col :span="24">
                   <a-form-item style="width:100%" label="File">
-                    <InputUploadGetPath autocomplete="off" v-model:value="formState.file"></InputUploadGetPath>
+                    <InputUploadGetPath autocomplete="off" v-model:value="formState.file" :accept="'application/pdf'"></InputUploadGetPath>
                   </a-form-item>
                   <a-form-item label="Description">
                     <a-textarea v-model:value="formState.description" placeholder="Description..." :rows="4"/>

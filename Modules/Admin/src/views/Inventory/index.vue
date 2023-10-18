@@ -38,16 +38,12 @@
       width: 80
     },
     {
-      title: "Product",
-      key: "product",
+      title: "Code",
+      key: "code",
     },
     {
       title: "Supplier",
       key: "supplier",
-    },
-    {
-      title: "Trademark",
-      key: "trademark",
     },
     {
       title: "Amount",
@@ -58,11 +54,6 @@
     {
       title: "Date",
       key: "date",
-      width: 100,
-    },
-    {
-      title: "Expiration Date",
-      key: "expiration_date",
       width: 100,
     },
     {
@@ -95,8 +86,7 @@
         label: "Edit",
         key: "edit",
         action: (item) => {
-          productDetail.value = item;
-          visible.value = true;
+          router.push(prefix + '/' + item.id);
         },
       },
       {
@@ -157,25 +147,11 @@
         <template #cell[type]="{ item, column }">
           <a-tag class="capitalize" :color="item.type == 'in' ? 'green' : 'red'">{{item.type}}</a-tag>
         </template>
-        <template #cell[product]="{ item, column }">
-          <div class="flex flex-row items-center">
-            <img class="w-20 h-auto float-left" :src="item.product.image_url" :alt="item.product.name" v-if="item.product.image_url"/>
-            <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>
-            <label class="ml-2 font-semibold">{{item.product.name}}</label>
-          </div>
-        </template>
         <template #cell[supplier]="{ item, column }">
           <div class="flex flex-row items-center">
             <img class="w-20 h-auto float-left" :src="item.supplier.image_url" :alt="item.supplier.name" v-if="item.supplier.image_url"/>
             <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>
             <label class="ml-2 font-semibold">{{item.supplier.name}}</label>
-          </div>
-        </template>
-        <template #cell[trademark]="{ item, column }">
-          <div class="flex flex-row items-center">
-            <img class="w-20 h-auto float-left" :src="item.trademark.image_url" :alt="item.trademark.name" v-if="item.trademark.image_url"/>
-            <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>
-            <label class="ml-2 font-semibold">{{item.trademark.name}}</label>
           </div>
         </template>
         <template #cell[status]="{ item, column }">

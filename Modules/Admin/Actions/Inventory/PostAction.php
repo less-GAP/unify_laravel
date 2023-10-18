@@ -4,6 +4,7 @@
 namespace Modules\Admin\Actions\Inventory;
 
 use App\Models\Inventories;
+use App\Models\InventoryDetail;
 use Illuminate\Http\Request;
 
 class PostAction
@@ -13,18 +14,36 @@ class PostAction
         $data = $request->all();
 
         try {
-            $product = new Inventories();
+            $inventory = new Inventories();
             if (isset($data['id']) && $data['id'] > 0) {
-                $product = Inventories::find($data['id']);
+                $inventory = Inventories::find($data['id']);
             }
             $data['created_by'] = \Auth::guard('admin')->user()->username;
-            $product->fill($data);
-            $product->save();
-
+            $inventory->fill($data);
+            $inventory->save();
+            if ($inventory->id > 0) {
+                InventoryDetail::where('inventory_id', $inventory->id)->delete();
+                if (!empty($data['products'])) {
+                    foreach ($data['products'] as $k => $v) {
+                        $ins = [
+                            'inventory_id' => $inventory->id,
+                            'product_id' => $v['product_id'],
+                            'trademark_id' => $v['trademark_id'],
+                            'amount' => $v['amount'],
+                            'expiration_date' => $v['expiration_date'],
+                            'used' => 0,
+                            'remaining' => $v['amount'],
+                            'order_id' => null
+                        ];
+                        InventoryDetail::create($ins);
+                    }
+                }
+            }
+            
             $output = [
                 'code' => 1,
                 'message' => 'Success!',
-                'data' => $product
+                'data' => $inventory
             ];
         } catch (\Throwable $e) {
             $output = [
