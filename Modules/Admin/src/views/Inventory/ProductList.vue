@@ -7,9 +7,9 @@
             <ApiData url="product/all" method="GET" :params="{}">
               <template #default="{ data }">
                 <a-select class="w-[200px]" v-model:value="formState.product_id"
-                          placeholder="Select product..." option-label-prop="children">
+                          placeholder="Select product..." option-label-prop="children" @change="changeProduct">
                   <template v-for="(value, key) in data" :key="key">
-                    <a-select-option :value="value.id" :label="value.name">
+                    <a-select-option :value="value.id" :label="value.name" v-bind="value">
                       <img :src="value.image_url" class="w-5 h-5 inline-block"/>&nbsp;&nbsp;&nbsp;&nbsp;{{value.name}}
                     </a-select-option>
                   </template>
@@ -21,9 +21,9 @@
             <ApiData url="trademark/all" method="GET" :params="{}">
               <template #default="{ data }">
                 <a-select class="w-[200px]" v-model:value="formState.trademark_id"
-                          placeholder="Select product..." option-label-prop="children">
+                          placeholder="Select product..." option-label-prop="children" @change="changeTrademark">
                   <template v-for="(value, key) in data" :key="key">
-                    <a-select-option :value="value.id" :label="value.name" :data="data">
+                    <a-select-option :value="value.id" :label="value.name" v-bind="value">
                       <img :src="value.image_url" class="w-5 h-5 inline-block"/>&nbsp;&nbsp;&nbsp;&nbsp;{{value.name}}
                     </a-select-option>
                   </template>
@@ -74,7 +74,8 @@
       DragOutlined,
       DeleteOutlined,
       PlusOutlined,
-      ApiData
+      ApiData,
+      RemoteSelect
     },
     props: {
       value: Array,
@@ -84,12 +85,11 @@
       const isFirstLoaded = ref<Boolean>(false);
       const loading = ref(false);
       const formRef = ref();
-      const formState = ref({});
-
-
-      onMounted(async () => {
-
+      const formState = ref({
+        product: {},
+        trademark: {}
       });
+      const products = ref([]);
 
       function back() {
         emit('close');
@@ -99,13 +99,22 @@
         formRef.value
           .validate()
           .then(() => {
-            console.log(formState.value);
+            emit('select', toRaw(formState.value));
           });
+      };
+
+      function changeProduct(value, option) {
+        formState.value.product = option;
+      };
+
+      function changeTrademark(value, option) {
+        formState.value.trademark = option;
       };
 
       watch(
         () => props.value,
         (value) => {
+          formState.value = props.value;
         },
         {deep: true},
       );
@@ -115,7 +124,9 @@
         formRef,
         back,
         formState,
-        submit
+        submit,
+        changeProduct,
+        changeTrademark
       };
     },
   });

@@ -69,15 +69,7 @@
   } else {
     formState.value = {
       type: 'in',
-      products: [
-        {
-          id: 1,
-          product_id: 'Product 1',
-          trademark_id: 'Trademark 1',
-          amount: 10,
-          expiration_date: '2023-10-18'
-        },
-      ]
+      products: []
     };
   }
 
@@ -86,7 +78,11 @@
       title: '#',
       dataIndex: 'id',
       key: 'id',
-      width: 50
+      width: 50,
+      render: (id, record, index) => {
+        ++index;
+        return index;
+      },
     },
     {
       title: 'Product',
@@ -136,8 +132,29 @@
   };
   const selectProduct = ref({});
   const onSelectProduct = (item) => {
-    console.log(item);
+    //console.log(item);
+    if (item.id) {
+      formState.value.products.forEach((value, index) => {
+        if (value.id == item.id) {
+          formState.value.products[index] = item;
+        }
+      });
+    } else {
+      item.id = formState.value.products.length + 1;
+      formState.value.products.push(item);
+    }
+    showDetail.value = false;
   }
+
+  const addProduct = () => {
+    selectProduct.value = {};
+    showDetail.value = true;
+  };
+
+  const edit = (item) => {
+    selectProduct.value = item;
+    showDetail.value = true;
+  };
 
   const back = () => {
     router.push('/' + prefix);
@@ -205,11 +222,25 @@
             </a-tab-pane>
             <a-tab-pane key="2" tab="Products">
               <div class="flex flex-row justify-end">
-                <a-button @click="showDetail = true">Add Product</a-button>
+                <a-button @click="addProduct">Add Product</a-button>
               </div>
               <div class="mt-5">
                 <a-table :data-source="formState.products" :columns="productColumns" bordered :pagination="false" triped>
                   <template #bodyCell="{ column, record }">
+                    <template v-if="column.key === 'product_id'">
+                      <div v-if="record.product" class="flex flex-row items-center">
+                        <img class="w-20 h-auto float-left" :src="record.product.image_url" :alt="record.product.name" v-if="record.product.image_url"/>
+                        <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>
+                        <label class="ml-4 font-semibold">{{record.product.name}}</label>
+                      </div>
+                    </template>
+                    <template v-if="column.key === 'trademark_id'">
+                      <div v-if="record.trademark" class="flex flex-row items-center">
+                        <img class="w-20 h-auto float-left" :src="record.trademark.image_url" :alt="record.trademark.name" v-if="record.trademark.image_url"/>
+                        <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>
+                        <label class="ml-4 font-semibold">{{record.trademark.name}}</label>
+                      </div>
+                    </template>
                     <template v-if="column.key === 'expiration_date'">
                       {{dayjs(record.expiration_date, "YYYY-MM-DD").format("MM-DD-YYYY" )}}
                     </template>
