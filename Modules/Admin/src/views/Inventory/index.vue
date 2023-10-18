@@ -84,8 +84,7 @@
     addAction: {
       action: (reload) => {
         //showEditUser({}, reload)
-        productDetail.value.id = 0;
-        visible.value = true;
+        router.push(prefix + '/0');
       },
       ifShow: auth.hasPermission('Inventory.create')
     },
@@ -118,9 +117,7 @@
         }
       }
     ],
-    selectionActions: [
-
-    ]
+    selectionActions: []
   });
 
   let reloadTable = () => {
@@ -180,9 +177,6 @@
             <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>
             <label class="ml-2 font-semibold">{{item.trademark.name}}</label>
           </div>
-        </template>
-        <template #cell[slug]="{ item, column }">
-          /{{ item.slug }}
         </template>
         <template #cell[status]="{ item, column }">
           <a-tag v-if="item.status == 'A'" color="green">Active</a-tag>
