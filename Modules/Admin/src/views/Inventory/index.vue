@@ -72,6 +72,7 @@
     columns,
     showSelection: false,
     showSort: false,
+    showReload: true,
     addAction: {
       action: (reload) => {
         //showEditUser({}, reload)
