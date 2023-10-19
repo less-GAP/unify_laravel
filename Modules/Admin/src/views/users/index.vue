@@ -20,6 +20,9 @@
   const auth = useAuthStore();
 
   const tableConfig = UseDataTable(fetchListApi, {
+    showSelection: true,
+    showSort: false,
+    showReload: true,
     columns: [
       {
         title: 'Username',
@@ -43,11 +46,11 @@
         key: 'edit',
         action: (item, reload) => {
           //showEditUser({}, reload)
-          router.replace(prefix + '/' + item.id)
+          router.push(prefix + '/' + item.id)
         },
       },
       {
-        ifShow: auth.hasPermission('User.detele'),
+        ifShow: auth.hasPermission('User.delete'),
         label: 'Delete',
         key: 'delete',
         class: 'font-medium !text-red-600 dark:text-red-500 hover:underline',
@@ -62,7 +65,7 @@
     ],
     addAction: {
       action: (reload) => {
-        router.replace(prefix + '/new')
+        router.push('/'+prefix + '/0')
       },
       ifShow: auth.hasPermission('User.create')
     },
