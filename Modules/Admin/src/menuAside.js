@@ -126,6 +126,7 @@ export default [{
         label: "Customer group",
       },
     ],
+    disable: true,
   },
   {
     to: "/doctor",

@@ -37,6 +37,7 @@ class DatabaseSeeder extends Seeder
             'deleted' => 0,
             'deleted_at' => null,
             'deleted_by' => null,
+            'status' => 'active'
         ]);
         $seller = \App\Models\User::factory()->create([
             'full_name' => 'Nguyen Thi Hong',
@@ -47,6 +48,7 @@ class DatabaseSeeder extends Seeder
             'deleted' => 0,
             'deleted_at' => null,
             'deleted_by' => null,
+            'status' => 'active'
         ]);
         $seller1 = \App\Models\User::factory()->create([
             'full_name' => 'Nguyen Van A',
@@ -57,6 +59,7 @@ class DatabaseSeeder extends Seeder
             'deleted' => 0,
             'deleted_at' => null,
             'deleted_by' => null,
+            'status' => 'active'
         ]);
         $seller2 = \App\Models\User::factory()->create([
             'full_name' => 'Nguyen Van B',
@@ -67,6 +70,7 @@ class DatabaseSeeder extends Seeder
             'deleted' => 0,
             'deleted_at' => null,
             'deleted_by' => null,
+            'status' => 'active'
         ]);
         $seller3 = \App\Models\User::factory()->create([
             'full_name' => 'Tran Van B',
@@ -77,6 +81,7 @@ class DatabaseSeeder extends Seeder
             'deleted' => 0,
             'deleted_at' => null,
             'deleted_by' => null,
+            'status' => 'active'
         ]);
 
         $role_admin = Role::create(['name' => 'Admin']);
@@ -88,39 +93,39 @@ class DatabaseSeeder extends Seeder
         $role_staff = Role::create(['name' => 'Staff']);
 
         Permission::findOrCreate('*');
-        Permission::findOrCreate('patient.*');
-        Permission::findOrCreate('patient.filter.seller');
-        Permission::findOrCreate('patient.filter.doctor');
-        Permission::findOrCreate('patient.list');
-        Permission::findOrCreate('patient.view');
-        Permission::findOrCreate('patient.approve');
-        Permission::findOrCreate('patient.create');
-        Permission::findOrCreate('patient.edit');
-        Permission::findOrCreate('patient.delete');
+        Permission::findOrCreate('Patient.*');
+        Permission::findOrCreate('Patient.filter.seller');
+        Permission::findOrCreate('Patient.filter.doctor');
+        Permission::findOrCreate('Patient.list');
+        Permission::findOrCreate('Patient.view');
+        Permission::findOrCreate('Patient.approve');
+        Permission::findOrCreate('Patient.create');
+        Permission::findOrCreate('Patient.edit');
+        Permission::findOrCreate('Patient.delete');
 
-        Permission::findOrCreate('doctor.*');
-        Permission::findOrCreate('doctor.list');
-        Permission::findOrCreate('doctor.create');
-        Permission::findOrCreate('doctor.edit');
-        Permission::findOrCreate('doctor.delete');
+        Permission::findOrCreate('Doctor.*');
+        Permission::findOrCreate('Doctor.list');
+        Permission::findOrCreate('Doctor.create');
+        Permission::findOrCreate('Doctor.edit');
+        Permission::findOrCreate('Doctor.delete');
 
-        Permission::findOrCreate('user.*');
-        Permission::findOrCreate('user.list');
-        Permission::findOrCreate('user.create');
-        Permission::findOrCreate('user.edit');
-        Permission::findOrCreate('user.delete');
+        Permission::findOrCreate('User.*');
+        Permission::findOrCreate('User.list');
+        Permission::findOrCreate('User.create');
+        Permission::findOrCreate('User.edit');
+        Permission::findOrCreate('User.delete');
 
-        Permission::findOrCreate('task.*');
-        Permission::findOrCreate('task.list');
-        Permission::findOrCreate('task.create');
-        Permission::findOrCreate('task.assign');
-        Permission::findOrCreate('task.working');
-        Permission::findOrCreate('task.review');
-        Permission::findOrCreate('task.delete');
+        Permission::findOrCreate('Task.*');
+        Permission::findOrCreate('Task.list');
+        Permission::findOrCreate('Task.create');
+        Permission::findOrCreate('Task.assign');
+        Permission::findOrCreate('Task.working');
+        Permission::findOrCreate('Task.review');
+        Permission::findOrCreate('Task.delete');
 
-        Permission::findOrCreate('log.list');
+        Permission::findOrCreate('Log.list');
 
-        Permission::findOrCreate('file.*');
+        Permission::findOrCreate('File.*');
 
         Permission::findOrCreate('Seller');
         Permission::findOrCreate('Seller Manager');

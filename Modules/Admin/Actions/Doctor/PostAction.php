@@ -15,6 +15,7 @@ class PostAction
 
         try {
             $doctor = new Doctor();
+            $data['full_name'] = $data['first_name'] . ' ' . $data['last_name'];
             if (isset($data['id']) && $data['id'] > 0) {
                 $doctor = Doctor::find($data['id']);
             }

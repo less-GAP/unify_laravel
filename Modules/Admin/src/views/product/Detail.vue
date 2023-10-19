@@ -77,20 +77,20 @@
       .validate()
       .then(() => {
         Api.post(prefix, toRaw(formState.value)).then(rs => {
-          notification[rs.data.code == 0 ? 'error' : 'success']({
-            message: 'Notification',
-            description: rs.data.message,
-          });
+          // notification[rs.data.code == 0 ? 'error' : 'success']({
+          //   message: 'Notification',
+          //   description: rs.data.message,
+          // });
           if (rs.data.code == 1) {
             emit('close');
           }
         });
       })
       .catch(error => {
-        notification['error']({
-          message: 'Notification',
-          description: error,
-        });
+        // notification['error']({
+        //   message: 'Notification',
+        //   description: error,
+        // });
       });
   };
 

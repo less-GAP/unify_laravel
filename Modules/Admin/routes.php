@@ -67,6 +67,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         )->routes(
             function () {
                 Route::get('list', \Modules\Admin\Actions\Doctor\GetListAction::class . '@handle');
+                Route::post('/', \Modules\Admin\Actions\Doctor\PostAction::class . '@handle');
             }
         );
     EloquentRouter::prefix('logs')
