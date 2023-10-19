@@ -19,7 +19,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens ,HasRoles  , HasFactory, Notifiable ,HasProfilePhoto ,CausesActivity;
+    use HasApiTokens, HasRoles, HasFactory, Notifiable, HasProfilePhoto, CausesActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -37,6 +37,7 @@ class User extends Authenticatable
         'deleted',
         'deleted_at',
         'deleted_by',
+        'status'
     ];
 
     /**
@@ -64,19 +65,24 @@ class User extends Authenticatable
         'roles_id',
         'app_permissions'
     ];
-    public function getRolesIdAttribute(){
+
+    public function getRolesIdAttribute()
+    {
         return $this->roles->pluck('id');
     }
-    public function getAppPermissionsAttribute(){
-        if($this->hasRole('Admin')){
+
+    public function getAppPermissionsAttribute()
+    {
+        if ($this->hasRole('Admin')) {
             return ['*'];
         }
         $permissions = $this->permissions->toArray();
-        foreach($this->roles as $role){
-            $permissions = array_merge($permissions , $role->permissions->toArray());
+        foreach ($this->roles as $role) {
+            $permissions = array_merge($permissions, $role->permissions->toArray());
         }
         return collect($permissions)->pluck('name')->toArray();
     }
+
     /**
      * A model may have multiple roles.
      */
@@ -88,15 +94,15 @@ class User extends Authenticatable
             config('permission.table_names.model_has_roles'),
             config('permission.column_names.model_morph_key'),
             PermissionRegistrar::$pivotRole
-        )->where('status','active');
+        )->where('status', 'active');
 
-        if (! PermissionRegistrar::$teams) {
+        if (!PermissionRegistrar::$teams) {
             return $relation;
         }
 
         return $relation->wherePivot(PermissionRegistrar::$teamsKey, getPermissionsTeamId())
             ->where(function ($q) {
-                $teamField = config('permission.table_names.roles').'.'.PermissionRegistrar::$teamsKey;
+                $teamField = config('permission.table_names.roles') . '.' . PermissionRegistrar::$teamsKey;
                 $q->whereNull($teamField)->orWhere($teamField, getPermissionsTeamId());
             });
     }

@@ -65,7 +65,7 @@
     ],
     addAction: {
       action: (reload) => {
-        router.push('/'+prefix + '/0')
+        router.push(prefix + '/0')
       },
       ifShow: auth.hasPermission('User.create')
     },
@@ -138,5 +138,4 @@
       </template>
     </DataTable>
   </LayoutAuthenticated>
-  <router-view></router-view>
 </template>

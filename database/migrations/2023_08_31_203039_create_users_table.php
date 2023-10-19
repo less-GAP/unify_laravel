@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->boolean('is_support')->nullable();
+            $table->string('status')->default('active');
 
             // new migrate 1/9
             $table->integer('deleted')->default(0);

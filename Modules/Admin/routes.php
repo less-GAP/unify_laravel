@@ -40,12 +40,6 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         Route::get('userInfo', GetUserInfoAction::class . '@handle');
     });
     EloquentRouter::prefix('user')
-        ->routes(function () {
-            Route::get('/options', \Modules\Admin\Actions\User\GetUserOptionsAction::class . '@handle');
-            Route::get('list', \Modules\Admin\Actions\User\GetUserListAction::class . '@handle');
-            Route::post('{id?}', \Modules\Admin\Actions\User\PostUserAction::class . '@handle');
-            // Route::delete('{id}', \Modules\Admin\Actions\User\DeleteUserAction::class . '@handle');
-        })
         ->handle(
             \App\Models\User::class,
             [
@@ -54,8 +48,14 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                     AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,username'), AllowedFilter::custom('roles.name', new \App\Builder\Filters\SearchRelationShip, 'roles.name')
                 ]
             ]
-        );
-
+        )
+        ->routes(function () {
+            Route::post('/', \Modules\Admin\Actions\User\PostAction::class . '@handle');
+            Route::get('/options', \Modules\Admin\Actions\User\GetUserOptionsAction::class . '@handle');
+            Route::get('list', \Modules\Admin\Actions\User\GetUserListAction::class . '@handle');
+            //Route::post('{id?}', \Modules\Admin\Actions\User\PostUserAction::class . '@handle');
+            // Route::delete('{id}', \Modules\Admin\Actions\User\DeleteUserAction::class . '@handle');
+        });
     EloquentRouter::prefix('doctor')
         ->handle(
             \App\Models\Doctor::class,

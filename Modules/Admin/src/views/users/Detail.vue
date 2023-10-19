@@ -13,12 +13,11 @@
 
   const prefix = 'user'
   const {
-    fetchDetailApi,
-    createApi,
-    // updateApi
+    fetchDetailApi
   } = UseEloquentRouter(prefix)
+
   const auth = useAuthStore();
-  const currentRoute = router.currentRoute.value;
+
   const loading = ref(false);
   const activeKey = ref('1');
   const formRef = ref();
@@ -26,20 +25,19 @@
   const formState = ref({
     isNew: true,
     status: 'active',
-    isDefaultSeller: false,
   });
 
   const fetch = async function () {
     loading.value = true;
-    var id = currentRoute.params.id;
+    var id = parseInt(router.currentRoute.value.params.id);
     if (id > 0) {
-      loading.value = true
       const value = await fetchDetailApi(id)
-      Object.assign(formState, value.data)
-      formState.roles = value.data.roles ? value.data.roles[0].name : ''
-      formState.isNew = false
+      formState.value = value.data;
+      // formState.value.role_id = value.data.roles ? value.data.roles[0].name : ''
+      formState.value.isNew = false
       loading.value = false
     } else {
+      formState.value.isNew = true;
       loading.value = false
     }
   }
@@ -50,25 +48,16 @@
     formRef.value
       .validate()
       .then(() => {
-        if (formState.roles === null) {
-          notification.error({
-            message: 'Error',
-            description: 'Please select role',
+        Api.post(prefix, toRaw(formState.value)).then(rs => {
+          notification[rs.data.code == 0 ? 'error' : 'success']({
+            message: 'Notification',
+            description: rs.data.message,
           });
-          return false;
-        }
-        createApi({...formState}).then(rs => {
-          Object.assign(formState, rs.data.result)
+          if (rs.data.code == 1) {
+            back();
+          }
         });
-
-        if (formState.isDefaultSeller) {
-          Api.post("config", {
-            default_seller: formState.id
-          }).then((result) => {
-            console.log(result)
-          })
-        }
-      })
+      });
   };
 
   const back = () => {
@@ -80,7 +69,7 @@
 <template>
 
   <LayoutAuthenticated>
-    <a-form autocomplete="off" v-bind="$config.formConfig" :model="formState" ref="formRef" @finish="submit">
+    <a-form autocomplete="off" layout="vertical" :model="formState" ref="formRef" @finish="submit">
       <div class="mx-4">
         <a-tabs v-model:activeKey="activeKey" @change="tabActive">
           <a-tab-pane key="1" tab="General">
@@ -95,9 +84,9 @@
               </a-col>
             </a-row>
             <a-row :gutter="20">
-              <a-col :span="12">
-                <a-form-item label="Username" name="username" :rules="formState.isNew ? [{ required: true, message: 'Please input your password!' }] : []">
-                  <a-input v-model:value="formState.username" autocomplete="off"/>
+              <a-col :span="12" v-if="formState.isNew">
+                <a-form-item label="Username" name="username" :rules="[{ required: true, message: 'Please input your password!' }]">
+                  <a-input v-model:value="formState.username" autocomplete="off" placeholder="Username..."/>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -117,19 +106,23 @@
             </a-row>
             <a-row :gutter="20">
               <a-col :span="12">
-                <a-form-item label="Role" name="role_id" :rules="[{ required: true, message: 'Please input !' }]">
-                  <RemoteSelect url="roles/all" labelKey="name" valueKey="id"
-                                v-model:value="formState.role_id">
-                    <template #option="{option,valueKey,labelKey}">
-                      <a-select-option :value="option[valueKey]">
-                        {{ option[labelKey] }}
-                      </a-select-option>
+                <a-form-item label="Role" name="roles_id" :rules="[{ required: true, message: 'Please input !' }]">
+                  <ApiData url="roles/all" method="GET" :params="{}">
+                    <template #default="{ data }">
+                      <a-select class="w-[200px]" v-model:value="formState.roles_id" mode="multiple"
+                                placeholder="Select product..." option-label-prop="children">
+                        <template v-for="(value, key) in data" :key="key">
+                          <a-select-option :value="value.id" :label="value.name">
+                            {{value.name}}
+                          </a-select-option>
+                        </template>
+                      </a-select>
                     </template>
-                  </RemoteSelect>
+                  </ApiData>
                 </a-form-item>
               </a-col>
             </a-row>
-            <a-row :gutter="20">
+            <a-row :gutter="20" v-if="false">
               <a-col :span="12">
                 <a-form-item>
                   <label>
@@ -140,9 +133,9 @@
               </a-col>
             </a-row>
             <a-row :gutter="20">
-              <a-col :span="12">
+              <a-col :span="12" v-if="formState.isNew">
                 <a-form-item label="Password" name="password"
-                             :rules="formState.isNew ? [{ required: true, message: 'Please input your password!' }] : []">
+                             :rules="[{ required: true, message: 'Please input your password!' }]">
                   <a-input-password v-model:value="formState.password" autocomplete="off">
                     <template #prefix>
                       <LockOutlined class="site-form-item-icon"/>
