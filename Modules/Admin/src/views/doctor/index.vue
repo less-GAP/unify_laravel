@@ -19,8 +19,9 @@
 
   const customFormat = "MM-DD-YYYY";
   const dbFormat = "YYYY-MM-DD"; // format of datepicker
-  const dob_value = (item) => {
-    return item.dob ? dayjs(item.dob, dbFormat).format(customFormat) : "-";
+  const date_value = (item) => {
+    console.log(item);
+    return item ? dayjs(item, dbFormat).format(customFormat) : "-";
   };
 
   const age = (item) => {
@@ -57,6 +58,11 @@
       {
         title: "Created at",
         key: "created_at",
+        width: 130,
+      },
+      {
+        title: "Publish date",
+        key: "unify_active",
         width: 130,
       },
       {
@@ -177,17 +183,17 @@
             {{ item.zip }}
           </div>
         </template>
+        <template #cell[unify_active]="{ item, column }">
+          <small>{{ item.unify_active ? dayjs(item.unify_active).format('HH:mm MM-DD-YYYY') : '-' }}</small>
+        </template>
         <template #cell[dob]="{ item, column }">
-          <small>{{ dob_value(item) }}</small>
+          <small>{{ date_value(item.dob) }}</small>
           <br/><span class="text-[11px] text-gray-400">{{ age(item) }}</span>
         </template>
         <template #cell[status]="{ item, column }">
-          <a-tag v-if="item.status === null || item.status == 0" color="green"
-          >Active
-          </a-tag
-          >
-          <a-tag v-if="item.status == 1" color="green">Inactive</a-tag>
-          <a-tag v-if="item.status == 2" color="green">Trashed</a-tag>
+          <a-tag v-if="item.status == '0'" color="green">Active</a-tag>
+          <a-tag v-if="item.status == '1'" color="cyan">Inactive</a-tag>
+          <a-tag v-if="item.status == '2'" color="red">Trashed</a-tag>
         </template>
       </DataTable>
       <router-view></router-view>

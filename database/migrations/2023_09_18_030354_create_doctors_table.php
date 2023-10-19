@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -27,7 +26,7 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('state')->nullable();
             $table->string('zip')->nullable();
-            
+
             $table->text('note')->nullable();
 
             $table->integer('status')->nullable();
@@ -37,6 +36,7 @@ return new class extends Migration
 
             $table->integer('updated_by')->nullable();
             $table->integer('created_by')->nullable();
+            $table->dateTime('unify_active')->nullable();
             $table->timestamps();
         });
     }
