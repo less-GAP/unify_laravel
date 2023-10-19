@@ -74,6 +74,15 @@
         <a-tabs v-model:activeKey="activeKey" @change="tabActive">
           <a-tab-pane key="1" tab="General">
             <a-row :gutter="20">
+              <a-col :span="24">
+                <a-form-item label="Note for this change" name="log_detail" :rules="[{ required: true, message: 'Please enter note!' }]" v-if="false">
+                  <a-textarea class="!rounded-none w-full" v-model:value="formState.log_detail"
+                              placeholder="Make a note of any changes you make to the doctor record"
+                              :auto-size="{ minRows: 2, maxRows: 10 }"/>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="20">
               <a-col :span="12">
                 <a-form-item label="Status" name="status" :rules="[{ required: true, message: 'Select a status!' }]">
                   <a-radio-group v-model:value="formState.status" button-style="solid" size="middle">

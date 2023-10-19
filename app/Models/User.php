@@ -12,14 +12,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\CausesActivity;
 use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasRoles, HasFactory, Notifiable, HasProfilePhoto, CausesActivity;
+    use HasApiTokens, HasRoles, HasFactory, Notifiable, HasProfilePhoto, CausesActivity, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -107,6 +109,14 @@ class User extends Authenticatable
             });
     }
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->setDescriptionForEvent(fn(string $eventName) => request()->input('log_detail',$eventName))
+            ->dontSubmitEmptyLogs();
+    }
 
     public function logs()
     {

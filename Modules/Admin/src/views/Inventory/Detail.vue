@@ -170,6 +170,15 @@
             <a-tab-pane key="1" tab="General">
               <a-row :gutter="20">
                 <a-col :span="24">
+                  <a-form-item label="Note for this change" name="log_detail" :rules="[{ required: true, message: 'Please enter note!' }]" v-if="formState.id > 0">
+                    <a-textarea class="!rounded-none w-full" v-model:value="formState.log_detail"
+                                placeholder="Make a note of any changes you make to the doctor record"
+                                :auto-size="{ minRows: 2, maxRows: 10 }"/>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+              <a-row :gutter="20">
+                <a-col :span="24">
                   <a-form-item label="Type" name="type" :rules="[{ required: true, message: 'Select a type!' }]">
                     <a-radio-group v-model:value="formState.type" button-style="solid" size="middle">
                       <a-radio-button value="in">In</a-radio-button>

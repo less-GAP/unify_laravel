@@ -5,6 +5,8 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Inventories extends Model
 {
@@ -14,7 +16,7 @@ class Inventories extends Model
      *
      * @var array<int, string>
      */
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'inventories';
 
@@ -75,6 +77,15 @@ class Inventories extends Model
     public function getProductsAttribute()
     {
         return InventoryDetail::where('inventory_id', $this->id)->get();
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->setDescriptionForEvent(fn(string $eventName) => request()->input('log_detail',$eventName))
+            ->dontSubmitEmptyLogs();
     }
 
 }
