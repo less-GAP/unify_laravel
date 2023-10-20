@@ -103,7 +103,7 @@ class DatabaseSeeder extends Seeder
         Permission::findOrCreate('Patient.*');
         Permission::findOrCreate('Patient.filter.seller');
         Permission::findOrCreate('Patient.filter.doctor');
-        Permission::findOrCreate('Patient.list');
+        Permission::findOrCreate('Patient.menu');
         Permission::findOrCreate('Patient.view');
         Permission::findOrCreate('Patient.approve');
         Permission::findOrCreate('Patient.create');
@@ -111,26 +111,26 @@ class DatabaseSeeder extends Seeder
         Permission::findOrCreate('Patient.delete');
 
         Permission::findOrCreate('Doctor.*');
-        Permission::findOrCreate('Doctor.list');
+        Permission::findOrCreate('Doctor.menu');
         Permission::findOrCreate('Doctor.create');
-        Permission::findOrCreate('Doctor.edit');
+        Permission::findOrCreate('Doctor.update');
         Permission::findOrCreate('Doctor.delete');
 
         Permission::findOrCreate('User.*');
-        Permission::findOrCreate('User.list');
+        Permission::findOrCreate('User.menu');
         Permission::findOrCreate('User.create');
-        Permission::findOrCreate('User.edit');
+        Permission::findOrCreate('User.update');
         Permission::findOrCreate('User.delete');
 
         Permission::findOrCreate('Task.*');
-        Permission::findOrCreate('Task.list');
+        Permission::findOrCreate('Task.menu');
         Permission::findOrCreate('Task.create');
         Permission::findOrCreate('Task.assign');
         Permission::findOrCreate('Task.working');
         Permission::findOrCreate('Task.review');
         Permission::findOrCreate('Task.delete');
 
-        Permission::findOrCreate('Log.list');
+        Permission::findOrCreate('Log.menu');
 
         Permission::findOrCreate('File.*');
 
@@ -139,8 +139,8 @@ class DatabaseSeeder extends Seeder
         Permission::findOrCreate('Admin');
 
         // $role_seller->givePermissionTo('post.*');
-        $role_seller->givePermissionTo(['Seller', 'patient.list', 'patient.view', 'patient.create', 'patient.edit', 'task.list', 'task.working', 'file.*']);
-        $role_seller_manager->givePermissionTo('Seller Manager', 'task.*', 'patient.list', 'patient.view', 'patient.delete', 'patient.filter.doctor', 'patient.filter.seller', 'patient.create', 'patient.edit', 'file.*', 'user.*');
+        $role_seller->givePermissionTo(['Seller', 'Patient.menu', 'Patient.view', 'Patient.create', 'Patient.edit', 'Task.menu', 'Task.working', 'File.*']);
+        $role_seller_manager->givePermissionTo('Seller Manager', 'Task.*', 'Patient.menu', 'Patient.view', 'Patient.delete', 'Patient.filter.doctor', 'Patient.filter.seller', 'Patient.create', 'Patient.edit', 'File.*', 'User.*');
         $role_admin->givePermissionTo('*');
 
 
@@ -153,7 +153,119 @@ class DatabaseSeeder extends Seeder
 
         \App\Models\MasterData::factory()->create([
             'list_key' => 'task-status',
-            'data' => json_encode([["label" => "Potential Patient", "value" => "potential_patient", "color" => "#fff", "background_color" => "#5b3286"], ["value" => "insurance_pending", "label" => "Insurance Pending", "color" => "#000", "background_color" => "#c0e1f6"], ["label" => "New Patient", "value" => "new_patient", "color" => "#000", "background_color" => "#e8eaed"], ["label" => "New Supply Request", "value" => "new_supply_request", "color" => "#000", "background_color" => "#d0d2d5"], ["label" => "Urgent", "value" => "urgent", "color" => "#fff", "background_color" => "#b10202"], ["label" => "Pending", "value" => "pending", "color" => "#000", "background_color" => "#ffe59f"], ["background_color" => "#ffe59f", "color" => "#000", "value" => "renewal", "label" => "Renewal"], ["label" => "Code", "value" => "code", "active" => "1", "color" => "#fff", "background_color" => "#116743"], ["label" => "PAR pending", "value" => "par_pending", "active" => "1", "color" => "#000", "background_color" => "#c0e1f6"], ["label" => "PAR", "value" => "par", "active" => "1", "color" => "#fff", "background_color" => "#0953a8"], ["background_color" => "#0953a8", "color" => "#fff", "label" => "Kepro", "value" => "kepro"], ["background_color" => "#0953a8#0953a8", "color" => "#fff", "value" => "pending_kepro", "label" => "Pending Kepro"], ["background_color" => "#ffc8aa", "color" => "#000", "value" => "outbound_document", "label" => "Outbound document"], ["label" => "Review", "value" => "review", "color" => "#fff", "background_color" => "#116743"], ["label" => "Done", "value" => "done", "color" => "#fff", "background_color" => "#116743"], ["value" => "drop_off", "label" => "Dropoff", "color" => "#fff", "background_color" => "#ffad0d"], ["value" => "new_supply_request", "label" => "New Supply Request", "color" => "#000", "background_color" => "#e8eaed"], ["value" => "ready_to_bill", "label" => "Ready to bill", "color" => "#000", "background_color" => "#d4edbb"]]),
+            'data' => json_encode([
+                [
+                    "label" => "Potential Patient",
+                    "value" => "potential_patient",
+                    "color" => "#fff",
+                    "background_color" => "#5b3286"
+                ],
+                [
+                    "value" => "insurance_pending",
+                    "label" => "Insurance Pending",
+                    "color" => "#000",
+                    "background_color" => "#c0e1f6"
+                ],
+                [
+                    "label" => "New Patient",
+                    "value" => "new_patient",
+                    "color" => "#000",
+                    "background_color" => "#e8eaed"
+                ],
+                [
+                    "label" => "New Supply Request",
+                    "value" => "new_supply_request",
+                    "color" => "#000",
+                    "background_color" => "#d0d2d5"
+                ],
+                [
+                    "label" => "Urgent",
+                    "value" => "urgent",
+                    "color" => "#fff",
+                    "background_color" => "#b10202"
+                ],
+                [
+                    "label" => "Pending",
+                    "value" => "pending",
+                    "color" => "#000",
+                    "background_color" => "#ffe59f"
+                ],
+                [
+                    "background_color" => "#ffe59f",
+                    "color" => "#000",
+                    "value" => "renewal",
+                    "label" => "Renewal"
+                ],
+                [
+                    "label" => "Code",
+                    "value" => "code",
+                    "active" => "1",
+                    "color" => "#fff",
+                    "background_color" => "#116743"
+                ],
+                [
+                    "label" => "PAR pending",
+                    "value" => "par_pending",
+                    "active" => "1",
+                    "color" => "#000",
+                    "background_color" => "#c0e1f6"
+                ],
+                [
+                    "label" => "PAR",
+                    "value" => "par",
+                    "active" => "1",
+                    "color" => "#fff",
+                    "background_color" => "#0953a8"
+                ],
+                [
+                    "background_color" => "#0953a8",
+                    "color" => "#fff",
+                    "label" => "Kepro",
+                    "value" => "kepro"
+                ],
+                [
+                    "background_color" => "#0953a8#0953a8",
+                    "color" => "#fff",
+                    "value" => "pending_kepro",
+                    "label" => "Pending Kepro"
+                ],
+                [
+                    "background_color" => "#ffc8aa",
+                    "color" => "#000",
+                    "value" => "outbound_document",
+                    "label" => "Outbound document"
+                ],
+                [
+                    "label" => "Review",
+                    "value" => "review",
+                    "color" => "#fff",
+                    "background_color" => "#116743"
+                ],
+                [
+                    "label" => "Done",
+                    "value" => "done",
+                    "color" => "#fff",
+                    "background_color" => "#116743"
+                ],
+                [
+                    "value" => "drop_off",
+                    "label" => "Dropoff",
+                    "color" => "#fff",
+                    "background_color" => "#ffad0d"
+                ],
+                [
+                    "value" => "new_supply_request",
+                    "label" => "New Supply Request",
+                    "color" => "#000",
+                    "background_color" => "#e8eaed"
+                ],
+                [
+                    "value" => "ready_to_bill",
+                    "label" => "Ready to bill",
+                    "color" => "#000",
+                    "background_color" => "#d4edbb"
+                ]
+            ]),
             'created_by' => 'admin',
         ]);
         \App\Models\MasterData::factory()->create([
