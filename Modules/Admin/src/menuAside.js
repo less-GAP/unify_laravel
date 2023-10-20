@@ -182,6 +182,7 @@ export default [{
     label: "FAQs",
     icon: mdiTooltipQuestion,
     to: "/faqs",
+    disable: true,
   },
   {
     to: null,
