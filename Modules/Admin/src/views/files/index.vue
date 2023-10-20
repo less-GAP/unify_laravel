@@ -1,117 +1,130 @@
 <script setup>
-import {reactive, ref, h} from "vue";
-import {mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, mdiDelete, mdiEye} from "@mdi/js";
-import SectionMain from "@/components/SectionMain.vue";
-import BaseButton from "@/components/BaseButton.vue";
-import BaseButtons from "@/components/BaseButtons.vue";
-import SectionTitle from "@/components/SectionTitle.vue";
-import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
-import {Modal, DataTable, FileManager} from "@/components";
-import {DeleteOutlined} from '@ant-design/icons-vue';
-import { InboxOutlined } from '@ant-design/icons-vue';
-import { message } from 'ant-design-vue';
+  import {reactive, ref, h} from "vue";
+  import {mdiBallotOutline, mdiAccount, mdiMail, mdiGithub, mdiDelete, mdiEye} from "@mdi/js";
+  import SectionMain from "@/components/SectionMain.vue";
+  import BaseButton from "@/components/BaseButton.vue";
+  import BaseButtons from "@/components/BaseButtons.vue";
+  import SectionTitle from "@/components/SectionTitle.vue";
+  import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
+  import {Modal, DataTable, FileManager} from "@/components";
+  import {DeleteOutlined} from '@ant-design/icons-vue';
+  import {InboxOutlined} from '@ant-design/icons-vue';
+  import {message} from 'ant-design-vue';
 
-import Api from "@/utils/Api";
-import router from "@/router";
-import FormUser from "./FormUser.vue";
+  import Api from "@/utils/Api";
+  import router from "@/router";
+  import FormUser from "./FormUser.vue";
 
-const modalState = ref({
-  visible: false,
-  value: null,
-  success: () => {
-  },
-  cancel: () => {
-  },
-});
-
-function showEditUser(value, success) {
-  modalState.value.visible = true;
-  modalState.value.value = value;
-  modalState.value.success = success;
-}
-
-const tableConfig = {
-  api: (params) => Api.get('user/list', {params}),
-  addAction: (reload) => {
-    showEditUser(null, reload)
-  },
-  itemActions: [
-    // {
-    //   label: 'View'
-    //   , key: 'view'
-    //   , icon: mdiEye
-    //   , class: 'font-medium text-blue-600 dark:text-blue-500 hover:underline'
-    //   , action(item, reload) {
-    //     router.replace('/users/' + item.id)
-    //   }
-    // },
-    {
-      label: 'Edit User'
-      , key: 'edit'
-      , class: 'font-medium text-blue-600 dark:text-blue-500 hover:underline'
-      , action(item, reload) {
-        showEditUser(item, reload)
-      }
+  const modalState = ref({
+    visible: false,
+    value: null,
+    success: () => {
     },
-    {
-      label: ''
-      , class: 'font-medium text-red-600 dark:text-red-500 hover:underline'
-      , icon: mdiDelete
-      , key: 'delete'
-      , action(item, reload) {
-        Api.delete('user/' + item.id).then(reload)
-      }
-    }
+    cancel: () => {
+    },
+  });
 
-  ],
-  columns: [
-    {title: 'Username', key: 'username'}
-   , {title: 'Name', key: 'full_name'}
-    , {title: 'Role', key: 'role'}
-    , {title: 'Status', key: 'status'}
-  ],
-  selectionActions: [
-    {
-      title: 'Active',
-      action(selectedKeys) {
-        return Api.post('user/activeList', selectedKeys)
-      }, complete() {
-        alert('success')
-      }
-    }
-    , {
-      title: 'DeActive', action(selectedKeys) {
-        return Api.post('user/activeList', selectedKeys)
-      }, complete() {
-        alert('success')
-      }
-    }
-    , {
-      title: 'Delete',
-      action(selectedKeys) {
-        return Api.post('user/deleteList', selectedKeys)
+  function showEditUser(value, success) {
+    modalState.value.visible = true;
+    modalState.value.value = value;
+    modalState.value.success = success;
+  }
+
+  const tableConfig = {
+    api: (params) => Api.get('user/list', {params}),
+    addAction: (reload) => {
+      showEditUser(null, reload)
+    },
+    itemActions: [
+      // {
+      //   label: 'View'
+      //   , key: 'view'
+      //   , icon: mdiEye
+      //   , class: 'font-medium text-blue-600 dark:text-blue-500 hover:underline'
+      //   , action(item, reload) {
+      //     router.replace('/users/' + item.id)
+      //   }
+      // },
+      {
+        label: 'Edit User'
+        , key: 'edit'
+        , class: 'font-medium text-blue-600 dark:text-blue-500 hover:underline'
+        , action(item, reload) {
+          showEditUser(item, reload)
+        }
       },
-      complete() {
-        alert('success')
+      {
+        label: ''
+        , class: 'font-medium text-red-600 dark:text-red-500 hover:underline'
+        , icon: mdiDelete
+        , key: 'delete'
+        , action(item, reload) {
+          Api.delete('user/' + item.id).then(reload)
+        }
       }
+
+    ],
+    columns: [
+      {
+        title: 'Username',
+        key: 'username'
+      },
+      {
+        title: 'Name',
+        key: 'full_name'
+      },
+      {
+        title: 'Role',
+        key: 'role'
+      },
+      {
+        title: 'Status',
+        key: 'status'
+      }
+    ],
+    selectionActions: [
+      {
+        title: 'Active',
+        action(selectedKeys) {
+          return Api.post('user/activeList', selectedKeys)
+        }, complete() {
+          alert('success')
+        }
+      },
+      {
+        title: 'DeActive', action(selectedKeys) {
+          return Api.post('user/activeList', selectedKeys)
+        }, complete() {
+          alert('success')
+        }
+      },
+      {
+        title: 'Delete',
+        action(selectedKeys) {
+          return Api.post('user/deleteList', selectedKeys)
+        },
+        complete() {
+          alert('success')
+        }
+      }
+    ]
+  }
+  const fileList = ref([]);
+  const handleChange = (info) => {
+    const status = info.file.status;
+    if (status !== 'uploading') {
+      console.log(info.file, info.fileList);
     }
-  ]
-}
-const fileList = ref([]);
-const handleChange = (info) => {
-  const status = info.file.status;
-  if (status !== 'uploading') {
-    console.log(info.file, info.fileList);
+    if (status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully.`);
+    } else if (status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  };
+
+  function handleDrop(e) {
+    console.log(e);
   }
-  if (status === 'done') {
-    message.success(`${info.file.name} file uploaded successfully.`);
-  } else if (status === 'error') {
-    message.error(`${info.file.name} file upload failed.`);
-  }
-};
-function handleDrop(e) {
-  console.log(e);
-}
 </script>
 
 <template>

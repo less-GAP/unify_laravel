@@ -205,6 +205,7 @@ export default [{
     label: "Template",
     icon: mdiPaletteSwatch,
     to: "/email/templates",
+    disable: true,
     // menu: [
     //   {
     //     to: "/email/templates",

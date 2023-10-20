@@ -24,10 +24,17 @@ class DatabaseSeeder extends Seeder
         \App\Models\User::truncate();
         \App\Models\Patient::truncate();
         \App\Models\MasterData::truncate();
+        \App\Models\Doctor::truncate();
+        \App\Models\Patient::truncate();
+        \App\Models\Trademark::truncate();
+        \App\Models\Supplier::truncate();
+        \App\Models\Product::truncate();
+        \App\Models\Inventories::truncate();
+        \App\Models\InventoryDetail::truncate();
         Role::truncate();
         Permission::truncate();
         \App\Models\Customer::truncate();
-        \App\Models\Customer::factory()->count(10)->create();
+        //\App\Models\Customer::factory()->count(10)->create();
         $admin = \App\Models\User::factory()->create([
             'full_name' => 'Admin',
             'username' => 'admin',
@@ -132,8 +139,8 @@ class DatabaseSeeder extends Seeder
         Permission::findOrCreate('Admin');
 
         // $role_seller->givePermissionTo('post.*');
-        $role_seller->givePermissionTo(['Seller', 'patient.list','patient.view', 'patient.create', 'patient.edit', 'task.list', 'task.working', 'file.*']);
-        $role_seller_manager->givePermissionTo('Seller Manager', 'task.*', 'patient.list','patient.view', 'patient.delete', 'patient.filter.doctor', 'patient.filter.seller', 'patient.create', 'patient.edit', 'file.*', 'user.*');
+        $role_seller->givePermissionTo(['Seller', 'patient.list', 'patient.view', 'patient.create', 'patient.edit', 'task.list', 'task.working', 'file.*']);
+        $role_seller_manager->givePermissionTo('Seller Manager', 'task.*', 'patient.list', 'patient.view', 'patient.delete', 'patient.filter.doctor', 'patient.filter.seller', 'patient.create', 'patient.edit', 'file.*', 'user.*');
         $role_admin->givePermissionTo('*');
 
 
