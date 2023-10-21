@@ -202,7 +202,7 @@
             </a-col>
           </a-row>
         </a-tab-pane>
-        <a-tab-pane key="3" tab="Inventories">
+        <a-tab-pane key="3" tab="Inventories" v-if="false">
 
         </a-tab-pane>
       </a-tabs>

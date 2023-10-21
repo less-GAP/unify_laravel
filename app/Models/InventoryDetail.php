@@ -28,7 +28,8 @@ class InventoryDetail extends Model
         'expiration_date',
         'used',
         'remaining',
-        'order_id'
+        'order_id',
+        'type'
     ];
 
     /**

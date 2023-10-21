@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -31,7 +32,8 @@ class Inventories extends Model
         'file',
         'status',
         'description',
-        'order_id'
+        'order_id',
+        'code'
     ];
 
     /**
@@ -84,7 +86,7 @@ class Inventories extends Model
         return LogOptions::defaults()
             ->logAll()
             ->logOnlyDirty()
-            ->setDescriptionForEvent(fn(string $eventName) => request()->input('log_detail',$eventName))
+            ->setDescriptionForEvent(fn(string $eventName) => request()->input('log_detail', $eventName))
             ->dontSubmitEmptyLogs();
     }
 

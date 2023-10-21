@@ -35,6 +35,7 @@ return new class extends Migration {
             $table->integer('used')->default(0);
             $table->integer('remaining')->default(0);
             $table->integer('order_id')->nullable();
+            $table->string('type')->nullable();
             $table->timestamps();
         });
     }

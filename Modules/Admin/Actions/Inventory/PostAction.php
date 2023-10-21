@@ -33,13 +33,14 @@ class PostAction
                             'expiration_date' => $v['expiration_date'],
                             'used' => 0,
                             'remaining' => $v['amount'],
-                            'order_id' => null
+                            'order_id' => null,
+                            'type' => $data['type']
                         ];
                         InventoryDetail::create($ins);
                     }
                 }
             }
-            
+
             $output = [
                 'code' => 1,
                 'message' => 'Success!',

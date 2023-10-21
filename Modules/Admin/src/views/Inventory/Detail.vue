@@ -285,7 +285,7 @@
   </a-modal>
 
   <a-modal append-to-body v-model:open="showDetail" :zIndex="10" width="40%" title="Select Product" :closable="true" :footer="null" :maskClosable="false">
-    <ProductList :value="selectProduct" @close="showDetail = false" @select="onSelectProduct"></ProductList>
+    <ProductList :value="selectProduct" @close="showDetail = false" @select="onSelectProduct" :key="selectProduct.id ? selectProduct : 0"></ProductList>
   </a-modal>
 </template>
 

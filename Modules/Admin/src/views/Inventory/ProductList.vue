@@ -111,13 +111,12 @@
         formState.value.trademark = option;
       };
 
-      watch(
-        () => props.value,
-        (value) => {
-          formState.value = props.value;
-        },
-        {deep: true},
-      );
+      onMounted(() => {
+        //console.log(props.value)
+        formState.value = props.value;
+      });
+
+
 
       return {
         loading,

@@ -73,7 +73,6 @@ class Product extends Model
 
     public function getInventoryAttribute()
     {
-        return 0;
-        //return Inventories::where('product_id', $this->id)->where('type', 'in')->sum('amount') - Inventories::where('product_id', $this->id)->where('type', 'out')->sum('amount');
+        return InventoryDetail::where('product_id', $this->id)->where('type', 'in')->sum('amount') - InventoryDetail::where('product_id', $this->id)->where('type', 'out')->sum('amount');
     }
 }
