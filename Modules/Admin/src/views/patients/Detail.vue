@@ -416,6 +416,8 @@
               </a-col>
             </a-row>
           </a-tab-pane>
+          <a-tab-pane key="5" tab="Products">
+          </a-tab-pane>
         </a-tabs>
       </div>
       <a-input v-model:value="formState.unify_process" name="unify_process" type="hidden"></a-input>
