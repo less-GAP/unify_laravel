@@ -78,7 +78,6 @@ class Patient extends Model
     ];
 
 
-
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -108,9 +107,11 @@ class Patient extends Model
         parent::boot();
 
         static::creating(function ($patient) {
-            // Generate a unique 6-digit number starting from 100000
-            $nextUnifyNumber = self::getNextUnifyNumber();
-            $patient->unify_number = $nextUnifyNumber;
+            if ($patient->unify_number == '') {
+                // Generate a unique 6-digit number starting from 100000
+                $nextUnifyNumber = self::getNextUnifyNumber();
+                $patient->unify_number = $nextUnifyNumber;
+            }
         });
     }
 
@@ -140,7 +141,7 @@ class Patient extends Model
     public function notificationData()
     {
         return [
-            'by_user'=>\App\Models\User::find($this->update_ted)
+            'by_user' => \App\Models\User::find($this->update_ted)
         ];
     }
 
@@ -178,8 +179,8 @@ class Patient extends Model
 
     public function getDoctorAttribute()
     {
-        if($this->doctor_id != ''){
-            return Doctor::where('id',$this->doctor_id)->first();
+        if ($this->doctor_id != '') {
+            return Doctor::where('id', $this->doctor_id)->first();
         }
         return '';
     }

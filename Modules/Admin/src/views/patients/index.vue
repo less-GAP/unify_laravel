@@ -1,24 +1,26 @@
 <script setup>
-import router from "@/router";
-import SectionMain from "@/components/SectionMain.vue";
-import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
-import dayjs from "dayjs";
-import {h, watch, onDeactivated} from "vue";
-import {useAuthStore} from "@/stores/auth";
-import {DataTablePatient} from "@/components";
-import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
-import {UseDataTable} from "@/utils/UseDataTable";
-import {DeleteOutlined} from "@ant-design/icons-vue";
-import {
-  mdiGenderMale,
-  mdiGenderFemale,
-  mdiCalendarCheckOutline,
-  mdiHistory,
-  mdiCheckOutline,
-  mdiPencil,
-  mdiAlertCircle,
-} from "@mdi/js";
-import {BaseIcon} from "@/components";
+  import router from "@/router";
+  import SectionMain from "@/components/SectionMain.vue";
+  import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
+  import dayjs from "dayjs";
+  import {h, watch, onDeactivated, ref} from "vue";
+  import {useAuthStore} from "@/stores/auth";
+  import {DataTablePatient} from "@/components";
+  import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
+  import {UseDataTable} from "@/utils/UseDataTable";
+  import {DeleteOutlined} from "@ant-design/icons-vue";
+  import {
+    mdiGenderMale,
+    mdiGenderFemale,
+    mdiCalendarCheckOutline,
+    mdiHistory,
+    mdiCheckOutline,
+    mdiPencil,
+    mdiAlertCircle,
+  } from "@mdi/js";
+  import {BaseIcon} from "@/components";
+
+  import Detail from './Detail.vue'
 
   const prefix = "patient";
   const version_key = 'patients';
@@ -27,109 +29,8 @@ import {BaseIcon} from "@/components";
   const auth = useAuthStore();
 
   var item = {};
-  const itemActions = [
-    {
-      label: "Edit",
-      key: "edit",
-      show: (item) => {
-        return true;
-      },
-      action: (item) => {
-        router.replace(prefix + "/" + item.id + "/edit");
-      },
-    },
-    {
-      label: "Approve Patient",
-      key: "editProcess",
-      show: (item) => {
-        return true;
-      },
-      action: (item) => {
-        router.replace(prefix + "/" + item.id + "/process");
-      },
-    },
-    {
-      label: "Task",
-      key: "addTask",
-      show: (item) => {
-        return true;
-      },
-      action: (item) => {
-        router.replace(prefix + "/" + item.id + "/task");
-      },
-    },
-    {
-      label: "History",
-      key: "history",
-      show: (item) => {
-        return true;
-      },
-      action: (item) => {
-        router.replace(prefix + "/" + item.id + "/history");
-      },
-    },
-  ];
-  const listActions = [
-    {
-      label: "Add",
-      permission: auth.hasPermission("patient.create"),
-      action: (item) => {
-        router.replace(prefix + "/new");
-      },
-    },
-  ];
-  const columns = [
-    {
-      title: "",
-      key: "status",
-      width: 30,
-    },
-    {
-      title: "Number",
-      key: "unify_number",
-      width: 70,
-    },
-    {
-      title: "Patient",
-      key: "full_name",
-      width: "",
-    },
-    {
-      title: "STATUS",
-      key: "unify_status",
-      width: 100,
-    },
-    {
-      title: "Task Status",
-      key: "unify_task_status",
-      width: 125,
-    },
-    {
-      title: "DOB",
-      key: "dob",
-      width: 100,
-    },
-    {
-      title: "Doctor",
-      key: "doctor_id",
-      width: 200,
-    },
-    {
-      title: "INFO",
-      key: "info",
-      width: 400,
-    },
-    {
-      title: "CREATED AT",
-      key: "created_at",
-      width: 130,
-    },
-    {
-      title: "Assigned",
-      key: "assigned",
-      width: 120,
-    },
-  ];
+  const openDetail = ref(false);
+  const patientDetail = ref({});
 
   const customFormat = "MM-DD-YYYY";
   const dbFormat = "YYYY-MM-DD"; // format of datepicker
@@ -142,10 +43,11 @@ import {BaseIcon} from "@/components";
       ? "(" + dayjs().diff(dayjs(item.dob, dbFormat), "year") + " years old)"
       : "-";
   };
+
   const tableConfig = UseDataTable(fetchListApi, {
-    columns,
     versionKey: version_key,
     showSelection: false,
+    showReload: true,
     showSort: [
       {
         label: "Latest",
@@ -164,12 +66,116 @@ import {BaseIcon} from "@/components";
         value: "-updated_at",
       },
     ],
-    listActions,
-    itemActions,
+    columns: [
+      {
+        title: "",
+        key: "status",
+        width: 30,
+      },
+      {
+        title: "Number",
+        key: "unify_number",
+        width: 70,
+      },
+      {
+        title: "Patient",
+        key: "full_name",
+        width: "",
+      },
+      {
+        title: "STATUS",
+        key: "unify_status",
+        width: 100,
+      },
+      {
+        title: "Task Status",
+        key: "unify_task_status",
+        width: 125,
+      },
+      {
+        title: "DOB",
+        key: "dob",
+        width: 100,
+      },
+      {
+        title: "Doctor",
+        key: "doctor_id",
+        width: 200,
+      },
+      {
+        title: "INFO",
+        key: "info",
+        width: 400,
+      },
+      {
+        title: "CREATED AT",
+        key: "created_at",
+        width: 130,
+      },
+      {
+        title: "Assigned",
+        key: "assigned",
+        width: 120,
+      },
+    ],
+    addAction: {
+      action: (reload) => {
+        //showEditUser({}, reload)
+        router.push(prefix + "/0");
+      },
+      ifShow: auth.hasPermission('Patient.create')
+    },
+    listActions: [],
+    itemActions: [
+      {
+        label: "Edit",
+        key: "edit",
+        show: (item) => {
+          return true;
+        },
+        action: (item) => {
+          router.push(prefix + "/" + item.id);
+        },
+      },
+      {
+        label: "Approve Patient",
+        key: "editProcess",
+        show: (item) => {
+          return true;
+        },
+        action: (item) => {
+          router.replace(prefix + "/" + item.id + "/process");
+        },
+      },
+      {
+        label: "Task",
+        key: "addTask",
+        show: (item) => {
+          return true;
+        },
+        action: (item) => {
+          router.replace(prefix + "/" + item.id + "/task");
+        },
+      },
+      {
+        label: "History",
+        key: "history",
+        show: (item) => {
+          return true;
+        },
+        action: (item) => {
+          router.replace(prefix + "/" + item.id + "/history");
+        },
+      },
+    ],
   });
 
-let reloadTable = () => {
-};
+  let reloadTable = () => {
+  };
+
+  const closeDetail = () => {
+    openDetail.value = false;
+  }
 
 </script>
 
@@ -181,7 +187,7 @@ let reloadTable = () => {
           <h2>Patient List</h2>
         </template>
         <template #cellAction[edit]="{ item, actionMethod }">
-          <a-tooltip title="Edit" class="mr-1" v-if=" auth.hasPermission('patient.edit')">
+          <a-tooltip title="Edit" class="mr-1" v-if=" auth.hasPermission('Patient.update')">
             <a-button
               class="justify-center !flex !p-1 !h-auto"
               :class="auth.hasPermission('patient.edit')  ? '' : '!bg-gray-300 opacity-50'"
@@ -203,7 +209,7 @@ let reloadTable = () => {
           </a-tooltip>
         </template>
         <template #cellAction[addTask]="{ item, actionMethod }">
-          <a-tooltip title="View Task" class="mr-1" v-if="auth.hasPermission('task.list')">
+          <a-tooltip title="View Task" class="mr-1" v-if="auth.hasPermission('Task.list')">
             <a-button
               class="justify-center !flex !p-1 !h-auto"
               :disabled="auth.hasPermission('task.list') ? false : true"
@@ -215,7 +221,7 @@ let reloadTable = () => {
           </a-tooltip>
         </template>
         <template #cellAction[history]="{ item, actionMethod }">
-          <a-tooltip title="View History" v-if="auth.hasPermission('patient.history')">
+          <a-tooltip title="View History" v-if="auth.hasPermission('Patient.history')">
             <a-button
               class="justify-center !flex !p-1 !h-auto"
               :class="auth.hasPermission('patient.history') ? '': '!bg-gray-300 opacity-50'"
@@ -265,7 +271,6 @@ let reloadTable = () => {
               :path="mdiGenderFemale"
               class="flex-none text-pink-600"
             />
-
             <span class="pl-1">
               <a
                 @click="auth.hasPermission('patient.view') ? router.push('patient/' + item.id + '/detail') : 'javascript:void(0)'"
@@ -303,25 +308,26 @@ let reloadTable = () => {
           <a-tag v-else-if="item.unify_process === 0" color="yellow">Waiting</a-tag>
           <a-tag v-else-if="item.unify_process === 1" color="orange"
           >Eligibility Check
-          </a-tag
-          >
+          </a-tag>
           <a-tag v-else-if="item.unify_status === 1" color="green">
             <div class="pt-1 leading-none">Active</div>
             <div class="pb-1 leading-none">
               <small>({{dayjs(item.unify_active, "YYYY-MM-DD HH:mm:ss").format("HH:mm MM-DD-YYYY" )}})</small>
             </div>
           </a-tag>
-          <a-tag v-else-if="item.unify_status === 2" color="gray"
-          >Inactive
-          </a-tag
-          >
-          <a-tag v-else-if="item.unify_status === 3" color="gray"
-          >Decease
-          </a-tag
-          >
+          <a-tag v-else-if="item.unify_status === 2" color="gray">
+            Inactive
+          </a-tag>
+          <a-tag v-else-if="item.unify_status === 3" color="gray">
+            Decease
+          </a-tag>
         </template>
       </DataTablePatient>
       <router-view></router-view>
     </SectionMain>
   </LayoutAuthenticated>
+  <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;"
+            @close="closeDetail" :open="openDetail" width="90vw">
+    <Detail :value="patientDetail" :key="patientDetail.id ?? 0"/>
+  </a-drawer>
 </template>

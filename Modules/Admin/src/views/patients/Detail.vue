@@ -1,373 +1,443 @@
 <script lang="ts" setup>
-import { reactive, h, ref, toRaw, computed } from "vue";
-import { useMainStore } from "@/stores/main";
-import router from "@/router";
-import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
-import Api from "@/utils/Api";
-import { mdiGenderMale, mdiGenderFemale, mdiFolderMultipleImage, mdiPill, mdiMedicalBag, mdiNoteText, mdiBagPersonal, mdiCheckAll, mdiCancel, mdiAlertCircle } from '@mdi/js';
-import { BaseIcon } from "@/components";
-import 'jodit/es5/jodit.css';
-import dayjs from 'dayjs';
-import { mdiBackspace } from "@mdi/js";
-import SectionMain from "@/components/SectionMain.vue";
-import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
-import {
+  import {reactive, h, ref, toRaw, computed, watch} from "vue";
+  import {mdiBackspace, mdiContentSave, mdiAccountArrowUp, mdiTrashCanOutline} from '@mdi/js';
+  import {BaseIcon, InputUpload} from "@/components";
+  import {ApiData} from "@/components";
+  import {notification} from "ant-design-vue";
+  import router from "@/router";
+  import {useAuthStore} from "@/stores/auth";
+  import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
+  import {getProcess} from "@/utils/Patient";
+  import InsuranceListEdit from "@/components/InsuranceListEdit.vue";
+  import dayjs from 'dayjs';
+  import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
+  import Api from "@/utils/Api";
+
+  import {
     fetchListInsurancesApi,
-    fetchListDoctorStatusApi
-} from "@/utils/Patient";
+    fetchListDoctorsApi,
+    fetchListDoctorStatusApi,
+  } from "@/utils/Patient";
+  import listStates from "@/utils/States";
 
-const prefix = "patient";
-const { fetchDetailApi } = UseEloquentRouter(prefix);
+  const prefix = 'patient'
+  const {
+    fetchDetailApi,
+    createApi,
+    updateApi,
+  } = UseEloquentRouter(prefix)
 
-const customFormat = 'MM-DD-YYYY';
-const dbFormat = "YYYY-MM-DD"; // format of datepicker
+  const listInsurances = fetchListInsurancesApi();
+  const listDoctors = ref([]);
+  const listDoctorStatus = fetchListDoctorStatusApi();
+  const loading = ref(false);
+  const auth = useAuthStore();
+  const currentRoute = router.currentRoute.value;
 
-const dob_value = (item) => {
-    return item.dob ? dayjs(item.dob, dbFormat).format(customFormat) : '-';
-};
-
-const age = (item) => {
-    return item.dob ? '(' + dayjs().diff(dayjs(item.dob, dbFormat), 'year') + ' years old)' : '-';
-};
-
-const formatDateTime = (datetime) => {
-    return datetime ? dayjs(datetime, 'YYYY-MM-DD HH:mm:ss').format('HH:mm MM-DD-YYYY') : '-';
-};
-
-const listInsurances = ref([]);
-const doctorObj = ref([]);
-const listUploadFiles = ref([]);
-const formState = reactive({})
-const loading = ref(false);
-const doctorStatusObj = ref([]);
-
-const fetch = async function () {
-    loading.value = true;
-    var id = router.currentRoute.value.params.id;
-    const rsInsurances = await fetchListInsurancesApi();
-    listInsurances.value = rsInsurances;
-    const rs = await fetchDetailApi(id);
-    const data = rs.data;
-    if (data.status == 200) {
-        if (data.data.insurance_coverages && data.data.insurance_coverages.length > 0) {
-            data.data.insurance_coverages = JSON.parse(data.data.insurance_coverages);
-            data.data.insurance_coverages.map((item) => {
-                return listInsurances.value.find((insurance) => {
-                    if (insurance.value === item.coverage) {
-                        item.coverage = insurance.label;
-                    }
-                });
-            });
-        }
-        Object.assign(formState, data.data)
-        if (formState.doctor_status != undefined) {
-            doctorStatusObj.value = fetchListDoctorStatusApi().find(item => item.value === formState.doctor_status);
-        }
-        if (formState.sale_user) {
-            Api.get(`user/${formState.sale_user}`).then((res) => {
-                if (res.status === 200) {
-                    formState.sale_user_object = res.data.full_name;
-                }
-            });
-        }
-        if (formState.doctor_id) {
-            Api.get(`doctor/${formState.doctor_id}`).then((res) => {
-                if (res.status === 200) {
-                    doctorObj.value = res.data;
-                }
-            });
-        }
-        if (formState.signature) {
-            listUploadFiles.value.push({
-                alt: 'Signature',
-                site_path: formState.signature
-            });
-        }
-        
-        if (formState.images) {
-            listUploadFiles.value.push(...formState.images);
-        }
-
-        loading.value = false
-    } else {
-        loading.value = false
-        router.replace(prefix)
+  const genderList = [
+    {
+      value: 0,
+      label: 'Male'
+    },
+    {
+      value: 1,
+      label: 'Female'
     }
-}
-fetch();
+  ];
+
+  const formRef = ref();
+
+  const formState = ref({});
+
+  const current = ref<number>(0);
+
+  const fetch = async function () {
+    loading.value = true;
+    var nameRoute = currentRoute.name;
+    var id = currentRoute.params.id;
+    listDoctors.value = await fetchListDoctorsApi();
+    if (id > 0) {
+      loading.value = true
+      var response = await fetchDetailApi(id)
+      if (response.data.status === 200) {
+        //prepare data
+        const data = response.data.data
+        data.insurance_coverages = JSON.parse(data.insurance_coverages);
+        formState.value = data;
+        //Object.assign(formState, data)
+        loading.value = false
+      } else {
+        notification.error({
+          message: "Error",
+          description: response.data.message,
+        });
+        setTimeout(() => {
+          router.replace({path: '/' + prefix})
+        }, 3000);
+      }
+    } else {
+      formState.sale_user = auth.user.id;
+      formState.unify_process = 0;
+      loading.value = false
+    }
+  }
+  fetch();
+
+
+  const submit = (status) => {
+    formRef.value
+      .validate()
+      .then(() => {
+        if (formState.value.unify_status > 1) { // die or inactive => to archive
+          formState.value.unify_inactive_at = dayjs().format('YYYY-MM-DD HH:mm:ss');
+        }
+        const new_insurance_coverages = formState.value.insurance_coverages;
+        var insurance_coverages = ref([]);
+        if (formState.value.insurance_coverages) {
+          formState.value.insurance_coverages.forEach((element, index) => {
+            insurance_coverages.value.push({
+              coverage: element.coverage,
+              insurance_id: element.insurance_id,
+              active_date: element.active_date,
+              expired_date: element.expired_date,
+            });
+          });
+        }
+        if (insurance_coverages.value.length) {
+          formState.insurance_coverages = JSON.stringify(toRaw(insurance_coverages.value))
+        } else {
+          formState.insurance_coverages = null
+        }
+
+        Api.post(prefix, toRaw(formState.value)).then(rs => {
+          if (rs.data.code == 1) {
+            back();
+          }
+        });
+      })
+  };
+  // Submit when seller approve profile from Waiting to Eligibility Check
+  const approval = (step) => {
+    formRef.value
+      .validate()
+      .then(() => {
+        const new_insurance_coverages = formState.value.insurance_coverages;
+        var insurance_coverages = ref([]);
+        if (formState.value.insurance_coverages) {
+          formState.value.insurance_coverages.forEach((element, index) => {
+            insurance_coverages.value.push({
+              coverage: element.coverage,
+              insurance_id: element.insurance_id,
+              active_date: element.active_date,
+              expired_date: element.expired_date,
+            });
+          });
+        }
+        if (insurance_coverages.value.length) {
+          formState.value.insurance_coverages = JSON.stringify(toRaw(insurance_coverages.value))
+        } else {
+          formState.value.insurance_coverages = null
+        }
+
+        if (step == 'eligibility_check') {
+          formState.value.unify_process = 1;
+        }
+
+        Api.post(prefix, toRaw(formState.value)).then(rs => {
+          if (rs.data.code == 1) {
+            back();
+          }
+        });
+      })
+  };
+
+
+  const back = () => {
+    router.push('/' + prefix);
+  };
 
 </script>
 
 <template>
-    <LayoutAuthenticated>
-        <SectionMain>
-
-            <div class="p-5">
-                <a-button class="!hidden md:!inline-block" type="link" @click="router.back()">
-                    <template #icon>
-                        <div class="flex">
-                            <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500" />
-                            <span class="ml-1 text-stone-500">Back</span>
-                        </div>
+  <LayoutAuthenticated>
+    <div class="mx-4">
+      <div class="mb-5 bg-gray-100" v-if="formState.id > 0">
+        <a-steps
+          v-model:current="current"
+          type="navigation"
+          size="small"
+          :items="[
+        {
+          title: 'Waiting',
+          description: '',
+        },
+        {
+          title: 'Eligibility Check',
+          description: '',
+          disabled: true
+        },
+        {
+          title: 'Running',
+          description: '',
+          disabled: true
+        },
+        {
+          title: 'Finshed',
+          description: '',
+          disabled: true
+        },
+      ]">
+        </a-steps>
+      </div>
+    </div>
+    <a-form layout="vertical" ref="formRef" :model="formState" @finish="submit">
+      <div class="mx-4">
+        <a-tabs v-model:activeKey="activeKey" @change="tabActive">
+          <a-tab-pane key="1" tab="General">
+            <a-row :gutter="20">
+              <a-col :span="12">
+                <a-form-item label="Note for this change" name="log_detail"
+                             :rules="[{ required: true }]" v-if="formState.id > 0">
+                  <a-textarea class="!rounded-none w-full" v-model:value="formState.log_detail"
+                              placeholder="Make a note of any changes you make to the patient record"
+                              :auto-size="{ minRows: 2, maxRows: 10 }"/>
+                </a-form-item>
+              </a-col>
+              <a-col :span="6">
+                <a-form-item label="Task Status" v-if="formState.id > 0">
+                  <ApiData url="master-data/task-status" method="GET" :params="{}">
+                    <template #default="{ data }">
+                      <a-select class="w-[200px]" v-model:value="formState.unify_task_status"
+                                placeholder="Select status for profile">
+                        <template v-for="(value, key) in JSON.parse(data.data)" :key="key">
+                          <a-select-option :value="value.value" :style="'color:'+value.color+';background-color:'+value.background_color">{{value.label}}</a-select-option>
+                        </template>
+                      </a-select>
                     </template>
-                </a-button>
-                <a-breadcrumb>
-                    <a-breadcrumb-item>Patients</a-breadcrumb-item>
-                    <a-breadcrumb-item>Detail</a-breadcrumb-item>
-                </a-breadcrumb>
-                <h1 class="flex items-center justify-between mb-3">
-                    <div class="flex items-center mb-3">
-                        <BaseIcon :path="mdiAlertCircle" class="flex-none mr-1 text-red-600 w-7"
-                            v-if="formState.need_improve === 0 && formState.unify_status !== 1" />
-                        <span>{{ formState.full_name }}</span>
-                    </div>
-                    <div class="text-gray-400">#{{ formState.unify_number }}</div>
-                </h1>
-                <hr class="my-2">
-            </div>
-
-
-            <div class="p-5 mx-auto">
-                <div class="md:flex no-wrap md:-mx-2 ">
-                    <!-- Left Side -->
-                    <div class="w-full md:w-3/12 md:mx-2">
-                        <!-- Profile Card -->
-                        <ul class="p-5 text-gray-600 bg-white divide-y rounded-lg shadow hover:text-gray-700 hover:shadow">
-                            <li class="flex items-center py-3">
-                                <span>Status</span>
-                                <span class="ml-auto">
-                                    <a-tag v-if="formState.unify_process === 0" color="yellow">Waiting</a-tag>
-                                    <a-tag v-else-if="formState.unify_process === 1" color="orange">Eligibility
-                                        Check</a-tag>
-                                    <a-tag v-else-if="formState.unify_status === 1" color="green">
-                                        <div class="pt-1 leading-none">Active</div>
-                                        <div class="pb-1 leading-none">
-                                            <small>({{
-                                                dayjs(formState.unify_active, "YYYY-MM-DD HH:mm:ss").format(
-                                                    "HH:mm MM-DD-YYYY"
-                                                )
-                                            }})</small>
-                                        </div>
-                                    </a-tag>
-                                    <a-tag v-else-if="formState.unify_status === 2" color="gray">Inactive</a-tag>
-                                    <a-tag v-else-if="formState.unify_status === 3" color="gray">Decease</a-tag>
-                                </span>
-                            </li>
-                            <li class="flex items-center py-3" v-if="formState.unify_status === 1">
-                                <span>Publish date</span>
-                                <span class="ml-auto text-xs">{{ formatDateTime(formState.unify_active) }}</span>
-                            </li>
-                            <li class="flex items-center py-3">
-                                <span>Created date</span>
-                                <span class="ml-auto text-xs">{{ formatDateTime(formState.created_at) }}</span>
-                            </li>
-                            <li class="flex items-center py-3">
-                                <span>Saler</span>
-                                <span class="ml-auto text-xs">{{ formState.sale_user_object }}</span>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- Right Side -->
-                    <div class="w-full h-64 mx-2 md:w-9/12">
-                        <!-- Profile tab -->
-                        <!-- About Section -->
-                        <div class="p-5 text-gray-600 bg-white rounded-lg shadow hover:text-gray-700 hover:shadow">
-                            <div class="grid">
-                                <div class="flex items-center py-2 font-semibold">
-                                    <div clas="text-green-500">
-                                        <BaseIcon :path="mdiNoteText" class="w-6" />
-                                    </div>
-                                    <div class="ml-2">ABOUT</div>
-                                </div>
-                                <div class="mb-5">
-                                    <hr class="my-2">
-                                </div>
-                            </div>
-                            <div class="text-gray-700">
-                                <div class="grid -mx-4 text-sm md:grid-cols-2">
-                                    <div class="grid grid-cols-2 px-4">
-                                        <div class="py-2 font-semibold">First Name</div>
-                                        <div class="py-2">{{ formState.first_name }}</div>
-                                    </div>
-                                    <div class="grid grid-cols-2 px-4">
-                                        <div class="py-2 font-semibold">Last Name</div>
-                                        <div class="py-2">{{ formState.last_name }}</div>
-                                    </div>
-                                    <div class="grid grid-cols-2 px-4">
-                                        <div class="py-2 font-semibold">Gender</div>
-                                        <div class="flex items-center py-2">
-                                            <BaseIcon :path="mdiGenderMale" class="w-6 h-6 mr-1 !text-blue-600"
-                                                v-if="formState.gender === 0" />
-                                            <BaseIcon :path="mdiGenderFemale" class="w-6 h-6 mr-1 text-pink-600"
-                                                v-if="formState.gender === 1" />
-                                            <div>{{ (formState.gender === 1) ? 'Female' : 'Male' }}</div>
-                                        </div>
-                                    </div>
-                                    <div class="grid grid-cols-2 px-4">
-                                        <div class="py-2 font-semibold">Phone</div>
-                                        <div class="py-2">
-                                            <a class="text-blue-800" :href="'tel:' + formState.phone">{{ formState.phone
-                                            }}</a>
-                                        </div>
-                                    </div>
-                                    <div class="grid grid-cols-2 px-4">
-                                        <div class="py-2 font-semibold">Current Address</div>
-                                        <div class="py-2">{{ formState.street }}, {{ formState.city }}, {{ formState.state
-                                        }}, {{ formState.zip }}</div>
-                                    </div>
-                                    <div class="grid grid-cols-2 px-4">
-                                        <div class="py-2 font-semibold">Date of Birth</div>
-                                        <div class="py-2">{{ dob_value(formState) }} <span class="text-xs text-gray-600">{{
-                                            age(formState) }}</span></div>
-                                    </div>
-                                    <div class="grid grid-cols-2 px-4">
-                                        <div class="py-2 font-semibold">Email.</div>
-                                        <div class="py-2">
-                                            <a class="text-blue-800" :href="'mailto:' + formState.email">{{ formState.email
-                                            }}</a>
-                                        </div>
-                                    </div>
-                                    <div class="grid grid-cols-2 px-4">
-                                        <div class="py-2 font-semibold">Weight</div>
-                                        <div class="py-2">{{ formState.weight ? formState.weight : 'N/A' }}</div>
-                                    </div>
-                                    <div class="grid grid-cols-2 px-4">
-                                        <div class="py-2 font-semibold">Height</div>
-                                        <div class="py-2">{{ formState.height ? formState.height : 'N/A' }}</div>
-                                    </div>
-                                    <div class="grid grid-cols-2 px-4">
-                                        <div class="py-2 font-semibold">Note</div>
-                                        <div class="py-2">{{ formState.note ? formState.note : 'N/A' }}</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                        <!-- End of about section -->
-
-                        <div class="my-4"></div>
-
-                        <!-- Experience and education -->
-                        <div class="p-5 text-gray-600 bg-white rounded-lg shadow hover:text-gray-700 hover:shadow">
-
-                            <div class="grid grid-cols-2">
-                                <div>
-                                    <div class="flex items-center mb-3 space-x-2 font-semibold leading-8 text-gray-900">
-                                        <span clas="text-green-500">
-                                            <BaseIcon :path="mdiMedicalBag" class="w-6" />
-                                        </span>
-                                        <span class="tracking-wide">INSURANCE</span>
-                                    </div>
-                                    <ul class="grid grid-cols-2 space-y-2 list-inside">
-                                        <li v-for="item in formState.insurance_coverages" :key="item">
-                                            <div class="">
-                                                <div class="flex items-start">
-                                                    <BaseIcon :path="mdiCheckAll" class="w-6 mr-2 text-teal-600" />
-                                                    <div class="flex flex-col">
-                                                        <h4>Coverage: <span class="text-teal-600">{{ item.coverage }}</span>
-                                                        </h4>
-                                                        <div class="text-base">
-                                                            <div>ID: <span class="text-teal-600">{{ item.insurance_id ??
-                                                                'N/A' }}</span></div>
-                                                            <div>Active date: <span class="text-teal-600">{{
-                                                                item.active_date ?
-                                                                dayjs(item.active_date,
-                                                                    "YYYY-MM-DD").format("MM-DD-YYYY") :
-                                                                'N/A' }}</span></div>
-                                                            <div>Expired date: <span class="text-teal-600">{{
-                                                                item.expired_date ?
-                                                                dayjs(item.expired_date,
-                                                                    "YYYY-MM-DD").format("MM-DD-YYYY") :
-                                                                'N/A' }}</span></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div>
-                                    <div class="flex items-center mb-3 space-x-2 font-semibold leading-8 text-gray-900">
-                                        <span clas="text-green-500">
-                                            <BaseIcon :path="mdiPill" class="w-6" />
-                                        </span>
-                                        <span class="tracking-wide">DOCTOR</span>
-                                    </div>
-                                    <ul class="space-y-2 list-inside">
-                                        <li>
-                                            <div class="text-teal-600">{{ doctorObj.full_name }}</div>
-                                            <div class="text-xs text-gray-500">{{ doctorStatusObj.label }}</div>
-                                        </li>
-                                    </ul>
-                                    <div class="mt-3">
-                                        <a-Divider class="!font-bold !text-gray-700" dashed orientation="left"
-                                            orientation-margin="0" plain>Doctor note</a-Divider>
-                                        <div class="text-sm">{{ formState.doctor_comment }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- End of Experience and education grid -->
-                        </div>
-                        <!-- End of profile tab -->
-
-
-                        <div class="my-4"></div>
-
-                        <!-- Experience and education -->
-                        <div class="p-5 text-gray-600 bg-white rounded-lg shadow hover:text-gray-700 hover:shadow">
-
-                            <div class="grid grid-cols-2">
-                                <div>
-                                    <div class="flex items-center mb-3 space-x-2 font-semibold leading-8 text-gray-900">
-                                        <span clas="text-green-500">
-                                            <BaseIcon :path="mdiBagPersonal" class="w-6" />
-                                        </span>
-                                        <span class="tracking-wide">SUPPLIES</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="my-4"></div>
-
-                        <!-- Experience and education -->
-                        <div class="p-5 text-gray-600 bg-white rounded-lg shadow hover:text-gray-700 hover:shadow">
-                            <div class="flex items-center mb-3 space-x-2 font-semibold leading-8 text-gray-900">
-                                <span clas="text-green-500">
-                                    <BaseIcon :path="mdiFolderMultipleImage" class="w-6" />
-                                </span>
-                                <span class="tracking-wide">FILES</span>
-                            </div>
-                            <div v-if="listUploadFiles.length == 0" class="flex flex-wrap -mx-4">
-                                <div
-                                    class="flex flex-col items-center justify-center w-24 h-24 mx-auto my-2 text-gray-400 bg-gray-100 rounded-lg">
-                                    <BaseIcon :path="mdiFolderMultipleImage" class="w-12" />
-                                    <div class="mt-2 text-sm">No files</div>
-                                </div>
-                            </div>
-                            <div v-else class="flex flex-wrap -mx-4">
-                                <div class="px-4">
-                                    <a-image-preview-group style="width:100%;overflow: auto;gap:8px">
-                                        <template v-for="(file, index) in listUploadFiles" :key="index">
-                                            <a-card shadow="none"
-                                                style="display:inline-block;margin-right:5px;text-align: center;width:200px;height:200px;position:relative">
-                                                <template #cover>
-                                                    <a-image style="width:200px;height:200px;object-fit:contain" :src="$url(file.site_path)"
-                                                        :alt="alt" />
-                                                </template>
-                                            </a-card>
-                                        </template>
-                                    </a-image-preview-group>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="pb-4"></div>
-
-                    </div>
-                </div>
-            </div>
-
-        </SectionMain>
-    </LayoutAuthenticated>
+                  </ApiData>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="20">
+              <a-col :span="6">
+                <a-form-item label="Status"
+                             :rules="[{ required: true }]">
+                  <a-select v-model:value="formState.unify_status" allowClear="" class="w-full" :options="[
+                //   {
+                //   value:0,
+                //   label:'Waiting'
+                // },
+                {
+                  value: 1,
+                  label: 'Active'
+                },
+                {
+                  value: 2,
+                  label: 'Inactive'
+                },
+                {
+                  value: 3,
+                  label: 'Decease'
+                },
+              ]">
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :span="6">
+                <a-form-item label="Publish date" :rules="[{ required: true }]" v-if="formState.unify_status == '1'">
+                  <a-date-picker class="w-full" :showTime="{ format: 'HH:mm' }"
+                                 v-model:value="formState.unify_active"
+                                 valueFormat="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"
+                  ></a-date-picker>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="20">
+              <a-col :span="8">
+                <a-form-item label="ID Number" name="unify_number"
+                             :rules="[{ required: true, message: 'Please enter unify number!' }]">
+                  <a-input v-model:value="formState.unify_number"/>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="First Name" name="first_name"
+                             :rules="[{ required: true, message: 'Please enter first name!' }]">
+                  <a-input v-model:value="formState.first_name"/>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="Last Name" name="last_name"
+                             :rules="[{ required: true, message: 'Please enter last name!' }]">
+                  <a-input v-model:value="formState.last_name"/>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8" v-if="false">
+                <a-form-item label="Full Name" name="full_name"
+                             :rules="[{ required: true, message: 'Please enter full name!' }]">
+                  <a-input v-model:value="formState.full_name" disabled/>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="Date of Birth" name="dob" required>
+                  <a-date-picker v-model:value="formState.dob" valueFormat="YYYY-MM-DD" format="MM-DD-YYYY" inputReadOnly
+                                 class="w-full"></a-date-picker>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="Gender" name="gender" :rules="[{ required: true, message: 'Please enter gender!' }]">
+                  <a-select v-model:value="formState.gender" allowClear="" class="w-full" :options="genderList">
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="Email" name="email" :rules="[{type: 'email', message: 'The input is not valid email!',}]">
+                  <a-input v-model:value="formState.email"></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="Phone" name="phone" :rules="[{ required: true, message: 'Please enter phone!' }]">
+                  <a-input v-model:value="formState.phone" class="w-full"></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item label="Note" name="note">
+                  <a-textarea class="!rounded-none w-full" v-model:value="formState.note"
+                              :auto-size="{ minRows: 2, maxRows: 10 }"/>
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item label="Data" name="unify_data">
+                  <a-textarea class="!rounded-none w-full" v-model:value="formState.unify_data"
+                              :auto-size="{ minRows: 2, maxRows: 10 }"/>
+                </a-form-item>
+              </a-col>
+              <a-col :span="24">
+                <a-form-item label="Gallery" name="unify_data">
+                  <InputUpload :multiple="true" v-model:value="formState.images"></InputUpload>
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-tab-pane>
+          <a-tab-pane key="2" tab="Address">
+            <a-row :gutter="20">
+              <a-col :span="8">
+                <a-form-item label="Street" name="street" :rules="[{ required: true, message: 'Please enter street!' }]">
+                  <a-input v-model:value="formState.street" class="w-full"></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="Apt" name="apt" :rules="[{ message: 'Please enter apt!' }]">
+                  <a-input v-model:value="formState.apt" class="w-full"></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="City" name="city" :rules="[{ required: true, message: 'Please enter city!' }]">
+                  <a-input v-model:value="formState.city" class="w-full"></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="State" name="state" :rules="[{ required: true, message: 'Please enter state!' }]">
+                  <a-select v-model:value="formState.state" allowClear="" class="w-full" showSearch
+                            placeholder="Select a state">
+                    <a-select-option v-for="state in listStates" :key="state.value" :value="state.label">{{ state.label
+                      }} ({{ state.value }})
+                    </a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="Zip" name="zip" :rules="[{ required: true, message: 'Please enter zip!' }]">
+                  <a-input-number v-model:value="formState.zip" class="!w-full"></a-input-number>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="Route" name="route" :rules="[{ message: 'Please enter route!' }]">
+                  <a-input v-model:value="formState.route" class="w-full"></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item label="Sub-r" name="sub_r" :rules="[{ message: 'Please enter sub-r!' }]">
+                  <a-input v-model:value="formState.sub_r" class="w-full"></a-input>
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-tab-pane>
+          <a-tab-pane key="3" tab="Insurance">
+            <a-row :gutter="20">
+              <a-col :span="24">
+                <InsuranceListEdit :columns="[{
+              title: 'Insurance Coverage',
+              dataIndex: 'coverage',
+            }, {
+              title: 'Insurance ID',
+              dataIndex: 'insurance_id'
+            }, {
+              title: 'Active date',
+              dataIndex: 'active_date',
+              type: 'date',
+            }, {
+              title: 'Expired date',
+              dataIndex: 'expired_date',
+              type: 'date',
+            },
+            ]" v-model:value="formState.insurance_coverages">
+                </InsuranceListEdit>
+              </a-col>
+            </a-row>
+          </a-tab-pane>
+          <a-tab-pane key="4" tab="Doctor">
+            <a-row :gutter="20">
+              <a-col :span="12">
+                <a-form-item label="Doctor" name="doctor">
+                  <a-select v-model:value="formState.doctor_id" allowClear="" class="w-full" showSearch
+                            placeholder="Select a doctor">
+                    <a-select-option v-for="(doctor, index) in listDoctors" :key="doctor.value" :value="parseInt(doctor.value)">{{
+                      doctor.label
+                      }}
+                    </a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item label="Doctor status" name="doctor_status">
+                  <a-select v-model:value="formState.doctor_status" allowClear="" class="w-full"
+                            placeholder="Select a status">
+                    <a-select-option v-for="(status, index) in listDoctorStatus" :key="status.value" :value="status.value">{{
+                      status.label
+                      }}
+                    </a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :span="24">
+                <a-form-item label="Doctor note" name="doctor_comment">
+                  <a-input v-model:value="formState.doctor_comment" class="w-full"></a-input>
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-tab-pane>
+        </a-tabs>
+      </div>
+      <a-input v-model:value="formState.unify_process" name="unify_process" type="hidden"></a-input>
+      <a-input v-model:value="formState.sale_user" name="sale_user" type="hidden"></a-input>
+      <a-space align="center" class="pt-5">
+        <a-button
+          v-if="auth.hasPermission('Patient.EligibilityCheckApprove') && formState.unify_process == 0"
+          @click="approval('eligibility_check')" type="primary" class="!bg-green-500 hover:!bg-green-400">
+          Approve
+        </a-button>
+        <a-button type="primary" html-type="submit">Submit</a-button>
+        <a-button type="primary" ghost @click="back()">Back</a-button>
+      </a-space>
+    </a-form>
+  </LayoutAuthenticated>
 </template>
+
+<style>
+  .ant-input {
+    border-color: #d9d9d9 !important;
+    border-radius: 5px !important;
+  }
+
+
+</style>

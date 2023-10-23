@@ -205,7 +205,7 @@ reload(true);
             <DownOutlined/>
           </a-button>
         </a-dropdown>
-        <a-button type="primary" v-if="addAction && addAction.ifShow" @click="()=>{addAction.action(reload)}">Add new</a-button>
+        <a-button type="primary" v-if="addAction && addAction.ifShow" @click="()=>{addAction.action(reload)}">Add</a-button>
       </a-space>
     </div>
     <div class="flex-1 w-full my-2 overflow-auto bg-white rounded-lg shadow scroll-smooth">

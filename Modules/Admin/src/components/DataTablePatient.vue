@@ -70,8 +70,9 @@
       default: [],
     },
     api: Function,
-    addAction: Function,
+    addAction: Object,
   });
+
   const tableConfig = {
     item_key: "id",
     rowSelect: true,
@@ -243,6 +244,7 @@
           }
           ">{{ listAction.label }}
         </a-button>
+        <a-button type="primary" v-if="addAction && addAction.ifShow" @click="()=>{addAction.action(reload)}">Add</a-button>
       </a-space>
     </div>
     <div class="flex-1 w-full my-5 overflow-auto bg-white border border-gray-200 rounded-lg shadow scroll-smooth">

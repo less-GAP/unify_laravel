@@ -127,6 +127,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                 ]
             ]
         )->routes(function () {
+            Route::post('/', \Modules\Admin\Actions\Patient\PostAction::class . '@handle');
             Route::get('/list', \Modules\Admin\Actions\Patient\GetListAction::class . '@handle');
             Route::get('/{id}', \Modules\Admin\Actions\Patient\GetDetailAction::class . '@handle');
         });
