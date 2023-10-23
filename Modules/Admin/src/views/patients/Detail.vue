@@ -12,6 +12,9 @@
   import dayjs from 'dayjs';
   import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
   import Api from "@/utils/Api";
+  import {DeleteOutlined} from "@ant-design/icons-vue";
+
+  import ProductList from "./ProductList.vue";
 
   import {
     fetchListInsurancesApi,
@@ -47,7 +50,9 @@
 
   const formRef = ref();
 
-  const formState = ref({});
+  const formState = ref({
+    products: []
+  });
 
   const current = ref<number>(0);
 
@@ -66,18 +71,20 @@
         formState.value = data;
         //Object.assign(formState, data)
         loading.value = false
+        current.value = formState.value.unify_process;
       } else {
         notification.error({
           message: "Error",
           description: response.data.message,
         });
         setTimeout(() => {
-          router.replace({path: '/' + prefix})
+          back();
         }, 3000);
       }
     } else {
-      formState.sale_user = auth.user.id;
-      formState.unify_process = 0;
+      formState.value.sale_user = auth.user.id;
+      formState.value.unify_process = 0;
+      current.value = 0;
       loading.value = false
     }
   }
@@ -151,6 +158,68 @@
       })
   };
 
+  const showDetail = ref(false);
+
+  const productColumns = ref([
+    {
+      title: '#',
+      dataIndex: 'stt',
+      key: 'stt',
+      width: 50,
+      render: (id, record, index) => {
+        ++index;
+        return index;
+      },
+    },
+    {
+      title: 'Product',
+      dataIndex: 'id',
+      key: 'id',
+    },
+    {
+      title: "Slug",
+      key: "slug",
+    },
+    {
+      title: "Status",
+      key: "status",
+      width: 100,
+    },
+    {
+      title: 'Action',
+      dataIndex: 'action',
+      key: 'action',
+      width: 100
+    },
+  ]);
+
+  const selectProduct = ref({});
+  const onSelectProduct = (item) => {
+    var add = true;
+    formState.value.products.forEach((value, index) => {
+      if (value.id == item.id) {
+        formState.value.products[index] = item;
+        add = false;
+      }
+    });
+    if (add) {
+      formState.value.products.push(item);
+    }
+    showDetail.value = false;
+  }
+
+  const addProduct = () => {
+    selectProduct.value = {};
+    showDetail.value = true;
+  };
+
+  const delProduct = (item) => {
+    formState.value.products.forEach((value, index) => {
+      if (value.id == item.id) {
+        formState.value.products.splice(index, 1);
+      }
+    });
+  };
 
   const back = () => {
     router.push('/' + prefix);
@@ -411,12 +480,52 @@
               </a-col>
               <a-col :span="24">
                 <a-form-item label="Doctor note" name="doctor_comment">
-                  <a-input v-model:value="formState.doctor_comment" class="w-full"></a-input>
+                  <a-textarea class="!rounded-none w-full" v-model:value="formState.doctor_comment"
+                              placeholder="Doctor note"
+                              :auto-size="{ minRows: 2, maxRows: 10 }"/>
                 </a-form-item>
               </a-col>
             </a-row>
           </a-tab-pane>
-          <a-tab-pane key="5" tab="Products">
+          <a-tab-pane key="5" tab="Products" v-if="formState.id > 0">
+            <a-row :gutter="20">
+              <a-col :span="6">
+                <a-form-item label="Delivery date" name="delivery_date" required>
+                  <a-date-picker v-model:value="formState.delivery_date" valueFormat="YYYY-MM-DD" format="MM-DD-YYYY" class="w-full"></a-date-picker>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <div class="flex flex-row justify-end">
+              <a-button @click="addProduct">Add Product</a-button>
+            </div>
+            <div class="mt-5">
+              <a-table :data-source="formState.products" :columns="productColumns" bordered :pagination="false" triped>
+                <template #bodyCell="{ column, record }">
+                  <template v-if="column.key === 'id'">
+                    <div class="flex flex-row items-center">
+                      <img class="w-20 h-auto float-left" :src="record.image_url" :alt="record.name" v-if="record.image_url"/>
+                      <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>
+                      <label class="ml-4 font-semibold">{{record.name}}</label>
+                    </div>
+                  </template>
+
+                  <template v-if="column.key === 'slug'">
+                    /{{ record.slug }}
+                  </template>
+
+                  <template v-if="column.key === 'status'">
+                    <a-tag v-if="record.status == 'A'" color="green">Active</a-tag>
+                    <a-tag v-if="record.status == 'D'" color="green">Inactive</a-tag>
+                  </template>
+                  <template v-if="column.key === 'action'">
+                    <a-popconfirm title="Do you want delete this?" ok-text="Yes" cancel-text="No" @confirm="delProduct(record)">
+                      <a-button type="text" danger :icon="h(DeleteOutlined)" label="" :outline="true">
+                      </a-button>
+                    </a-popconfirm>
+                  </template>
+                </template>
+              </a-table>
+            </div>
           </a-tab-pane>
         </a-tabs>
       </div>
@@ -433,6 +542,11 @@
       </a-space>
     </a-form>
   </LayoutAuthenticated>
+
+  <a-modal append-to-body v-model:open="showDetail" :zIndex="10" width="70%" title="Select Product" :closable="true" :footer="null" :maskClosable="false">
+    <ProductList @close="showDetail = false" @select="onSelectProduct"></ProductList>
+  </a-modal>
+
 </template>
 
 <style>
@@ -440,6 +554,4 @@
     border-color: #d9d9d9 !important;
     border-radius: 5px !important;
   }
-
-
 </style>

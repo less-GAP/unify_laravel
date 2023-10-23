@@ -155,6 +155,14 @@
     showDetail.value = true;
   };
 
+  const delProduct = (item) => {
+    formState.value.products.forEach((value, index) => {
+      if (value.id == item.id) {
+        formState.value.products.splice(index, 1);
+      }
+    });
+  };
+
   const back = () => {
     router.push('/' + prefix);
   };
@@ -258,7 +266,7 @@
                     </template>
                     <template v-if="column.key === 'action'">
                       <a-button type="text" :icon="h(FormOutlined)" label="" :outline="true" @click="edit(record)"></a-button>
-                      <a-popconfirm title="Do you want delete this?" ok-text="Yes" cancel-text="No" @confirm="actionMethod">
+                      <a-popconfirm title="Do you want delete this?" ok-text="Yes" cancel-text="No" @confirm="delProduct(record)">
                         <a-button type="text" danger :icon="h(DeleteOutlined)" label="" :outline="true">
                         </a-button>
                       </a-popconfirm>

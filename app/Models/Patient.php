@@ -65,9 +65,11 @@ class Patient extends Model
         'unify_deleted_by',
         'sale_user',
         'images',
+        'delivery_date'
     ];
     protected $casts = [
         'images' => 'array',
+        'products' => 'array',
     ];
 
 
