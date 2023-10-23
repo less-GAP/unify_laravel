@@ -7,28 +7,28 @@ export default [{
   name: "patient",
   component: () => import("./index.vue"),
   children: [
-  //   {
-  //     meta: {
-  //       title: "Add Patient",
-  //       permission: 'patient.create',
-  //     },
-  //     path: "/patient/new",
-  //     name: "patient-add",
-  //     component: () => import("./Edit.vue"),
-  //   },
-  //   {
-  //     meta: {
-  //       title: "Edit Patient",
-  //       permission: 'patient.edit',
-  //     },
-  //     path: "/patient/:id/edit",
-  //     name: "patient-edit",
-  //     component: () => import("./Edit.vue"),
-  //   },
+    //   {
+    //     meta: {
+    //       title: "Add Patient",
+    //       permission: 'patient.create',
+    //     },
+    //     path: "/patient/new",
+    //     name: "patient-add",
+    //     component: () => import("./Edit.vue"),
+    //   },
+    //   {
+    //     meta: {
+    //       title: "Edit Patient",
+    //       permission: 'patient.edit',
+    //     },
+    //     path: "/patient/:id/edit",
+    //     name: "patient-edit",
+    //     component: () => import("./Edit.vue"),
+    //   },
     {
       meta: {
         title: "Approve Patient",
-        permission: 'patient.approve',
+        permission: 'Patient.approveRunning',
       },
       path: "/patient/:id/process",
       name: "patient-process",
@@ -37,7 +37,7 @@ export default [{
     {
       meta: {
         title: "Patient Tasks",
-        permission: 'task.list',
+        permission: 'Task.menu',
       },
       path: "/patient/:id/task",
       name: "patient-task",
@@ -46,7 +46,7 @@ export default [{
     {
       meta: {
         title: "Patient History",
-        permission: 'patient.history',
+        permission: 'Patient.history',
       },
       path: "/patient/:id/history",
       name: "patient-history",
@@ -62,5 +62,4 @@ export default [{
     name: "patient-detail",
     component: () => import("./Detail.vue"),
   },
-
 ]
