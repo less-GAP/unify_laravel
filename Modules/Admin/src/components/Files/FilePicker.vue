@@ -1,8 +1,8 @@
 <script setup>
-import {computed, ref, h, toRaw} from "vue";
-import {useMainStore} from "@/stores/main";
-import {mdiEye, mdiTrashCan} from "@mdi/js";
-import {Button, Input} from "@/components";
+import { computed, ref, h, toRaw } from "vue";
+import { useMainStore } from "@/stores/main";
+import { mdiEye, mdiTrashCan } from "@mdi/js";
+import { Button, Input } from "@/components";
 import BaseIcon from "@/components/BaseIcon.vue";
 import FileViewDetail from "./FileViewDetail.vue";
 import {
@@ -140,13 +140,13 @@ let uploadTimeout = null
 async function onFilesSelect(option) {
   option.percent = 0
   inProgressFiles.value.push(option)
-  if(uploadTimeout){
+  if (uploadTimeout) {
     clearTimeout(uploadTimeout)
     uploadTimeout = null;
   }
-  uploadTimeout = setTimeout(async ()=>{
+  uploadTimeout = setTimeout(async () => {
     await upload()
-  },200)
+  }, 200)
 
   // inProgressFiles.value.forEach(upload)
 }
@@ -160,7 +160,7 @@ function close() {
 }
 
 function selectFile() {
-    emit('select', toRaw(selectedItems.value))
+  emit('select', toRaw(selectedItems.value))
 }
 
 function addSelectedFile(file) {
@@ -176,6 +176,14 @@ function addSelectedFile(file) {
   fileDetail.value = file
 }
 
+function getFullPath(url) {
+  const host = window.location.host
+  if (host.indexOf('9200') > -1) {
+    return "//" + host.split(':')[0] + ":9100/" + url
+  }
+  return "//" + host + "/" + url
+}
+
 reload()
 </script>
 
@@ -185,8 +193,7 @@ reload()
       <div class="relative text-center overflow-x-auto sm:rounded-lg">
         <div :loading="loading" class="flex items-center justify-between  bg-white dark:bg-gray-800">
           <a-pagination v-if="pagination?.total" :showSizeChanger="showSizeChanger" @change="reload"
-                        v-model:current="pagination.page"
-                        v-model:pageSize="pagination.perPage" :total="pagination.total">
+            v-model:current="pagination.page" v-model:pageSize="pagination.perPage" :total="pagination.total">
             <template #itemRender="{ type, originalElement }">
               <a v-if="type === 'prev'">Previous</a>
               <a v-else-if="type === 'next'">Next</a>
@@ -195,25 +202,12 @@ reload()
           </a-pagination>
           <span>
 
-      </span>
+          </span>
           <a-space>
 
-            <a-input
-              v-if="tableConfig.globalSearch"
-              allow-clear
-              @keyup.enter="reload"
-              style="max-width: 300px"
-              v-model:value="search"
-              placeholder="Enter to search..."
-              :loading="loading"
-            />
-            <a-upload
-              name="file"
-              :showUploadList="false"
-              :max-count="10"
-              multiple="true"
-              :customRequest="onFilesSelect"
-            >
+            <a-input v-if="tableConfig.globalSearch" allow-clear @keyup.enter="reload" style="max-width: 300px"
+              v-model:value="search" placeholder="Enter to search..." :loading="loading" />
+            <a-upload name="file" :showUploadList="false" :max-count="10" multiple="true" :customRequest="onFilesSelect">
               <a-button>
                 <upload-outlined></upload-outlined>
                 Click to Upload
@@ -231,33 +225,24 @@ reload()
         </div>
         <div style="max-height:60vh;overflow:auto" class="mt-12 mb-12 grid grid-cols-4 lg:grid-cols-6  gap-4">
           <div v-for="file in inProgressFiles"
-               class="cursor-pointer border-2 border-gray-100  hover:border-blue-700  h-[150px] mb-5  rounded-lg overflow:hidden">
-            <a-progress type="circle" :percent="file.percent"/>
+            class="cursor-pointer border-2 border-gray-100  hover:border-blue-700  h-[150px] mb-5  rounded-lg overflow:hidden">
+            <a-progress type="circle" :percent="file.percent" />
           </div>
-          <div
-            :class="selectedItems.indexOf(image)!=-1?'!border-blue-700':''"
-            @click="addSelectedFile(image)" v-for="image in tableData.data" :key="image.id"
+          <div :class="selectedItems.indexOf(image) != -1 ? '!border-blue-700' : ''" @click="addSelectedFile(image)"
+            v-for="image in tableData.data" :key="image.id"
             class=" cursor-pointer relative border-2 border-gray-100 hover:border-blue-700 h-[150px]  mb-[50px] rounded-lg overflow:hidden">
-            <a-button size="compact" type="success" v-if="selectedItems.indexOf(image)!=-1"
-                      style="position: absolute;right:2px;top:2px;background:white;color:green"  ghost>
+            <a-button size="compact" type="success" v-if="selectedItems.indexOf(image) != -1"
+              style="position: absolute;right:2px;top:2px;background:white;color:green" ghost>
               <template #icon>
                 <CheckOutlined></CheckOutlined>
               </template>
             </a-button>
 
-            <img
-              v-if="isImageUrl(image.file_url)"
-              style="max-width:auto;max-height:auto"
-              :title="image.file_name"
-              class="h-full object-contain object-center w-full max-w-full "
-              :src="image.file_url"
-            />
-            <div
-              v-else
-              :title="image.file_name"
-              class="h-full flex items-center text-center object-contain object-center w-full max-w-full "
-            >
-              <file-outlined style="margin:0 auto;font-size: 30px"/>
+            <img v-if="isImageUrl(image.file_url)" style="max-width:auto;max-height:auto" :title="image.file_name"
+              class="h-full object-contain object-center w-full max-w-full " :src="getFullPath(image.site_path)" />
+            <div v-else :title="image.file_name"
+              class="h-full flex items-center text-center object-contain object-center w-full max-w-full ">
+              <file-outlined style="margin:0 auto;font-size: 30px" />
             </div>
             <div
               class="absolute whitespace-nowrap text-center overflow-hidden text-ellipsis -bottom-[40px] bg-white w-full pl-2 pr-2 ">
@@ -270,7 +255,7 @@ reload()
 
       </div>
     </a-col>
-    <a-col  flex="400px" v-if="fileDetail">
+    <a-col flex="400px" v-if="fileDetail">
       <FileViewDetail v-if="fileDetail" :value="fileDetail"></FileViewDetail>
     </a-col>
   </a-row>
@@ -283,7 +268,7 @@ reload()
   </a-row>
 </template>
 <style scoped>
-.item-actions > :not(:first-child) {
+.item-actions> :not(:first-child) {
   margin-left: 10px
 }
 </style>
