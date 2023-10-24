@@ -51,7 +51,6 @@ class Patient extends Model
         'route',
         'sub_r',
         'supplies',
-        'products',
         'note',
         'unify_data',
         'doctor_id',
@@ -65,18 +64,17 @@ class Patient extends Model
         'unify_deleted_by',
         'sale_user',
         'images',
-        'delivery_date'
     ];
     protected $casts = [
         'images' => 'array',
-        'products' => 'array',
     ];
 
 
     protected $appends = [
         'seller',
         'is_turn_off',
-        'doctor'
+        'doctor',
+        'products'
     ];
 
 
@@ -186,4 +184,10 @@ class Patient extends Model
         }
         return '';
     }
+
+    public function getProductsAttribute()
+    {
+        return PatientProducts::where('patient_id', $this->id)->get();
+    }
+
 }

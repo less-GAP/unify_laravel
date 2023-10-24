@@ -1,101 +1,67 @@
 <template>
-  <DataTable v-bind="tableConfig" @register="registerTable">
-    <template #cellAction[edit]="{ item, actionMethod }">
-      <a-button type="link" class="!underline" @click="selectProduct(item)">Select</a-button>
-    </template>
-    <template #cell[id]="{ item, column }">
-      <div>{{ item.id }}</div>
-    </template>
-    <template #cell[image]="{ item, column }">
-      <img class="w-20 h-auto float-left" :src="item.image_url" :alt="item.name" v-if="item.image_url"/>
-      <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>
-    </template>
-    <template #cell[slug]="{ item, column }">
-      /{{ item.slug }}
-    </template>
-    <template #cell[status]="{ item, column }">
-      <a-tag v-if="item.status == 'A'" color="green">Active</a-tag>
-      <a-tag v-if="item.status == 'D'" color="green">Inactive</a-tag>
-    </template>
-  </DataTable>
+  <a-form layout="vertical" ref="formRef" :model="formState" @finish="submit" class="w-full">
+    <div class="my-4">
+      <a-row :gutter="20">
+        <a-col :span="24">
+          <a-form-item label="Product" name="product_id" :rules="[{ required: true, message: 'Please input !' }]">
+            <ApiData url="product/all" method="GET" :params="{}">
+              <template #default="{ data }">
+                <a-select class="w-[200px]" v-model:value="formState.product_id"
+                          placeholder="Select product..." option-label-prop="children" @change="changeProduct">
+                  <template v-for="(value, key) in data" :key="key">
+                    <a-select-option :value="value.id" :label="value.name" v-bind="value">
+                      <img :src="value.image_url" class="w-5 h-5 inline-block"/>&nbsp;&nbsp;&nbsp;&nbsp;{{value.name}}
+                    </a-select-option>
+                  </template>
+                </a-select>
+              </template>
+            </ApiData>
+          </a-form-item>
+        </a-col>
+        <a-col :span="24">
+          <a-form-item label="Delivery date" name="delivery_date" :rules="[{ required: true, message: 'Please input !' }]">
+            <a-date-picker
+              v-model:value="formState.delivery_date"
+              input-read-only
+              value-format="YYYY-MM-DD"
+              format="MM-DD-YYYY"
+              class="w-full"
+            ></a-date-picker>
+          </a-form-item>
+        </a-col>
+        <a-col :span="24">
+          <a-form-item label="Amount" name="amount" :rules="[{ required: true, message: 'Please input !' }]">
+            <a-input-number id="inputNumber" v-model:value="formState.amount" :min="0" style="width: 100%"/>
+          </a-form-item>
+        </a-col>
+      </a-row>
+
+      <div class="py-4 flex justify-end">
+        <a-button type="primary" html-type="submit">Submit</a-button>
+        <a-button type="primary" ghost @click="back()" class="ml-4">Back</a-button>
+      </div>
+    </div>
+  </a-form>
 
 </template>
 
 <script lang="ts">
-  import {computed, defineComponent, watch, ref, onMounted, unref, toRaw, h} from 'vue';
+  import {computed, defineComponent, watch, ref, onMounted, unref, toRaw} from 'vue';
   import {isArray, isFunction} from '@/utils/is';
-  import {DragOutlined, DeleteOutlined, PlusOutlined, FormOutlined} from '@ant-design/icons-vue';
+  import {DragOutlined, DeleteOutlined, PlusOutlined} from '@ant-design/icons-vue';
 
-
-  import {DataTable} from "@/components";
-
-  import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
-  import {UseDataTable} from "@/utils/UseDataTable";
+  import {InputUpload, InputUploadGetPath, FilePicker, InputTags, RemoteSelect, BaseIcon, ApiData} from "@/components";
 
   import Api from '@/utils/Api';
   import {notification} from "ant-design-vue";
-  import {mdiDelete} from "@mdi/js";
-
-  const prefix = "product";
-  const {fetchListApi} = UseEloquentRouter(prefix);
-
-  const columns = [
-    {
-      title: "Image",
-      key: "image",
-      width: 100
-    },
-    {
-      title: "Name",
-      key: "name",
-    },
-    {
-      title: "Slug",
-      key: "slug",
-    },
-    {
-      title: "Inventory",
-      key: "inventory",
-      class: 'text-center',
-      width: 100
-    },
-    {
-      title: "Status",
-      key: "status",
-      width: 100,
-    },
-    {
-      title: "Created at",
-      key: "created_at",
-      width: 130,
-    },
-  ];
-
-  const tableConfig = UseDataTable(fetchListApi, {
-    columns,
-    showSelection: true,
-    showSort: false,
-    showReload: true,
-    addAction: {},
-    listActions: [],
-    itemActions: [
-      {
-        ifShow: true,
-        label: "Edit",
-        key: "edit",
-      },
-
-    ],
-    selectionActions: []
-  });
-
-  let reloadTable = () => {
-  };
 
   export default defineComponent({
     components: {
-      DataTable,
-      FormOutlined,
+      DragOutlined,
+      DeleteOutlined,
+      PlusOutlined,
+      ApiData,
+      RemoteSelect
     },
     props: {
       value: Array,
@@ -104,32 +70,40 @@
     setup(props, {emit}) {
       const isFirstLoaded = ref<Boolean>(false);
       const loading = ref(false);
+      const formRef = ref();
+      const formState = ref({});
+      const products = ref([]);
 
       function back() {
         emit('close');
       }
 
-      function selectProduct(item) {
-        emit('select', item);
+      function submit() {
+        formRef.value
+          .validate()
+          .then(() => {
+            emit('select', toRaw(formState.value));
+          });
       };
+
+      function changeProduct(value, option) {
+        formState.value.product = option;
+      };
+
 
       onMounted(() => {
         //console.log(props.value)
-        reloadTable()
+        formState.value = props.value;
       });
-
-      function registerTable({reload}) {
-        reloadTable = reload;
-      }
 
 
       return {
         loading,
+        formRef,
         back,
-        selectProduct,
-        tableConfig,
-        h,
-        registerTable
+        formState,
+        submit,
+        changeProduct
       };
     },
   });

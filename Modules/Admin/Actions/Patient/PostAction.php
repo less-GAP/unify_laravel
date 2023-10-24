@@ -4,6 +4,7 @@
 namespace Modules\Admin\Actions\Patient;
 
 use App\Models\Patient;
+use App\Models\PatientProducts;
 use Illuminate\Http\Request;
 use Modules\Admin\Middleware\AdminIsAuthenticated;
 
@@ -12,7 +13,6 @@ class PostAction
     public function handle(Request $request)
     {
         $data = $request->all();
-
         //check unify number
         $query = Patient::where('unify_number', $data['unify_number']);
         if (isset($data['id']) && $data['id'] > 0) {
@@ -30,6 +30,20 @@ class PostAction
 
                 $patient->fill($data);
                 $patient->save();
+
+                if (!empty($data['products'])) {
+                    PatientProducts::where('patient_id', $patient->id)->delete();
+                    foreach ($data['products'] as $k => $v) {
+                        PatientProducts::create([
+                            'patient_id' => $patient->id,
+                            'product' => $v['product'],
+                            'product_id' => $v['product_id'],
+                            'delivery_date' => $v['delivery_date'],
+                            'amount' => $v['amount']
+                        ]);
+                    }
+                }
+
 
                 // if($request->input('images')){
                 //     $syncImages = [];

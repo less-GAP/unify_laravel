@@ -12,7 +12,7 @@
   import dayjs from 'dayjs';
   import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
   import Api from "@/utils/Api";
-  import {DeleteOutlined} from "@ant-design/icons-vue";
+  import {DeleteOutlined, FormOutlined} from "@ant-design/icons-vue";
 
   import ProductList from "./ProductList.vue";
 
@@ -70,6 +70,9 @@
         data.insurance_coverages = JSON.parse(data.insurance_coverages);
         formState.value = data;
         //Object.assign(formState, data)
+        if(!formState.value.products){
+          formState.value.products = [];
+        }
         loading.value = false
         current.value = formState.value.unify_process;
       } else {
@@ -177,13 +180,15 @@
       key: 'id',
     },
     {
-      title: "Slug",
-      key: "slug",
+      title: "Amount",
+      dataIndex: 'amount',
+      key: "amount",
     },
     {
-      title: "Status",
-      key: "status",
-      width: 100,
+      title: "Delivery date",
+      dataIndex: 'delivery_date',
+      key: "delivery_date",
+      width: 150,
     },
     {
       title: 'Action',
@@ -210,6 +215,11 @@
 
   const addProduct = () => {
     selectProduct.value = {};
+    showDetail.value = true;
+  };
+
+  const edit = (item) => {
+    selectProduct.value = item;
     showDetail.value = true;
   };
 
@@ -488,13 +498,6 @@
             </a-row>
           </a-tab-pane>
           <a-tab-pane key="5" tab="Products" v-if="formState.id > 0">
-            <a-row :gutter="20">
-              <a-col :span="6">
-                <a-form-item label="Delivery date" name="delivery_date" required>
-                  <a-date-picker v-model:value="formState.delivery_date" valueFormat="YYYY-MM-DD" format="MM-DD-YYYY" class="w-full"></a-date-picker>
-                </a-form-item>
-              </a-col>
-            </a-row>
             <div class="flex flex-row justify-end">
               <a-button @click="addProduct">Add Product</a-button>
             </div>
@@ -503,21 +506,16 @@
                 <template #bodyCell="{ column, record }">
                   <template v-if="column.key === 'id'">
                     <div class="flex flex-row items-center">
-                      <img class="w-20 h-auto float-left" :src="record.image_url" :alt="record.name" v-if="record.image_url"/>
+                      <img class="w-20 h-auto float-left" :src="record.product.image_url" :alt="record.product.name" v-if="record.product.image_url"/>
                       <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>
-                      <label class="ml-4 font-semibold">{{record.name}}</label>
+                      <label class="ml-4 font-semibold">{{record.product.name}}</label>
                     </div>
                   </template>
-
-                  <template v-if="column.key === 'slug'">
-                    /{{ record.slug }}
-                  </template>
-
-                  <template v-if="column.key === 'status'">
-                    <a-tag v-if="record.status == 'A'" color="green">Active</a-tag>
-                    <a-tag v-if="record.status == 'D'" color="green">Inactive</a-tag>
+                  <template v-if="column.key === 'delivery_date'">
+                    {{dayjs(record.delivery_date, "YYYY-MM-DD").format("MM-DD-YYYY" )}}
                   </template>
                   <template v-if="column.key === 'action'">
+                    <a-button type="text" :icon="h(FormOutlined)" label="" :outline="true" @click="edit(record)"></a-button>
                     <a-popconfirm title="Do you want delete this?" ok-text="Yes" cancel-text="No" @confirm="delProduct(record)">
                       <a-button type="text" danger :icon="h(DeleteOutlined)" label="" :outline="true">
                       </a-button>
@@ -543,8 +541,8 @@
     </a-form>
   </LayoutAuthenticated>
 
-  <a-modal append-to-body v-model:open="showDetail" :zIndex="10" width="70%" title="Select Product" :closable="true" :footer="null" :maskClosable="false">
-    <ProductList @close="showDetail = false" @select="onSelectProduct"></ProductList>
+  <a-modal append-to-body v-model:open="showDetail" :zIndex="10" width="50%" title="Select Product" :closable="true" :footer="null" :maskClosable="false">
+    <ProductList :value="selectProduct" @close="showDetail = false" @select="onSelectProduct" :key="selectProduct.product ? selectProduct.product.id : 0"></ProductList>
   </a-modal>
 
 </template>

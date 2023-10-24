@@ -42,7 +42,6 @@ return new class extends Migration {
             $table->string('sub_r')->nullable();
 
             $table->string('supplies')->nullable(); // medical_supplies
-            $table->text('products')->nullable();
 
             $table->text('note')->nullable();
             $table->longtext('signature')->nullable();
@@ -64,9 +63,6 @@ return new class extends Migration {
             $table->integer('unify_deleted_by')->nullable();
 
             $table->integer('sale_user')->nullable(); // created_by
-
-            $table->date('delivery_date')->nullable();
-            $table->longtext('products')->default([]);
 
             $table->timestamps();
         });
