@@ -5,8 +5,7 @@ export default [{
   path: "/configs",
   name: "configs",
   component: () => import("./ConfigLayout.vue"),
-  children: [
-    {
+  children: [{
       meta: {
         title: "General Configuration",
       },
@@ -21,7 +20,7 @@ export default [{
       path: "/configs/smtp",
       name: "config-smtp",
       component: () => import("./SMTPConfig.vue"),
-    } ,
+    },
     {
       meta: {
         title: "Authenticate Configuration",
@@ -29,7 +28,7 @@ export default [{
       path: "/configs/auth",
       name: "config-auth",
       component: () => import("./AuthConfig.vue"),
-    },{
+    }, {
       meta: {
         title: "Payment Configuration",
       },
@@ -92,6 +91,14 @@ export default [{
       path: "/configs/social",
       name: "config-social",
       component: () => import("./SocialConfig.vue"),
+    },
+    {
+      meta: {
+        title: "System Configuration",
+      },
+      path: "/configs/system",
+      name: "config-system",
+      component: () => import("./SystemConfig.vue"),
     },
   ]
 }]
