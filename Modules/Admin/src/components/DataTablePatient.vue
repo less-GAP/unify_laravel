@@ -320,7 +320,7 @@
             <td v-if="itemActions.length" width="120" class="p-1 whitespace-nowrap">
               <div class="flex flex-nowrap whitespace-nowrap">
                 <template v-for="itemAction in itemActions">
-                  <slot v-if="itemAction.show(item)" :name="'cellAction[' + itemAction.key + ']'" v-bind="{
+                  <slot v-if="itemAction.ifShow" :name="'cellAction[' + itemAction.key + ']'" v-bind="{
                       item,
                       itemAction,
                       actionMethod() {

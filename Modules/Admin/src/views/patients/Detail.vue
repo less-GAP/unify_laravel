@@ -1,9 +1,9 @@
 <script lang="ts" setup>
   import {reactive, h, ref, toRaw, computed, watch} from "vue";
   import {mdiBackspace, mdiContentSave, mdiAccountArrowUp, mdiTrashCanOutline} from '@mdi/js';
-  import {BaseIcon, InputUpload} from "@/components";
+  import {BaseIcon, InputUpload, InputUploadGetPath} from "@/components";
   import {ApiData} from "@/components";
-  import {notification} from "ant-design-vue";
+  import {notification, message} from "ant-design-vue";
   import router from "@/router";
   import {useAuthStore} from "@/stores/auth";
   import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
@@ -51,6 +51,7 @@
   const formRef = ref();
 
   const formState = ref({
+    unify_process: 0,
     products: []
   });
 
@@ -70,7 +71,7 @@
         data.insurance_coverages = JSON.parse(data.insurance_coverages);
         formState.value = data;
         //Object.assign(formState, data)
-        if(!formState.value.products){
+        if (!formState.value.products) {
           formState.value.products = [];
         }
         loading.value = false
@@ -124,8 +125,17 @@
             back();
           }
         });
-      })
+      }).catch(error => {
+      //console.log(error);
+
+    });
   };
+
+  const onFinishFailed = (errorInfo: any) => {
+    //console.log('Failed:', errorInfo);
+    message.error('Please input required!');
+  };
+
   // Submit when seller approve profile from Waiting to Eligibility Check
   const approval = (step) => {
     formRef.value
@@ -269,10 +279,11 @@
         </a-steps>
       </div>
     </div>
-    <a-form layout="vertical" ref="formRef" :model="formState" @finish="submit">
+    <a-form layout="vertical" ref="formRef" :model="formState" @finish="submit" @finishFailed="onFinishFailed">
       <div class="mx-4">
         <a-tabs v-model:activeKey="activeKey" @change="tabActive">
           <a-tab-pane key="1" tab="General">
+            <a-divider orientation="left">Infomation</a-divider>
             <a-row :gutter="20">
               <a-col :span="12">
                 <a-form-item label="Note for this change" name="log_detail"
@@ -297,8 +308,9 @@
                 </a-form-item>
               </a-col>
             </a-row>
-            <a-row :gutter="20">
-              <a-col :span="6">
+
+            <a-row :gutter="20" v-if="false">
+              <a-col :span="8">
                 <a-form-item label="Status"
                              :rules="[{ required: true }]">
                   <a-select v-model:value="formState.unify_status" allowClear="" class="w-full" :options="[
@@ -322,7 +334,7 @@
                   </a-select>
                 </a-form-item>
               </a-col>
-              <a-col :span="6">
+              <a-col :span="8">
                 <a-form-item label="Publish date" :rules="[{ required: true }]" v-if="formState.unify_status == '1'">
                   <a-date-picker class="w-full" :showTime="{ format: 'HH:mm' }"
                                  v-model:value="formState.unify_active"
@@ -334,7 +346,7 @@
             <a-row :gutter="20">
               <a-col :span="8">
                 <a-form-item label="ID Number" name="unify_number"
-                             :rules="[{ required: true, message: 'Please enter unify number!' }]">
+                             :rules="[{ required: true, message: 'Please enter ID number!' }]">
                   <a-input v-model:value="formState.unify_number"/>
                 </a-form-item>
               </a-col>
@@ -369,22 +381,22 @@
                 </a-form-item>
               </a-col>
               <a-col :span="8">
+                <a-form-item label="Phone" name="phone" :rules="[{ required: true, message: 'Please enter phone!' }]">
+                  <a-input v-model:value="formState.phone" class="w-full"></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
                 <a-form-item label="Email" name="email" :rules="[{type: 'email', message: 'The input is not valid email!',}]">
                   <a-input v-model:value="formState.email"></a-input>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
-                <a-form-item label="Phone" name="phone" :rules="[{ required: true, message: 'Please enter phone!' }]">
-                  <a-input v-model:value="formState.phone" class="w-full"></a-input>
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
                 <a-form-item label="Note" name="note">
                   <a-textarea class="!rounded-none w-full" v-model:value="formState.note"
                               :auto-size="{ minRows: 2, maxRows: 10 }"/>
                 </a-form-item>
               </a-col>
-              <a-col :span="12">
+              <a-col :span="8">
                 <a-form-item label="Data" name="unify_data">
                   <a-textarea class="!rounded-none w-full" v-model:value="formState.unify_data"
                               :auto-size="{ minRows: 2, maxRows: 10 }"/>
@@ -392,23 +404,19 @@
               </a-col>
               <a-col :span="24">
                 <a-form-item label="Gallery" name="unify_data">
-                  <InputUpload :multiple="true" v-model:value="formState.images"></InputUpload>
+                  <InputUpload v-model:value="formState.images"></InputUpload>
                 </a-form-item>
               </a-col>
             </a-row>
-          </a-tab-pane>
-          <a-tab-pane key="2" tab="Address">
+
+            <a-divider orientation="left">Address</a-divider>
             <a-row :gutter="20">
               <a-col :span="8">
                 <a-form-item label="Street" name="street" :rules="[{ required: true, message: 'Please enter street!' }]">
                   <a-input v-model:value="formState.street" class="w-full"></a-input>
                 </a-form-item>
               </a-col>
-              <a-col :span="8">
-                <a-form-item label="Apt" name="apt" :rules="[{ message: 'Please enter apt!' }]">
-                  <a-input v-model:value="formState.apt" class="w-full"></a-input>
-                </a-form-item>
-              </a-col>
+
               <a-col :span="8">
                 <a-form-item label="City" name="city" :rules="[{ required: true, message: 'Please enter city!' }]">
                   <a-input v-model:value="formState.city" class="w-full"></a-input>
@@ -430,6 +438,11 @@
                 </a-form-item>
               </a-col>
               <a-col :span="8">
+                <a-form-item label="Apt" name="apt" :rules="[{ message: 'Please enter apt!' }]">
+                  <a-input v-model:value="formState.apt" class="w-full"></a-input>
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
                 <a-form-item label="Route" name="route" :rules="[{ message: 'Please enter route!' }]">
                   <a-input v-model:value="formState.route" class="w-full"></a-input>
                 </a-form-item>
@@ -441,7 +454,7 @@
               </a-col>
             </a-row>
           </a-tab-pane>
-          <a-tab-pane key="3" tab="Insurance">
+          <a-tab-pane key="2" tab="Insurance">
             <a-row :gutter="20">
               <a-col :span="24">
                 <InsuranceListEdit :columns="[{
@@ -464,7 +477,7 @@
               </a-col>
             </a-row>
           </a-tab-pane>
-          <a-tab-pane key="4" tab="Doctor">
+          <a-tab-pane key="3" tab="Doctor">
             <a-row :gutter="20">
               <a-col :span="12">
                 <a-form-item label="Doctor" name="doctor">
@@ -497,7 +510,7 @@
               </a-col>
             </a-row>
           </a-tab-pane>
-          <a-tab-pane key="5" tab="Products" v-if="formState.id > 0">
+          <a-tab-pane key="4" tab="Products" v-if="formState.id > 0">
             <div class="flex flex-row justify-end">
               <a-button @click="addProduct">Add Product</a-button>
             </div>
@@ -526,18 +539,16 @@
             </div>
           </a-tab-pane>
         </a-tabs>
+        <a-space align="center" class="pt-5">
+          <a-button
+            v-if="auth.hasPermission('Patient.EligibilityCheckApprove') && formState.unify_process == 0 && formState.id > 0"
+            @click="approval('eligibility_check')" type="primary" class="!bg-green-500 hover:!bg-green-400">
+            Approve
+          </a-button>
+          <a-button type="primary" html-type="submit">Submit</a-button>
+          <a-button type="primary" ghost @click="back()">Back</a-button>
+        </a-space>
       </div>
-      <a-input v-model:value="formState.unify_process" name="unify_process" type="hidden"></a-input>
-      <a-input v-model:value="formState.sale_user" name="sale_user" type="hidden"></a-input>
-      <a-space align="center" class="pt-5">
-        <a-button
-          v-if="auth.hasPermission('Patient.EligibilityCheckApprove') && formState.unify_process == 0"
-          @click="approval('eligibility_check')" type="primary" class="!bg-green-500 hover:!bg-green-400">
-          Approve
-        </a-button>
-        <a-button type="primary" html-type="submit">Submit</a-button>
-        <a-button type="primary" ghost @click="back()">Back</a-button>
-      </a-space>
     </a-form>
   </LayoutAuthenticated>
 

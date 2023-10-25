@@ -128,6 +128,7 @@
     listActions: [],
     itemActions: [
       {
+        ifShow: auth.hasPermission('Patient.update'),
         label: "Edit",
         key: "edit",
         show: (item) => {
@@ -138,6 +139,7 @@
         },
       },
       {
+        ifShow: false,
         label: "Approve Patient",
         key: "editProcess",
         show: (item) => {
@@ -148,6 +150,7 @@
         },
       },
       {
+        ifShow: true,
         label: "Task",
         key: "addTask",
         show: (item) => {
@@ -158,6 +161,7 @@
         },
       },
       {
+        ifShow: true,
         label: "History",
         key: "history",
         show: (item) => {
