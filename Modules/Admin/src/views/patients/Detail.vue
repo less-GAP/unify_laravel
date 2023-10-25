@@ -55,7 +55,9 @@
   });
 
   const formRefLog = ref();
-  const formStateLog = ref({});
+  const formStateLog = ref({
+    log_detail: ''
+  });
 
 
   const current = ref<number>(0);
@@ -145,37 +147,13 @@
     formRef.value
       .validate()
       .then(() => {
+        console.log(formState.value);
+        if (step == 'eligibility_check') {
+          formState.value.unify_process = 1;
+        }
         showLog.value = true;
-        //   const new_insurance_coverages = formState.value.insurance_coverages;
-        //   var insurance_coverages = ref([]);
-        //   if (formState.value.insurance_coverages) {
-        //     formState.value.insurance_coverages.forEach((element, index) => {
-        //       insurance_coverages.value.push({
-        //         coverage: element.coverage,
-        //         insurance_id: element.insurance_id,
-        //         active_date: element.active_date,
-        //         expired_date: element.expired_date,
-        //       });
-        //     });
-        //   }
-        //   if (insurance_coverages.value.length) {
-        //     formState.value.insurance_coverages = JSON.stringify(toRaw(insurance_coverages.value))
-        //   } else {
-        //     formState.value.insurance_coverages = null
-        //   }
-        //
-        //   if (step == 'eligibility_check') {
-        //     formState.value.unify_process = 1;
-        //   }
-        //
-        //   Api.post(prefix, toRaw(formState.value)).then(rs => {
-        //     if (rs.data.code == 1) {
-        //       back();
-        //     }
-        //   });
       })
   };
-
 
   const showLog = ref(false);
 
@@ -187,7 +165,12 @@
     formRefLog.value
       .validate()
       .then(() => {
-
+        formRef.value.log_detail = formStateLog.log_detail;
+        Api.post(prefix, toRaw(formState.value)).then(rs => {
+          if (rs.data.code == 1) {
+            back();
+          }
+        });
       });
   };
 
