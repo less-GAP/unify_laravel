@@ -49,11 +49,14 @@
   ];
 
   const formRef = ref();
-
   const formState = ref({
     unify_process: 0,
     products: []
   });
+
+  const formRefLog = ref();
+  const formStateLog = ref({});
+
 
   const current = ref<number>(0);
 
@@ -136,39 +139,56 @@
     message.error('Please input required!');
   };
 
+
   // Submit when seller approve profile from Waiting to Eligibility Check
   const approval = (step) => {
     formRef.value
       .validate()
       .then(() => {
-        const new_insurance_coverages = formState.value.insurance_coverages;
-        var insurance_coverages = ref([]);
-        if (formState.value.insurance_coverages) {
-          formState.value.insurance_coverages.forEach((element, index) => {
-            insurance_coverages.value.push({
-              coverage: element.coverage,
-              insurance_id: element.insurance_id,
-              active_date: element.active_date,
-              expired_date: element.expired_date,
-            });
-          });
-        }
-        if (insurance_coverages.value.length) {
-          formState.value.insurance_coverages = JSON.stringify(toRaw(insurance_coverages.value))
-        } else {
-          formState.value.insurance_coverages = null
-        }
-
-        if (step == 'eligibility_check') {
-          formState.value.unify_process = 1;
-        }
-
-        Api.post(prefix, toRaw(formState.value)).then(rs => {
-          if (rs.data.code == 1) {
-            back();
-          }
-        });
+        showLog.value = true;
+        //   const new_insurance_coverages = formState.value.insurance_coverages;
+        //   var insurance_coverages = ref([]);
+        //   if (formState.value.insurance_coverages) {
+        //     formState.value.insurance_coverages.forEach((element, index) => {
+        //       insurance_coverages.value.push({
+        //         coverage: element.coverage,
+        //         insurance_id: element.insurance_id,
+        //         active_date: element.active_date,
+        //         expired_date: element.expired_date,
+        //       });
+        //     });
+        //   }
+        //   if (insurance_coverages.value.length) {
+        //     formState.value.insurance_coverages = JSON.stringify(toRaw(insurance_coverages.value))
+        //   } else {
+        //     formState.value.insurance_coverages = null
+        //   }
+        //
+        //   if (step == 'eligibility_check') {
+        //     formState.value.unify_process = 1;
+        //   }
+        //
+        //   Api.post(prefix, toRaw(formState.value)).then(rs => {
+        //     if (rs.data.code == 1) {
+        //       back();
+        //     }
+        //   });
       })
+  };
+
+
+  const showLog = ref(false);
+
+  const handleCancelLog = () => {
+    showLog.value = false;
+  };
+
+  const handleOkLog = () => {
+    formRefLog.value
+      .validate()
+      .then(() => {
+
+      });
   };
 
   const showDetail = ref(false);
@@ -241,6 +261,7 @@
     });
   };
 
+
   const back = () => {
     router.push('/' + prefix);
   };
@@ -284,31 +305,6 @@
         <a-tabs v-model:activeKey="activeKey" @change="tabActive">
           <a-tab-pane key="1" tab="General">
             <a-divider orientation="left">Infomation</a-divider>
-            <a-row :gutter="20">
-              <a-col :span="12">
-                <a-form-item label="Note for this change" name="log_detail"
-                             :rules="[{ required: true }]" v-if="formState.id > 0">
-                  <a-textarea class="!rounded-none w-full" v-model:value="formState.log_detail"
-                              placeholder="Make a note of any changes you make to the patient record"
-                              :auto-size="{ minRows: 2, maxRows: 10 }"/>
-                </a-form-item>
-              </a-col>
-              <a-col :span="6">
-                <a-form-item label="Task Status" v-if="formState.id > 0">
-                  <ApiData url="master-data/task-status" method="GET" :params="{}">
-                    <template #default="{ data }">
-                      <a-select class="w-[200px]" v-model:value="formState.unify_task_status"
-                                placeholder="Select status for profile">
-                        <template v-for="(value, key) in JSON.parse(data.data)" :key="key">
-                          <a-select-option :value="value.value" :style="'color:'+value.color+';background-color:'+value.background_color">{{value.label}}</a-select-option>
-                        </template>
-                      </a-select>
-                    </template>
-                  </ApiData>
-                </a-form-item>
-              </a-col>
-            </a-row>
-
             <a-row :gutter="20" v-if="false">
               <a-col :span="8">
                 <a-form-item label="Status"
@@ -554,6 +550,39 @@
 
   <a-modal append-to-body v-model:open="showDetail" :zIndex="10" width="50%" title="Select Product" :closable="true" :footer="null" :maskClosable="false">
     <ProductList :value="selectProduct" @close="showDetail = false" @select="onSelectProduct" :key="selectProduct.product ? selectProduct.product.id : 0"></ProductList>
+  </a-modal>
+
+  <a-modal v-model:open="showLog" title="Confirm for change" width="50%" :closable="true" :maskClosable="false">
+    <a-form layout="vertical" ref="formRefLog" :model="formStateLog" @finish="handleOkLog">
+      <a-row :gutter="20">
+        <a-col :span="24">
+          <a-form-item label="Note for this change" name="log_detail"
+                       :rules="[{ required: true, message: 'Please enter note...' }]">
+            <a-textarea class="!rounded-none w-full" v-model:value="formStateLog.log_detail"
+                        placeholder="Make a note of any changes you make to the patient record"
+                        :auto-size="{ minRows: 4, maxRows: 10 }"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="24">
+          <a-form-item label="Task Status" v-if="false">
+            <ApiData url="master-data/task-status" method="GET" :params="{}">
+              <template #default="{ data }">
+                <a-select class="w-[200px]" v-model:value="formStateLog.unify_task_status"
+                          placeholder="Select status for profile">
+                  <template v-for="(value, key) in JSON.parse(data.data)" :key="key">
+                    <a-select-option :value="value.value" :style="'color:'+value.color+';background-color:'+value.background_color">{{value.label}}</a-select-option>
+                  </template>
+                </a-select>
+              </template>
+            </ApiData>
+          </a-form-item>
+        </a-col>
+      </a-row>
+    </a-form>
+    <template #footer>
+      <a-button key="back" @click="handleCancelLog">Back</a-button>
+      <a-button key="submit" type="primary" :loading="loading" @click="handleOkLog">Submit</a-button>
+    </template>
   </a-modal>
 
 </template>

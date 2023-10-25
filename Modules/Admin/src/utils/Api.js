@@ -26,8 +26,13 @@ Api.interceptors.request.use(function (config) {
 });
 
 Api.interceptors.response.use((response) => {
+  //console.log(response);
   if (response?.data?.message && (requestConfig.method.toLowerCase() == 'post' || requestConfig.method.toLowerCase() == 'put')) {
-    message.success({content: response?.data?.message, key, duration: 1});
+    if(response?.data?.code == 0){
+      message.error({content: response?.data?.message, key, duration: 1});
+    }else{
+      message.success({content: response?.data?.message, key, duration: 1});
+    }
   } else if (requestConfig.method.toLowerCase() == 'delete') {
     message.info({content: response?.data?.message, key, duration: 1});
   } else if (hideMessage) {
