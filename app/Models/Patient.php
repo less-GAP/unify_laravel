@@ -74,7 +74,8 @@ class Patient extends Model
         'seller',
         'is_turn_off',
         'doctor',
-        'products'
+        'products',
+        'insurances'
     ];
 
 
@@ -188,6 +189,11 @@ class Patient extends Model
     public function getProductsAttribute()
     {
         return PatientProducts::where('patient_id', $this->id)->get();
+    }
+
+    public function getInsurancesAttribute()
+    {
+        return PatientInsurances::where('patient_id', $this->id)->get();
     }
 
 }

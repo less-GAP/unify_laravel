@@ -4,6 +4,7 @@
 namespace Modules\Admin\Actions\Patient;
 
 use App\Models\Patient;
+use App\Models\PatientInsurances;
 use App\Models\PatientProducts;
 use Illuminate\Http\Request;
 use Modules\Admin\Middleware\AdminIsAuthenticated;
@@ -40,6 +41,19 @@ class PostAction
                             'product_id' => $v['product_id'],
                             'delivery_date' => $v['delivery_date'],
                             'amount' => $v['amount']
+                        ]);
+                    }
+                }
+
+                if (!empty($data['insurances'])) {
+                    PatientInsurances::where('patient_id', $patient->id)->delete();
+                    foreach ($data['insurances'] as $k => $v) {
+                        PatientInsurances::create([
+                            'patient_id' => $patient->id,
+                            'insurance_id' => $v['insurance_id'],
+                            'coverage' => $v['coverage'],
+                            'active_date' => $v['active_date'],
+                            'expired_date' => $v['expired_date']
                         ]);
                     }
                 }
