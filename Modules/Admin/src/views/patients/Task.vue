@@ -1,221 +1,227 @@
 <script setup>
-import { reactive, ref } from "vue";
-import { notification } from "ant-design-vue";
-import {
-  mdiBackspace,
-  mdiCheckCircleOutline,
-  mdiDeleteOffOutline,
-  mdiPauseCircleOutline,
-  mdiPlayCircleOutline,
-  mdiPencil,
-  mdiCalendarClockOutline,
-  mdiUploadOutline,
-  mdiLink,
-  mdiTrashCan,
-  mdiAccountCheckOutline,
-  mdiCheckboxMarkedCircle,
-  mdiReply
-} from "@mdi/js";
-import { BaseIcon, DataTable } from "@/components";
-import router from "@/router";
-import { useAuthStore } from "@/stores/auth";
-import { UseEloquentRouter } from "@/utils/UseEloquentRouter";
-import { useNeedToDoList } from "@/utils/Patient";
-import { PlusOutlined, CheckCircleOutlined, SyncOutlined, ClockCircleOutlined } from "@ant-design/icons-vue";
-import dayjs from "dayjs";
-import relativeTime from 'dayjs/plugin/relativeTime'
-dayjs.extend(relativeTime)
-import Api from "@/utils/Api";
-import {
-  deleteTask,
-  completeTask,
-  workingTask,
-  reviewTask,
-  getStatusTask
-} from "@/utils/Task";
-import { UseDataTable } from "@/utils/UseDataTable";
+  import {reactive, ref} from "vue";
+  import {notification} from "ant-design-vue";
+  import {
+    mdiBackspace,
+    mdiCheckCircleOutline,
+    mdiDeleteOffOutline,
+    mdiPauseCircleOutline,
+    mdiPlayCircleOutline,
+    mdiPencil,
+    mdiCalendarClockOutline,
+    mdiUploadOutline,
+    mdiLink,
+    mdiTrashCan,
+    mdiAccountCheckOutline,
+    mdiCheckboxMarkedCircle,
+    mdiReply
+  } from "@mdi/js";
+  import {BaseIcon, DataTable} from "@/components";
+  import router from "@/router";
+  import {useAuthStore} from "@/stores/auth";
+  import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
+  import {useNeedToDoList} from "@/utils/Patient";
+  import {PlusOutlined, CheckCircleOutlined, SyncOutlined, ClockCircleOutlined} from "@ant-design/icons-vue";
+  import dayjs from "dayjs";
+  import relativeTime from 'dayjs/plugin/relativeTime'
 
-const prefix = "patient";
-const { fetchDetailApi, updateApi } = UseEloquentRouter(prefix);
+  dayjs.extend(relativeTime)
+  import Api from "@/utils/Api";
+  import {
+    deleteTask,
+    completeTask,
+    workingTask,
+    reviewTask,
+    getStatusTask
+  } from "@/utils/Task";
+  import {UseDataTable} from "@/utils/UseDataTable";
 
-defineProps({
-  value: {
-    type: Object,
-    default: {},
-  },
-  visible: {
-    type: Boolean,
-    default: true,
-  },
-});
-const formState = reactive({
-  tasks: [],
-});
-// const taskHistory = ref([]);
-const formRef = ref();
-const loading = ref(false);
-const auth = useAuthStore();
-const needToDoLib = useNeedToDoList();
-var needToDoList = [];
-const fetch = async function () {
-  loading.value = true;
-  needToDoList = [];
-  var id = router.currentRoute.value.params.id;
-  const response = await fetchDetailApi(id);
-  if (response.data.status === 200) {
-    const data = response.data.data;
-    Object.assign(formState, data, true);
-    needToDoLib.forEach((item) => {
-      if (formState[item.key] != null && formState[item.key] !== 0) {
-        return;
-      }
-      if (item.key == "doctor_id" && formState[item.key] !== null) {
-        return;
-      }
-      needToDoList.push({
-        value: item.key,
-        label: item.noti,
-      });
-    });
-  } else {
-    notification.error({
-      message: "Error",
-      description: response.data.message,
-    });
-    router.replace({ path: "/" + prefix });
-  }
-  loading.value = false;
-};
-fetch();
-const submit = () => {
-  formRef.value.validate().then(() => {
-    updateApi(formState.id, { ...formState }).then((rs) => {
-      Object.assign(formState, rs.data.result);
-    });
-  });
-};
-const closeDetail = function () {
-  router.replace({ path: "/" + prefix });
-};
+  const prefix = "patient";
+  const {fetchDetailApi, updateApi} = UseEloquentRouter(prefix);
 
-// get list user
-const fetchListUserApi = function () {
-  return Api.get("user/all");
-};
-var listUserAssignees = [];
-const fetchListUser = async function () {
-  const value = await fetchListUserApi();
-  listUserAssignees = value.data.map((item) => {
-    item.label = item.full_name;
-    item.value = item.id;
-    return item;
-  });
-};
-fetchListUser();
-
-// Handle Modal Add Task
-const openModal = ref(false);
-const openModalDetail = ref(false);
-const taskDetail = reactive({});
-const confirmLoading = ref(false);
-const formTaskState = reactive({});
-const formTaskRef = ref();
-const createTaskApi = function (data) {
-  return Api.post("task", data);
-};
-// on click Add task
-const addTask = function () {
-  var listChecked = document.querySelectorAll(".listNeedToDo input:checked");
-  var txt = "";
-  listChecked.forEach((item) => {
-    txt += "- " + item.value + "\n";
-  });
-  formTaskState.description = txt;
-  formTaskState.assignees = [formState.sale_user];
-  formTaskState.name = "Check & Update for " + formState.full_name;
-  openModal.value = true;
-};
-const tableConfig = ref(null);
-const detailTask = function (task) {
-  Object.assign(taskDetail, task);
-
-  const { fetchListApi } = UseEloquentRouter('activity', {
-    order: "-id",
-  });
-  tableConfig.value = UseDataTable(fetchListApi, {
-    showSelection: false,
-    globalSearch: false,
-    pagination: {
-      perPage: 10,
+  defineProps({
+    value: {
+      type: Object,
+      default: {},
     },
-    filter: {
-      subject_id: taskDetail.id,
-      subject_type: "App\\Models\\Task",
+    visible: {
+      type: Boolean,
+      default: true,
     },
   });
-  openModalDetail.value = true;
-}
+  const formState = reactive({
+    tasks: [],
+  });
+  // const taskHistory = ref([]);
+  const formRef = ref();
+  const loading = ref(false);
+  const auth = useAuthStore();
+  const needToDoLib = useNeedToDoList();
+  var needToDoList = [];
+  const fetch = async function () {
+    loading.value = true;
+    needToDoList = [];
+    var id = router.currentRoute.value.params.id;
+    const response = await fetchDetailApi(id);
+    if (response.data.status === 200) {
+      const data = response.data.data;
+      Object.assign(formState, data, true);
+      needToDoLib.forEach((item) => {
+        if (formState[item.key] != item.check) {
+          return;
+        }
+        // if (item.key == "doctor_id" && formState[item.key] !== null) {
+        //   return;
+        // }
+        //
+        // if (item.key == "products" && formState[item.key].length > 0) {
+        //   return;
+        // }
 
-// on click OK
-const handleAddTask = () => {
-  formTaskRef.value.validate().then(() => {
-    formTaskState.created_by = auth.user.id;
-    formTaskState.patient_id = formState.id;
-    formTaskState.assignees = JSON.stringify(formTaskState.assignees);
-    try {
-      confirmLoading.value = true;
-      createTaskApi({ ...formTaskState }).then((rs) => {
-        confirmLoading.value = false;
-        openModal.value = false;
-        fetch();
+        needToDoList.push({
+          value: item.key,
+          label: item.noti,
+        });
       });
-    } catch (e) {
-      console.log(e);
+    } else {
+      notification.error({
+        message: "Error",
+        description: response.data.message,
+      });
+      router.replace({path: "/" + prefix});
     }
-  });
-};
+    loading.value = false;
+  };
+  fetch();
+  const submit = () => {
+    formRef.value.validate().then(() => {
+      updateApi(formState.id, {...formState}).then((rs) => {
+        Object.assign(formState, rs.data.result);
+      });
+    });
+  };
+  const closeDetail = function () {
+    router.replace({path: "/" + prefix});
+  };
 
-const editTask = async function (id) {
-  const task = await Api.get("task/" + id);
-  Object.assign(formTaskState, task.data);
-  openModal.value = true;
-};
+  // get list user
+  const fetchListUserApi = function () {
+    return Api.get("user/all");
+  };
+  var listUserAssignees = [];
+  const fetchListUser = async function () {
+    const value = await fetchListUserApi();
+    listUserAssignees = value.data.map((item) => {
+      item.label = item.full_name;
+      item.value = item.id;
+      return item;
+    });
+  };
+  fetchListUser();
 
-const checkOutDate = function (task) {
-  if (!task) return false;
-  if (task.deadline_at) {
-    return dayjs(task.deadline_at).isBefore(dayjs());
+  // Handle Modal Add Task
+  const openModal = ref(false);
+  const openModalDetail = ref(false);
+  const taskDetail = reactive({});
+  const confirmLoading = ref(false);
+  const formTaskState = reactive({});
+  const formTaskRef = ref();
+  const createTaskApi = function (data) {
+    return Api.post("task", data);
+  };
+  // on click Add task
+  const addTask = function () {
+    var listChecked = document.querySelectorAll(".listNeedToDo input:checked");
+    var txt = "";
+    listChecked.forEach((item) => {
+      txt += "- " + item.value + "\n";
+    });
+    formTaskState.description = txt;
+    formTaskState.assignees = [formState.sale_user];
+    formTaskState.name = "Check & Update for " + formState.full_name;
+    openModal.value = true;
+  };
+  const tableConfig = ref(null);
+  const detailTask = function (task) {
+    Object.assign(taskDetail, task);
+
+    const {fetchListApi} = UseEloquentRouter('activity', {
+      order: "-id",
+    });
+    tableConfig.value = UseDataTable(fetchListApi, {
+      showSelection: false,
+      globalSearch: false,
+      pagination: {
+        perPage: 10,
+      },
+      filter: {
+        subject_id: taskDetail.id,
+        subject_type: "App\\Models\\Task",
+      },
+    });
+    openModalDetail.value = true;
   }
-}
 
-const formatDescription = function (description) {
-  if (description !== null && typeof description === "string") {
-    return description.replace(/\n/g, "<br>");
-  } else {
-    return "";
+  // on click OK
+  const handleAddTask = () => {
+    formTaskRef.value.validate().then(() => {
+      formTaskState.created_by = auth.user.id;
+      formTaskState.patient_id = formState.id;
+      formTaskState.assignees = JSON.stringify(formTaskState.assignees);
+      try {
+        confirmLoading.value = true;
+        createTaskApi({...formTaskState}).then((rs) => {
+          confirmLoading.value = false;
+          openModal.value = false;
+          fetch();
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    });
+  };
+
+  const editTask = async function (id) {
+    const task = await Api.get("task/" + id);
+    Object.assign(formTaskState, task.data);
+    openModal.value = true;
+  };
+
+  const checkOutDate = function (task) {
+    if (!task) return false;
+    if (task.deadline_at) {
+      return dayjs(task.deadline_at).isBefore(dayjs());
+    }
   }
-};
 
-const submitComment = function (id) {
-  // const comment = document.getElementById("comment-" + id).value;
-  // if (comment !== "") {
-  //   const data = {
-  //     task_id: id,
-  //     comment: comment,
-  //     created_by: auth.user.id,
-  //   };
-  //   Api.post("task/comment", data).then((rs) => {
-  //     fetch();
-  //   });
-  // }
-};
+  const formatDescription = function (description) {
+    if (description !== null && typeof description === "string") {
+      return description.replace(/\n/g, "<br>");
+    } else {
+      return "";
+    }
+  };
 
-const dbFormat = "YYYY-MM-DD"; // format of datepicker
-const age = (dob) => {
-  return dob
-    ? "(" + dayjs().diff(dayjs(dob, dbFormat), "year") + " years old)"
-    : "-";
-};
+  const submitComment = function (id) {
+    // const comment = document.getElementById("comment-" + id).value;
+    // if (comment !== "") {
+    //   const data = {
+    //     task_id: id,
+    //     comment: comment,
+    //     created_by: auth.user.id,
+    //   };
+    //   Api.post("task/comment", data).then((rs) => {
+    //     fetch();
+    //   });
+    // }
+  };
+
+  const dbFormat = "YYYY-MM-DD"; // format of datepicker
+  const age = (dob) => {
+    return dob
+      ? "(" + dayjs().diff(dayjs(dob, dbFormat), "year") + " years old)"
+      : "-";
+  };
 </script>
 <template>
   <a-drawer :closable="false" style="
@@ -229,16 +235,16 @@ const age = (dob) => {
         <a-button class="!hidden md:!inline-block" type="link" @click="closeDetail">
           <template #icon>
             <div class="flex">
-              <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500" />
+              <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500"/>
               <span class="ml-1 text-stone-500">Back</span>
             </div>
           </template>
         </a-button>
         <a-button class="!inline-flex items-center justify-center md:!hidden !w-8 !h-8 !p-0" type="link"
-          @click="closeDetail">
+                  @click="closeDetail">
           <template #icon>
             <div class="flex">
-              <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500" />
+              <BaseIcon :path="mdiBackspace" class="w-4 text-stone-500"/>
               <span class="ml-1 text-stone-500">Back</span>
             </div>
           </template>
@@ -267,23 +273,23 @@ const age = (dob) => {
                 <div v-if="needToDoList.length > 0" class="w-full p-8 mt-5 bg-yellow-100 border-red-400 rounded-xl">
                   <div class="flex items-center mb-6">
                     <svg class="w-8 h-8 text-indigo-500 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none"
-                      viewBox="0 0 24 24" stroke="currentColor">
+                         viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
                     </svg>
                     <h4 class="ml-3 text-lg font-semibold">Need to do</h4>
                   </div>
                   <div class="listNeedToDo">
                     <div v-for="ntd in needToDoList" :key="ntd.value">
-                      <input :id="ntd.value" class="hidden" type="checkbox" :value="ntd.label" />
+                      <input :id="ntd.value" class="hidden" type="checkbox" :value="ntd.label"/>
                       <label class="flex items-center h-10 px-2 rounded-lg cursor-pointer hover:bg-white"
-                        :for="ntd.value">
+                             :for="ntd.value">
                         <span
                           class="flex items-center justify-center w-5 h-5 text-transparent border-2 border-gray-900 rounded-full">
                           <svg class="hidden w-4 h-4 fill-black" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                             <path fill-rule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              clip-rule="evenodd" />
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clip-rule="evenodd"/>
                           </svg>
                         </span>
                         <span class="ml-4 text-sm">{{ ntd.label }}</span>
@@ -321,15 +327,15 @@ const age = (dob) => {
                                 auth.hasPermission('task.review')) &&
                                 task.is_completed === 0
                                 " type="link" class="!px-0"
-                                @click="workingTask(task.id, fetch, task.task_process === 1)">
+                                        @click="workingTask(task.id, fetch, task.task_process === 1)">
                                 <BaseIcon :path="task.task_process === 0 ? mdiPauseCircleOutline : mdiPlayCircleOutline"
-                                  class="text-current hover:text-blue-500"></BaseIcon>
+                                          class="text-current hover:text-blue-500"></BaseIcon>
                               </a-button>
                             </a-tooltip>
                             <a-tooltip title="Review">
                               <a-popconfirm placement="leftBottom" title="Review this task" ok-text="Accept Done"
-                                cancel-text="Reject" @confirm="reviewTask(task.id, true, fetch)"
-                                @cancel="reviewTask(task.id, false, fetch)">
+                                            cancel-text="Reject" @confirm="reviewTask(task.id, true, fetch)"
+                                            @cancel="reviewTask(task.id, false, fetch)">
                                 <a-button v-if="auth.hasPermission('task.review') &&
                                   task.is_completed == 1
                                   " type="link" class="!px-0">
@@ -358,26 +364,26 @@ const age = (dob) => {
                           </div>
                           <h4 :style="checkOutDate(task) ? 'color: red;' : ''" class="text-sm font-medium">
                             <a-tag v-if="getStatusTask(task.task_process)" :color="getStatusTask(task.task_process).color"
-                              class="!mr-2">
+                                   class="!mr-2">
                               <template #icon>
-                                <CheckCircleOutlined v-if="task.task_process === 3" />
-                                <SyncOutlined v-if="task.task_process === 1" :spin="true" />
-                                <ClockCircleOutlined v-if="[null, 0].includes(task.task_process)" />
+                                <CheckCircleOutlined v-if="task.task_process === 3"/>
+                                <SyncOutlined v-if="task.task_process === 1" :spin="true"/>
+                                <ClockCircleOutlined v-if="[null, 0].includes(task.task_process)"/>
                               </template>
                               {{ getStatusTask(task.task_process).label }}
                             </a-tag>
                             <a @click="detailTask(task)">{{ task.name }}<span v-if="checkOutDate(task)" color="red"
-                                class="text-xs text-red-900"> (Out date)</span>
+                                                                              class="text-xs text-red-900"> (Out date)</span>
                             </a>
                           </h4>
                           <div class="text-xs text-gray-400" v-html="formatDescription(task.description)"></div>
                           <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-400">
                             <div class="flex items-center">
                               <svg v-if="task.deadline_at" class="w-4 h-4 text-gray-300 fill-current"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                   xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd"
-                                  d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                                  clip-rule="evenodd"></path>
+                                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                      clip-rule="evenodd"></path>
                               </svg>
                               <span v-if="task.deadline_at" class="ml-1 leading-none" v-html="task.deadline_at
                                 ? dayjs(task.deadline_at).format(
@@ -418,7 +424,8 @@ const age = (dob) => {
                       <span>Done</span>
                     </a-tag>
                     <a-tag v-if="task.deleted != 0" color="red" class="!flex items-center">
-                      <BaseIcon :path="mdiTrashCan" class="!text-red-500 !mr-1"></BaseIcon> <span>Trashed</span>
+                      <BaseIcon :path="mdiTrashCan" class="!text-red-500 !mr-1"></BaseIcon>
+                      <span>Trashed</span>
                     </a-tag>
                   </div>
                   <h4 :style="checkOutDate(task) ? 'color: red;' : ''" class="mt-3 text-sm font-medium">
@@ -428,10 +435,10 @@ const age = (dob) => {
                   <div class="flex items-center w-full mt-3 text-xs font-medium text-gray-400">
                     <div class="flex items-center">
                       <svg v-if="task.deadline_at" class="w-4 h-4 text-gray-300 fill-current"
-                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                           xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd"
-                          d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                          clip-rule="evenodd"></path>
+                              d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                              clip-rule="evenodd"></path>
                       </svg>
                       <span v-if="task.deadline_at" class="ml-1 leading-none" v-html="task.deadline_at
                         ? dayjs(task.deadline_at).format(
@@ -459,16 +466,16 @@ const age = (dob) => {
 
     <!-- Modal Add Task -->
     <a-modal v-model:open="openModal" append-to-body title="Add Task" :confirm-loading="confirmLoading"
-      @ok="handleAddTask">
+             @ok="handleAddTask">
       <a-form v-bind="$config.formConfig" ref="formTaskRef" layout="vertical" :model="formTaskState">
         <a-form-item label="Task name" required name="name">
           <a-input v-model:value="formTaskState.name"></a-input>
         </a-form-item>
         <div class="flex flex-wrap -mx-2">
           <div class="w-full px-2">
-            <a-form-item label="Due date" name="deadline_at" >
+            <a-form-item label="Due date" name="deadline_at">
               <a-date-picker v-model:value="formTaskState.deadline_at" class="w-full" :show-time="{ format: 'HH:mm' }"
-                input-read-only value-format="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"></a-date-picker>
+                             input-read-only value-format="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"></a-date-picker>
             </a-form-item>
           </div>
         </div>
@@ -476,7 +483,7 @@ const age = (dob) => {
           <a-select v-model:value="formTaskState.assignees" :options="listUserAssignees" mode="multiple">
           </a-select>
         </a-form-item>
-        <a-form-item label="Description" name="description" >
+        <a-form-item label="Description" name="description">
           <a-textarea v-model:value="formTaskState.description" :rows="4"></a-textarea>
         </a-form-item>
       </a-form>
@@ -484,14 +491,14 @@ const age = (dob) => {
 
     <!-- Modal Detail Task -->
     <a-modal v-model:open="openModalDetail" append-to-body :title="taskDetail.name" width="1000px"
-      :confirm-loading="confirmLoading">
+             :confirm-loading="confirmLoading">
       <div class="detail">
         <div class="mb-4">
           <a-tag v-if="getStatusTask(taskDetail.task_process)" :color="getStatusTask(taskDetail.task_process).color">
             <template #icon>
-              <CheckCircleOutlined v-if="taskDetail.task_process === 3" />
-              <SyncOutlined v-if="taskDetail.task_process === 1" :spin="true" />
-              <ClockCircleOutlined v-if="[null, 0].includes(taskDetail.task_process)" />
+              <CheckCircleOutlined v-if="taskDetail.task_process === 3"/>
+              <SyncOutlined v-if="taskDetail.task_process === 1" :spin="true"/>
+              <ClockCircleOutlined v-if="[null, 0].includes(taskDetail.task_process)"/>
             </template>
             {{ getStatusTask(taskDetail.task_process).label }}
           </a-tag>
@@ -547,7 +554,8 @@ const age = (dob) => {
       <!-- Comment & Log -->
       <div class="comment">
         <a-divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0"
-          plain>Logs</a-divider>
+                   plain>Logs
+        </a-divider>
         <DataTable v-if="tableConfig" v-bind="tableConfig">
           <template #table="{
             tableConfig,
@@ -560,7 +568,7 @@ const age = (dob) => {
             <a-timeline v-if="data.length > 0" class="!m-5">
               <a-timeline-item v-for="item in data" color="green" class="!mb-5">
                 <div class="flex items-center">
-                  <img class="w-6 h-6 rounded-full" :src="item.causer?.profile_photo_url" />
+                  <img class="w-6 h-6 rounded-full" :src="item.causer?.profile_photo_url"/>
                   <div class="mx-2 by">{{ item.causer?.full_name }}</div>
                   <a-tag>{{ item.event }}</a-tag>
                   <div class="ml-auto text-xs text-gray-500">
@@ -574,7 +582,8 @@ const age = (dob) => {
         </DataTable>
         <a-form>
           <a-divider class="!font-bold !text-blue-700" dashed orientation="left" orientation-margin="0"
-            plain>Comments</a-divider>
+                     plain>Comments
+          </a-divider>
           <div class="">
             <div class="mt-4">
               <div class="flex gap-2">
@@ -587,7 +596,8 @@ const age = (dob) => {
                   </h5>
                   <p>Nice work, makes me think of The Money Pit.</p>
                   <a href="javascript: void(0);" class="flex items-center mt-2 text-xs font-light !text-stone-500">
-                    <BaseIcon :path="mdiReply" class="inline-block !text-current" /> Reply
+                    <BaseIcon :path="mdiReply" class="inline-block !text-current"/>
+                    Reply
                   </a>
                   <!-- chat-end -->
 
@@ -602,7 +612,8 @@ const age = (dob) => {
                         </h5>
                         <p>i'm in the middle of a timelapse animation myself! (Very different though.) Awesome stuff.</p>
                         <a href="javascript: void(0);" class="flex items-center mt-2 text-xs font-light !text-stone-500">
-                          <BaseIcon :path="mdiReply" class="inline-block !text-current" /> Reply
+                          <BaseIcon :path="mdiReply" class="inline-block !text-current"/>
+                          Reply
                         </a>
                       </div>
                     </div>
@@ -622,7 +633,8 @@ const age = (dob) => {
                   </h5>
                   <p>It would be very nice to have.</p>
                   <a href="javascript: void(0);" class="flex items-center mt-2 text-xs font-light !text-stone-500">
-                    <BaseIcon :path="mdiReply" class="inline-block !text-current" /> Reply
+                    <BaseIcon :path="mdiReply" class="inline-block !text-current"/>
+                    Reply
                   </a>
                 </div>
               </div>
@@ -631,14 +643,14 @@ const age = (dob) => {
 
           <div class="border mt-7">
             <textarea rows="3" class="w-full border-0 focus:outline-0 focus:border-0 focus:ring-0"
-              placeholder="Your comment..."></textarea>
+                      placeholder="Your comment..."></textarea>
             <div class="flex items-center justify-between px-3 py-2 bg-gray-50">
               <div>
                 <a href="#" class="inline-block px-1 hover:bg-light hover:text-slate-900">
-                  <BaseIcon :path="mdiUploadOutline" />
+                  <BaseIcon :path="mdiUploadOutline"/>
                 </a>
                 <a href="#" class="inline-block px-1 hover:bg-light hover:text-slate-900">
-                  <BaseIcon :path="mdiLink" />
+                  <BaseIcon :path="mdiLink"/>
                 </a>
               </div>
               <a-button @click="submitComment(taskDetail.id)" type="primary" class="uppercase">Send</a-button>
@@ -650,7 +662,8 @@ const age = (dob) => {
       <template #footer>
         <a-button key="submit" type="primary" @click="() => {
           openModalDetail = false;
-        }">Ok</a-button>
+        }">Ok
+        </a-button>
       </template>
     </a-modal>
 
@@ -658,22 +671,22 @@ const age = (dob) => {
 </template>
 
 <style>
-.ant-drawer-body {
-  padding: 0 !important;
-}
+  .ant-drawer-body {
+    padding: 0 !important;
+  }
 
-.listNeedToDo input:checked~label svg {
-  display: block !important;
-}
+  .listNeedToDo input:checked ~ label svg {
+    display: block !important;
+  }
 
-.comment .shadow {
-  box-shadow: none !important;
-  border-radius: 0 !important;
-}
+  .comment .shadow {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
 
-.comment .shadow .ant-timeline {
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  margin-bottom: 0 !important;
-}
+  .comment .shadow .ant-timeline {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-bottom: 0 !important;
+  }
 </style>

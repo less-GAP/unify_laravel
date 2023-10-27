@@ -14,8 +14,8 @@
   import Api from "@/utils/Api";
   import {DeleteOutlined, FormOutlined} from "@ant-design/icons-vue";
 
-  import ProductList from "./ProductList.vue";
-  import InsuranceList from "./InsuranceList.vue";
+  import ProductList from "./components/ProductList.vue";
+  import InsuranceList from "./components/InsuranceList.vue";
 
 
   import {

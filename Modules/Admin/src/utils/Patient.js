@@ -1,4 +1,5 @@
 import Api from "./Api";
+
 const fetchListInsurancesApi = async function () {
   const list = await Api.get("master-data/insurance").then((res) => res.data);
   return JSON.parse(list.data);
@@ -48,9 +49,9 @@ const fetchListDoctorStatusApi = function () {
 
 const listProcess = function () {
   return [
-    { value: 0, label: "Waiting" },
-    { value: 1, label: "Eligibility Check" },
-    { value: 2, label: "Approve new patient" },
+    {value: 0, label: "Waiting"},
+    {value: 1, label: "Eligibility Check"},
+    {value: 2, label: "Approve new patient"},
   ];
 };
 
@@ -64,38 +65,57 @@ const useNeedToDoList = function () {
     {
       key: "full_name",
       noti: "Full Name need check & update",
+      check: null
     },
     {
       key: "last_name",
       noti: "Last Name need check & update",
+      check: null
     },
     {
       key: "first_name",
       noti: "First Name need check & update",
+      check: null
     },
     {
       key: "phone",
       noti: "Phone number need check & update",
+      check: null
     },
     {
       key: "dob",
       noti: "Date of birth need check & update",
+      check: null
     },
     {
       key: "street",
       noti: "Address need check & update",
+      check: null
     },
     {
-      key: "insurance_coverages",
+      key: "insurances",
       noti: "Insurance Coverages need check & update",
+      check: 0
     },
     {
       key: "doctor_id",
       noti: "Doctor for patient need check & update",
+      check: null
     },
     {
       key: "doctor_status",
-      noti: "Doctor status need confirm and note",
+      noti: "Doctor status need confirm",
+      check: 0
+    },
+    {
+      key: "doctor_comment",
+      noti: "Doctor status need note",
+      check: null
+    },
+    {
+      key: "products",
+      noti: "Products need need check & update",
+      check: 0
     },
   ];
 };

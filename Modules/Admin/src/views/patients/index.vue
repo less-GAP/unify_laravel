@@ -139,12 +139,9 @@
         },
       },
       {
-        ifShow: false,
+        ifShow: auth.hasPermission('Patient.approveRunning') && item.unify_process < 2,
         label: "Approve Patient",
         key: "editProcess",
-        show: (item) => {
-          return true;
-        },
         action: (item) => {
           router.replace(prefix + "/" + item.id + "/process");
         },
@@ -202,11 +199,9 @@
           </a-tooltip>
         </template>
         <template #cellAction[editProcess]="{ item, actionMethod }">
-          <a-tooltip title="Approve Patient" class="mr-1" v-if="auth.hasPermission('patient.approve')  && item.unify_process < 2">
+          <a-tooltip title="Approve Patient" class="mr-1">
             <a-button
-              class="justify-center !flex !p-1 !h-auto"
-              :class="auth.hasPermission('patient.approve')  && item.unify_process < 2 ? '' : '!bg-gray-300 opacity-50'"
-              @click="actionMethod"
+              class="justify-center !flex !p-1 !h-auto" @click="actionMethod"
             >
               <BaseIcon :path="mdiCheckOutline" class="w-4"/>
             </a-button>
@@ -332,6 +327,6 @@
   </LayoutAuthenticated>
   <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;"
             @close="closeDetail" :open="openDetail" width="90vw">
-    <Detail :value="patientDetail" :key="patientDetail.id ?? 0"/>
+
   </a-drawer>
 </template>
