@@ -3,7 +3,7 @@
   import SectionMain from "@/components/SectionMain.vue";
   import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
   import dayjs from "dayjs";
-  import {h, watch, ref} from "vue";
+  import {h, watch, ref, toRaw} from "vue";
   import {useAuthStore} from "@/stores/auth";
   import {DataTable} from "@/components";
   import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
@@ -12,7 +12,11 @@
   import {BaseIcon} from "@/components";
   import Detail from "./Detail.vue";
 
-  import {PlusOutlined, LoadingOutlined, DeleteOutlined, FormOutlined, EyeOutlined} from '@ant-design/icons-vue';
+  import Shipper from "./components/Shipper.vue";
+
+  import {PlusOutlined, LoadingOutlined, DeleteOutlined, FormOutlined, EyeOutlined, PlusSquareOutlined} from '@ant-design/icons-vue';
+
+  import Api from "@/utils/Api";
 
   const prefix = "order";
   const {fetchListApi} = UseEloquentRouter(prefix);
@@ -105,6 +109,21 @@
           router.push(prefix + '/' + item.id);
         },
       },
+
+      {
+        ifShow: auth.hasPermission('Order.assign'),
+        label: "Assign",
+        key: "assign",
+        action: (item) => {
+          var shipper = {
+            order_id: item.id,
+            shipping_id: item.shipping_id,
+            shipper_phone: item.shipper_phone,
+            shipper_email: item.shipper_email,
+          };
+          editShipper(shipper);
+        },
+      },
       {
         ifShow: auth.hasPermission('Order.delete'),
         label: '',
@@ -144,6 +163,28 @@
     reloadTable();
   }
 
+
+  const showShipper = ref(false);
+  const selectShipper = ref({});
+  const onSelectShipper = (item) => {
+    Api.post(prefix+'/assign', toRaw(item)).then(rs => {
+      // notification[rs.data.code == 0 ? 'error' : 'success']({
+      //   message: 'Notification',
+      //   description: rs.data.message,
+      // });
+      if (rs.data.code == 1) {
+        showShipper.value = false;
+        reloadTable();
+      }
+    });
+  }
+
+  const editShipper = (item) => {
+    selectShipper.value = item;
+    showShipper.value = true;
+  };
+
+
 </script>
 
 <template>
@@ -164,6 +205,13 @@
           <a-button type="text" :icon="h(EyeOutlined)" label="" :outline="true" @click="actionMethod">
           </a-button>
         </template>
+
+        <template #cellAction[assign]="{ item, actionMethod }">
+          <a-button type="text" :icon="h(PlusSquareOutlined)" label="" :outline="true" @click="actionMethod">
+          </a-button>
+        </template>
+
+
         <template #cell[type]="{ item, column }">
           <a-tag class="capitalize" :color="item.type == 'in' ? 'green' : 'red'">{{item.type}}</a-tag>
         </template>
@@ -196,4 +244,8 @@
   <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;" @close="close" :open="visible" width="80vw" :maskClosable="false">
     <Detail :value="productDetail" @close="close" :key="productDetail.id"></Detail>
   </a-drawer>
+
+  <a-modal append-to-body v-model:open="showShipper" :zIndex="10" width="40%" title="Select Shipper" :closable="true" :footer="null" :maskClosable="false">
+    <Shipper :value="selectShipper" @close="showShipper = false" @select="onSelectShipper" :key="selectShipper.id ? selectShipper : 0"></Shipper>
+  </a-modal>
 </template>

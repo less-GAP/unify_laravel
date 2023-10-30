@@ -86,7 +86,7 @@
       };
 
       onMounted(() => {
-        console.log(props.value)
+        //console.log(props.value)
         formState.value = props.value;
         formState.value.shipper_phone = props.value.shipper_phone;
         formState.value.shipper_email = props.value.shipper_email;

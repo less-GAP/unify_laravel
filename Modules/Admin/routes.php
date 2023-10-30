@@ -309,7 +309,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
         )->routes(function () {
             Route::post('/', \Modules\Admin\Actions\Order\PostAction::class . '@handle');
             Route::get('/{id}', \Modules\Admin\Actions\Order\GetDetailAction::class . '@handle');
-//            Route::get('/list', \Modules\Admin\Actions\Patient\GetListAction::class . '@handle');
+            Route::post('/assign', \Modules\Admin\Actions\Order\PostAssignAction::class . '@handle');
 //            Route::get('/{id}', \Modules\Admin\Actions\Patient\GetDetailAction::class . '@handle');
         });
 });

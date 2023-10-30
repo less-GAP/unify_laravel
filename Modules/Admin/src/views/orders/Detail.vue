@@ -80,7 +80,6 @@
     formRef.value
       .validate()
       .then(() => {
-
         //check
         if (formState.value.products.length == 0) {
           message.error('Please select product!');
