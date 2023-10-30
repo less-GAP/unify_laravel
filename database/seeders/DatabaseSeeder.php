@@ -79,6 +79,7 @@ class DatabaseSeeder extends Seeder
             'deleted_by' => null,
             'status' => 'active'
         ]);
+
         $seller3 = \App\Models\User::factory()->create([
             'full_name' => 'Tran Van B',
             'username' => 'seller3',

@@ -46,7 +46,6 @@ class PatientFactory extends Factory
             'route' => null,
             'sub_r' => null,
             'supplies' => null,
-            'products' => null,
             'note' => null,
             'unify_data' => null,
             'doctor_id' => array_rand(Doctor::all()->pluck('id')->toArray()),

@@ -73,6 +73,7 @@
           //   description: rs.data.message,
           // });
           if (rs.data.code == 1) {
+            formRef.value.resetFields();
             emit('close');
           }
         });

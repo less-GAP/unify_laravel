@@ -67,7 +67,7 @@
     addAction: {
       action: (reload) => {
         //showEditUser({}, reload)
-        productDetail.value.id = 0;
+        productDetail.value = {};
         visible.value = true;
       },
       ifShow: auth.hasPermission('Supplier.create')
@@ -184,6 +184,6 @@
     </SectionMain>
   </LayoutAuthenticated>
   <a-drawer :closable="false" style="position:relative;display:flex;flex-direction:column;height:100vh;" @close="close" :open="visible" width="80vw" :maskClosable="false">
-    <Detail :value="productDetail" @close="close" :key="productDetail.id"></Detail>
+    <Detail :value="productDetail" @close="close" :key="productDetail.id ?? 0"></Detail>
   </a-drawer>
 </template>

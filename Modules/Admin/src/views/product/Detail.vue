@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive, h, ref, toRaw, computed, watch } from "vue";
+import {reactive, h, ref, toRaw, computed, watch, onMounted} from "vue";
 
 import { mdiBackspace, mdiContentSave, mdiAccountArrowUp } from '@mdi/js';
 
@@ -72,6 +72,11 @@ if (props.value.id > 0) {
 //   //formState.value = props.value
 // })
 
+onMounted(() => {
+  //console.log(props.value)
+  formState.value = props.value;
+});
+
 const submit = () => {
   formRef.value
     .validate()
@@ -82,6 +87,7 @@ const submit = () => {
         //   description: rs.data.message,
         // });
         if (rs.data.code == 1) {
+          formRef.value.resetFields();
           emit('close');
         }
       });
