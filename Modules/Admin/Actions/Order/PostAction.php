@@ -4,6 +4,7 @@
 namespace Modules\Admin\Actions\Order;
 
 use App\Models\InventoryDetail;
+use App\Models\OrderDetailInventories;
 use App\Models\Orders;
 use App\Models\OrderDetails;
 use Illuminate\Http\Request;
@@ -13,6 +14,7 @@ class PostAction
     public function handle(Request $request)
     {
         $data = $request->all();
+
         try {
             $order = new Orders();
             if (isset($data['id']) && $data['id'] > 0) {
@@ -22,7 +24,30 @@ class PostAction
             $order->fill($data);
             $order->save();
             if ($order->id > 0) {
-                OrderDetails::where('order_id', $order->id)->delete();
+                $order_details = OrderDetails::where('order_id', $order->id)->get();
+                if (!empty($order_details)) {
+                    foreach ($order_details as $de) {
+                        $inven = OrderDetailInventories::where('order_id', $de['order_id'])
+                            ->where('order_detail_id', $de['id'])
+                            ->get();
+                        if (!empty($inven)) {
+                            foreach ($inven as $inv) {
+                                $inven_detail = InventoryDetail::where('id', $inv['inventory_id'])->first();
+                                if (!empty($inven_detail)) {
+                                    //cong lai ton kho
+                                    InventoryDetail::where('id', $inv['inventory_id'])->update([
+                                        'used' => $inven_detail['used'] - $inv['amount'],
+                                        'remaining' => $inven_detail['remaining'] + $inv['amount'],
+                                    ]);
+                                    //xoa record
+                                    OrderDetailInventories::where('id', $inv['id'])->delete();
+                                }
+                            }
+                            OrderDetails::where('id', $de['id'])->delete();
+                        }
+                    }
+                }
+
                 if (!empty($data['products'])) {
                     foreach ($data['products'] as $k => $v) {
                         $amount = $v['amount'];
@@ -33,7 +58,7 @@ class PostAction
                             'supplier_id' => $v['supplier_id'],
                             'amount' => $v['amount'],
                         ];
-                        OrderDetails::create($ins);
+                        $detail = OrderDetails::create($ins);
 
                         //minus stock amount
                         $stocks = InventoryDetail::where('product_id', $v['product_id'])
@@ -50,10 +75,24 @@ class PostAction
                                         'used' => $st['remaining'],
                                         'remaining' => 0,
                                     ]);
+
+                                    OrderDetailInventories::create([
+                                        'order_id' => $order->id,
+                                        'order_detail_id' => $detail->id,
+                                        'amount' => $amount,
+                                        'inventory_id' => $st['id'],
+                                    ]);
                                 } else {
                                     InventoryDetail::where('id', $st['id'])->update([
                                         'used' => $amount,
                                         'remaining' => $st['remaining'] - $amount,
+                                    ]);
+
+                                    OrderDetailInventories::create([
+                                        'order_id' => $order->id,
+                                        'order_detail_id' => $detail->id,
+                                        'amount' => $amount,
+                                        'inventory_id' => $st['id'],
                                     ]);
                                     break;
                                 }
@@ -68,6 +107,7 @@ class PostAction
                 'message' => 'Success!',
                 'data' => $order
             ];
+
         } catch (\Throwable $e) {
             $output = [
                 'code' => 0,

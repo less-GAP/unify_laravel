@@ -167,7 +167,7 @@
   const showShipper = ref(false);
   const selectShipper = ref({});
   const onSelectShipper = (item) => {
-    Api.post(prefix+'/assign', toRaw(item)).then(rs => {
+    Api.post(prefix + '/assign', toRaw(item)).then(rs => {
       // notification[rs.data.code == 0 ? 'error' : 'success']({
       //   message: 'Notification',
       //   description: rs.data.message,
@@ -216,15 +216,19 @@
           <a-tag class="capitalize" :color="item.type == 'in' ? 'green' : 'red'">{{item.type}}</a-tag>
         </template>
         <template #cell[patient_id]="{ item, column }">
-          <span><b>#{{item.patient.unify_number}} - {{item.patient.full_name}}</b></span><br/>
-          <span v-if="item.phone">Tel: {{item.phone}}</span><br v-if="item.phone"/>
-          <span v-if="item.email">{{item.email}}</span><br v-if="item.email"/>
-          <span v-if="item.street">{{item.street}}, {{item.city}}, {{item.state}}, {{item.zip}}</span>
+          <div v-if="item.patient">
+            <span><b>#{{item.patient.unify_number}} - {{item.patient.full_name}}</b></span><br/>
+            <span v-if="item.phone">Tel: {{item.phone}}</span><br v-if="item.phone"/>
+            <span v-if="item.email">{{item.email}}</span><br v-if="item.email"/>
+            <span v-if="item.street">{{item.street}}, {{item.city}}, {{item.state}}, {{item.zip}}</span>
+          </div>
         </template>
         <template #cell[shipping_id]="{ item, column }">
-          <span><b>{{item.shipper_name}}</b></span><br/>
-          <span v-if="item.shipper_phone">Tel: {{item.shipper_phone}}</span><br v-if="item.shipper_phone"/>
-          <span v-if="item.shipper_email">{{item.shipper_email}}</span>
+          <div v-if="item.shipping_id">
+            <span><b>{{item.shipper_name}}</b></span><br/>
+            <span v-if="item.shipper_phone">Tel: {{item.shipper_phone}}</span><br v-if="item.shipper_phone"/>
+            <span v-if="item.shipper_email">{{item.shipper_email}}</span>
+          </div>
         </template>
 
         <template #cell[delivery_date]="{ item, column }">

@@ -34,7 +34,8 @@ class PostAction
                             'used' => 0,
                             'remaining' => $v['amount'],
                             'order_id' => null,
-                            'type' => $data['type']
+                            'type' => $data['type'],
+                            'supplier_id' => $data['supplier_id']
                         ];
                         InventoryDetail::create($ins);
                     }

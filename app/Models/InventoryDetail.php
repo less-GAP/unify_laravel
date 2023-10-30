@@ -29,7 +29,8 @@ class InventoryDetail extends Model
         'used',
         'remaining',
         'order_id',
-        'type'
+        'type',
+        'supplier_id'
     ];
 
     /**

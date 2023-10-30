@@ -53,7 +53,7 @@
         </a-col>
       </a-row>
       <div class="py-4 flex justify-end">
-        <a-button type="primary" html-type="submit">Submit</a-button>
+        <a-button type="primary" html-type="submit" :loading="loading">Submit</a-button>
         <a-button type="primary" ghost @click="back()" class="ml-4">Back</a-button>
       </div>
     </div>
@@ -101,7 +101,12 @@
         formRef.value
           .validate()
           .then(() => {
-            emit('select', toRaw(formState.value));
+            //check stock
+            Api.post('order/checkStock', toRaw(formState.value)).then(rs => {
+              if (rs.data.code == 1) {
+                emit('select', toRaw(formState.value));
+              }
+            });
           });
       };
 

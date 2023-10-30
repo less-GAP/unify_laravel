@@ -398,7 +398,7 @@
   </a-modal>
 
   <a-modal append-to-body v-model:open="showProduct" :zIndex="10" width="40%" title="Select Product" :closable="true" :footer="null" :maskClosable="false">
-    <ProductList :value="selectProduct" @close="showDetail = false" @select="onSelectProduct" :key="selectProduct.id ? selectProduct : 0"></ProductList>
+    <ProductList :value="selectProduct" @close="showProduct = false" @select="onSelectProduct" :key="selectProduct.id ? selectProduct : 0"></ProductList>
   </a-modal>
 
   <a-modal append-to-body v-model:open="showPatient" :zIndex="10" width="60%" title="Select Patient" :closable="true" :footer="null" :maskClosable="false">
