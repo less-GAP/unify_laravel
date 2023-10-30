@@ -26,6 +26,9 @@ return new class extends Migration {
             $table->string('route')->nullable();
             $table->string('sub_r')->nullable();
             $table->string('status')->nullable();
+            $table->string('shipper_name')->nullable();
+            $table->string('shipper_phone')->nullable();
+            $table->string('shipper_email')->nullable();
             $table->string('created_by')->nullable();
             $table->timestamps();
         });

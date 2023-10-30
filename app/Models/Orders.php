@@ -33,7 +33,11 @@ class Orders extends Model
         'route',
         'sub_r',
         'status',
-        'street'
+        'street',
+        'shipper_name',
+        'shipper_phone',
+        'shipper_email',
+        'created_by'
     ];
 
     /**

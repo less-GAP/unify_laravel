@@ -12,7 +12,7 @@
   import {BaseIcon} from "@/components";
   import Detail from "./Detail.vue";
 
-  import {PlusOutlined, LoadingOutlined, DeleteOutlined, FormOutlined} from '@ant-design/icons-vue';
+  import {PlusOutlined, LoadingOutlined, DeleteOutlined, FormOutlined, EyeOutlined} from '@ant-design/icons-vue';
 
   const prefix = "order";
   const {fetchListApi} = UseEloquentRouter(prefix);
@@ -90,6 +90,14 @@
     listActions: [],
     itemActions: [
       {
+        ifShow: auth.hasPermission('Order.menu'),
+        label: "View",
+        key: "view",
+        action: (item) => {
+          router.push(prefix + '/view/' + item.id);
+        },
+      },
+      {
         ifShow: auth.hasPermission('Order.update'),
         label: "Edit",
         key: "edit",
@@ -152,19 +160,23 @@
           <a-button type="text" :icon="h(FormOutlined)" label="" :outline="true" @click="actionMethod">
           </a-button>
         </template>
+        <template #cellAction[view]="{ item, actionMethod }">
+          <a-button type="text" :icon="h(EyeOutlined)" label="" :outline="true" @click="actionMethod">
+          </a-button>
+        </template>
         <template #cell[type]="{ item, column }">
           <a-tag class="capitalize" :color="item.type == 'in' ? 'green' : 'red'">{{item.type}}</a-tag>
         </template>
         <template #cell[patient_id]="{ item, column }">
-          <span><b>{{item.patient.unify_number}} - {{item.patient.full_name}}</b></span><br/>
-          <span v-if="item.phone">{{item.phone}}</span><br v-if="item.phone"/>
+          <span><b>#{{item.patient.unify_number}} - {{item.patient.full_name}}</b></span><br/>
+          <span v-if="item.phone">Tel: {{item.phone}}</span><br v-if="item.phone"/>
           <span v-if="item.email">{{item.email}}</span><br v-if="item.email"/>
           <span v-if="item.street">{{item.street}}, {{item.city}}, {{item.state}}, {{item.zip}}</span>
         </template>
         <template #cell[shipping_id]="{ item, column }">
-          <span><b>{{item.shipper.full_name}}</b></span><br/>
-          <span v-if="item.shipper.phone">{{item.shipper.phone}}</span><br v-if="item.shipper.phone"/>
-          <span v-if="item.shipper.email">{{item.shipper.email}}</span><br v-if="item.email"/>
+          <span><b>{{item.shipper_name}}</b></span><br/>
+          <span v-if="item.shipper_phone">Tel: {{item.shipper_phone}}</span><br v-if="item.shipper_phone"/>
+          <span v-if="item.shipper_email">{{item.shipper_email}}</span>
         </template>
 
         <template #cell[delivery_date]="{ item, column }">
@@ -173,9 +185,10 @@
 
         <template #cell[status]="{ item, column }">
           <a-tag v-if="item.status == 'new'" color="#2db7f5">New</a-tag>
-          <a-tag v-if="item.status == 'confirm'" color="#108ee9">Confirmed</a-tag>
+          <a-tag v-if="item.status == 'confirmed'" color="#108ee9">Confirmed</a-tag>
           <a-tag v-if="item.status == 'delivering'" color="#87d068">Delivering</a-tag>
           <a-tag v-if="item.status == 'delivered'" color="#green">Delivered</a-tag>
+          <a-tag v-if="item.status == 'done'" color="#green">Done</a-tag>
         </template>
       </DataTable>
     </SectionMain>

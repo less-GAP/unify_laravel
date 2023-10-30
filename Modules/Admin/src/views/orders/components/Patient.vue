@@ -10,7 +10,7 @@
                           placeholder="Select patient..." option-label-prop="children" @change="changePatient">
                   <template v-for="(value, key) in data" :key="key">
                     <a-select-option :value="value.id" :label="value.name" v-bind="value">
-                      {{value.unify_number}} - {{value.full_name}}
+                      #{{value.unify_number}} - {{value.full_name}}
                     </a-select-option>
                   </template>
                 </a-select>
@@ -108,6 +108,8 @@
       function changePatient(value, option) {
         if(option){
           formState.value.patient = option;
+          formState.value.unify_number = option.unify_number;
+          formState.value.full_name = option.full_name;
           formState.value.phone = option.phone;
           formState.value.email = option.email;
           formState.value.street = option.street;

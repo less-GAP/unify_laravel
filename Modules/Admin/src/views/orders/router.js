@@ -17,4 +17,13 @@ export default [
     name: "order-detail",
     component: () => import("./Detail.vue"),
   },
+  {
+    meta: {
+      title: "Order Detail",
+      permission: "Order.update",
+    },
+    path: "/order/view/:id",
+    name: "order-view",
+    component: () => import("./View.vue"),
+  },
 ];

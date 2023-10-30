@@ -29,8 +29,6 @@
 
   import Patient from "./components/Patient.vue";
 
-  import Shipper from "./components/Shipper.vue";
-
   import dayjs from "dayjs";
 
   import {PlusOutlined, LoadingOutlined, DeleteOutlined, FormOutlined} from '@ant-design/icons-vue';
@@ -55,7 +53,6 @@
   const formRef = ref();
 
   const formState = ref({
-    status: 'new',
     products: [],
     patient: {}
   });
@@ -137,12 +134,6 @@
       className: 'text-center',
       width: 100
     },
-    {
-      title: 'Action',
-      dataIndex: 'action',
-      key: 'action',
-      width: 100
-    },
   ]);
 
   const showProduct = ref(false);
@@ -184,20 +175,7 @@
   const selectPatient = ref({});
   const onSelectPatient = (item) => {
     //console.log(item);
-    formState.value.patient = {
-      unify_number: item.unify_number,
-      full_name: item.full_name,
-      patient_id: item.patient_id,
-      apt: item.apt,
-      city: item.city,
-      phone: item.phone,
-      email: item.email,
-      route: item.route,
-      state: item.state,
-      street: item.street,
-      sub_r: item.sub_r,
-      zip: item.zip,
-    };
+    formState.value.patient = item.patient;
     formState.value.apt = item.apt;
     formState.value.city = item.city;
     formState.value.phone = item.phone;
@@ -209,6 +187,7 @@
     formState.value.sub_r = item.sub_r;
     formState.value.zip = item.zip;
     showPatient.value = false;
+    console.log(formState.value);
   }
 
   const addPatient = () => {
@@ -221,31 +200,9 @@
     showPatient.value = true;
   };
 
-  const showShipper = ref(false);
-  const selectShipper = ref({});
-  const onSelectShipper = (item) => {
-    formState.value.shipper = {
-      shipping_id: item.shipping_id,
-      shipper_phone: item.shipper_phone,
-      shipper_email: item.shipper_email,
-    };
-    formState.value.shipper_name = item.shipper_name;
-    formState.value.shipper_phone = item.shipper_phone;
-    formState.value.shipper_email = item.shipper_email;
-    formState.value.shipping_id = item.shipping_id;
-    showShipper.value = false;
-  }
-
-  const addShipper = () => {
-    selectShipper.value = {};
-    showShipper.value = true;
+  const delPatient = (item) => {
+    formState.value.patient = item;
   };
-
-  const editShipper = (item) => {
-    selectShipper.value = item;
-    showShipper.value = true;
-  };
-
 
   const back = () => {
     router.push('/' + prefix);
@@ -261,9 +218,6 @@
           <a-row :gutter="20">
             <a-col :span="16">
               <a-divider orientation="left">Product Info</a-divider>
-              <div class="flex flex-row justify-start">
-                <a-button @click="addProduct">Add Product</a-button>
-              </div>
               <div class="mt-5">
                 <a-table :data-source="formState.products" :columns="productColumns" bordered :pagination="false" triped>
                   <template #bodyCell="{ column, record }">
@@ -304,86 +258,34 @@
             </a-col>
             <a-col :span="8">
               <a-divider orientation="left">Order Info</a-divider>
-              <a-row :gutter="20">
-                <a-col :span="24">
-                  <a-form-item label="Status" :rules="[{ required: true, message: 'Please select !' }]">
-                    <a-select v-model:value="formState.status" allowClear="" class="w-full" :options="[
-                {
-                  value: 'new',
-                  label: 'New'
-                },
-                {
-                  value: 'confirmed',
-                  label: 'Confirmed'
-                },
-                {
-                  value: 'delivering',
-                  label: 'Delivering'
-                },
-                {
-                  value: 'delivered',
-                  label: 'Delivered'
-                },
-                {
-                  value: 'done',
-                  label: 'Done'
-                },
-
-              ]">
-                    </a-select>
-                  </a-form-item>
-                  <a-form-item label="Delivery Date" name="delivery_date" :rules="[{ required: true, message: 'Please input !' }]">
-                    <a-date-picker
-                      v-model:value="formState.delivery_date"
-                      input-read-only
-                      value-format="YYYY-MM-DD"
-                      format="MM-DD-YYYY"
-                      class="w-[150px]"
-                    ></a-date-picker>
-                  </a-form-item>
-                </a-col>
-              </a-row>
+              <div><b>Status: </b>
+                <a-tag v-if="formState.status == 'new'" color="#2db7f5">New</a-tag>
+                <a-tag v-if="formState.status == 'confirmed'" color="#108ee9">Confirmed</a-tag>
+                <a-tag v-if="formState.status == 'delivering'" color="#87d068">Delivering</a-tag>
+                <a-tag v-if="formState.status == 'delivered'" color="#green">Delivered</a-tag>
+                <a-tag v-if="formState.status == 'done'" color="#green">Done</a-tag>
+              </div>
+              <div class="mt-2"><b>Delivery Date: </b> {{dayjs(formState.delivery_date, "YYYY-MM-DD").format("MM-DD-YYYY" )}}
+              </div>
               <a-divider orientation="left">Patient Info</a-divider>
               <div class="flex flex-row justify-start">
                 <a-button @click="addPatient" v-if="!formState.patient_id">Add Patient</a-button>
               </div>
-              <div v-if="formState.patient_id" class="flex flex-row justify-between">
-                <div>
-                  <span><b>#{{formState.patient.unify_number}} - {{formState.patient.full_name}}</b></span><br/>
-                  <span v-if="formState.phone">{{formState.phone}}</span><br/>
-                  <span v-if="formState.email">{{formState.email}}</span><br v-if="formState.email"/>
-                  <span v-if="formState.street">{{formState.street}}, {{formState.city}}, {{formState.state}}, {{formState.zip}}</span>
-                </div>
-                <div>
-                  <a-button @click="editPatient(formState.patient)" :size="small">
-                    <template #icon>
-                      <FormOutlined/>
-                    </template>
-                  </a-button>
-                </div>
+              <div v-if="formState.patient_id">
+                <span><b>{{formState.patient.unify_number}} - {{formState.patient.full_name}}</b></span><br/>
+                <span v-if="formState.phone">{{formState.phone}}</span><br/>
+                <span v-if="formState.email">{{formState.email}}</span><br v-if="formState.email"/>
+                <span v-if="formState.street">{{formState.street}}, {{formState.city}}, {{formState.state}}, {{formState.zip}}</span>
               </div>
               <a-divider orientation="left">Shipping Info</a-divider>
-              <div class="flex flex-row justify-start">
-                <a-button @click="addShipper" v-if="!formState.shipping_id">Add Shipper</a-button>
-              </div>
-              <div v-if="formState.shipping_id" class="flex flex-row justify-between">
-                <div>
-                  <span><b>{{formState.shipper_name}}</b></span><br/>
-                  <span v-if="formState.shipper_phone">{{formState.shipper_phone}}</span><br/>
-                  <span v-if="formState.shipper_email">{{formState.shipper_email}}</span>
-                </div>
-                <div>
-                  <a-button @click="editShipper(formState.shipper)" :size="small">
-                    <template #icon>
-                      <FormOutlined/>
-                    </template>
-                  </a-button>
-                </div>
+              <div v-if="formState.shipping_id">
+                <span><b>{{formState.shipper_name}}</b></span><br/>
+                <span v-if="formState.shipper.phone">{{formState.shipper_phone}}</span><br v-if="formState.shipper_phone"/>
+                <span v-if="formState.shipper_email">{{formState.shipper_email}}</span>
               </div>
             </a-col>
           </a-row>
           <a-space align="center" class="pt-5">
-            <a-button type="primary" html-type="submit">Submit</a-button>
             <a-button type="primary" ghost @click="back()">Back</a-button>
           </a-space>
         </div>
@@ -404,10 +306,6 @@
 
   <a-modal append-to-body v-model:open="showPatient" :zIndex="10" width="60%" title="Select Patient" :closable="true" :footer="null" :maskClosable="false">
     <Patient :value="selectPatient" @close="showPatient = false" @select="onSelectPatient" :key="selectPatient.id ? selectPatient : 0"></Patient>
-  </a-modal>
-
-  <a-modal append-to-body v-model:open="showShipper" :zIndex="10" width="40%" title="Select Shipper" :closable="true" :footer="null" :maskClosable="false">
-    <Shipper :value="selectShipper" @close="showShipper = false" @select="onSelectShipper" :key="selectShipper.id ? selectShipper : 0"></Shipper>
   </a-modal>
 
 </template>

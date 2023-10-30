@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->boolean('is_support')->nullable();
             $table->string('status')->default('active');
             $table->string('type')->default('user');
+            $table->string('phone')->nullable();
 
             // new migrate 1/9
             $table->integer('deleted')->default(0);
