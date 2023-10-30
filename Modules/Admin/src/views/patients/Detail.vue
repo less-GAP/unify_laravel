@@ -275,7 +275,7 @@
     if (add) {
       formState.value.insurances.push(item);
     }
-    console.log(formState.value.insurances);
+    //console.log(formState.value.insurances);
     showInsuranceDetail.value = false;
   }
 

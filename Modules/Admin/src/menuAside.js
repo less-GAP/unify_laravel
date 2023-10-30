@@ -22,7 +22,8 @@ import {
   mdiStarCircle,
   mdiTooltipQuestion,
   mdiStoreSettingsOutline,
-  mdiTrademark
+  mdiTrademark,
+  mdiCartVariant
 } from "@mdi/js";
 
 export default [{
@@ -51,12 +52,19 @@ export default [{
     permission: 'Inventory.menu',
     label: "Inventory",
   },
+  // {
+  //   to: "/delivery",
+  //   permission: 'Delivery.menu',
+  //   label: "Delivery",
+  //   icon: mdiTruckDelivery,
+  //   disable: true,
+  // },
   {
-    to: "/delivery",
-    permission: 'Delivery.menu',
-    label: "Delivery",
-    icon: mdiTruckDelivery,
-    disable: true,
+    to: "/order",
+    permission: 'Order.menu',
+    label: "Order",
+    icon: mdiCartVariant,
+    disable: false,
   },
   {
     to: "/inventory",

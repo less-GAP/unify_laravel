@@ -23,26 +23,9 @@ class OrderDetails extends Model
     protected $fillable = [
         'order_id',
         'product_id',
-        'price',
+        'supplier_id',
         'amount',
-        'extra',
-        'discount',
-        'total',
-        'subtotal_discount',
-        'shipping_id',
-        'shipping_cost',
-        'shipping_status',
-        'payment_id',
-        'payment_status',
-        'notes',
-        'coupon_code',
-        's_name',
-        's_phone',
-        's_address',
-        's_ward',
-        's_district',
-        's_province',
-        's_country',
+        'trademark_id',
     ];
 
     /**
@@ -66,9 +49,33 @@ class OrderDetails extends Model
     ];
 
     protected $appends = [
-//        'customer_group_name',
-//        'videos'
+        'supplier',
+        'product',
+        'trademark'
     ];
+
+
+    public function getSupplierAttribute()
+    {
+        if ($this->supplier_id != '') {
+            return Supplier::where('id', $this->supplier_id)->first();
+        }
+        return '';
+    }
+
+    public function getProductAttribute()
+    {
+        return Product::where('id', $this->product_id)->first();
+    }
+
+
+    public function getTrademarkAttribute()
+    {
+        if ($this->supplier_id != '') {
+            return Trademark::where('id', $this->trademark_id)->first();
+        }
+        return '';
+    }
 
 //    public function getCustomerGroupNameAttribute()
 //    {

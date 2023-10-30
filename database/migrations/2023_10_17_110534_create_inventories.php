@@ -30,6 +30,7 @@ return new class extends Migration {
             $table->integer('inventory_id')->nullable();
             $table->integer('product_id')->nullable();
             $table->integer('trademark_id')->nullable();
+            $table->integer('supplier_id')->nullable();
             $table->integer('amount')->default(0);
             $table->date('expiration_date')->nullable();
             $table->integer('used')->default(0);

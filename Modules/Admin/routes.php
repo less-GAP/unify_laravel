@@ -53,6 +53,7 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             Route::post('/', \Modules\Admin\Actions\User\PostAction::class . '@handle');
             Route::get('/options', \Modules\Admin\Actions\User\GetUserOptionsAction::class . '@handle');
             Route::get('list', \Modules\Admin\Actions\User\GetUserListAction::class . '@handle');
+            Route::get('all', \Modules\Admin\Actions\User\GetAllAction::class . '@handle');
             //Route::post('{id?}', \Modules\Admin\Actions\User\PostUserAction::class . '@handle');
             // Route::delete('{id}', \Modules\Admin\Actions\User\DeleteUserAction::class . '@handle');
         });
@@ -123,12 +124,15 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                 'allowedIncludes' => ['tasks', 'doctor'],
                 'allowedSorts' => ['id', 'name', 'updated_at'],
                 'allowedFilters' => [
-                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,phone,email'), AllowedFilter::custom('phone', new \App\Builder\Filters\SearchLikeMultipleField, 'phone')
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,phone,email'),
+                    AllowedFilter::custom('phone', new \App\Builder\Filters\SearchLikeMultipleField, 'phone'),
+                    AllowedFilter::custom('unify_process', new \App\Builder\Filters\SearchLikeMultipleField, 'unify_process'),
                 ]
             ]
         )->routes(function () {
             Route::post('/', \Modules\Admin\Actions\Patient\PostAction::class . '@handle');
             Route::get('/list', \Modules\Admin\Actions\Patient\GetListAction::class . '@handle');
+            Route::get('/all', \Modules\Admin\Actions\Patient\GetAllAction::class . '@handle');
             Route::get('/{id}', \Modules\Admin\Actions\Patient\GetDetailAction::class . '@handle');
         });
     EloquentRouter::prefix('activity')
@@ -139,7 +143,10 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                 'allowedIncludes' => ['user'],
                 'allowedSorts' => ['id'],
                 'allowedFilters' => [
-                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'description'), AllowedFilter::exact('causer_id'), AllowedFilter::exact('subject_id'), AllowedFilter::exact('subject_type')
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'description'),
+                    AllowedFilter::exact('causer_id'),
+                    AllowedFilter::exact('subject_id'),
+                    AllowedFilter::exact('subject_type')
                 ]
             ]
         )->routes(function () {
@@ -289,5 +296,20 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             Route::post('/', \Modules\Admin\Actions\Inventory\PostAction::class . '@handle');
             Route::get('/{id}', \Modules\Admin\Actions\Inventory\GetDetailAction::class . '@handle');
             Route::post('/activeList', \Modules\Admin\Actions\Inventory\PostActiveListAction::class . '@handle');
+        });
+
+    EloquentRouter::prefix('order')
+        ->handle(
+            \App\Models\Orders::class,
+            [
+                'allowedFilters' => [
+                    AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,phone,email'), AllowedFilter::custom('phone', new \App\Builder\Filters\SearchLikeMultipleField, 'phone')
+                ]
+            ]
+        )->routes(function () {
+            Route::post('/', \Modules\Admin\Actions\Order\PostAction::class . '@handle');
+            Route::get('/{id}', \Modules\Admin\Actions\Order\GetDetailAction::class . '@handle');
+//            Route::get('/list', \Modules\Admin\Actions\Patient\GetListAction::class . '@handle');
+//            Route::get('/{id}', \Modules\Admin\Actions\Patient\GetDetailAction::class . '@handle');
         });
 });

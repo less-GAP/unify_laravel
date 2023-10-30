@@ -21,28 +21,19 @@ class Orders extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'customer_id',
-        'customer_name',
-        'customer_phone',
-        'customer_email',
-        'subtotal',
-        'discount',
-        'total',
-        'subtotal_discount',
+        'patient_id',
         'shipping_id',
-        'shipping_cost',
-        'shipping_status',
-        'payment_id',
-        'payment_status',
-        'notes',
-        'coupon_code',
-        's_name',
-        's_phone',
-        's_address',
-        's_ward',
-        's_district',
-        's_province',
-        's_country',
+        'delivery_date',
+        'phone',
+        'address',
+        'apt',
+        'city',
+        'state',
+        'zip',
+        'route',
+        'sub_r',
+        'status',
+        'street'
     ];
 
     /**
@@ -66,58 +57,64 @@ class Orders extends Model
     ];
 
     protected $appends = [
-        'shipping_name',
-        'payment_name',
-        'country_name',
-        'province_name',
-        'district_name',
-        'ward_name',
+        'patient',
+        'shipper',
+        'products'
     ];
 
-    public function getShippingNameAttribute()
+    public function getPatientAttribute()
     {
-        $data = ShippingMethod::where('id', $this->shipping_id)->first();
-        return $data->name;
+        return Patient::where('id', $this->patient_id)->first();
     }
 
-    public function getPaymentNameAttribute()
+    public function getShipperAttribute()
     {
-        $data = PaymentMethod::where('id', $this->payment_id)->first();
-        return $data->name;
+        return User::where('id', $this->shipping_id)->first();
     }
 
-    public function getCountryNameAttribute()
+    public function getProductsAttribute()
     {
-        $data = Countries::where('code', $this->s_country)->first();
-        return $data->name;
+        return OrderDetails::where('order_id', $this->id)->get();
     }
-
-    public function getProvinceNameAttribute()
-    {
-        $data = Provinces::where('code', $this->s_province)
-            ->where('country_code', $this->s_country)
-            ->first();
-        return $data->name;
-    }
-
-    public function getDistrictNameAttribute()
-    {
-        $data = Districts::where('code', $this->s_district)
-            ->where('province_code', $this->s_province)
-            ->where('country_code', $this->s_country)
-            ->first();
-        return $data->name;
-    }
-
-    public function getWardNameAttribute()
-    {
-        $data = Wards::where('code', $this->s_ward)
-            ->where('province_code', $this->s_province)
-            ->where('country_code', $this->s_country)
-            ->where('district_code', $this->s_district)
-            ->first();
-        return $data->name;
-    }
+//
+//    public function getPaymentNameAttribute()
+//    {
+//        $data = PaymentMethod::where('id', $this->payment_id)->first();
+//        return $data->name;
+//    }
+//
+//    public function getCountryNameAttribute()
+//    {
+//        $data = Countries::where('code', $this->s_country)->first();
+//        return $data->name;
+//    }
+//
+//    public function getProvinceNameAttribute()
+//    {
+//        $data = Provinces::where('code', $this->s_province)
+//            ->where('country_code', $this->s_country)
+//            ->first();
+//        return $data->name;
+//    }
+//
+//    public function getDistrictNameAttribute()
+//    {
+//        $data = Districts::where('code', $this->s_district)
+//            ->where('province_code', $this->s_province)
+//            ->where('country_code', $this->s_country)
+//            ->first();
+//        return $data->name;
+//    }
+//
+//    public function getWardNameAttribute()
+//    {
+//        $data = Wards::where('code', $this->s_ward)
+//            ->where('province_code', $this->s_province)
+//            ->where('country_code', $this->s_country)
+//            ->where('district_code', $this->s_district)
+//            ->first();
+//        return $data->name;
+//    }
 
 
 }
