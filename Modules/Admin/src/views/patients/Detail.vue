@@ -143,7 +143,7 @@
         formRef.value.log_detail = formStateLog.log_detail;
         Api.post(prefix, toRaw(formState.value)).then(rs => {
           if (rs.data.code == 1) {
-            back();
+            //back();
           }
         });
       });
