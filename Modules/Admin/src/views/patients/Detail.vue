@@ -96,7 +96,7 @@
     formRef.value
       .validate()
       .then(() => {
-        if(formState.value.id > 0){
+        if (formState.value.id > 0) {
           showLog.value = true;
         }
 
@@ -144,6 +144,8 @@
         Api.post(prefix, toRaw(formState.value)).then(rs => {
           if (rs.data.code == 1) {
             //back();
+            showLog.value = false;
+            formRefLog.value.resetFields();
           }
         });
       });
@@ -171,6 +173,14 @@
       title: "Amount",
       dataIndex: 'amount',
       key: "amount",
+      width: 150,
+      align: 'center'
+    },
+    {
+      title: "Delivery Type",
+      dataIndex: 'delivery_type',
+      key: "delivery_type",
+      width: 250,
     },
     {
       title: "Delivery date",
@@ -568,8 +578,19 @@
                       <label class="ml-4 font-semibold">{{record.product.name}}</label>
                     </div>
                   </template>
+                  <template v-if="column.key === 'delivery_type'">
+                    <label v-if="record.delivery_type == 'one_times'">One Times</label>
+                    <label v-if="record.delivery_type == 'weekly'">Weekly</label>
+                    <label v-if="record.delivery_type == 'monthly'">Monthly</label>
+                    <label v-if="record.delivery_type == 'yearly'">Yearly</label>
+                  </template>
                   <template v-if="column.key === 'delivery_date'">
-                    {{dayjs(record.delivery_date, "YYYY-MM-DD").format("MM-DD-YYYY" )}}
+                    <label v-if="record.delivery_type == 'one_times' || record.delivery_type == 'yearly'">
+                      {{dayjs(record.delivery_date, "YYYY-MM-DD").format("MM-DD-YYYY" )}}
+                    </label>
+                    <label v-if="record.delivery_type == 'weekly' || record.delivery_type == 'monthly'">
+                      {{record.delivery_value}}
+                    </label>
                   </template>
                   <template v-if="column.key === 'action'">
                     <a-button type="text" :icon="h(FormOutlined)" label="" :outline="true" @click="editProduct(record)"></a-button>

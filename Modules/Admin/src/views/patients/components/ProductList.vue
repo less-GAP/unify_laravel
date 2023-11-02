@@ -18,8 +18,30 @@
             </ApiData>
           </a-form-item>
         </a-col>
-        <a-col :span="24">
-          <a-form-item label="Delivery date" name="delivery_date" :rules="[{ required: true, message: 'Please input !' }]">
+      </a-row>
+      <a-row :gutter="20">
+        <a-col :span="8">
+          <a-form-item label="Amount" name="amount" :rules="[{ required: true, message: 'Please input !' }]">
+            <a-input-number id="inputNumber" v-model:value="formState.amount" :min="0" style="width: 100%"/>
+          </a-form-item>
+        </a-col>
+      </a-row>
+      <a-row :gutter="20">
+        <a-col :span="8">
+          <a-form-item label="Delivery Type" name="delivery_type" :rules="[{ required: true, message: 'Please input !' }]">
+            <a-select class="w-[200px]" v-model:value="formState.delivery_type"
+                      placeholder="Select type..." option-label-prop="children" @change="formState.delivery_value = null">
+              <a-select-option value="one_times">One Times</a-select-option>
+              <a-select-option value="weekly">Weekly</a-select-option>
+              <a-select-option value="monthly">Monthly</a-select-option>
+              <a-select-option value="yearly">Yearly</a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :span="8" v-if="formState.delivery_type">
+          <a-form-item label="Delivery date" name="delivery_date" :rules="[{ required: true, message: 'Please input !' }]"
+                       v-if="formState.delivery_type == 'one_times' || formState.delivery_type == 'yearly'"
+          >
             <a-date-picker
               v-model:value="formState.delivery_date"
               input-read-only
@@ -28,14 +50,20 @@
               class="w-full"
             ></a-date-picker>
           </a-form-item>
-        </a-col>
-        <a-col :span="24">
-          <a-form-item label="Amount" name="amount" :rules="[{ required: true, message: 'Please input !' }]">
-            <a-input-number id="inputNumber" v-model:value="formState.amount" :min="0" style="width: 100%"/>
+          <a-form-item label="Delivery value" name="delivery_value" :rules="[{ required: true, message: 'Please input !' }]"
+                       v-if="formState.delivery_type == 'weekly'">
+            <a-select class="w-[200px]" v-model:value="formState.delivery_value"
+                      placeholder="Select type..." option-label-prop="children" :options="weeks">
+            </a-select>
+          </a-form-item>
+          <a-form-item label="Delivery value" name="delivery_value" :rules="[{ required: true, message: 'Please input !' }]"
+                       v-if="formState.delivery_type == 'monthly'">
+            <a-select class="w-[200px]" v-model:value="formState.delivery_value"
+                      placeholder="Select type..." option-label-prop="children" :options="months">
+            </a-select>
           </a-form-item>
         </a-col>
       </a-row>
-
       <div class="py-4 flex justify-end">
         <a-button type="primary" html-type="submit">Submit</a-button>
         <a-button type="primary" ghost @click="back()" class="ml-4">Back</a-button>
@@ -73,6 +101,44 @@
       const formRef = ref();
       const formState = ref({});
       const products = ref([]);
+      const weeks = ref([
+        {
+          value: 'Monday',
+          label: 'Monday'
+        },
+        {
+          value: 'Tuesday',
+          label: 'Tuesday'
+        },
+        {
+          value: 'Wednesday',
+          label: 'Wednesday'
+        },
+        {
+          value: 'Thursday',
+          label: 'Thursday'
+        },
+        {
+          value: 'Friday',
+          label: 'Friday'
+        },
+        {
+          value: 'Saturday',
+          label: 'Saturday'
+        },
+        {
+          value: 'Sunday',
+          label: 'Sunday'
+        }
+      ]);
+      const months = ref([]);
+      for (var day = 1; day < 29; day++) {
+        months.value.push({
+          value: day,
+          label: day
+        })
+      }
+
 
       function back() {
         emit('close');
@@ -91,11 +157,17 @@
       };
 
 
-      onMounted(() => {
-        //console.log(props.value)
-        formState.value = props.value;
-      });
+      // onMounted(() => {
+      //   //console.log(props.value)
+      //   formState.value = props.value;
+      // });
 
+      watch(props.value, () => {
+          formState.value = props.value;
+          console.log(props.value);
+        },
+        {immediate: true}
+      )
 
       return {
         loading,
@@ -103,7 +175,9 @@
         back,
         formState,
         submit,
-        changeProduct
+        changeProduct,
+        weeks,
+        months
       };
     },
   });

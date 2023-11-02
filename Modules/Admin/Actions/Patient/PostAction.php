@@ -39,7 +39,9 @@ class PostAction
                             'patient_id' => $patient->id,
                             'product' => $v['product'],
                             'product_id' => $v['product_id'],
-                            'delivery_date' => $v['delivery_date'],
+                            'delivery_date' => $v['delivery_date'] ?? null,
+                            'delivery_value' => $v['delivery_value'] ?? null,
+                            'delivery_type' => $v['delivery_type'],
                             'amount' => $v['amount']
                         ]);
                     }

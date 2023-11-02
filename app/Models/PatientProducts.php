@@ -32,9 +32,8 @@ class PatientProducts extends Model
         'amount',
         'product_id',
         'product',
-        'full_name',
-        'last_name',
-
+        'delivery_value',
+        'delivery_type'
     ];
 
     protected $casts = [

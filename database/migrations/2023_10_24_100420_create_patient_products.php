@@ -12,11 +12,13 @@ return new class extends Migration {
     {
         Schema::create('patient_products', function (Blueprint $table) {
             $table->id();
-            $table->integer('patient_id');
-            $table->date('delivery_date');
-            $table->integer('amount');
-            $table->integer('product_id');
-            $table->text('product');
+            $table->integer('patient_id')->nullable();
+            $table->date('delivery_date')->nullable();
+            $table->string('delivery_value')->nullable();
+            $table->string('delivery_type')->nullable();
+            $table->integer('amount')->nullable();
+            $table->integer('product_id')->nullable();
+            $table->text('product')->nullable();
             $table->timestamps();
         });
     }
