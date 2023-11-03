@@ -14,6 +14,7 @@ class PostAction
     public function handle(Request $request)
     {
         $data = $request->all();
+
         //check unify number
         $query = Patient::where('unify_number', $data['unify_number']);
         if (isset($data['id']) && $data['id'] > 0) {
@@ -42,6 +43,7 @@ class PostAction
                             'delivery_date' => $v['delivery_date'] ?? null,
                             'delivery_value' => $v['delivery_value'] ?? null,
                             'delivery_type' => $v['delivery_type'],
+                            'delivery_option' => $v['delivery_option'],
                             'amount' => $v['amount']
                         ]);
                     }

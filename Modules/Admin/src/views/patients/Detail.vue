@@ -484,13 +484,13 @@
                 </a-form-item>
               </a-col>
               <a-col :span="8">
-                <a-form-item label="Apt" name="apt" :rules="[{ message: 'Please enter apt!' }]">
-                  <a-input v-model:value="formState.apt" class="w-full" placeholder="Apt..."></a-input>
+                <a-form-item label="Route" name="route" :rules="[{ required: true, message: 'Please enter route!' }]">
+                  <a-input v-model:value="formState.route" class="w-full" placeholder="Route..."></a-input>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
-                <a-form-item label="Route" name="route" :rules="[{ message: 'Please enter route!' }]">
-                  <a-input v-model:value="formState.route" class="w-full" placeholder="Route..."></a-input>
+                <a-form-item label="Apt" name="apt" :rules="[{ message: 'Please enter apt!' }]">
+                  <a-input v-model:value="formState.apt" class="w-full" placeholder="Apt..."></a-input>
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -588,8 +588,11 @@
                     <label v-if="record.delivery_type == 'one_times' || record.delivery_type == 'yearly'">
                       {{dayjs(record.delivery_date, "YYYY-MM-DD").format("MM-DD-YYYY" )}}
                     </label>
-                    <label v-if="record.delivery_type == 'weekly' || record.delivery_type == 'monthly'">
+                    <label v-if="record.delivery_type == 'monthly'">
                       {{record.delivery_value}}
+                    </label>
+                    <label v-if="record.delivery_type == 'weekly'">
+                      {{record.delivery_option.label}}
                     </label>
                   </template>
                   <template v-if="column.key === 'action'">

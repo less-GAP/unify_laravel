@@ -14,7 +14,6 @@ class PostAction
     public function handle(Request $request)
     {
         $data = $request->all();
-
         try {
             $order = new Orders();
             if (isset($data['id']) && $data['id'] > 0) {

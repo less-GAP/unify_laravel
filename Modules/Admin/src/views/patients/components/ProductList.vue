@@ -53,7 +53,7 @@
           <a-form-item label="Delivery value" name="delivery_value" :rules="[{ required: true, message: 'Please input !' }]"
                        v-if="formState.delivery_type == 'weekly'">
             <a-select class="w-[200px]" v-model:value="formState.delivery_value"
-                      placeholder="Select type..." option-label-prop="children" :options="weeks">
+                      placeholder="Select type..." :options="weeks" @change="changeWeek">
             </a-select>
           </a-form-item>
           <a-form-item label="Delivery value" name="delivery_value" :rules="[{ required: true, message: 'Please input !' }]"
@@ -103,32 +103,32 @@
       const products = ref([]);
       const weeks = ref([
         {
-          value: 'Monday',
-          label: 'Monday'
+          label: 'Monday',
+          value: '1'
         },
         {
-          value: 'Tuesday',
-          label: 'Tuesday'
+          label: 'Tuesday',
+          value: '2'
         },
         {
-          value: 'Wednesday',
-          label: 'Wednesday'
+          label: 'Wednesday',
+          value: '3'
         },
         {
-          value: 'Thursday',
-          label: 'Thursday'
+          label: 'Thursday',
+          value: '4'
         },
         {
-          value: 'Friday',
-          label: 'Friday'
+          label: 'Friday',
+          value: '5'
         },
         {
-          value: 'Saturday',
-          label: 'Saturday'
+          label: 'Saturday',
+          value: '6'
         },
         {
-          value: 'Sunday',
-          label: 'Sunday'
+          label: 'Sunday',
+          value: '7'
         }
       ]);
       const months = ref([]);
@@ -156,6 +156,10 @@
         formState.value.product = option;
       };
 
+      function changeWeek(value, option) {
+        formState.value.delivery_option = option;
+      };
+
 
       // onMounted(() => {
       //   //console.log(props.value)
@@ -177,7 +181,8 @@
         submit,
         changeProduct,
         weeks,
-        months
+        months,
+        changeWeek
       };
     },
   });
