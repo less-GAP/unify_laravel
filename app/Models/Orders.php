@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Orders extends Model
 {
@@ -76,8 +77,15 @@ class Orders extends Model
         return User::where('id', $this->shipping_id)->first();
     }
 
+    public function details()
+    {
+        return $this->belongsTo(OrderDetails::class, 'id', 'order_id');
+        //return OrderDetails::where('order_id', $this->id)->get();
+    }
+
     public function getProductsAttribute()
     {
+        //return $this->belongsTo(OrderDetails::class, 'id', 'order_id');
         return OrderDetails::where('order_id', $this->id)->get();
     }
 //

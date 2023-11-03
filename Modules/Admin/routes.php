@@ -304,7 +304,8 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
             [
                 'allowedFilters' => [
                     AllowedFilter::custom('search', new \App\Builder\Filters\SearchLikeMultipleField, 'full_name,phone,email'), AllowedFilter::custom('phone', new \App\Builder\Filters\SearchLikeMultipleField, 'phone')
-                ]
+                ],
+                'allowedIncludes' => ['products'],
             ]
         )->routes(function () {
             Route::post('/', \Modules\Admin\Actions\Order\PostAction::class . '@handle');
