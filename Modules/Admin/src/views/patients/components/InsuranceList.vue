@@ -103,10 +103,19 @@
       };
 
 
-      onMounted(() => {
-        //console.log(props.value)
-        formState.value = props.value;
-      });
+      // onMounted(() => {
+      //   //console.log(props.value)
+      //   formState.value = props.value;
+      //   //formState.value = {...props.value};
+      // });
+
+      watch(props.value, () => {
+          console.log(props.value);
+          formState.value = props.value;
+
+        },
+        {immediate: true}
+      )
 
 
       return {

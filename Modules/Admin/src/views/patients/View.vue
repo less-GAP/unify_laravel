@@ -97,6 +97,79 @@ const fetch = async function () {
 }
 fetch();
 
+const productColumns = ref([
+  {
+    title: '#',
+    dataIndex: 'stt',
+    key: 'stt',
+    width: 50,
+    render: (id, record, index) => {
+      ++index;
+      return index;
+    },
+  },
+  {
+    title: 'Product',
+    dataIndex: 'id',
+    key: 'id',
+  },
+  {
+    title: "Amount",
+    dataIndex: 'amount',
+    key: "amount",
+    width: 150,
+    align: 'center'
+  },
+  {
+    title: "Delivery Type",
+    dataIndex: 'delivery_type',
+    key: "delivery_type",
+    width: 250,
+  },
+  {
+    title: "Delivery date",
+    dataIndex: 'delivery_date',
+    key: "delivery_date",
+    width: 150,
+  },
+]);
+
+const insuranceColumns = ref([
+  {
+    title: '#',
+    dataIndex: 'stt',
+    key: 'stt',
+    width: 50,
+    render: (id, record, index) => {
+      ++index;
+      return index;
+    },
+  },
+  {
+    title: 'Insurance Coverage',
+    dataIndex: 'coverage',
+    key: 'coverage',
+  },
+  {
+    title: "Insurance ID",
+    dataIndex: 'insurance_id',
+    key: "insurance_id",
+    width: 200,
+  },
+  {
+    title: "Active date",
+    dataIndex: 'active_date',
+    key: "active_date",
+    width: 200,
+  },
+  {
+    title: "Expired date",
+    dataIndex: 'expired_date',
+    key: "expired_date",
+    width: 200,
+  },
+]);
+
 </script>
 
 <template>
@@ -237,7 +310,6 @@ fetch();
                         </div>
                       </div>
                     </div>
-
                   </div>
                   <!-- End of about section -->
 
@@ -245,7 +317,6 @@ fetch();
 
                   <!-- Experience and education -->
                   <div class="p-5 text-gray-600 bg-white rounded-lg shadow hover:text-gray-700 hover:shadow">
-
                     <div class="grid grid-cols-2">
                       <div>
                         <div class="flex items-center mb-3 space-x-2 font-semibold leading-8 text-gray-900">
@@ -254,23 +325,23 @@ fetch();
                                         </span>
                           <span class="tracking-wide">INSURANCE</span>
                         </div>
-                        <ul class="grid grid-cols-2 space-y-2 list-inside">
-                          <li v-for="item in formState.insurance_coverages" :key="item">
+                        <ul class="grid space-y-2 list-inside">
+                          <li v-for="item in formState.insurances" :key="item">
                             <div class="">
                               <div class="flex items-start">
                                 <BaseIcon :path="mdiCheckAll" class="w-6 mr-2 text-teal-600" />
                                 <div class="flex flex-col">
-                                  <h4>Coverage: <span class="text-teal-600">{{ item.coverage }}</span>
-                                  </h4>
-                                  <div class="text-base">
-                                    <div>ID: <span class="text-teal-600">{{ item.insurance_id ??
+                                  <h5>Coverage: <span class="text-teal-600">{{ item.coverage.label }}</span>
+                                  </h5>
+                                  <div class="text-sm">
+                                    <div class="text-sm">ID: <span class="text-teal-600 text-sm">{{ item.insurance_id ??
                                     'N/A' }}</span></div>
-                                    <div>Active date: <span class="text-teal-600">{{
+                                    <div class="text-sm">Active date: <span class="text-teal-600">{{
                                         item.active_date ?
                                           dayjs(item.active_date,
                                             "YYYY-MM-DD").format("MM-DD-YYYY") :
                                           'N/A' }}</span></div>
-                                    <div>Expired date: <span class="text-teal-600">{{
+                                    <div class="text-sm">Expired date: <span class="text-teal-600">{{
                                         item.expired_date ?
                                           dayjs(item.expired_date,
                                             "YYYY-MM-DD").format("MM-DD-YYYY") :
@@ -312,14 +383,49 @@ fetch();
                   <!-- Experience and education -->
                   <div class="p-5 text-gray-600 bg-white rounded-lg shadow hover:text-gray-700 hover:shadow">
 
-                    <div class="grid grid-cols-2">
+                    <div class="grid">
                       <div>
                         <div class="flex items-center mb-3 space-x-2 font-semibold leading-8 text-gray-900">
                                         <span clas="text-green-500">
                                             <BaseIcon :path="mdiBagPersonal" class="w-6" />
                                         </span>
-                          <span class="tracking-wide">SUPPLIES</span>
+                          <span class="tracking-wide">Products</span>
                         </div>
+                        <a-table :data-source="formState.products" :columns="productColumns" bordered :pagination="false" triped>
+                          <template #bodyCell="{ column, record }">
+                            <template v-if="column.key === 'id'">
+                              <div class="flex flex-row items-center">
+                                <img class="w-20 h-auto float-left" :src="record.product.image_url" :alt="record.product.name" v-if="record.product.image_url"/>
+                                <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>
+                                <label class="ml-4 font-semibold">{{record.product.name}}</label>
+                              </div>
+                            </template>
+                            <template v-if="column.key === 'delivery_type'">
+                              <label v-if="record.delivery_type == 'one_times'">One Times</label>
+                              <label v-if="record.delivery_type == 'weekly'">Weekly</label>
+                              <label v-if="record.delivery_type == 'monthly'">Monthly</label>
+                              <label v-if="record.delivery_type == 'yearly'">Yearly</label>
+                            </template>
+                            <template v-if="column.key === 'delivery_date'">
+                              <label v-if="record.delivery_type == 'one_times' || record.delivery_type == 'yearly'">
+                                {{dayjs(record.delivery_date, "YYYY-MM-DD").format("MM-DD-YYYY" )}}
+                              </label>
+                              <label v-if="record.delivery_type == 'monthly'">
+                                {{record.delivery_value}}
+                              </label>
+                              <label v-if="record.delivery_type == 'weekly'">
+                                {{record.delivery_option.label}}
+                              </label>
+                            </template>
+                            <template v-if="column.key === 'action'">
+                              <a-button type="text" :icon="h(FormOutlined)" label="" :outline="true" @click="editProduct(record)"></a-button>
+                              <a-popconfirm title="Do you want delete this?" ok-text="Yes" cancel-text="No" @confirm="delProduct(record)">
+                                <a-button type="text" danger :icon="h(DeleteOutlined)" label="" :outline="true">
+                                </a-button>
+                              </a-popconfirm>
+                            </template>
+                          </template>
+                        </a-table>
                       </div>
                     </div>
                   </div>

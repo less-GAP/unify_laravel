@@ -30,7 +30,7 @@
         <a-col :span="8">
           <a-form-item label="Delivery Type" name="delivery_type" :rules="[{ required: true, message: 'Please input !' }]">
             <a-select class="w-[200px]" v-model:value="formState.delivery_type"
-                      placeholder="Select type..." option-label-prop="children" @change="formState.delivery_value = null">
+                      placeholder="Select type..." option-label-prop="children" @change="changeDelivery">
               <a-select-option value="one_times">One Times</a-select-option>
               <a-select-option value="weekly">Weekly</a-select-option>
               <a-select-option value="monthly">Monthly</a-select-option>
@@ -53,7 +53,7 @@
           <a-form-item label="Delivery value" name="delivery_value" :rules="[{ required: true, message: 'Please input !' }]"
                        v-if="formState.delivery_type == 'weekly'">
             <a-select class="w-[200px]" v-model:value="formState.delivery_value"
-                      placeholder="Select type..." :options="weeks" @change="changeWeek">
+                      placeholder="Select type..." :options="weeks" >
             </a-select>
           </a-form-item>
           <a-form-item label="Delivery value" name="delivery_value" :rules="[{ required: true, message: 'Please input !' }]"
@@ -156,8 +156,9 @@
         formState.value.product = option;
       };
 
-      function changeWeek(value, option) {
+      function changeDelivery(value, option) {
         formState.value.delivery_option = option;
+        formState.value.delivery_value = null
       };
 
 
@@ -168,7 +169,7 @@
 
       watch(props.value, () => {
           formState.value = props.value;
-          console.log(props.value);
+          //console.log(props.value);
         },
         {immediate: true}
       )
@@ -182,7 +183,7 @@
         changeProduct,
         weeks,
         months,
-        changeWeek
+        changeDelivery
       };
     },
   });

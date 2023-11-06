@@ -198,9 +198,10 @@
 
   const selectProduct = ref({});
   const onSelectProduct = (item) => {
+    console.log(item);
     var add = true;
     formState.value.products.forEach((value, index) => {
-      if (value.id == item.id) {
+      if (value.product_id == item.product_id) {
         formState.value.products[index] = item;
         add = false;
       }
@@ -275,9 +276,10 @@
 
   const selectInsurance = ref({});
   const onSelectInsurance = (item) => {
+    console.log(item);
     var add = true;
     formState.value.insurances.forEach((value, index) => {
-      if (value.id == item.id) {
+      if (value.insurance_id == item.insurance_id) {
         formState.value.insurances[index] = item;
         add = false;
       }
@@ -629,7 +631,7 @@
   </a-modal>
 
   <a-modal append-to-body v-model:open="showInsuranceDetail" :zIndex="10" width="50%" title="Select Insurance" :closable="true" :footer="null" :maskClosable="false">
-    <InsuranceList :value="selectInsurance" @close="showInsuranceDetail = false" @select="onSelectInsurance" :key="selectInsurance.product ? selectInsurance.product.id : 0"></InsuranceList>
+    <InsuranceList :value="selectInsurance" @close="showInsuranceDetail = false" @select="onSelectInsurance" :key="selectInsurance.coverage ? selectInsurance.coverage.id : 0"></InsuranceList>
   </a-modal>
 
 
