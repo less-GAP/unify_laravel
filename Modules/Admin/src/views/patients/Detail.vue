@@ -316,13 +316,15 @@
 
 <template>
   <LayoutAuthenticated>
-    <div class="mx-4">
-      <div class="mb-5 bg-gray-100" v-if="formState.id > 0">
-        <a-steps
-          v-model:current="current"
-          type="navigation"
-          size="small"
-          :items="[
+    <a-skeleton v-if="loading" active class="p-10"/>
+    <div v-else>
+      <div class="mx-4">
+        <div class="mb-5 bg-gray-100" v-if="formState.id > 0">
+          <a-steps
+            v-model:current="current"
+            type="navigation"
+            size="small"
+            :items="[
         {
           title: 'Waiting',
           description: '',
@@ -343,19 +345,19 @@
           disabled: true
         },
       ]">
-        </a-steps>
+          </a-steps>
+        </div>
       </div>
-    </div>
-    <a-form layout="vertical" ref="formRef" :model="formState" @finish="submit" @finishFailed="onFinishFailed">
-      <div class="mx-4">
-        <a-tabs v-model:activeKey="activeKey" @change="tabActive">
-          <a-tab-pane key="1" tab="General">
-            <a-divider orientation="left">Infomation</a-divider>
-            <a-row :gutter="20" v-if="false">
-              <a-col :span="8">
-                <a-form-item label="Status"
-                             :rules="[{ required: true }]">
-                  <a-select v-model:value="formState.unify_status" allowClear="" class="w-full" :options="[
+      <a-form layout="vertical" ref="formRef" :model="formState" @finish="submit" @finishFailed="onFinishFailed">
+        <div class="mx-4">
+          <a-tabs v-model:activeKey="activeKey" @change="tabActive">
+            <a-tab-pane key="1" tab="General">
+              <a-divider orientation="left">Infomation</a-divider>
+              <a-row :gutter="20" v-if="false">
+                <a-col :span="8">
+                  <a-form-item label="Status"
+                               :rules="[{ required: true }]">
+                    <a-select v-model:value="formState.unify_status" allowClear="" class="w-full" :options="[
                 {
                   value: 1,
                   label: 'Active'
@@ -369,52 +371,52 @@
                   label: 'Decease'
                 },
               ]">
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item label="Publish date" :rules="[{ required: true }]" v-if="formState.unify_status == '1'">
-                  <a-date-picker class="w-full" :showTime="{ format: 'HH:mm' }"
-                                 v-model:value="formState.unify_active"
-                                 valueFormat="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"
-                  ></a-date-picker>
-                </a-form-item>
-              </a-col>
-            </a-row>
-            <a-row :gutter="20">
-              <a-col :span="8">
-                <a-form-item label="ID Number" name="unify_number"
-                             :rules="[{ required: true, message: 'Please enter ID number!' }]">
-                  <a-input v-model:value="formState.unify_number" placeholder="ID Number..."/>
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item label="First Name" name="first_name"
-                             :rules="[{ required: true, message: 'Please enter first name!' }]">
-                  <a-input v-model:value="formState.first_name" placeholder="First Name..."/>
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item label="Last Name" name="last_name"
-                             :rules="[{ required: true, message: 'Please enter last name!' }]">
-                  <a-input v-model:value="formState.last_name" placeholder="Last Name..."/>
-                </a-form-item>
-              </a-col>
-              <a-col :span="8" v-if="false">
-                <a-form-item label="Full Name" name="full_name"
-                             :rules="[{ required: true, message: 'Please enter full name!' }]">
-                  <a-input v-model:value="formState.full_name" disabled/>
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item label="Date of Birth" name="dob" required>
-                  <a-date-picker v-model:value="formState.dob" valueFormat="YYYY-MM-DD" format="MM-DD-YYYY" inputReadOnly
-                                 class="w-full" placeholder="Date of Birth..."></a-date-picker>
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item label="Gender" name="gender" :rules="[{ required: true, message: 'Please enter gender!' }]">
-                  <a-select v-model:value="formState.gender" allowClear="true" class="w-full" :options="[
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-item label="Publish date" :rules="[{ required: true }]" v-if="formState.unify_status == '1'">
+                    <a-date-picker class="w-full" :showTime="{ format: 'HH:mm' }"
+                                   v-model:value="formState.unify_active"
+                                   valueFormat="YYYY-MM-DD HH:mm:ss" format="HH:mm MM-DD-YYYY"
+                    ></a-date-picker>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+              <a-row :gutter="20">
+                <a-col :span="8">
+                  <a-form-item label="ID Number" name="unify_number"
+                               :rules="[{ required: true, message: 'Please enter ID number!' }]">
+                    <a-input v-model:value="formState.unify_number" placeholder="ID Number..."/>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-item label="First Name" name="first_name"
+                               :rules="[{ required: true, message: 'Please enter first name!' }]">
+                    <a-input v-model:value="formState.first_name" placeholder="First Name..."/>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-item label="Last Name" name="last_name"
+                               :rules="[{ required: true, message: 'Please enter last name!' }]">
+                    <a-input v-model:value="formState.last_name" placeholder="Last Name..."/>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="8" v-if="false">
+                  <a-form-item label="Full Name" name="full_name"
+                               :rules="[{ required: true, message: 'Please enter full name!' }]">
+                    <a-input v-model:value="formState.full_name" disabled/>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-item label="Date of Birth" name="dob" required>
+                    <a-date-picker v-model:value="formState.dob" valueFormat="YYYY-MM-DD" format="MM-DD-YYYY" inputReadOnly
+                                   class="w-full" placeholder="Date of Birth..."></a-date-picker>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-item label="Gender" name="gender" :rules="[{ required: true, message: 'Please enter gender!' }]">
+                    <a-select v-model:value="formState.gender" allowClear="true" class="w-full" :options="[
                     {
                       value: 0,
                       label: 'Male'
@@ -424,200 +426,202 @@
                       label: 'Female'
                     }
                   ]" placeholder="Gender...">
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item label="Phone" name="phone" :rules="[{ required: true, message: 'Please enter phone!' }]">
-                  <a-input v-model:value="formState.phone" class="w-full" placeholder="Phone..."></a-input>
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item label="Email" name="email" :rules="[{type: 'email', message: 'The input is not valid email!',}]">
-                  <a-input v-model:value="formState.email" placeholder="Email..."></a-input>
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item label="Note" name="note">
-                  <a-textarea class="!rounded-none w-full" v-model:value="formState.note"
-                              :auto-size="{ minRows: 2, maxRows: 10 }" placeholder="Note..."/>
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item label="Data" name="unify_data">
-                  <a-textarea class="!rounded-none w-full" v-model:value="formState.unify_data"
-                              :auto-size="{ minRows: 2, maxRows: 10 }" placeholder="Data..."/>
-                </a-form-item>
-              </a-col>
-              <a-col :span="24">
-                <a-form-item label="Gallery" name="unify_data">
-                  <InputUpload v-model:value="formState.images"></InputUpload>
-                </a-form-item>
-              </a-col>
-            </a-row>
-            <a-divider orientation="left">Address</a-divider>
-            <a-row :gutter="20">
-              <a-col :span="8">
-                <a-form-item label="Street" name="street" :rules="[{ required: true, message: 'Please enter street!' }]">
-                  <a-input v-model:value="formState.street" class="w-full" placeholder="Street..."></a-input>
-                </a-form-item>
-              </a-col>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-item label="Phone" name="phone" :rules="[{ required: true, message: 'Please enter phone!' }]">
+                    <a-input v-model:value="formState.phone" class="w-full" placeholder="Phone..."></a-input>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-item label="Email" name="email" :rules="[{type: 'email', message: 'The input is not valid email!',}]">
+                    <a-input v-model:value="formState.email" placeholder="Email..."></a-input>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-item label="Note" name="note">
+                    <a-textarea class="!rounded-none w-full" v-model:value="formState.note"
+                                :auto-size="{ minRows: 2, maxRows: 10 }" placeholder="Note..."/>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-item label="Data" name="unify_data">
+                    <a-textarea class="!rounded-none w-full" v-model:value="formState.unify_data"
+                                :auto-size="{ minRows: 2, maxRows: 10 }" placeholder="Data..."/>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="24">
+                  <a-form-item label="Gallery" name="unify_data">
+                    <InputUpload v-model:value="formState.images"></InputUpload>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+              <a-divider orientation="left">Address</a-divider>
+              <a-row :gutter="20">
+                <a-col :span="8">
+                  <a-form-item label="Street" name="street" :rules="[{ required: true, message: 'Please enter street!' }]">
+                    <a-input v-model:value="formState.street" class="w-full" placeholder="Street..."></a-input>
+                  </a-form-item>
+                </a-col>
 
-              <a-col :span="8">
-                <a-form-item label="City" name="city" :rules="[{ required: true, message: 'Please enter city!' }]">
-                  <a-input v-model:value="formState.city" class="w-full" placeholder="City..."></a-input>
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item label="State" name="state" :rules="[{ required: true, message: 'Please enter state!' }]">
-                  <a-select v-model:value="formState.state" allowClear="" class="w-full" showSearch
-                            placeholder="Select a state">
-                    <a-select-option v-for="state in listStates" :key="state.value" :value="state.label">{{ state.label
-                      }} ({{ state.value }})
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item label="Zip" name="zip" :rules="[{ required: true, message: 'Please enter zip!' }]">
-                  <a-input-number v-model:value="formState.zip" class="!w-full" placeholder="Zip..."></a-input-number>
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item label="Route" name="route" :rules="[{ required: true, message: 'Please enter route!' }]">
-                  <a-input v-model:value="formState.route" class="w-full" placeholder="Route..."></a-input>
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item label="Apt" name="apt" :rules="[{ message: 'Please enter apt!' }]">
-                  <a-input v-model:value="formState.apt" class="w-full" placeholder="Apt..."></a-input>
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item label="Sub-r" name="sub_r" :rules="[{ message: 'Please enter sub-r!' }]">
-                  <a-input v-model:value="formState.sub_r" class="w-full" placeholder="Sub-r..."></a-input>
-                </a-form-item>
-              </a-col>
-            </a-row>
-          </a-tab-pane>
-          <a-tab-pane key="2" tab="Insurance">
-            <div class="flex flex-row justify-end">
-              <a-button @click="addInsurance">Add Insurance</a-button>
-            </div>
-            <div class="mt-5">
-              <a-table :data-source="formState.insurances" :columns="insuranceColumns" bordered :pagination="false" triped>
-                <template #bodyCell="{ column, record }">
-                  <template v-if="column.key === 'coverage'">
-                    <div class="flex flex-row items-center">
-                      <!--                        <img class="w-20 h-auto float-left" :src="record.product.image_url" :alt="record.product.name" v-if="record.product.image_url"/>-->
-                      <!--                        <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>-->
-                      <label class="ml-4 font-semibold">{{record.coverage.label}}</label>
-                    </div>
+                <a-col :span="8">
+                  <a-form-item label="City" name="city" :rules="[{ required: true, message: 'Please enter city!' }]">
+                    <a-input v-model:value="formState.city" class="w-full" placeholder="City..."></a-input>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-item label="State" name="state" :rules="[{ required: true, message: 'Please enter state!' }]">
+                    <a-select v-model:value="formState.state" allowClear="" class="w-full" showSearch
+                              placeholder="Select a state">
+                      <a-select-option v-for="state in listStates" :key="state.value" :value="state.label">{{ state.label
+                        }} ({{ state.value }})
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-item label="Zip" name="zip" :rules="[{ required: true, message: 'Please enter zip!' }]">
+                    <a-input-number v-model:value="formState.zip" class="!w-full" placeholder="Zip..."></a-input-number>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-item label="Route" name="route" :rules="[{ required: true, message: 'Please enter route!' }]">
+                    <a-input v-model:value="formState.route" class="w-full" placeholder="Route..."></a-input>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-item label="Apt" name="apt" :rules="[{ message: 'Please enter apt!' }]">
+                    <a-input v-model:value="formState.apt" class="w-full" placeholder="Apt..."></a-input>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-item label="Sub-r" name="sub_r" :rules="[{ message: 'Please enter sub-r!' }]">
+                    <a-input v-model:value="formState.sub_r" class="w-full" placeholder="Sub-r..."></a-input>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+            </a-tab-pane>
+            <a-tab-pane key="2" tab="Insurance">
+              <div class="flex flex-row justify-end">
+                <a-button @click="addInsurance">Add Insurance</a-button>
+              </div>
+              <div class="mt-5">
+                <a-table :data-source="formState.insurances" :columns="insuranceColumns" bordered :pagination="false" triped>
+                  <template #bodyCell="{ column, record }">
+                    <template v-if="column.key === 'coverage'">
+                      <div class="flex flex-row items-center">
+                        <!--                        <img class="w-20 h-auto float-left" :src="record.product.image_url" :alt="record.product.name" v-if="record.product.image_url"/>-->
+                        <!--                        <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>-->
+                        <label class="ml-4 font-semibold">{{record.coverage.label}}</label>
+                      </div>
+                    </template>
+                    <template v-if="column.key === 'active_date'">
+                      {{dayjs(record.active_date, "YYYY-MM-DD").format("MM-DD-YYYY" )}}
+                    </template>
+                    <template v-if="column.key === 'expired_date'">
+                      {{dayjs(record.expired_date, "YYYY-MM-DD").format("MM-DD-YYYY" )}}
+                    </template>
+                    <template v-if="column.key === 'action'">
+                      <a-button type="text" :icon="h(FormOutlined)" label="" :outline="true" @click="editInsurance(record)"></a-button>
+                      <a-popconfirm title="Do you want delete this?" ok-text="Yes" cancel-text="No" @confirm="delInsurance(record)">
+                        <a-button type="text" danger :icon="h(DeleteOutlined)" label="" :outline="true">
+                        </a-button>
+                      </a-popconfirm>
+                    </template>
                   </template>
-                  <template v-if="column.key === 'active_date'">
-                    {{dayjs(record.active_date, "YYYY-MM-DD").format("MM-DD-YYYY" )}}
+                </a-table>
+              </div>
+            </a-tab-pane>
+            <a-tab-pane key="3" tab="Doctor">
+              <a-row :gutter="20">
+                <a-col :span="12">
+                  <a-form-item label="Doctor" name="doctor">
+                    <a-select v-model:value="formState.doctor_id" allowClear="" class="w-full" showSearch
+                              placeholder="Select a doctor">
+                      <a-select-option v-for="(doctor, index) in listDoctors" :key="doctor.value" :value="parseInt(doctor.value)">{{
+                          doctor.label
+                        }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="12">
+                  <a-form-item label="Doctor status" name="doctor_status">
+                    <a-select v-model:value="formState.doctor_status" allowClear="" class="w-full"
+                              placeholder="Select a status">
+                      <a-select-option v-for="(status, index) in listDoctorStatus" :key="status.value" :value="status.value">{{
+                          status.label
+                        }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="24">
+                  <a-form-item label="Doctor note" name="doctor_comment">
+                    <a-textarea class="!rounded-none w-full" v-model:value="formState.doctor_comment"
+                                placeholder="Doctor note"
+                                :auto-size="{ minRows: 2, maxRows: 10 }"/>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+            </a-tab-pane>
+            <a-tab-pane key="4" tab="Products" v-if="formState.id > 0">
+              <div class="flex flex-row justify-end">
+                <a-button @click="addProduct">Add Product</a-button>
+              </div>
+              <div class="mt-5">
+                <a-table :data-source="formState.products" :columns="productColumns" bordered :pagination="false" triped>
+                  <template #bodyCell="{ column, record }">
+                    <template v-if="column.key === 'id'">
+                      <div class="flex flex-row items-center">
+                        <img class="w-20 h-auto float-left" :src="record.product.image_url" :alt="record.product.name" v-if="record.product.image_url"/>
+                        <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>
+                        <label class="ml-4 font-semibold">{{record.product.name}}</label>
+                      </div>
+                    </template>
+                    <template v-if="column.key === 'delivery_type'">
+                      <label v-if="record.delivery_type == 'one_times'">One Times</label>
+                      <label v-if="record.delivery_type == 'weekly'">Weekly</label>
+                      <label v-if="record.delivery_type == 'monthly'">Monthly</label>
+                      <label v-if="record.delivery_type == 'yearly'">Yearly</label>
+                    </template>
+                    <template v-if="column.key === 'delivery_date'">
+                      <label v-if="record.delivery_type == 'one_times' || record.delivery_type == 'yearly'">
+                        {{dayjs(record.delivery_date, "YYYY-MM-DD").format("MM-DD-YYYY" )}}
+                      </label>
+                      <label v-if="record.delivery_type == 'monthly'">
+                        {{record.delivery_value}}
+                      </label>
+                      <label v-if="record.delivery_type == 'weekly'">
+                        {{record.delivery_option.label}}
+                      </label>
+                    </template>
+                    <template v-if="column.key === 'action'">
+                      <a-button type="text" :icon="h(FormOutlined)" label="" :outline="true" @click="editProduct(record)"></a-button>
+                      <a-popconfirm title="Do you want delete this?" ok-text="Yes" cancel-text="No" @confirm="delProduct(record)">
+                        <a-button type="text" danger :icon="h(DeleteOutlined)" label="" :outline="true">
+                        </a-button>
+                      </a-popconfirm>
+                    </template>
                   </template>
-                  <template v-if="column.key === 'expired_date'">
-                    {{dayjs(record.expired_date, "YYYY-MM-DD").format("MM-DD-YYYY" )}}
-                  </template>
-                  <template v-if="column.key === 'action'">
-                    <a-button type="text" :icon="h(FormOutlined)" label="" :outline="true" @click="editInsurance(record)"></a-button>
-                    <a-popconfirm title="Do you want delete this?" ok-text="Yes" cancel-text="No" @confirm="delInsurance(record)">
-                      <a-button type="text" danger :icon="h(DeleteOutlined)" label="" :outline="true">
-                      </a-button>
-                    </a-popconfirm>
-                  </template>
-                </template>
-              </a-table>
-            </div>
-          </a-tab-pane>
-          <a-tab-pane key="3" tab="Doctor">
-            <a-row :gutter="20">
-              <a-col :span="12">
-                <a-form-item label="Doctor" name="doctor">
-                  <a-select v-model:value="formState.doctor_id" allowClear="" class="w-full" showSearch
-                            placeholder="Select a doctor">
-                    <a-select-option v-for="(doctor, index) in listDoctors" :key="doctor.value" :value="parseInt(doctor.value)">{{
-                      doctor.label
-                      }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-form-item label="Doctor status" name="doctor_status">
-                  <a-select v-model:value="formState.doctor_status" allowClear="" class="w-full"
-                            placeholder="Select a status">
-                    <a-select-option v-for="(status, index) in listDoctorStatus" :key="status.value" :value="status.value">{{
-                      status.label
-                      }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :span="24">
-                <a-form-item label="Doctor note" name="doctor_comment">
-                  <a-textarea class="!rounded-none w-full" v-model:value="formState.doctor_comment"
-                              placeholder="Doctor note"
-                              :auto-size="{ minRows: 2, maxRows: 10 }"/>
-                </a-form-item>
-              </a-col>
-            </a-row>
-          </a-tab-pane>
-          <a-tab-pane key="4" tab="Products" v-if="formState.id > 0">
-            <div class="flex flex-row justify-end">
-              <a-button @click="addProduct">Add Product</a-button>
-            </div>
-            <div class="mt-5">
-              <a-table :data-source="formState.products" :columns="productColumns" bordered :pagination="false" triped>
-                <template #bodyCell="{ column, record }">
-                  <template v-if="column.key === 'id'">
-                    <div class="flex flex-row items-center">
-                      <img class="w-20 h-auto float-left" :src="record.product.image_url" :alt="record.product.name" v-if="record.product.image_url"/>
-                      <img class="w-20 h-auto float-left" src="/src/assets/no_image_available.png" v-else/>
-                      <label class="ml-4 font-semibold">{{record.product.name}}</label>
-                    </div>
-                  </template>
-                  <template v-if="column.key === 'delivery_type'">
-                    <label v-if="record.delivery_type == 'one_times'">One Times</label>
-                    <label v-if="record.delivery_type == 'weekly'">Weekly</label>
-                    <label v-if="record.delivery_type == 'monthly'">Monthly</label>
-                    <label v-if="record.delivery_type == 'yearly'">Yearly</label>
-                  </template>
-                  <template v-if="column.key === 'delivery_date'">
-                    <label v-if="record.delivery_type == 'one_times' || record.delivery_type == 'yearly'">
-                      {{dayjs(record.delivery_date, "YYYY-MM-DD").format("MM-DD-YYYY" )}}
-                    </label>
-                    <label v-if="record.delivery_type == 'monthly'">
-                      {{record.delivery_value}}
-                    </label>
-                    <label v-if="record.delivery_type == 'weekly'">
-                      {{record.delivery_option.label}}
-                    </label>
-                  </template>
-                  <template v-if="column.key === 'action'">
-                    <a-button type="text" :icon="h(FormOutlined)" label="" :outline="true" @click="editProduct(record)"></a-button>
-                    <a-popconfirm title="Do you want delete this?" ok-text="Yes" cancel-text="No" @confirm="delProduct(record)">
-                      <a-button type="text" danger :icon="h(DeleteOutlined)" label="" :outline="true">
-                      </a-button>
-                    </a-popconfirm>
-                  </template>
-                </template>
-              </a-table>
-            </div>
-          </a-tab-pane>
-        </a-tabs>
-        <a-space align="center" class="pt-5">
-          <a-button
-            v-if="auth.hasPermission('Patient.EligibilityCheckApprove') && formState.unify_process == 0 && formState.id > 0"
-            @click="approval('eligibility_check')" type="primary" class="!bg-green-500 hover:!bg-green-400">
-            Approve
-          </a-button>
-          <a-button type="primary" html-type="submit">Submit</a-button>
-          <a-button type="primary" ghost @click="back()">Back</a-button>
-        </a-space>
-      </div>
-    </a-form>
+                </a-table>
+              </div>
+            </a-tab-pane>
+          </a-tabs>
+          <a-space align="center" class="pt-5">
+            <a-button
+              v-if="auth.hasPermission('Patient.EligibilityCheckApprove') && formState.unify_process == 0 && formState.id > 0"
+              @click="approval('eligibility_check')" type="primary" class="!bg-green-500 hover:!bg-green-400">
+              Approve
+            </a-button>
+            <a-button type="primary" html-type="submit">Submit</a-button>
+            <a-button type="primary" ghost @click="back()">Back</a-button>
+          </a-space>
+        </div>
+      </a-form>
+    </div>
+
   </LayoutAuthenticated>
 
   <a-modal append-to-body v-model:open="showProductDetail" :zIndex="10" width="50%" title="Select Product" :closable="true" :footer="null" :maskClosable="false">

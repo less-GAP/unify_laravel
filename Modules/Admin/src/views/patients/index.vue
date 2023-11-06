@@ -121,7 +121,7 @@
     addAction: {
       action: (reload) => {
         //showEditUser({}, reload)
-        router.push(prefix + "/0");
+        router.push(prefix + "/edit/0");
       },
       ifShow: auth.hasPermission('Patient.create')
     },
@@ -135,7 +135,7 @@
           return true;
         },
         action: (item) => {
-          router.push(prefix + "/" + item.id);
+          router.push(prefix+"/edit/" + item.id);
         },
       },
       {
@@ -143,7 +143,7 @@
         label: "Approve Patient",
         key: "editProcess",
         action: (item) => {
-          router.replace(prefix + "/" + item.id + "/process");
+          router.replace(prefix + "/process/" + item.id + "");
         },
       },
       {
@@ -154,7 +154,7 @@
           return true;
         },
         action: (item) => {
-          router.replace(prefix + "/" + item.id + "/task");
+          router.replace(prefix + "/task/" + item.id);
         },
       },
       {
@@ -165,7 +165,7 @@
           return true;
         },
         action: (item) => {
-          router.replace(prefix + "/" + item.id + "/history");
+          router.replace(prefix + "/history/" + item.id);
         },
       },
     ],
@@ -272,7 +272,7 @@
             />
             <span class="pl-1">
               <a
-                @click="auth.hasPermission('patient.view') ? router.push('patient/' + item.id + '/detail') : 'javascript:void(0)'"
+                @click="auth.hasPermission('Patient.view') ? router.push('patient/view/' + item.id) : 'javascript:void(0)'"
                 class="text-blue-700 underline cursor-pointer"
               >{{ item.full_name }}</a
               >
