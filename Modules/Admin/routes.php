@@ -308,11 +308,13 @@ Route::middleware([AdminIsAuthenticated::class])->group(function () {
                 'allowedIncludes' => ['products'],
             ]
         )->routes(function () {
+            Route::get('/list', \Modules\Admin\Actions\Order\GetListAction::class . '@handle');
             Route::post('/', \Modules\Admin\Actions\Order\PostAction::class . '@handle');
             Route::get('/{id}', \Modules\Admin\Actions\Order\GetDetailAction::class . '@handle');
             Route::post('/assign', \Modules\Admin\Actions\Order\PostAssignAction::class . '@handle');
             Route::delete('/{id}', \Modules\Admin\Actions\Order\DeleteAction::class . '@handle');
             Route::post('/checkStock', \Modules\Admin\Actions\Order\PostCheckStockAction::class . '@handle');
+            Route::post('/updateStatus', \Modules\Admin\Actions\Order\PostUpdateStatusAction::class . '@handle');
 //            Route::get('/{id}', \Modules\Admin\Actions\Patient\GetDetailAction::class . '@handle');
         });
 });

@@ -116,10 +116,6 @@ const closeDetail = function () {
   border-radius: 5px !important;
 }
 
-.ant-modal-wrap {
-  z-index: 100001 !important;
-}
-
 .ant-form-item {
   margin-bottom: 0;
 }

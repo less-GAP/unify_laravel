@@ -39,7 +39,8 @@ class User extends Authenticatable
         'deleted',
         'deleted_at',
         'deleted_by',
-        'status'
+        'status',
+        'type'
     ];
 
     /**

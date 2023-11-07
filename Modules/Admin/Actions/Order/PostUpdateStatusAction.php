@@ -1,18 +1,18 @@
 <?php
 
 
-namespace Modules\Admin\Actions\Inventory;
+namespace Modules\Admin\Actions\Order;
 
-use App\Models\Inventory;
+use App\Models\Orders;
 use Illuminate\Http\Request;
 
-class PostActiveListAction
+class PostUpdateStatusAction
 {
     public function handle(Request $request)
     {
         $data = $request->all();
         try {
-            $res = Inventories::whereIn('id', $data['items'])->update([
+            $res = Orders::find($data['id'])->update([
                 'status' => $data['status']
             ]);
 

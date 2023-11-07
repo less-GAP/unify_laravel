@@ -1,92 +1,93 @@
 <script setup>
-import {reactive, ref, h, watch} from "vue";
-import {mdiBallotOutline, mdiDelete} from "@mdi/js";
-import {Modal, DataTable} from "@/components";
-import router from "@/router";
+  import {reactive, ref, h, watch} from "vue";
+  import {mdiBallotOutline, mdiDelete} from "@mdi/js";
+  import {Modal, DataTable} from "@/components";
+  import {DeleteOutlined, FormOutlined, ProjectOutlined} from '@ant-design/icons-vue';
+  import router from "@/router";
 
-import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
-import {UseDataTable} from "@/utils/UseDataTable";
+  import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
+  import {UseDataTable} from "@/utils/UseDataTable";
+  import {useAuthStore} from "@/stores/auth";
 
-const prefix = 'permissions'
-const routePath = '/master-data/' + prefix
-const {
-  fetchListApi,
-  createApi,
-  deleteApi,
-  updateApi
-} = UseEloquentRouter(prefix)
-const isShowModal = ref(false)
+  const prefix = 'permissions'
+  const routePath = '/master-data/' + prefix
+  const {
+    fetchListApi,
+    createApi,
+    deleteApi,
+    updateApi
+  } = UseEloquentRouter(prefix)
+  const isShowModal = ref(false)
+  const auth = useAuthStore();
 
-const itemActions = [
-  {
-    label: 'Edit',
-    action: (item, reload) => {
-      //showEditUser({}, reload)
-      router.push(routePath + '/' + item.id)
-    }
-  },
-  {
-    label: 'Delete',
-    class: 'font-medium !text-red-600 !dark:text-red-500 hover:underline',
-    confirm: true,
-    action(item, reload) {
-      deleteApi(item.id).then(rs => {
-      }).finally(() => {
-        reload();
-      });
-    }
+  const tableConfig = UseDataTable(fetchListApi, {
+    columns: [
+      {
+        title: 'Name',
+        key: 'name',
+
+      }, {
+        title: 'Description',
+        key: 'description',
+
+      },
+      {
+        title: 'Status',
+        key: 'status',
+        width: 100
+      },
+      {
+        title: 'Created at',
+        key: 'created_at',
+        width: 200
+      },
+    ],
+    listActions: [],
+    itemActions: [
+      {
+        ifShow: auth.hasPermission('Permission.update'),
+        label: 'Edit',
+        key: 'edit',
+        action: (item, reload) => {
+          //showEditUser({}, reload)
+          router.push(routePath + '/' + item.id)
+        }
+      },
+      {
+        ifShow: auth.hasPermission('Permission.delete'),
+        label: 'Delete',
+        key: 'delete',
+        class: 'font-medium !text-red-600 !dark:text-red-500 hover:underline',
+        confirm: true,
+        action(item, reload) {
+          deleteApi(item.id).then(rs => {
+          }).finally(() => {
+            reload();
+          });
+        }
+      }
+    ],
+    addAction: {
+      action: (reload) => {
+        router.push(routePath + '/new')
+      },
+      ifShow: auth.hasPermission('Permission.create')
+    },
+  })
+
+
+  let reloadTable = () => {
   }
-]
-const listActions = [
-  {
-    label: 'Add',
-    action: (reload) => {
-      //showEditUser({}, reload)
-      router.push(routePath + '/new')
+
+  watch(router.currentRoute, (data) => {
+    if (data.path === routePath) {
+      reloadTable()
     }
+  });
+
+  function registerTable({reload}) {
+    reloadTable = reload
   }
-]
-const columns = [
-
-  {
-    title: 'Name',
-    key: 'name',
-
-  }, {
-    title: 'Description',
-    key: 'description',
-
-  },
-  {
-    title: 'Status',
-    key: 'status',
-    width: 100
-  },
-  {
-    title: 'Created at',
-    key: 'created_at',
-    width: 200
-  },
-]
-
-
-const tableConfig = UseDataTable(fetchListApi, {
-  columns,
-  listActions,
-  itemActions
-})
-let reloadTable = () => {
-}
-
-watch(router.currentRoute, (data) => {
-  if (data.path === routePath) {
-    reloadTable()
-  }
-});
-
-function registerTable({reload}) {
-  reloadTable = reload
-}
 
 </script>
 

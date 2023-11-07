@@ -289,7 +289,7 @@ reload(true);
                         ? itemAction.class
                         : 'font-medium text-blue-600 dark:text-blue-500 hover:underline'
                       " type="link" @click="itemAction.action(item, reload)">
-                    {{ itemAction.label }} aaa
+                    {{ itemAction.label }}
                   </a-button>
                 </slot>
               </template>

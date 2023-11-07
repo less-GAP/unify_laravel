@@ -25,6 +25,10 @@
     showReload: true,
     columns: [
       {
+        title: 'Type',
+        key: 'type'
+      },
+      {
         title: 'Username',
         width: 200,
         key: 'username'
@@ -116,7 +120,6 @@
             :outline="true"
           >
           </a-button>
-
         </a-popconfirm>
       </template>
       <template #cell[full_name]="{item,column}">

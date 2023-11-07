@@ -14,7 +14,7 @@
 
   import Shipper from "./components/Shipper.vue";
 
-  import {PlusOutlined, LoadingOutlined, DeleteOutlined, FormOutlined, EyeOutlined, PlusSquareOutlined} from '@ant-design/icons-vue';
+  import {PlusOutlined, LoadingOutlined, DeleteOutlined, FormOutlined, EyeOutlined, PlusSquareOutlined, CheckSquareOutlined} from '@ant-design/icons-vue';
 
   import Api from "@/utils/Api";
 
@@ -109,7 +109,6 @@
           router.push(prefix + '/' + item.id);
         },
       },
-
       {
         ifShow: auth.hasPermission('Order.assign'),
         label: "Assign",
@@ -122,6 +121,32 @@
             shipper_email: item.shipper_email,
           };
           editShipper(shipper);
+        },
+      },
+      {
+        ifShow: auth.hasPermission('Order.updateStatus'),
+        label: "updateStatus",
+        key: "updateStatus",
+        confirm: true,
+        action: (item, reload) => {
+          var status = 'confirmed';
+          if (item.status == 'confirmed') {
+            status = 'delivering';
+          } else if (item.status == 'delivering') {
+            status = 'delivered';
+          }
+
+          Api.post(prefix + '/updateStatus', {
+            id: item.id,
+            status: status
+          }).then(rs => {
+            notification[rs.data.code == 0 ? 'error' : 'success']({
+              message: 'Notification',
+              description: rs.data.message,
+            });
+          }).finally(() => {
+            reload();
+          });
         },
       },
       {
@@ -211,6 +236,12 @@
           </a-button>
         </template>
 
+        <template #cellAction[updateStatus]="{ item, actionMethod }">
+          <a-popconfirm title="Do you confirm this?" ok-text="Yes" cancel-text="No" @confirm="actionMethod">
+            <a-button type="text" :icon="h(CheckSquareOutlined)" label="" :outline="true">
+            </a-button>
+          </a-popconfirm>
+        </template>
 
         <template #cell[type]="{ item, column }">
           <a-tag class="capitalize" :color="item.type == 'in' ? 'green' : 'red'">{{item.type}}</a-tag>
@@ -239,8 +270,8 @@
           <a-tag v-if="item.status == 'new'" color="#2db7f5">New</a-tag>
           <a-tag v-if="item.status == 'confirmed'" color="#108ee9">Confirmed</a-tag>
           <a-tag v-if="item.status == 'delivering'" color="#87d068">Delivering</a-tag>
-          <a-tag v-if="item.status == 'delivered'" color="#green">Delivered</a-tag>
-          <a-tag v-if="item.status == 'done'" color="#green">Done</a-tag>
+          <a-tag v-if="item.status == 'delivered'" color="#A8E18C">Delivered</a-tag>
+          <a-tag v-if="item.status == 'done'" color="#869D7A">Done</a-tag>
         </template>
       </DataTable>
     </SectionMain>

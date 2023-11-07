@@ -1,59 +1,59 @@
 <script lang="ts" setup>
-import {reactive, h, ref, toRaw, computed} from "vue";
-import {CloseCircleOutlined, ArrowLeftOutlined} from '@ant-design/icons-vue';
-import router from "@/router";
-import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
-import ApiData from "@/components/ApiData.vue";
-import Api from "@/utils/Api";
-import DataListEdit from "@/components/DataListEdit.vue";
+  import {reactive, h, ref, toRaw, computed} from "vue";
+  import {CloseCircleOutlined, ArrowLeftOutlined} from '@ant-design/icons-vue';
+  import router from "@/router";
+  import {UseEloquentRouter} from "@/utils/UseEloquentRouter";
+  import ApiData from "@/components/ApiData.vue";
+  import Api from "@/utils/Api";
+  import DataListEdit from "@/components/DataListEdit.vue";
 
-const prefix = 'permissions'
-const routeList = '/master-data/' + prefix
-const {
-  fetchDetailApi,
-  createApi,
-  // updateApi
-} = UseEloquentRouter(prefix)
+  const prefix = 'permissions'
+  const routeList = '/master-data/' + prefix
+  const {
+    fetchDetailApi,
+    createApi,
+    // updateApi
+  } = UseEloquentRouter(prefix)
 
-const loading = ref(false);
+  const loading = ref(false);
 
-const formRef = ref();
+  const formRef = ref();
 
 
-const emit = defineEmits(["close"]);
-const formState = reactive({
-  name: '',
-  status: 'active',
-  description: '',
-});
+  const emit = defineEmits(["close"]);
+  const formState = reactive({
+    name: '',
+    status: 'active',
+    description: '',
+  });
 
-const fetch = async function () {
-  loading.value = true;
-  var id = router.currentRoute?.value.params.id;
-  if (id !== 'new') {
-    loading.value = true
-    const value = await fetchDetailApi(id)
-    Object.assign(formState, value.data)
-    loading.value = false
-  } else {
-    loading.value = false
+  const fetch = async function () {
+    loading.value = true;
+    var id = router.currentRoute?.value.params.id;
+    if (id !== 'new') {
+      loading.value = true
+      const value = await fetchDetailApi(id)
+      Object.assign(formState, value.data)
+      loading.value = false
+    } else {
+      loading.value = false
+    }
   }
-}
-fetch();
+  fetch();
 
+  const submit = () => {
+    formRef.value
+      .validate()
+      .then(() => {
+        createApi({...formState}).then(rs => {
+          Object.assign(formState, rs.data.result)
+        });
+      })
+  };
 
-const submit = () => {
-  formRef.value
-    .validate()
-    .then(() => {
-      createApi({...formState}).then(rs => {
-        Object.assign(formState, rs.data.result)
-      });
-    })
-};
-const closeDetail = function () {
-  router.replace({path: routeList})
-}
+  const closeDetail = function () {
+    router.replace({path: routeList})
+  }
 
 
 </script>
@@ -79,14 +79,14 @@ const closeDetail = function () {
         </a-space>
       </a-card>
       <div style="height:calc(100% - 70px);margin-top:15px;overflow: auto;padding:0;" :gutter="20">
-        <a-card >
-          <a-form-item  label="Name"
+        <a-card>
+          <a-form-item label="Name"
                        name="name"
                        :rules="[{ required: true }]"
           >
             <a-input v-model:value="formState.name" placeholder="Name.."/>
           </a-form-item>
-          <a-form-item  label="Description"
+          <a-form-item label="Description"
                        name="description"
                        :min="0"
                        :rules="[{ required: true }]"
@@ -94,7 +94,7 @@ const closeDetail = function () {
             <a-textarea rows="5" v-model:value="formState.description"/>
           </a-form-item>
 
-          <a-form-item  label="Status"
+          <a-form-item label="Status"
                        name="status"
                        :rules="[{ required: true }]"
           >
@@ -111,16 +111,16 @@ const closeDetail = function () {
 </template>
 
 <style>
-.ant-input {
-  border-color: #d9d9d9 !important;
-  border-radius: 5px !important;
-}
+  .ant-input {
+    border-color: #d9d9d9 !important;
+    border-radius: 5px !important;
+  }
 
-.ant-modal-wrap {
-  z-index: 100001 !important;
-}
+  .ant-modal-wrap {
+    z-index: 100001 !important;
+  }
 
-.ant-form-item {
-  margin-bottom: 0;
-}
+  .ant-form-item {
+    margin-bottom: 0;
+  }
 </style>

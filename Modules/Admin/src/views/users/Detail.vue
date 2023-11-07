@@ -93,6 +93,17 @@
               </a-col>
             </a-row>
             <a-row :gutter="20">
+              <a-col :span="12">
+                <a-form-item label="Type" name="type" :rules="[{ required: true, message: 'Please input your password!' }]">
+                  <a-select class="w-[200px]" v-model:value="formState.type" placeholder="Select type..." clearable>
+                    <a-select-option value="user">User</a-select-option>
+                    <a-select-option value="shipper">Shipper</a-select-option>
+                    <a-select-option value="shipper">Seller</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="20">
               <a-col :span="12" v-if="formState.isNew">
                 <a-form-item label="Username" name="username" :rules="[{ required: true, message: 'Please input your password!' }]">
                   <a-input v-model:value="formState.username" autocomplete="off" placeholder="Username..."/>
