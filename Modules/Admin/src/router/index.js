@@ -113,23 +113,6 @@ let routes = [{
 
   {
     meta: {
-      title: "User Detail",
-    },
-    path: "/users/:id",
-    name: "user-detail",
-    component: () => import("@/views/users/ProfileView.vue"),
-  },
-  {
-    meta: {
-      title: "Profile",
-    },
-    path: "/profile",
-    name: "profile",
-    component: () => import("@/views/ProfileView.vue"),
-  },
-
-  {
-    meta: {
       title: "Login",
       isPublic: true,
     },
